@@ -1,0 +1,20 @@
+{
+  "name": "mb-billing",
+  "version": "1.0.0",
+  "description": "mb-billing server",
+  "main": "index.js",
+  "dependencies": {
+    "font-awesome": "^4.6.3",
+    "jquery.inputmask": "^3.3.3",
+    "jquery": "^3.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mb-billing"
+  ],
+  "author": "m@webmalc.pw",
+  "license": "ISC"
+}
