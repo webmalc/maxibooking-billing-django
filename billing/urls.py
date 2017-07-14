@@ -4,9 +4,19 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import APIRootView, DefaultRouter
+
+from hotels.urls import router as hotel_router
+
+class ApiRootView(Def)
+
+class DefaultRouter(DefaultRouter):
+    def extend(self, router):
+        self.registry.extend(router.registry)
+
 
 router = DefaultRouter()
+router.extend(hotel_router)
 
 urlpatterns = [
     url(r'^rosetta/', include('rosetta.urls')),
