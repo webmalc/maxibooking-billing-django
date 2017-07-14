@@ -12,6 +12,9 @@
 {% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">MaxiBooking-billing administration</a></h1>
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">MaxiBooking-billing administration</a>
+        <a id="small-site-name" href="{% url 'two_factor:setup' %}"><small>mfa</small></a>
+    </h1>
 {% endblock %}
 

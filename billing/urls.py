@@ -13,12 +13,13 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'', include('two_factor.urls', 'two_factor')),
     url(r'^rosetta/', include('rosetta.urls')),
 ]
 
-urlpatterns += i18n_patterns(url(r'^', include(router.urls)))
+urlpatterns += i18n_patterns(
+    url(r'^admin/', admin.site.urls),
+    url(r'', include('two_factor.urls', 'two_factor')),
+    url(r'^', include(router.urls)))
 
 if settings.DEBUG:
     import debug_toolbar
