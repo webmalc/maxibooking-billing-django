@@ -6,10 +6,6 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 
-# from two_factor.admin import AdminSiteOTPRequired
-
-# admin.site.__class__ = AdminSiteOTPRequired
-
 router = DefaultRouter()
 
 urlpatterns = [
@@ -19,7 +15,8 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     url(r'^admin/', admin.site.urls),
     url(r'', include('two_factor.urls', 'two_factor')),
-    url(r'^', include(router.urls)))
+    url(r'^', include(router.urls)),
+    url(r'^hotels/', include('hotels.urls', namespace="hotels")))
 
 if settings.DEBUG:
     import debug_toolbar
