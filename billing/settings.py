@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rosetta',
     'ordered_model',
+    'cities_light',
 
-    # profit apps
+    # mb apps
     'billing',
+    'clients',
+    'hotels',
 ]
 
 MIDDLEWARE = [
@@ -179,3 +182,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':
     ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly']
 }
+
+# Cities light
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ru']
+CITIES_LIGHT_APP_NAME = 'hotels'
