@@ -1,7 +1,11 @@
 from cities_light.abstract_models import (AbstractCity, AbstractCountry,
                                           AbstractRegion)
 from cities_light.receivers import connect_default_signals
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django_extensions.db.models import TimeStampedModel
+
+from billing.models import CommonInfo
 
 
 class CityMixin:
@@ -60,3 +64,31 @@ class City(CityMixin, AbstractCity):
 
 
 connect_default_signals(City)
+
+
+class Property(CommonInfo, TimeStampedModel):
+    """
+    Property class
+    """
+    TYPES = (('hotel', _('Hotel')), ('hostel', _('Hostel')),
+             ('flat', _('Flat')), ('b&b', _('B&B')),
+             ('vacation_rental', _('Vacation rental')))
+
+    name = models.CharField(
+        max_length=255, verbose_name=_('name'), db_index=True)
+    description = models.TextField(
+        null=True, blank=True, verbose_name=_('description'), db_index=True)
+    address = models.TextField(verbose_name=_('address'), db_index=True)
+    city = models.ForeignKey(
+        City, on_delete=models.PROTECT, verbose_name=_('city'))
+    type = models.CharField(
+        max_length=20,
+        default='hotel',
+        choices=TYPES,
+        verbose_name=_('type'),
+        db_index=True)
+    url = models.URLField(blank=True, null=True, db_index=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'properties'

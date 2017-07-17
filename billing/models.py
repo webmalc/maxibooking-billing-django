@@ -9,12 +9,14 @@ class CommonInfo(models.Model):
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
+        db_index=True,
         on_delete=models.CASCADE,
         related_name="%(app_label)s_%(class)s_created_by")
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
+        db_index=True,
         on_delete=models.CASCADE,
         editable=False,
         related_name="%(app_label)s_%(class)s_modified_by")

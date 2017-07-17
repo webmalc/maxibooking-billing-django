@@ -1,8 +1,9 @@
 from django.db.models import signals
+from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import curry
 
 
-class WhodidMiddleware(object):
+class WhodidMiddleware(MiddlewareMixin):
     """
     Fill created_by and updated_by fields
     """
