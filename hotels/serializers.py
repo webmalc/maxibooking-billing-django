@@ -1,6 +1,21 @@
 from rest_framework import serializers
 
-from .models import City, Country, Region
+from .models import City, Country, Property, Region
+
+
+class PropertySerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Property serializer
+    """
+    city = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field='display_name')
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = Property
+        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'created',
+                  'modified', 'created_by', 'modified_by')
 
 
 class CountrySerializer(serializers.HyperlinkedModelSerializer):
@@ -38,5 +53,5 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = City
-        fields = ('id', 'name', 'alternate_names', 'latitude', 'longitude',
-                  'population', 'region', 'country')
+        fields = ('id', 'name', 'display_name', 'alternate_names', 'latitude',
+                  'longitude', 'population', 'region', 'country')

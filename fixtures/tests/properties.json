@@ -1,0 +1,50 @@
+[
+{
+    "model": "hotels.property",
+    "pk": 1,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-17T13:56:04.919Z",
+        "modified": "2017-07-17T14:05:44.276Z",
+        "name": "Hotel one",
+        "description": "Hotel one description",
+        "address": "Hotel one address string",
+        "city": 1,
+        "type": "hotel",
+        "url": "http://hotel.one"
+    }
+},
+{
+    "model": "hotels.property",
+    "pk": 2,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-17T14:07:40.539Z",
+        "modified": "2017-07-17T14:07:40.539Z",
+        "name": "Hotel two",
+        "description": "Hotel two description",
+        "address": "Hotel two address string",
+        "city": 2,
+        "type": "flat",
+        "url": "http://hotel.two"
+    }
+},
+{
+    "model": "hotels.property",
+    "pk": 3,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-17T14:10:12.120Z",
+        "modified": "2017-07-17T14:10:12.120Z",
+        "name": "Hotel three",
+        "description": "Hotel three description",
+        "address": "Hotel three address string",
+        "city": 3,
+        "type": "hotel",
+        "url": "http://hotel.three"
+    }
+}
+]

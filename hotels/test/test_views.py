@@ -8,8 +8,34 @@ from billing.lib.test import json_contains
 @pytest.fixture(scope='module')
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
-        call_command('loaddata', 'tests/countries', 'tests/regions',
-                     'tests/cities')
+        call_command('loaddata', 'tests/users', 'tests/countries',
+                     'tests/regions', 'tests/cities', 'tests/properties')
+
+
+# Properties tests
+
+
+def test_properties_list_by_user(client):
+    response = client.get(reverse('hotels:property-list'))
+    assert response.status_code == 403
+
+
+def test_properties_list_by_admin(admin_client):
+    response = admin_client.get(reverse('hotels:property-list'))
+    assert response.status_code == 200
+    assert len(response.json()['results']) == 3
+    json_contains(response, 'Hotel two')
+
+
+def test_property_display_by_admin(admin_client):
+    response = admin_client.get(reverse('hotels:property-detail', args=[3]))
+    assert response.status_code == 200
+    json_contains(response, 'Hotel three')
+
+
+def test_property_display_by_user(client):
+    response = client.get(reverse('hotels:property-detail', args=[3]))
+    assert response.status_code == 403
 
 
 # Countries tests
