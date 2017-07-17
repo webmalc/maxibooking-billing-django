@@ -1,0 +1,96 @@
+[{
+    "model": "hotels.city",
+    "pk": 1,
+    "fields": {
+        "name_ascii": "Chegutu",
+        "slug": "chegutu",
+        "geoname_id": 894239,
+        "alternate_names": "",
+        "name": "Chegutu",
+        "display_name": "Chegutu, Mashonaland West, Zimbabwe",
+        "search_names": "chegutumashonalandwestzimbabwe chegutuzimbabwe",
+        "latitude": "-18.13021",
+        "longitude": "30.14074",
+        "region": 3,
+        "country": 1,
+        "population": 47294,
+        "feature_code": "PPL"
+    }
+},
+{
+    "model": "hotels.city",
+    "pk": 2,
+    "fields": {
+        "name_ascii": "Bulawayo",
+        "slug": "bulawayo",
+        "geoname_id": 894701,
+        "alternate_names": "\u0411\u0443\u043b\u0430\u0432\u0430\u0439\u043e",
+        "name": "Bulawayo",
+        "display_name": "Bulawayo, Bulawayo, Zimbabwe",
+        "search_names": "bulavaiobulawayozimbabve bulavaiobulawayozimbabwe bulavaiozimbabve bulavaiozimbabwe bulawayobulawayozimbabve bulawayobulawayozimbabwe bulawayozimbabve bulawayozimbabwe",
+        "latitude": "-20.15000",
+        "longitude": "28.58333",
+        "region": 7,
+        "country": 3,
+        "population": 699385,
+        "feature_code": "PPLA"
+    }
+},
+{
+    "model": "hotels.city",
+    "pk": 3,
+    "fields": {
+        "name_ascii": "Bindura",
+        "slug": "bindura",
+        "geoname_id": 895061,
+        "alternate_names": "\u0411\u0438\u043d\u0434\u0443\u0440\u0430",
+        "name": "Bindura",
+        "display_name": "Bindura, Mashonaland Central, Zimbabwe",
+        "search_names": "binduramashonalandcentralprovincezimbabve binduramashonalandcentralprovincezimbabwe binduramashonalandcentralzimbabve binduramashonalandcentralzimbabwe bindurazimbabve bindurazimbabwe",
+        "latitude": "-17.30192",
+        "longitude": "31.33056",
+        "region": 3,
+        "country": 2,
+        "population": 37423,
+        "feature_code": "PPLA"
+    }
+},
+{
+    "model": "hotels.city",
+    "pk": 4,
+    "fields": {
+        "name_ascii": "Beitbridge",
+        "slug": "beitbridge",
+        "geoname_id": 895269,
+        "alternate_names": "\u0411\u0430\u0439\u0442\u0431\u0440\u0438\u0434\u0436",
+        "name": "Beitbridge",
+        "display_name": "Beitbridge, Matabeleland South, Zimbabwe",
+        "search_names": "baitbridzhmatabelelandsouthzimbabve baitbridzhmatabelelandsouthzimbabwe baitbridzhzimbabve baitbridzhzimbabwe beitbridgematabelelandsouthzimbabve beitbridgematabelelandsouthzimbabwe beitbridgezimbabve beitbridgezimbabwe",
+        "latitude": "-22.21667",
+        "longitude": "30.00000",
+        "region": 3,
+        "country": 1,
+        "population": 26459,
+        "feature_code": "PPL"
+    }
+},
+{
+    "model": "hotels.city",
+    "pk": 5,
+    "fields": {
+        "name_ascii": "Chitungwiza",
+        "slug": "chitungwiza",
+        "geoname_id": 1106542,
+        "alternate_names": "\u0427\u0438\u0442\u0443\u043d\u0433\u0432\u0438\u0437\u0430",
+        "name": "Chitungwiza",
+        "display_name": "Chitungwiza, Harare, Zimbabwe",
+        "search_names": "chitungvizaharareprovincezimbabve chitungvizaharareprovincezimbabwe chitungvizahararezimbabve chitungvizahararezimbabwe chitungvizazimbabve chitungvizazimbabwe chitungwizaharareprovincezimbabve chitungwizaharareprovincezimbabwe chitungwizahararezimbabve chitungwizahararezimbabwe chitungwizazimbabve chitungwizazimbabwe",
+        "latitude": "-18.01274",
+        "longitude": "31.07555",
+        "region": 2,
+        "country": 1,
+        "population": 340360,
+        "feature_code": "PPL"
+    }
+}
+]

@@ -1,0 +1,100 @@
+[
+{
+    "model": "hotels.region",
+    "pk": 1,
+    "fields": {
+        "name_ascii": "Masvingo",
+        "slug": "masvingo",
+        "geoname_id": 886761,
+        "alternate_names": "",
+        "name": "Masvingo",
+        "display_name": "Masvingo, Masvingo",
+        "geoname_code": "08",
+        "country": 1
+    }
+},
+{
+    "model": "hotels.region",
+    "pk": 2,
+    "fields": {
+        "name_ascii": "Mashonaland West",
+        "slug": "mashonaland-west",
+        "geoname_id": 886841,
+        "alternate_names": "Mashonaland West Province",
+        "name": "Mashonaland West",
+        "display_name": "Mashonaland West, Mashonaland West",
+        "geoname_code": "05",
+        "country": 1
+    }
+},
+{
+    "model": "hotels.region",
+    "pk": 3,
+    "fields": {
+        "name_ascii": "Mashonaland East",
+        "slug": "mashonaland-east",
+        "geoname_id": 886842,
+        "alternate_names": "",
+        "name": "Mashonaland East",
+        "display_name": "Mashonaland East, Mashonaland East",
+        "geoname_code": "04",
+        "country": 1
+    }
+},
+{
+    "model": "hotels.region",
+    "pk": 4,
+    "fields": {
+        "name_ascii": "Mashonaland Central",
+        "slug": "mashonaland-central",
+        "geoname_id": 886843,
+        "alternate_names": "Mashonaland Central Province",
+        "name": "Mashonaland Central",
+        "display_name": "Mashonaland Central, Mashonaland Central",
+        "geoname_code": "03",
+        "country": 2
+    }
+},
+{
+    "model": "hotels.region",
+    "pk": 5,
+    "fields": {
+        "name_ascii": "Manicaland",
+        "slug": "manicaland",
+        "geoname_id": 887358,
+        "alternate_names": "",
+        "name": "Manicaland",
+        "display_name": "Manicaland, Manicaland",
+        "geoname_code": "01",
+        "country": 2
+    }
+},
+{
+    "model": "hotels.region",
+    "pk": 6,
+    "fields": {
+        "name_ascii": "Bulawayo",
+        "slug": "bulawayo",
+        "geoname_id": 1105843,
+        "alternate_names": "",
+        "name": "Bulawayo",
+        "display_name": "Bulawayo, Bulawayo",
+        "geoname_code": "09",
+        "country": 3
+    }
+},
+{
+    "model": "hotels.region",
+    "pk": 7,
+    "fields": {
+        "name_ascii": "Harare",
+        "slug": "harare",
+        "geoname_id": 1105844,
+        "alternate_names": "Harare Province",
+        "name": "Harare",
+        "display_name": "Harare, Harare",
+        "geoname_code": "10",
+        "country": 3
+    }
+}
+]

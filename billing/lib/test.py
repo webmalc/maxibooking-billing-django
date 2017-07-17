@@ -16,6 +16,8 @@ def json_contains(response, search):
     """
     result = False
     data = response.json()
+    if 'results' in data:
+        data = data['results']
     if type(data) == list:
         for entry in data:
             result = __check_dict(entry, search)

@@ -181,8 +181,10 @@ REST_FRAMEWORK = {
     'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE':
     100,
-    'DEFAULT_PERMISSION_CLASSES':
-    ['rest_framework.permissions.DjangoModelPermissions']
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissions',
+        'rest_framework.permissions.IsAuthenticated'
+    ]
 }
 
 # Cities light
