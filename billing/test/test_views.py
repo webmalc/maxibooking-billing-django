@@ -15,7 +15,7 @@ def test_admin_view_by_user(client):
 
 def test_main_view_by_user(client):
     response = client.get(reverse('api-root'))
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 def test_main_view_by_admin(admin_client):

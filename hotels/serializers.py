@@ -7,11 +7,8 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
     """
     Property serializer
     """
-    city = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        queryset=City.objects.all(),
-        slug_field='display_name')
+    city = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=City.objects.all())
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
 
