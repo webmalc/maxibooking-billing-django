@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'two_factor',
     'rest_framework',
+    'rest_framework.authtoken',
     'rosetta',
     'ordered_model',
     'cities_light',
@@ -191,8 +192,9 @@ REST_FRAMEWORK = {
     ('django_filters.rest_framework.DjangoFilterBackend',
      'rest_framework.filters.SearchFilter',
      'rest_framework.filters.OrderingFilter', ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication', )
+    'DEFAULT_AUTHENTICATION_CLASSES':
+    ('rest_framework.authentication.TokenAuthentication',
+     'rest_framework.authentication.SessionAuthentication', )
 }
 
 # Cities light
