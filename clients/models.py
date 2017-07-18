@@ -18,7 +18,7 @@ class Client(CommonInfo, TimeStampedModel):
         max_length=50,
         unique=True,
         db_index=True,
-        validators=[MinLengthValidator(6)])
+        validators=[MinLengthValidator(4)])
     email = models.EmailField(
         db_index=True, unique=True, verbose_name=_('e-mail'))
     phone = PhoneNumberField(max_length=50, db_index=True)
