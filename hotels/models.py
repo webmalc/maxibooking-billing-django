@@ -1,6 +1,7 @@
 from cities_light.abstract_models import (AbstractCity, AbstractCountry,
                                           AbstractRegion)
 from cities_light.receivers import connect_default_signals
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
@@ -75,10 +76,22 @@ class Property(CommonInfo, TimeStampedModel):
              ('vacation_rental', _('Vacation rental')))
 
     name = models.CharField(
-        max_length=255, verbose_name=_('name'), db_index=True)
+        max_length=255,
+        verbose_name=_('name'),
+        db_index=True,
+        validators=[MinLengthValidator(2)])
     description = models.TextField(
-        null=True, blank=True, verbose_name=_('description'), db_index=True)
-    address = models.TextField(verbose_name=_('address'), db_index=True)
+        null=True,
+        blank=True,
+        verbose_name=_('description'),
+        db_index=True,
+        validators=[MinLengthValidator(2)])
+    address = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('address'),
+        db_index=True,
+        validators=[MinLengthValidator(2)])
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, verbose_name=_('city'))
     type = models.CharField(

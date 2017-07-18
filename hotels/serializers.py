@@ -8,7 +8,10 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
     Property serializer
     """
     city = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field='display_name')
+        many=False,
+        read_only=False,
+        queryset=City.objects.all(),
+        slug_field='display_name')
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
 
@@ -35,7 +38,10 @@ class RegionSerializer(serializers.HyperlinkedModelSerializer):
     Region serializer
     """
     country = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field='tld')
+        many=False,
+        read_only=False,
+        slug_field='tld',
+        queryset=Country.objects.all())
 
     class Meta:
         model = Region
@@ -47,9 +53,16 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     City serializer
     """
     country = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field='tld')
+        many=False,
+        read_only=False,
+        slug_field='tld',
+        queryset=Country.objects.all())
 
-    region = serializers.StringRelatedField(many=False, read_only=True)
+    region = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='display_name',
+        queryset=Region.objects.all())
 
     class Meta:
         model = City
