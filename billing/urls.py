@@ -20,6 +20,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     url(r'^admin/', admin.site.urls),
     url(r'', include('two_factor.urls', 'two_factor')),
+    url(r'^adminactions/', include('adminactions.urls')),
     url(r'^', include(router.urls)))
 
 if settings.DEBUG:
