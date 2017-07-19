@@ -1,0 +1,66 @@
+[
+{
+    "model": "clients.client",
+    "pk": 1,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z",
+        "login": "user-one",
+        "email": "user@one.com",
+        "phone": "+79250000000",
+        "name": "User One",
+        "description": "User one description",
+        "status": "active"
+    }
+},
+{
+    "model": "clients.client",
+    "pk": 2,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z",
+        "login": "user-two",
+        "email": "user@two.com",
+        "phone": "+79250000001",
+        "name": "User Two",
+        "description": "User two description",
+        "status": "disabled"
+    }
+},
+{
+    "model": "clients.client",
+    "pk": 3,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z",
+        "login": "user-three",
+        "email": "user@three.com",
+        "phone": "+79250000002",
+        "name": "User Three",
+        "description": "User three description",
+        "status": "not_confirmed"
+    }
+},
+{
+    "model": "clients.client",
+    "pk": 4,
+    "fields": {
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z",
+        "login": "user-four",
+        "email": "user@four.com",
+        "phone": "+79250000003",
+        "name": "User Four",
+        "description": "User four description",
+        "status": "active"
+    }
+}
+]

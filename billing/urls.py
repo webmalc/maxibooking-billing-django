@@ -5,12 +5,13 @@ from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 
-from hotels.urls import router as hotel_router
+from clients.urls import router as clients_router
+from hotels.urls import router as hotels_router
 
 from .routers import DefaultRouter
 
 router = DefaultRouter()
-router.extend(hotel_router)
+router.extend(hotels_router, clients_router)
 
 urlpatterns = [
     url(r'^rosetta/', include('rosetta.urls')),
@@ -19,8 +20,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     url(r'^admin/', admin.site.urls),
     url(r'', include('two_factor.urls', 'two_factor')),
-    url(r'^', include(router.urls)),
-    url(r'^hotels/', include('hotels.urls', namespace="hotels")))
+    url(r'^', include(router.urls)))
 
 if settings.DEBUG:
     import debug_toolbar

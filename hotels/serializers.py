@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from clients.models import Client
+
 from .models import City, Country, Property, Region
 
 
@@ -11,11 +13,16 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
         many=False, read_only=False, queryset=City.objects.all())
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    client = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='login',
+        queryset=Client.objects.all())
 
     class Meta:
         model = Property
-        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'created',
-                  'modified', 'created_by', 'modified_by')
+        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'client',
+                  'created', 'modified', 'created_by', 'modified_by')
 
 
 class CountrySerializer(serializers.HyperlinkedModelSerializer):

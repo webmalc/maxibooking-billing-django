@@ -9,7 +9,8 @@ class PropertyViewSet(viewsets.ModelViewSet):
     """
     Property viewset
     """
-    queryset = Property.objects.all().select_related('city')
+    queryset = Property.objects.all().select_related('city', 'created_by',
+                                                     'modified_by')
     search_fields = ('name', 'city__name', 'city__alternate_names',
                      'description')
     serializer_class = PropertySerializer

@@ -11,6 +11,7 @@
         "description": "Hotel one description",
         "address": "Hotel one address string",
         "city": 1,
+        "client": 1,
         "type": "hotel",
         "url": "http://hotel.one"
     }
@@ -27,6 +28,7 @@
         "description": "Hotel two description",
         "address": "Hotel two address string",
         "city": 2,
+        "client": 2,
         "type": "flat",
         "url": "http://hotel.two"
     }
@@ -43,6 +45,7 @@
         "description": "Hotel three description",
         "address": "Hotel three address string",
         "city": 3,
+        "client": 3,
         "type": "hotel",
         "url": "http://hotel.three"
     }

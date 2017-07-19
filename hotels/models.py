@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from billing.models import CommonInfo
+from clients.models import Client
 
 
 class CityMixin:
@@ -54,7 +55,7 @@ class City(CityMixin, AbstractCity):
 
     def get_display_name(self):
         if self.region_id:
-            return '%s, %s, %s' % (self, self.region, self.country)
+            return '%s, %s, %s' % (self.name, self.region, self.country)
         else:
             return '%s, %s' % (self.name, self.country)
 
@@ -101,6 +102,11 @@ class Property(CommonInfo, TimeStampedModel):
         verbose_name=_('type'),
         db_index=True)
     url = models.URLField(blank=True, null=True, db_index=True)
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name='properties')
 
     class Meta:
         ordering = ['name']

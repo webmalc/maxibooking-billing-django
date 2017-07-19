@@ -1,4 +1,4 @@
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
@@ -18,7 +18,13 @@ class Client(CommonInfo, TimeStampedModel):
         max_length=50,
         unique=True,
         db_index=True,
-        validators=[MinLengthValidator(4)])
+        validators=[
+            MinLengthValidator(4), RegexValidator(
+                regex='^[a-z0-9\-]*$',
+                code='invalid_login',
+                message=_('Enter a valid login. This value may contain only \
+lowercase letters, numbers, and "-" character.'))
+        ])
     email = models.EmailField(
         db_index=True, unique=True, verbose_name=_('e-mail'))
     phone = PhoneNumberField(max_length=50, db_index=True)
@@ -34,6 +40,9 @@ class Client(CommonInfo, TimeStampedModel):
         default='not_confirmed',
         choices=STATUSES,
         db_index=True)
+
+    def __str__(self):
+        return '{} - {}'.format(self.login, self.name)
 
     class Meta:
         ordering = ['-created']

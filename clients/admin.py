@@ -1,7 +1,16 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
+from hotels.models import Property
+
 from .models import Client
+
+
+class PropertyInlineAdmin(admin.TabularInline):
+    model = Property
+    fields = ('name', 'type', 'city')
+    raw_id_fields = ('city', )
+    show_change_link = True
 
 
 @admin.register(Client)
@@ -21,6 +30,7 @@ class ClientAdmin(VersionAdmin):
         'fields':
         ('status', 'created', 'modified', 'created_by', 'modified_by')
     }), )
+    inlines = (PropertyInlineAdmin, )
 
     class Media:
         js = ('js/admin/clients.js', )
