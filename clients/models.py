@@ -14,6 +14,9 @@ class Client(CommonInfo, TimeStampedModel):
     STATUSES = (('not_confirmed', _('not confirmed')), ('active', _('active')),
                 ('disabled', _('disabled')), ('archived', _('archived')))
 
+    INSTALLATION = (('not_installed', _('not installed')),
+                    ('process', _('process')), ('installed', _('installed')))
+
     login = models.CharField(
         max_length=50,
         unique=True,
@@ -39,6 +42,11 @@ lowercase letters, numbers, and "-" character.'))
         max_length=20,
         default='not_confirmed',
         choices=STATUSES,
+        db_index=True)
+    installation = models.CharField(
+        max_length=20,
+        default='not_installed',
+        choices=INSTALLATION,
         db_index=True)
 
     def __str__(self):

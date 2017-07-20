@@ -16,6 +16,6 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
-                  'get_status_display', 'status', 'properties', 'created',
-                  'modified', 'created_by', 'modified_by')
+                  'get_status_display', 'status', 'properties', 'installation',
+                  'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
