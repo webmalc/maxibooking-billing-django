@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'ordered_model',
     'cities_light',
     'django_filters',
+    'django_admin_row_actions',
 
     # mb apps
     'billing',
@@ -153,6 +154,37 @@ LOCALE_PATHS = (os.path.join(os.path.dirname(__file__), "locale"),
                 os.path.join(os.path.dirname(__file__), "app_locale"), )
 
 EMAIL_SUBJECT_PREFIX = '[maxi-booking.com]: '
+
+# Logs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format':
+            "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt':
+            "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/billing.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'billing': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
+}
 
 # Two factor auth
 LOGIN_URL = 'two_factor:login'

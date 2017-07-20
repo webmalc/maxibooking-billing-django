@@ -1,9 +1,12 @@
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
+from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 
 from hotels.models import Property
 
 from .models import Client
+from .tasks import install_client_task
 
 
 class PropertyInlineAdmin(admin.TabularInline):
@@ -14,7 +17,7 @@ class PropertyInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Client)
-class ClientAdmin(VersionAdmin):
+class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     """
     Client admin interface
     """
@@ -32,6 +35,23 @@ class ClientAdmin(VersionAdmin):
                    'created_by', 'modified_by')
     }), )
     inlines = (PropertyInlineAdmin, )
+
+    def install(self, request, obj):
+        """
+        Install client
+        """
+        self.message_user(request, _('Installation successfully started.'))
+        install_client_task.delay(client_id=obj.id)
+
+    def get_row_actions(self, obj):
+        row_actions = [
+            {
+                'label': 'Install',
+                'action': 'install',
+            },
+        ]
+        row_actions += super(ClientAdmin, self).get_row_actions(obj)
+        return row_actions
 
     class Media:
         js = ('js/admin/clients.js', )
