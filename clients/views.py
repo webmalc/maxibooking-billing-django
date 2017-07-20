@@ -1,9 +1,13 @@
+import json
+
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from .models import Client
 from .serializers import ClientSerializer
+from .tasks import mail_client_task
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -36,3 +40,38 @@ class ClientViewSet(viewsets.ModelViewSet):
             'status': True,
             'message': 'client successfully confirmed'
         })
+
+    @detail_route(methods=['post'])
+    def install_result(self, request, login=None):
+        """
+        Receive installation status
+        """
+        client = self.get_object()
+        request_json = json.loads(request.body)
+
+        if client.installation == 'installed':
+            return Response({
+                'status': False,
+                'message': 'client already installed'
+            })
+
+        if all(k in request_json for k in ('status', 'url', 'password')):
+            if request_json['status']:
+                client.installation = 'installed'
+                client.save()
+                mail_client_task.delay(
+                    subject=_('Registation successefull'),
+                    template='emails/registration.html',
+                    data={
+                        'login': client.login,
+                        'url': request_json['url'],
+                        'password': request_json['password']
+                    },
+                    client_id=client.id)
+            else:
+                mail_client_task.delay(
+                    subject=_('Registation failed'),
+                    template='emails/registration_fail.html',
+                    client_id=client.id)
+
+        return Response({'status': True})

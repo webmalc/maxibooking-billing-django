@@ -1,0 +1,2 @@
+* ISSUES
+** TODO test for client installation

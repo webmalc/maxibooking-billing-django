@@ -1,0 +1,13 @@
+{% extends 'emails/base.html' %}
+{% load humanize %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Registation successefull" %}
+{% endblock %}
+
+{% block content %}
+    <p><strong>{% trans "Login" %}</strong>: {{ login }}</p>
+    <p><strong>{% trans "URL" %}</strong>: {{ url }}</p>
+    <p><strong>{% trans "Password" %}</strong>: {{ password }}</p>
+{% endblock %}
