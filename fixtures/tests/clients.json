@@ -12,7 +12,8 @@
         "phone": "+79250000000",
         "name": "User One",
         "description": "User one description",
-        "status": "active"
+        "status": "active",
+        "installation": "not_installed"
     }
 },
 {
@@ -28,7 +29,8 @@
         "phone": "+79250000001",
         "name": "User Two",
         "description": "User two description",
-        "status": "disabled"
+        "status": "disabled",
+        "installation": "installed"
     }
 },
 {
@@ -44,7 +46,8 @@
         "phone": "+79250000002",
         "name": "User Three",
         "description": "User three description",
-        "status": "not_confirmed"
+        "status": "not_confirmed",
+        "installation": "not_installed"
     }
 },
 {
@@ -60,7 +63,8 @@
         "phone": "+79250000003",
         "name": "User Four",
         "description": "User four description",
-        "status": "active"
+        "status": "active",
+        "installation": "process"
     }
 }
 ]

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from .models import Client
 from .serializers import ClientSerializer
-from .tasks import mail_client_task
+from .tasks import install_client_task, mail_client_task
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -42,6 +42,24 @@ class ClientViewSet(viewsets.ModelViewSet):
         })
 
     @detail_route(methods=['post'])
+    def install(self, request, login=None):
+        """
+        Install user
+        """
+        client = self.get_object()
+        if client.installation == 'installed':
+            return Response({
+                'status': False,
+                'message': 'client already installed'
+            })
+
+        install_client_task.delay(client_id=client.id)
+        return Response({
+            'status': True,
+            'message': 'client installation begin'
+        })
+
+    @detail_route(methods=['post'])
     def install_result(self, request, login=None):
         """
         Receive installation status
@@ -68,10 +86,12 @@ class ClientViewSet(viewsets.ModelViewSet):
                         'password': request_json['password']
                     },
                     client_id=client.id)
+                return Response({'status': True})
             else:
                 mail_client_task.delay(
                     subject=_('Registation failed'),
                     template='emails/registration_fail.html',
+                    data={},
                     client_id=client.id)
 
-        return Response({'status': True})
+        return Response({'status': False})

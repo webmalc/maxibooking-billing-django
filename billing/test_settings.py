@@ -6,3 +6,5 @@ DATABASES = {
         'NAME': 'test_ndptc'
     }
 }
+
+CELERY_ALWAYS_EAGER = True

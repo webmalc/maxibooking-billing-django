@@ -88,6 +88,7 @@ GPATH
 GRTAGS
 GTAGS
 .#*
+rest_client.txt
 
 #Project
 local_settings.py

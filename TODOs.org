@@ -1,2 +1,16 @@
 * ISSUES
-** TODO test for client installation
+** DONE tests for client installation
+   CLOSED: [2017-07-21 Fri 13:58]
+** TODO services
+** TODO services tests
+** TODO client services
+** TODO client services test
+** TODO orders
+** TODO orders tests
+** TODO client account rest
+** TODO stripe
+** TODO stripe tests
+** TODO transaction
+** TODO transaction tests
+** TODO client tariff restrictions rest
+** TODO client status rest

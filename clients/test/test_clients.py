@@ -83,3 +83,84 @@ def test_client_confirm_by_admin(admin_client):
     assert response.json()['status'] is True
     client = Client.objects.get(login='user-three')
     assert client.status == 'active'
+
+
+def test_client_install_by_user(client):
+    response = client.post(
+        reverse('client-install', args=['user-three']),
+        content_type="application/json")
+    assert response.status_code == 401
+
+
+def test_client_install_by_admin(admin_client):
+    response = admin_client.post(
+        reverse('client-install', args=['user-three']),
+        content_type="application/json")
+
+    assert response.json()['status'] is True
+    client = Client.objects.get(login='user-three')
+    assert client.installation == 'process'
+
+
+def test_client_invalid_install_by_admin(admin_client):
+    response = admin_client.post(
+        reverse('client-install', args=['user-two']),
+        content_type="application/json")
+
+    assert response.json()['status'] is False
+
+
+def test_client_install_results_by_client(client):
+    response = client.post(
+        reverse('client-install-result', args=['user-four']),
+        content_type="application/json")
+
+    assert response.status_code == 401
+
+
+def test_client_install_results_invalid_by_admin(admin_client):
+    response = admin_client.post(
+        reverse('client-install-result', args=['user-one']),
+        content_type="application/json")
+
+    assert response.json()['status'] is False
+
+
+def test_client_install_results_by_admin(admin_client, mailoutbox):
+    data = json.dumps({
+        'status': True,
+        'password': '123456',
+        'url': 'http://example.com'
+    })
+    response = admin_client.post(
+        reverse('client-install-result', args=['user-one']),
+        data=data,
+        content_type="application/json")
+
+    assert response.json()['status'] is True
+
+    client = Client.objects.get(login='user-one')
+    assert client.installation == 'installed'
+
+    mail = mailoutbox[0]
+    html = mail.alternatives[0][0]
+    assert 'successefull' in mail.subject
+    assert '123456' in html
+    assert 'http://example.com' in html
+    assert client.login in html
+
+
+def test_client_install_fail_results_by_admin(admin_client, mailoutbox):
+    data = json.dumps({'status': False, 'password': None, 'url': None})
+    response = admin_client.post(
+        reverse('client-install-result', args=['user-one']),
+        data=data,
+        content_type="application/json")
+
+    assert response.json()['status'] is False
+
+    client = Client.objects.get(login='user-one')
+    assert client.installation == 'not_installed'
+
+    mail = mailoutbox[0]
+    assert 'failed' in mail.subject
