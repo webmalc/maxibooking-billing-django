@@ -7,9 +7,6 @@ from billing.lib.test import json_contains
 from ..models import Client
 
 
-# Clients tests
-
-
 def test_clients_list_by_user(client):
     response = client.get(reverse('client-list'))
     assert response.status_code == 401

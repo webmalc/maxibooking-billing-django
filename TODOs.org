@@ -4,6 +4,7 @@
 ** DONE log mails and responses
    CLOSED: [2017-07-24 Mon 11:17]
 ** TODO services
+** TODO services rest
 ** TODO services tests
 ** TODO client services
 ** TODO client services test

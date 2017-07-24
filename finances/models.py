@@ -1,6 +1,5 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
@@ -26,7 +25,7 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     period_units = models.CharField(
         max_length=20, default='month', choices=PERIODS_UNITS, db_index=True)
 
-    @cached_property
+    @property
     def period_days(self):
         return self.period * self.PERIODS_UNITS_TO_DAYS.get(
             self.period_units, 0) if self.period else 0
