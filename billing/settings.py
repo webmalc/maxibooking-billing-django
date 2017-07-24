@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_admin_row_actions',
 
     # mb apps
+    'finances',
     'billing',
     'clients',
     'hotels',
