@@ -1,4 +1,5 @@
 import json
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
@@ -66,6 +67,10 @@ class ClientViewSet(viewsets.ModelViewSet):
         """
         client = self.get_object()
         request_json = json.loads(request.body)
+        logging.getLogger('billing').info(
+            'Client installation result. Client: {}; status: {}; url: {};'.
+            format(client, request_json.get('status'), request_json.get(
+                'url')))
 
         if client.installation == 'installed':
             return Response({

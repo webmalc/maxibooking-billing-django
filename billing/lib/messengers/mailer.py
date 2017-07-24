@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.core.mail import mail_managers, send_mail
 from django.template.loader import render_to_string
@@ -10,6 +12,8 @@ class Mailer:
             subject=subject,
             message='',
             html_message=render_to_string(template, data))
+        logging.getLogger('billing').info(
+            'Send mail to managers. Subject: {}'.format(subject))
 
     @staticmethod
     def mail_client(subject, template, data, email=None, client=None):
@@ -20,3 +24,6 @@ class Mailer:
                 prefix=settings.EMAIL_SUBJECT_PREFIX, text=subject),
             message='',
             html_message=render_to_string(template, data))
+        logging.getLogger('billing').info(
+            'Send mail to client. Subject: {}; client: {}; email: {};'.format(
+                subject, client, email))
