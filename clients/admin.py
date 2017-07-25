@@ -10,11 +10,43 @@ from .tasks import install_client_task
 
 
 @admin.register(ClientService)
-class ClientServicesAdmin(VersionAdmin):
-    pass
+class ClientServiceAdmin(VersionAdmin):
+    """
+    ClientService admin interface
+    """
+    list_display = ('id', 'service', 'client', 'quantity', 'price', 'begin',
+                    'end', 'is_enabled')
+    list_display_links = ('id', )
+    list_filter = ('service', 'is_enabled', 'begin', 'end')
+    search_fields = ('id', 'service__title', 'client__name', 'client__email',
+                     'client__login')
+    readonly_fields = ('start_at', 'created', 'modified', 'created_by',
+                       'modified_by', 'price')
+    raw_id_fields = ('service', 'client')
+    fieldsets = (('General', {
+        'fields': ('service', 'client', 'quantity', 'price', 'begin', 'end')
+    }), ('Options', {
+        'fields': ('is_enabled', 'start_at', 'created', 'modified',
+                   'created_by', 'modified_by')
+    }), )
+    list_select_related = ('service', 'client')
+
+
+class ClientServiceInlineAdmin(admin.TabularInline):
+    """
+    ClientServiceInline admin interface
+    """
+    model = ClientService
+    fields = ('service', 'client', 'quantity', 'price', 'begin', 'end')
+    raw_id_fields = ('service', 'client')
+    readonly_fields = ('price', )
+    show_change_link = True
 
 
 class PropertyInlineAdmin(admin.TabularInline):
+    """
+    PropertyInline admin interface
+    """
     model = Property
     fields = ('name', 'type', 'city')
     raw_id_fields = ('city', )
@@ -38,7 +70,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
         'fields': ('status', 'installation', 'created', 'modified',
                    'created_by', 'modified_by')
     }), )
-    inlines = (PropertyInlineAdmin, )
+    inlines = (PropertyInlineAdmin, ClientServiceInlineAdmin)
 
     def install(self, request, obj):
         """

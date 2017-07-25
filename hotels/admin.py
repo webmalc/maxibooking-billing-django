@@ -24,3 +24,4 @@ class PropertyAdmin(VersionAdmin):
     }), ('Options', {
         'fields': ('created', 'modified', 'created_by', 'modified_by')
     }), )
+    list_select_related = ('city', 'client')

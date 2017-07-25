@@ -1,6 +1,8 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import (MinLengthValidator, MinValueValidator,
                                     RegexValidator)
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
@@ -68,8 +70,11 @@ class ClientService(CommonInfo, TimeStampedModel):
         decimal_places=2,
         validators=[MinValueValidator(0)],
         db_index=True)
-    quantity = models.PositiveIntegerField(db_index=True)
-    begin = models.DateTimeField(db_index=True, verbose_name=_('start date'))
+    quantity = models.PositiveIntegerField(
+        db_index=True, validators=[MinValueValidator(1)])
+    start_at = models.DateTimeField(
+        db_index=True, verbose_name=_('start date'), auto_now_add=True)
+    begin = models.DateTimeField(db_index=True, verbose_name=_('begin date'))
     end = models.DateTimeField(db_index=True, verbose_name=_('end date'))
     service = models.ForeignKey(
         Service,
@@ -81,6 +86,16 @@ class ClientService(CommonInfo, TimeStampedModel):
         on_delete=models.CASCADE,
         db_index=True,
         related_name='services')
+
+    def save(self, *args, **kwargs):
+        self.price = self.service.price * self.quantity
+        if self.start_at is None:
+            self.start_at = timezone.now()
+        super(ClientService, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.begin > self.end:
+            raise ValidationError(_('Please correct dates'))
 
     def __str__(self):
         return '{} - {}'.format(self.client, self.service)
