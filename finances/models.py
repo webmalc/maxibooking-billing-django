@@ -30,6 +30,9 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         return self.period * self.PERIODS_UNITS_TO_DAYS.get(
             self.period_units, 0) if self.period else 0
 
+    def __str__(self):
+        return self.title
+
     class Meta:
-        ordering = ['-title']
+        ordering = ['title']
         unique_together = ('title', 'is_enabled')

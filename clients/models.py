@@ -1,10 +1,12 @@
-from django.core.validators import MinLengthValidator, RegexValidator
+from django.core.validators import (MinLengthValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import CommonInfo
+from finances.models import Service
 
 
 class Client(CommonInfo, TimeStampedModel):
@@ -60,4 +62,28 @@ class ClientServices(CommonInfo, TimeStampedModel):
     """
     ClientServices class
     """
-    pass
+    is_enabled = models.BooleanField(default=True, db_index=True)
+    price = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        db_index=True)
+    quantity = models.PositiveIntegerField(db_index=True)
+    begin = models.DateTimeField(db_index=True, verbose_name=_('start date'))
+    end = models.DateTimeField(db_index=True, verbose_name=_('end date'))
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.PROTECT,
+        db_index=True,
+        related_name='client_services')
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name='services')
+
+    def __str__(self):
+        return '{} - {}'.format(self.client, self.service)
+
+    class Meta:
+        ordering = ['-created']
