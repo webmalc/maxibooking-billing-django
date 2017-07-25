@@ -3,7 +3,8 @@
    CLOSED: [2017-07-21 Fri 13:58]
 ** DONE log mails and responses
    CLOSED: [2017-07-25 Tue 11:28]
-** TODO complete install request to MB
+** DONE complete install request to MB
+   CLOSED: [2017-07-25 Tue 18:22]
 ** DONE services
    CLOSED: [2017-07-25 Tue 11:56]
 ** DONE services rest
