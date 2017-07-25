@@ -58,9 +58,9 @@ lowercase letters, numbers, and "-" character.'))
         ordering = ['-created']
 
 
-class ClientServices(CommonInfo, TimeStampedModel):
+class ClientService(CommonInfo, TimeStampedModel):
     """
-    ClientServices class
+    ClientService class
     """
     is_enabled = models.BooleanField(default=True, db_index=True)
     price = models.DecimalField(

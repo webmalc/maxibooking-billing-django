@@ -5,8 +5,13 @@ from reversion.admin import VersionAdmin
 
 from hotels.models import Property
 
-from .models import Client
+from .models import Client, ClientService
 from .tasks import install_client_task
+
+
+@admin.register(ClientService)
+class ClientServicesAdmin(VersionAdmin):
+    pass
 
 
 class PropertyInlineAdmin(admin.TabularInline):
