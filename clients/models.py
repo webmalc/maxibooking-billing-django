@@ -54,3 +54,10 @@ lowercase letters, numbers, and "-" character.'))
 
     class Meta:
         ordering = ['-created']
+
+
+class ClientServices(CommonInfo, TimeStampedModel):
+    """
+    ClientServices class
+    """
+    pass

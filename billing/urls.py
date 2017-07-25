@@ -6,12 +6,13 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 
 from clients.urls import router as clients_router
+from finances.urls import router as finances_router
 from hotels.urls import router as hotels_router
 
 from .routers import DefaultRouter
 
 router = DefaultRouter()
-router.extend(hotels_router, clients_router)
+router.extend(hotels_router, clients_router, finances_router)
 
 urlpatterns = [
     url(r'^rosetta/', include('rosetta.urls')),

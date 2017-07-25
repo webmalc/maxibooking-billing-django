@@ -2,18 +2,25 @@
 ** DONE tests for client installation
    CLOSED: [2017-07-21 Fri 13:58]
 ** DONE log mails and responses
-   CLOSED: [2017-07-24 Mon 11:17]
-** TODO services
-** TODO services rest
-** TODO services tests
+   CLOSED: [2017-07-25 Tue 11:28]
+** TODO complete install request to MB
+** DONE services
+   CLOSED: [2017-07-25 Tue 11:56]
+** DONE services rest
+   CLOSED: [2017-07-25 Tue 11:56]
+** DONE services tests
+   CLOSED: [2017-07-25 Tue 11:57]
 ** TODO client services
 ** TODO client services test
 ** TODO orders
+** TODO orders creation by tasks
+** TODO client disabling by orders 
+** TODO orders prolongation
 ** TODO orders tests
-** TODO client account rest
 ** TODO stripe
 ** TODO stripe tests
 ** TODO transaction
 ** TODO transaction tests
+** TODO client account rest
 ** TODO client tariff restrictions rest
 ** TODO client status rest
