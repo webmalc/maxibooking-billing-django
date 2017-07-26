@@ -99,7 +99,26 @@ def test_client_install_by_admin(admin_client):
     assert client.installation == 'process'
 
 
-def test_client_invalid_install_by_admin(admin_client):
+def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
+    settings.MB_URL = 'http://invalid-domain-name.com'
+    response = admin_client.post(
+        reverse('client-install', args=['user-one']),
+        content_type="application/json")
+
+    assert response.json()['status'] is True
+    client = Client.objects.get(login='user-one')
+    assert client.installation == 'not_installed'
+    assert len(mailoutbox) == 2
+
+    mail = mailoutbox[0]
+    html = mail.alternatives[0][0]
+    assert 'Failed client installation' in mail.subject
+    assert 'user-one' in html
+
+    assert 'failed' in mailoutbox[1].subject
+
+
+def test_client_already_installed_install_by_admin(admin_client):
     response = admin_client.post(
         reverse('client-install', args=['user-two']),
         content_type="application/json")

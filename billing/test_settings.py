@@ -8,3 +8,5 @@ DATABASES = {
 }
 
 CELERY_ALWAYS_EAGER = True
+
+MB_URL = 'http://example.com'

@@ -17,11 +17,12 @@ def install_client_task(client_id):
     if client.installation == 'installed':
         return False
 
-    client.installation = 'process'
-    client.save()
-    mb.install_client(client)
+    if mb.install_client(client):
+        client.installation = 'process'
+        client.save()
+        return True
 
-    return True
+    return False
 
 
 @app.task
