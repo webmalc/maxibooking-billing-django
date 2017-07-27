@@ -101,10 +101,12 @@ class Property(CommonInfo, TimeStampedModel):
         choices=TYPES,
         verbose_name=_('type'),
         db_index=True)
-    url = models.URLField(blank=True, null=True, db_index=True)
+    url = models.URLField(
+        blank=True, null=True, db_index=True, verbose_name=_('url'))
     client = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
+        verbose_name=_('client'),
         db_index=True,
         related_name='properties')
 

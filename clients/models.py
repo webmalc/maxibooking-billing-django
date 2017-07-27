@@ -25,6 +25,7 @@ class Client(CommonInfo, TimeStampedModel):
         max_length=50,
         unique=True,
         db_index=True,
+        verbose_name=_('login'),
         validators=[
             MinLengthValidator(4), RegexValidator(
                 regex='^[a-z0-9\-]*$',
@@ -34,22 +35,29 @@ lowercase letters, numbers, and "-" character.'))
         ])
     email = models.EmailField(
         db_index=True, unique=True, verbose_name=_('e-mail'))
-    phone = PhoneNumberField(max_length=50, db_index=True)
+    phone = PhoneNumberField(
+        max_length=50, db_index=True, verbose_name=_('phone'))
     name = models.CharField(
-        max_length=255, db_index=True, validators=[MinLengthValidator(2)])
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('full name'))
     description = models.TextField(
         null=True,
         blank=True,
         db_index=True,
+        verbose_name=_('description'),
         validators=[MinLengthValidator(2)])
     status = models.CharField(
         max_length=20,
         default='not_confirmed',
         choices=STATUSES,
+        verbose_name=_('status'),
         db_index=True)
     installation = models.CharField(
         max_length=20,
         default='not_installed',
+        verbose_name=_('installation status'),
         choices=INSTALLATION,
         db_index=True)
 
@@ -64,14 +72,18 @@ class ClientService(CommonInfo, TimeStampedModel):
     """
     ClientService class
     """
-    is_enabled = models.BooleanField(default=True, db_index=True)
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
     price = models.DecimalField(
         max_digits=20,
         decimal_places=2,
+        verbose_name=_('price'),
         validators=[MinValueValidator(0)],
         db_index=True)
     quantity = models.PositiveIntegerField(
-        db_index=True, validators=[MinValueValidator(1)])
+        verbose_name=_('quantity'),
+        db_index=True,
+        validators=[MinValueValidator(1)])
     start_at = models.DateTimeField(
         db_index=True, verbose_name=_('start date'), auto_now_add=True)
     begin = models.DateTimeField(db_index=True, verbose_name=_('begin date'))
@@ -80,11 +92,13 @@ class ClientService(CommonInfo, TimeStampedModel):
         Service,
         on_delete=models.PROTECT,
         db_index=True,
+        verbose_name=_('service'),
         related_name='client_services')
     client = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
         db_index=True,
+        verbose_name=_('client'),
         related_name='services')
 
     def save(self, *args, **kwargs):

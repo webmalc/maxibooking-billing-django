@@ -1,0 +1,225 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 13:49+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: billing/lib/mb.py:43 billing/lib/mb.py:47
+msgid "Failed client installation"
+msgstr ""
+
+#: billing/lib/mb.py:50 billing/templates/emails/registration_fail.html:6
+#: billing/templates/emails/registration_fail.html:10 clients/views.py:97
+msgid "Registation failed"
+msgstr ""
+
+#: billing/models.py:15
+msgid "created by"
+msgstr ""
+
+#: billing/models.py:24
+msgid "modified by"
+msgstr ""
+
+#: billing/templates/emails/base_manager.html:6
+msgid "Message from billing"
+msgstr ""
+
+#: billing/templates/emails/registration.html:6 clients/views.py:86
+msgid "Registation successefull"
+msgstr ""
+
+#: billing/templates/emails/registration.html:10
+msgid "Login"
+msgstr ""
+
+#: billing/templates/emails/registration.html:11
+msgid "URL"
+msgstr ""
+
+#: billing/templates/emails/registration.html:12
+msgid "Password"
+msgstr ""
+
+#: clients/admin.py:79
+msgid "Installation successfully started."
+msgstr ""
+
+#: clients/models.py:18
+msgid "not confirmed"
+msgstr ""
+
+#: clients/models.py:18
+msgid "active"
+msgstr ""
+
+#: clients/models.py:19
+msgid "disabled"
+msgstr ""
+
+#: clients/models.py:19
+msgid "archived"
+msgstr ""
+
+#: clients/models.py:21
+msgid "not installed"
+msgstr ""
+
+#: clients/models.py:22
+msgid "process"
+msgstr ""
+
+#: clients/models.py:22
+msgid "installed"
+msgstr ""
+
+#: clients/models.py:28
+msgid "login"
+msgstr ""
+
+#: clients/models.py:33
+msgid ""
+"Enter a valid login. This value may contain only lowercase letters, numbers, "
+"and \"-\" character."
+msgstr ""
+
+#: clients/models.py:37
+msgid "e-mail"
+msgstr ""
+
+#: clients/models.py:39
+msgid "phone"
+msgstr ""
+
+#: clients/models.py:44
+msgid "full name"
+msgstr ""
+
+#: clients/models.py:49 hotels/models.py:87
+msgid "description"
+msgstr ""
+
+#: clients/models.py:55
+msgid "status"
+msgstr ""
+
+#: clients/models.py:60
+msgid "installation status"
+msgstr ""
+
+#: clients/models.py:76 finances/models.py:18
+msgid "is enabled"
+msgstr ""
+
+#: clients/models.py:80 finances/models.py:22
+msgid "price"
+msgstr ""
+
+#: clients/models.py:84
+msgid "quantity"
+msgstr ""
+
+#: clients/models.py:88
+msgid "start date"
+msgstr ""
+
+#: clients/models.py:89
+msgid "begin date"
+msgstr ""
+
+#: clients/models.py:90
+msgid "end date"
+msgstr ""
+
+#: clients/models.py:95
+msgid "service"
+msgstr ""
+
+#: clients/models.py:101 hotels/models.py:109
+msgid "client"
+msgstr ""
+
+#: clients/models.py:112
+msgid "Please correct dates"
+msgstr ""
+
+#: finances/models.py:13
+msgid "day"
+msgstr ""
+
+#: finances/models.py:13
+msgid "month"
+msgstr ""
+
+#: finances/models.py:14
+msgid "year"
+msgstr ""
+
+#: finances/models.py:27
+msgid "period"
+msgstr ""
+
+#: finances/models.py:29
+msgid "units of period"
+msgstr ""
+
+#: hotels/models.py:37
+msgid "countries"
+msgstr ""
+
+#: hotels/models.py:65
+msgid "cities"
+msgstr ""
+
+#: hotels/models.py:75
+msgid "Hotel"
+msgstr ""
+
+#: hotels/models.py:75
+msgid "Hostel"
+msgstr ""
+
+#: hotels/models.py:76
+msgid "Flat"
+msgstr ""
+
+#: hotels/models.py:76
+msgid "B&B"
+msgstr ""
+
+#: hotels/models.py:77
+msgid "Vacation rental"
+msgstr ""
+
+#: hotels/models.py:81
+msgid "name"
+msgstr ""
+
+#: hotels/models.py:93
+msgid "address"
+msgstr ""
+
+#: hotels/models.py:97
+msgid "city"
+msgstr ""
+
+#: hotels/models.py:102
+msgid "type"
+msgstr ""
+
+#: hotels/models.py:105
+msgid "url"
+msgstr ""

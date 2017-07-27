@@ -14,16 +14,23 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
                      ('year', _('year')))
     PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
 
-    is_enabled = models.BooleanField(default=True, db_index=True)
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
     price = models.DecimalField(
         max_digits=20,
         decimal_places=2,
+        verbose_name=_('price'),
         validators=[MinValueValidator(0)],
         db_index=True)
 
-    period = models.PositiveIntegerField(db_index=True)
+    period = models.PositiveIntegerField(
+        verbose_name=_('period'), db_index=True)
     period_units = models.CharField(
-        max_length=20, default='month', choices=PERIODS_UNITS, db_index=True)
+        verbose_name=_('units of period'),
+        max_length=20,
+        default='month',
+        choices=PERIODS_UNITS,
+        db_index=True)
 
     @property
     def period_days(self):
