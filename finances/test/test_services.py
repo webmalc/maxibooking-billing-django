@@ -27,6 +27,14 @@ def test_service_list_by_admin(admin_client):
     json_contains(response, 'Test service three')
 
 
+def test_service_list_by_admin_ru(admin_client, settings):
+    settings.LANGUAGE_CODE = 'ru'
+    response = admin_client.get(reverse('service-list'))
+    assert response.status_code == 200
+    assert len(response.json()['results']) == 3
+    json_contains(response, 'Описание тестового сервиса 2')
+
+
 def test_service_display_by_admin(admin_client):
     response = admin_client.get(reverse('service-detail', args=[2]))
     assert response.status_code == 200

@@ -11,7 +11,8 @@
    CLOSED: [2017-07-25 Tue 11:56]
 ** DONE services tests
    CLOSED: [2017-07-25 Tue 11:57]
-** TODO services translation - title, description
+** DONE services translation - title, description
+   CLOSED: [2017-07-27 Thu 13:51]
 ** TODO client services
 ** TODO client services test
 ** TODO orders
@@ -27,3 +28,5 @@
 ** TODO client tariff restrictions rest
 ** TODO client status rest
 ** TODO django supervisor
+** TODO organization
+** TODO bill

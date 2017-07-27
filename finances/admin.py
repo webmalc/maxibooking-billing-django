@@ -1,11 +1,12 @@
 from django.contrib import admin
+from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
 
 from .models import Service
 
 
 @admin.register(Service)
-class ClientAdmin(VersionAdmin):
+class ClientAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
     """
     Service admin interface
     """

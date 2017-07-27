@@ -120,7 +120,7 @@ UserAttributeSimilarityValidator',
 
 LANGUAGE_CODE = 'en'
 
-LANGUAGES = (('ru', 'Russian'), ('en', 'English'), )
+LANGUAGES = (('en', 'English'), ('ru', 'Russian'))
 
 TIME_ZONE = 'UTC'
 
