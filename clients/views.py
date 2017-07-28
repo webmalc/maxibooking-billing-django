@@ -6,9 +6,18 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from .models import Client
-from .serializers import ClientSerializer
+from .models import Client, ClientService
+from .serializers import ClientSerializer, ClientServiceSerializer
 from .tasks import install_client_task, mail_client_task
+
+
+class ClientServiceViewSet(viewsets.ModelViewSet):
+    queryset = ClientService.objects.all().select_related(
+        'created_by', 'modified_by', 'client', 'service')
+    search_fields = ('id', 'service__title', 'client__name', 'client__email',
+                     'client__login')
+    serializer_class = ClientServiceSerializer
+    filter_fields = ('client', 'service', 'is_enabled', 'begin', 'end')
 
 
 class ClientViewSet(viewsets.ModelViewSet):

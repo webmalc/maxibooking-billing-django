@@ -13,7 +13,12 @@
    CLOSED: [2017-07-25 Tue 11:57]
 ** DONE services translation - title, description
    CLOSED: [2017-07-27 Thu 13:51]
-** TODO client services
+** DONE client services
+   CLOSED: [2017-07-28 Fri 13:37]
+** TODO client country
+** TODO prices model
+** TODO prices model rest
+** TODO prices model tests
 ** TODO client services test
 ** TODO orders
 ** TODO orders creation by tasks

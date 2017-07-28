@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-27 13:49+0000\n"
+"POT-Creation-Date: 2017-07-28 09:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +25,7 @@ msgid "Failed client installation"
 msgstr ""
 
 #: billing/lib/mb.py:50 billing/templates/emails/registration_fail.html:6
-#: billing/templates/emails/registration_fail.html:10 clients/views.py:97
+#: billing/templates/emails/registration_fail.html:10 clients/views.py:106
 msgid "Registation failed"
 msgstr ""
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Message from billing"
 msgstr ""
 
-#: billing/templates/emails/registration.html:6 clients/views.py:86
+#: billing/templates/emails/registration.html:6 clients/views.py:95
 msgid "Registation successefull"
 msgstr ""
 
