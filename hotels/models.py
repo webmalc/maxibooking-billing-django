@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
 from billing.models import CommonInfo
-from clients.models import Client
 
 
 class CityMixin:
@@ -104,7 +103,7 @@ class Property(CommonInfo, TimeStampedModel):
     url = models.URLField(
         blank=True, null=True, db_index=True, verbose_name=_('url'))
     client = models.ForeignKey(
-        Client,
+        'clients.Client',
         on_delete=models.CASCADE,
         verbose_name=_('client'),
         db_index=True,

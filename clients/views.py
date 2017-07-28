@@ -25,10 +25,10 @@ class ClientViewSet(viewsets.ModelViewSet):
     Client viewset
     """
     queryset = Client.objects.all().select_related(
-        'created_by', 'modified_by').prefetch_related('properties')
+        'created_by', 'modified_by', 'country').prefetch_related('properties')
     search_fields = ('login', 'email', 'description', 'phone', 'status')
     serializer_class = ClientSerializer
-    filter_fields = ('status', )
+    filter_fields = ('status', 'installation', 'country')
     lookup_field = 'login'
 
     @detail_route(methods=['post'])

@@ -9,6 +9,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import CommonInfo
 from finances.models import Service
+from hotels.models import Country
 
 
 class Client(CommonInfo, TimeStampedModel):
@@ -48,6 +49,11 @@ lowercase letters, numbers, and "-" character.'))
         db_index=True,
         verbose_name=_('description'),
         validators=[MinLengthValidator(2)])
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        verbose_name=_('country'),
+        db_index=True)
     status = models.CharField(
         max_length=20,
         default='not_confirmed',

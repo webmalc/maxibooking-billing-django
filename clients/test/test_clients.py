@@ -50,7 +50,8 @@ def test_client_create_by_admin(admin_client):
         'login': 'new-user',
         'email': 'new@user.mail',
         'name': 'New User',
-        'phone': '+79239999999'
+        'phone': '+79239999999',
+        'country': 'af'
     })
     response = admin_client.post(
         reverse('client-list'), data=data, content_type="application/json")

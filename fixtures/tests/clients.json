@@ -3,6 +3,7 @@
     "model": "clients.client",
     "pk": 1,
     "fields": {
+        "country":  1,
         "created_by": 1,
         "modified_by": 1,
         "created": "2017-07-18T14:06:27.890Z",
@@ -20,6 +21,7 @@
     "model": "clients.client",
     "pk": 2,
     "fields": {
+        "country":  2,
         "created_by": 1,
         "modified_by": 1,
         "created": "2017-07-18T14:06:27.890Z",
@@ -37,6 +39,7 @@
     "model": "clients.client",
     "pk": 3,
     "fields": {
+        "country":  3,
         "created_by": 1,
         "modified_by": 1,
         "created": "2017-07-18T14:06:27.890Z",
@@ -54,6 +57,7 @@
     "model": "clients.client",
     "pk": 4,
     "fields": {
+        "country":  2,
         "created_by": 1,
         "modified_by": 1,
         "created": "2017-07-18T14:06:27.890Z",

@@ -15,7 +15,9 @@
    CLOSED: [2017-07-27 Thu 13:51]
 ** DONE client services
    CLOSED: [2017-07-28 Fri 13:37]
-** TODO client country
+** DONE client country
+   CLOSED: [2017-07-28 Fri 17:09]
+** TODO country, region, city translation
 ** TODO prices model
 ** TODO prices model rest
 ** TODO prices model tests
