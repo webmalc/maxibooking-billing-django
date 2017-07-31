@@ -1,3 +1,5 @@
+import re
+
 from cities_light.abstract_models import (AbstractCity, AbstractCountry,
                                           AbstractRegion)
 from cities_light.receivers import connect_default_signals
@@ -14,15 +16,18 @@ class CityMixin:
     City, Region, County name mixin
     """
 
-    def get_first_alternate_name(self):
+    def get_first_cyrilic_alternate_name(self):
         """
-        Returns first alternate name
+        Returns first cyrilic alternate name
         :return: string
         """
-        return self.alternate_names.split(',')[0]
+        for name in self.alternate_names.split(','):
+            if re.match(r'[А-яа-я\-\s]{2,}', name):
+                return name
+        return None
 
-    get_first_alternate_name.short_description = 'Alternative name'
-    get_first_alternate_name.admin_order_field = 'alternate_names'
+    get_first_cyrilic_alternate_name.short_description = 'Cyrilic name'
+    get_first_cyrilic_alternate_name.admin_order_field = 'cyrilic_names'
 
     def __str__(self):
         return self.name

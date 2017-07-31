@@ -53,6 +53,7 @@ pytz==2017.2
 qrcode==4.0.4
 redis==2.10.5
 sqlparse==0.2.3
+tqdm==4.15.0
 unicodecsv==0.14.1
 Unidecode==0.4.20
 vine==1.1.3
