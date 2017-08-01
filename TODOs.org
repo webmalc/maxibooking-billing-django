@@ -19,9 +19,14 @@
    CLOSED: [2017-07-28 Fri 17:09]
 ** DONE country, region, city translation
    CLOSED: [2017-07-31 Mon 15:11]
-** TODO prices model
-** TODO prices model rest
+** DONE prices model
+   CLOSED: [2017-08-01 Tue 11:11]
+** DONE prices model rest
+   CLOSED: [2017-08-01 Tue 11:31]
 ** TODO prices model tests
+** TODO service: get price by country, client
+** DONE add token to mb calls
+   CLOSED: [2017-08-01 Tue 11:36]
 ** TODO client services test
 ** TODO orders
 ** TODO orders creation by tasks

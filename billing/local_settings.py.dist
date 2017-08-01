@@ -26,3 +26,4 @@ DEBUG = False
 
 MB_URL = 'https://example.com'
 MB_TOKEN = 'my_super_secret_token'
+MB_TIMEOUT = 1

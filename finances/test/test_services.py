@@ -36,9 +36,11 @@ def test_service_list_by_admin_ru(admin_client, settings):
 
 
 def test_service_display_by_admin(admin_client):
-    response = admin_client.get(reverse('service-detail', args=[2]))
+    response = admin_client.get(reverse('service-detail', args=[1]))
     assert response.status_code == 200
-    json_contains(response, 'Test service two')
+    response_json = response.json()
+    assert response_json['title'] == 'Test service one'
+    assert response_json['price'] == 12332.00
 
 
 def test_service_display_by_user(client):

@@ -22,8 +22,10 @@ def install_client(client):
                 settings.MB_URL,
                 timeout=settings.MB_TIMEOUT,
                 json={
-                    'client':
+                    'client_login':
                     client.login,
+                    'token':
+                    settings.MB_TOKEN,
                     'results_url':
                     reverse('client-install-result', args=[client.login])
                 })
