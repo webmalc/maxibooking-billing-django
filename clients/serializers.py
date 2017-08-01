@@ -40,13 +40,15 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
         read_only=False,
         slug_field='login',
         queryset=Client.objects.all())
-    service = serializers.HyperlinkedRelatedField(
-        many=False,
-        read_only=False,
-        view_name='service-detail',
-        queryset=Service.objects.all())
+    service = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=Service.objects.all())
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    price = serializers.DecimalField(20, 2, read_only=True)
+
+    def validate(self, attrs):
+        ClientService.validate_dates(attrs.get('begin'), attrs.get('end'))
+        return attrs
 
     class Meta:
         model = ClientService

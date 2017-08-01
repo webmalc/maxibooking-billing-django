@@ -23,11 +23,16 @@
    CLOSED: [2017-08-01 Tue 11:11]
 ** DONE prices model rest
    CLOSED: [2017-08-01 Tue 11:31]
-** TODO prices model tests
-** TODO service: get price by country, client
+** DONE prices model tests
+   CLOSED: [2017-08-01 Tue 14:53]
+** DONE service: get price by country, client
+   CLOSED: [2017-08-01 Tue 14:00]
 ** DONE add token to mb calls
    CLOSED: [2017-08-01 Tue 11:36]
-** TODO client services test
+** DONE client services price calc
+   CLOSED: [2017-08-01 Tue 14:58]
+** DONE client services test
+   CLOSED: [2017-08-01 Tue 17:44]
 ** TODO orders
 ** TODO orders creation by tasks
 ** TODO client disabling by orders 

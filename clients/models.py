@@ -8,7 +8,6 @@ from django_extensions.db.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import CommonInfo
-from finances.models import Service
 from hotels.models import Country
 
 
@@ -95,7 +94,7 @@ class ClientService(CommonInfo, TimeStampedModel):
     begin = models.DateTimeField(db_index=True, verbose_name=_('begin date'))
     end = models.DateTimeField(db_index=True, verbose_name=_('end date'))
     service = models.ForeignKey(
-        Service,
+        'finances.Service',
         on_delete=models.PROTECT,
         db_index=True,
         verbose_name=_('service'),
@@ -108,14 +107,18 @@ class ClientService(CommonInfo, TimeStampedModel):
         related_name='services')
 
     def save(self, *args, **kwargs):
-        self.price = self.service.price * self.quantity
+        self.price = self.service.get_price(client=self.client) * self.quantity
         if self.start_at is None:
             self.start_at = timezone.now()
         super(ClientService, self).save(*args, **kwargs)
 
-    def clean(self):
-        if self.begin > self.end:
+    @staticmethod
+    def validate_dates(begin, end):
+        if begin and end and begin > end:
             raise ValidationError(_('Please correct dates'))
+
+    def clean(self):
+        ClientService.validate_dates(self.begin, self.end)
 
     def __str__(self):
         return '{} - {}'.format(self.client, self.service)

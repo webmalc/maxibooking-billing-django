@@ -27,8 +27,8 @@ class PriceSerializer(serializers.HyperlinkedModelSerializer):
 
     service = serializers.HyperlinkedRelatedField(
         many=False, read_only=True, view_name='service-detail')
-    country = serializers.HyperlinkedRelatedField(
-        many=False, read_only=True, view_name='service-detail')
+    country = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field='tld')
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
 

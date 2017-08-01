@@ -1,0 +1,74 @@
+[
+{
+    "model": "clients.clientservice",
+    "pk": 1,
+    "fields": {
+        "created": "2017-07-25T13:00:47.284Z",
+        "modified": "2017-07-26T09:17:23.391Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "is_enabled": true,
+        "price": "1999.98",
+        "quantity": 2,
+        "start_at": "2017-07-25T13:00:47.284Z",
+        "begin": "2017-07-25T12:59:06Z",
+        "end": "2017-07-26T12:59:07Z",
+        "service": 1,
+        "client": 1
+    }
+},
+{
+    "model": "clients.clientservice",
+    "pk": 2,
+    "fields": {
+        "created": "2017-07-25T13:03:26.400Z",
+        "modified": "2017-07-25T13:04:11.565Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "is_enabled": true,
+        "price": "12001.85",
+        "quantity": 5,
+        "start_at": "2017-07-25T13:03:26.401Z",
+        "begin": "2017-07-25T13:03:22Z",
+        "end": "2017-07-25T13:03:23Z",
+        "service": 2,
+        "client": 1
+    }
+},
+{
+    "model": "clients.clientservice",
+    "pk": 3,
+    "fields": {
+        "created": "2017-08-01T11:56:56.162Z",
+        "modified": "2017-08-01T11:56:56.162Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "is_enabled": true,
+        "price": "200.00",
+        "quantity": 2,
+        "start_at": "2017-08-01T11:56:56.162Z",
+        "begin": "2017-08-01T11:56:44Z",
+        "end": "2017-08-03T11:56:50Z",
+        "service": 1,
+        "client": 2
+    }
+},
+{
+    "model": "clients.clientservice",
+    "pk": 4,
+    "fields": {
+        "created": "2017-08-01T11:57:59.183Z",
+        "modified": "2017-08-01T11:57:59.183Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "is_enabled": true,
+        "price": "24664.00",
+        "quantity": 2,
+        "start_at": "2017-08-01T11:57:59.183Z",
+        "begin": "2017-08-01T11:57:53Z",
+        "end": "2017-08-30T11:57:57Z",
+        "service": 1,
+        "client": 3
+    }
+}
+]

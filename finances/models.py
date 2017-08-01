@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
 from billing.models import CommonInfo
+from clients.models import Client
 from hotels.models import Country
 
 
@@ -34,6 +35,35 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
                 country__isnull=True, is_enabled=True)[0].price
         except IndexError:
             return None
+
+    def get_price(self, country=None, client=None):
+        """
+        Get price by country or client
+        """
+        if isinstance(client, int) or (isinstance(client, str) and
+                                       client.isnumeric()):
+            try:
+                client = Client.objects.get(pk=int(client))
+            except Client.DoesNotExist:
+                pass
+        if isinstance(client, Client):
+            country = client.country
+
+        if country:
+            query = self.prices.filter(is_enabled=True)
+            if isinstance(country, int) or (isinstance(country, str) and
+                                            country.isnumeric()):
+                query = query.filter(country__id=int(country))
+            elif isinstance(country, Country):
+                query = query.filter(country=country)
+            else:
+                query = query.filter(country__tld=country)
+            try:
+                return query[0].price
+            except IndexError:
+                pass
+
+        return self.price
 
     @property
     def period_days(self):
