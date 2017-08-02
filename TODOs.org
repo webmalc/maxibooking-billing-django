@@ -33,6 +33,11 @@
    CLOSED: [2017-08-01 Tue 14:58]
 ** DONE client services test
    CLOSED: [2017-08-01 Tue 17:44]
+** DONE client service calc country
+   CLOSED: [2017-08-02 Wed 14:36]
+** TODO client services types
+** TODO client services autocreate
+** TODO client status info (is_enabled, rooms limit)
 ** TODO orders
 ** TODO orders creation by tasks
 ** TODO client disabling by orders 

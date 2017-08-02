@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
-from reversion.admin import VersionAdmin
-
 from hotels.models import Property
+from reversion.admin import VersionAdmin
 
 from .models import Client, ClientService
 from .tasks import install_client_task
@@ -21,12 +20,12 @@ class ClientServiceAdmin(VersionAdmin):
     search_fields = ('id', 'service__title', 'client__name', 'client__email',
                      'client__login')
     readonly_fields = ('start_at', 'created', 'modified', 'created_by',
-                       'modified_by', 'price')
-    raw_id_fields = ('service', 'client')
+                       'modified_by', 'price', 'country')
+    raw_id_fields = ('service', 'client', 'country')
     fieldsets = (('General', {
         'fields': ('service', 'client', 'quantity', 'price', 'begin', 'end')
     }), ('Options', {
-        'fields': ('is_enabled', 'start_at', 'created', 'modified',
+        'fields': ('is_enabled', 'country', 'start_at', 'created', 'modified',
                    'created_by', 'modified_by')
     }), )
     list_select_related = ('service', 'client')

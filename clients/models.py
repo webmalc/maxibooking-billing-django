@@ -1,3 +1,4 @@
+from billing.models import CommonInfo
 from django.core.exceptions import ValidationError
 from django.core.validators import (MinLengthValidator, MinValueValidator,
                                     RegexValidator)
@@ -5,10 +6,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from phonenumber_field.modelfields import PhoneNumberField
-
-from billing.models import CommonInfo
 from hotels.models import Country
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Client(CommonInfo, TimeStampedModel):
@@ -85,6 +84,12 @@ class ClientService(CommonInfo, TimeStampedModel):
         verbose_name=_('price'),
         validators=[MinValueValidator(0)],
         db_index=True)
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        verbose_name=_('country'),
+        db_index=True,
+        related_name='client_services')
     quantity = models.PositiveIntegerField(
         verbose_name=_('quantity'),
         db_index=True,
@@ -108,6 +113,8 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity
+        if self.country_id is None:
+            self.country = self.client.country
         if self.start_at is None:
             self.start_at = timezone.now()
         super(ClientService, self).save(*args, **kwargs)

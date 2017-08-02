@@ -1,9 +1,8 @@
 import json
 
 import arrow
-from django.core.urlresolvers import reverse
-
 from billing.lib.test import json_contains
+from django.core.urlresolvers import reverse
 
 
 def test_client_services_list_by_user(client):
@@ -79,3 +78,4 @@ def test_client_service_create_by_admin(admin_client):
     assert response_json['price'] == '4600.00'
     assert response_json['client'] == 'user-one'
     assert response_json['is_enabled'] is True
+    assert response_json['country'] == 'ad'
