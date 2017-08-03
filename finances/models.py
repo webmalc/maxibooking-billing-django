@@ -16,9 +16,13 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     PERIODS_UNITS = (('day', _('day')), ('month', _('month')),
                      ('year', _('year')))
     PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
+    TYPES = (('connection', _('connection')), ('rooms', _('rooms')),
+             ('other', _('other')))
 
     is_enabled = models.BooleanField(
         default=True, db_index=True, verbose_name=_('is enabled'))
+    is_default = models.BooleanField(
+        default=False, db_index=True, verbose_name=_('is default'))
     period = models.PositiveIntegerField(
         verbose_name=_('period'), db_index=True)
     period_units = models.CharField(
@@ -26,6 +30,12 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         max_length=20,
         default='month',
         choices=PERIODS_UNITS,
+        db_index=True)
+    type = models.CharField(
+        verbose_name=_('type'),
+        max_length=20,
+        default='other',
+        choices=TYPES,
         db_index=True)
 
     @property
@@ -73,9 +83,19 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     def __str__(self):
         return self.title
 
+    def validate_unique(self, exclude=None):
+        super(Service, self).validate_unique(exclude)
+        service_type = self.type
+        if service_type != 'other' and Service.objects.filter(
+                type=service_type, is_enabled=True,
+                is_default=True).exclude(id=self.id).exists():
+            raise ValidationError(
+                _('Default service with this type already exists.'))
+
     class Meta:
         ordering = ['title']
-        unique_together = ('title', 'is_enabled')
+        unique_together = (('title', 'is_enabled'),
+                           ('type', 'period', 'period_units', 'is_enabled'))
 
 
 class Price(CommonInfo, TimeStampedModel):
@@ -113,8 +133,8 @@ class Price(CommonInfo, TimeStampedModel):
         Price validation
         """
         if not self.country and Price.objects.filter(
-                service=self.service,
-                country__isnull=True).exclude(id=self.id).exists():
+                service=self.service, country__isnull=True,
+                is_enabled=True).exclude(id=self.id).exists():
             raise ValidationError('Base price already exists')
 
     class Meta:

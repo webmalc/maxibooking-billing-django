@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
-from hotels.models import Property
 from reversion.admin import VersionAdmin
+
+from hotels.models import Property
 
 from .models import Client, ClientService
 from .tasks import install_client_task

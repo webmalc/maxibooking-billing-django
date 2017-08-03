@@ -1,6 +1,7 @@
+from rest_framework import serializers
+
 from finances.models import Service
 from hotels.models import Country
-from rest_framework import serializers
 
 from .models import Client, ClientService
 
@@ -49,6 +50,8 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         ClientService.validate_dates(attrs.get('begin'), attrs.get('end'))
+        ClientService.validate_service(
+            attrs.get('service'), attrs.get('client'))
         return attrs
 
     class Meta:

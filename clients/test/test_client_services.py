@@ -1,8 +1,9 @@
 import json
 
 import arrow
-from billing.lib.test import json_contains
 from django.core.urlresolvers import reverse
+
+from billing.lib.test import json_contains
 
 
 def test_client_services_list_by_user(client):
@@ -59,14 +60,32 @@ def test_client_service_create_invalid_by_admin(admin_client):
         content_type="application/json")
     response_json = response.json()
 
-    assert response_json['non_field_errors'] == ['Please correct dates']
+    assert response_json['non_field_errors'] == [
+        'The fields client, is_enabled, service must make a unique set.'
+    ]
+
+    data['service'] = 3
+    response = admin_client.post(
+        reverse('clientservice-list'),
+        data=json.dumps(data),
+        content_type="application/json")
+    response_json = response.json()
+
+    assert response_json['non_field_errors'] == ['Please correct dates.']
+
+    data['end'] = arrow.utcnow().shift(months=+3).isoformat()
+    response = admin_client.post(
+        reverse('clientservice-list'),
+        data=json.dumps(data),
+        content_type="application/json")
+    response_json = response.json()
 
 
 def test_client_service_create_by_admin(admin_client):
     data = {
         'quantity': 2,
         'client': 'user-one',
-        'service': 1,
+        'service': 2,
         'begin': arrow.utcnow().isoformat(),
         'end': arrow.utcnow().shift(months=+3).isoformat()
     }
@@ -75,7 +94,7 @@ def test_client_service_create_by_admin(admin_client):
         data=json.dumps(data),
         content_type="application/json")
     response_json = response.json()
-    assert response_json['price'] == '4600.00'
+    assert response_json['price'] == '7000.00'
     assert response_json['client'] == 'user-one'
     assert response_json['is_enabled'] is True
     assert response_json['country'] == 'ad'

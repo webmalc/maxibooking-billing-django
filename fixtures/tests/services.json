@@ -11,6 +11,8 @@
         "description": "Test service one description",
         "description_en": "Test service one description",
         "description_ru": "Описание тестового сервиса 1",
+        "type": "connection",
+        "is_default": true,
         "created_by": 1,
         "modified_by": 1,
         "is_enabled": true,
@@ -30,6 +32,7 @@
         "description": "Test service two description",
         "description_en": "Test service two description",
         "description_ru": "Описание тестового сервиса 2",
+        "type": "rooms",
         "created_by": 1,
         "modified_by": 1,
         "is_enabled": true,
@@ -49,6 +52,7 @@
         "description": "Test service three",
         "description_en": "Test service three description",
         "description_ru": "Описание тестового сервиса 3",
+        "type": "other",
         "created_by": 1,
         "modified_by": 1,
         "is_enabled": false,
@@ -107,6 +111,20 @@
         "created_by": 1,
         "modified_by": 1,
         "price": "2000.00",
+        "country": null,
+        "is_enabled": true,
+        "service": 2
+    }
+},
+{
+    "model": "finances.price",
+    "pk": 9,
+    "fields": {
+        "created": "2017-07-31T13:58:08.269Z",
+        "modified": "2017-07-31T13:58:32.720Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "price": "3500.00",
         "country": null,
         "is_enabled": true,
         "service": 2

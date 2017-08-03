@@ -1,4 +1,3 @@
-from billing.models import CommonInfo
 from django.core.exceptions import ValidationError
 from django.core.validators import (MinLengthValidator, MinValueValidator,
                                     RegexValidator)
@@ -6,8 +5,10 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
-from hotels.models import Country
 from phonenumber_field.modelfields import PhoneNumberField
+
+from billing.models import CommonInfo
+from hotels.models import Country
 
 
 class Client(CommonInfo, TimeStampedModel):
@@ -122,13 +123,29 @@ class ClientService(CommonInfo, TimeStampedModel):
     @staticmethod
     def validate_dates(begin, end):
         if begin and end and begin > end:
-            raise ValidationError(_('Please correct dates'))
+            raise ValidationError(_('Please correct dates.'))
+
+    @staticmethod
+    def validate_service(service, client):
+        if service and not service.get_price(client=client):
+            raise ValidationError(_('Empty service prices.'))
 
     def clean(self):
         ClientService.validate_dates(self.begin, self.end)
+        ClientService.validate_service(self.service, self.client)
+
+    def validate_unique(self, exclude=None):
+        super(ClientService, self).validate_unique(exclude)
+        service_type = self.service.type
+        if service_type != 'other' and ClientService.objects.filter(
+                client=self.client, service__type=service_type,
+                is_enabled=True).exclude(id=self.id).exists():
+            raise ValidationError(
+                _('Client service with this type already exists.'))
 
     def __str__(self):
         return '{} - {}'.format(self.client, self.service)
 
     class Meta:
         ordering = ['-created']
+        unique_together = (('client', 'is_enabled', 'service'), )
