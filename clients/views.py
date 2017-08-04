@@ -66,6 +66,9 @@ class ClientViewSet(viewsets.ModelViewSet):
                 'message': 'trial successfully activated'
             })
         except BaseException as e:
+            logging.getLogger('billing').error(
+                'Failed client installation. Id: {}; login: {}'.format(
+                    client.id, client.login))
             return Response({
                 'status': False,
                 'message': 'trial activation failed: {}'.format(e)

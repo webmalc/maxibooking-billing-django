@@ -40,6 +40,9 @@
 ** DONE services defaults
    CLOSED: [2017-08-03 Thu 17:04]
 ** TODO client services autocreate
+** TODO client services autocreate tests
+** TODO email error logger
+** TODO amazon or ?? logs
 ** TODO client services autoupdate
 ** TODO client status info (is_enabled, rooms limit)
 ** TODO orders

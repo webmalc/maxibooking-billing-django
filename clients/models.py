@@ -86,11 +86,13 @@ class ClientService(CommonInfo, TimeStampedModel):
     price = models.DecimalField(
         max_digits=20,
         decimal_places=2,
+        blank=True,
         verbose_name=_('price'),
         validators=[MinValueValidator(0)],
         db_index=True)
     country = models.ForeignKey(
         Country,
+        blank=True,
         on_delete=models.PROTECT,
         verbose_name=_('country'),
         db_index=True,

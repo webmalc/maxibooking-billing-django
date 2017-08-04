@@ -38,7 +38,7 @@ def install_client(client):
             time.sleep(settings.MB_TIMEOUT)
 
     else:
-        logging.getLogger('billing').info(
+        logging.getLogger('billing').error(
             'Failed client installation. Id: {}; login: {}'.format(
                 client.id, client.login))
         Mailer.mail_managers(
