@@ -21,8 +21,8 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Property
-        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'client',
-                  'created', 'modified', 'created_by', 'modified_by')
+        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'rooms',
+                  'client', 'created', 'modified', 'created_by', 'modified_by')
 
 
 class CountrySerializer(serializers.HyperlinkedModelSerializer):

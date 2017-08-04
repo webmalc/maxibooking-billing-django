@@ -1,12 +1,16 @@
+import arrow
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
+from billing.exceptions import BaseException
 from billing.models import CommonInfo
 from clients.models import Client
 from hotels.models import Country
+
+from .managers import ServiceManager
 
 
 class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
@@ -18,6 +22,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
     TYPES = (('connection', _('connection')), ('rooms', _('rooms')),
              ('other', _('other')))
+
+    objects = ServiceManager()
 
     is_enabled = models.BooleanField(
         default=True, db_index=True, verbose_name=_('is enabled'))
@@ -79,6 +85,21 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     def period_days(self):
         return self.period * self.PERIODS_UNITS_TO_DAYS.get(
             self.period_units, 0) if self.period else 0
+
+    def get_default_end(self, begin=None):
+        end = arrow.get(begin) if begin else arrow.utcnow()
+        if self.period_units == 'day':
+            end = end.shift(days=self.period)
+        elif self.period_units == 'month':
+            end = end.shift(months=self.period)
+        elif self.period_units == 'year':
+            end = end.shift(years=self.period)
+        else:
+            raise BaseException('Unsupported service period units')
+        return end.datetime
+
+    def get_default_begin(self):
+        return arrow.utcnow().datetime
 
     def __str__(self):
         return self.title

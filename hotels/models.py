@@ -3,7 +3,7 @@ import re
 from cities_light.abstract_models import (AbstractCity, AbstractCountry,
                                           AbstractRegion)
 from cities_light.receivers import connect_default_signals
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
@@ -99,6 +99,11 @@ class Property(CommonInfo, TimeStampedModel):
         validators=[MinLengthValidator(2)])
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, verbose_name=_('city'), db_index=True)
+    rooms = models.PositiveIntegerField(
+        verbose_name=_('rooms'),
+        db_index=True,
+        validators=[MinValueValidator(1)],
+        help_text=_('max rooms'))
     type = models.CharField(
         max_length=20,
         default='hotel',

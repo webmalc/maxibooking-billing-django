@@ -6,6 +6,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
+from billing.exceptions import BaseException
+
 from .models import Client, ClientService
 from .serializers import ClientSerializer, ClientServiceSerializer
 from .tasks import install_client_task, mail_client_task
@@ -50,6 +52,24 @@ class ClientViewSet(viewsets.ModelViewSet):
             'status': True,
             'message': 'client successfully confirmed'
         })
+
+    @detail_route(methods=['post'])
+    def trial(self, request, login=None):
+        """
+        Activate user trial
+        """
+        client = self.get_object()
+        try:
+            ClientService.objects.make_trial(client)
+            return Response({
+                'status': True,
+                'message': 'trial successfully activated'
+            })
+        except BaseException as e:
+            return Response({
+                'status': False,
+                'message': 'trial activation failed: {}'.format(e)
+            })
 
     @detail_route(methods=['post'])
     def install(self, request, login=None):

@@ -48,7 +48,7 @@ class PropertyInlineAdmin(admin.TabularInline):
     PropertyInline admin interface
     """
     model = Property
-    fields = ('name', 'type', 'city')
+    fields = ('name', 'type', 'city', 'rooms')
     raw_id_fields = ('city', )
     show_change_link = True
 

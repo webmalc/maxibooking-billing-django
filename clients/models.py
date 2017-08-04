@@ -10,6 +10,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 from billing.models import CommonInfo
 from hotels.models import Country
 
+from .managers import ClientServiceManager
+
 
 class Client(CommonInfo, TimeStampedModel):
     """
@@ -77,6 +79,8 @@ class ClientService(CommonInfo, TimeStampedModel):
     """
     ClientService class
     """
+    objects = ClientServiceManager()
+
     is_enabled = models.BooleanField(
         default=True, db_index=True, verbose_name=_('is enabled'))
     price = models.DecimalField(
@@ -97,8 +101,10 @@ class ClientService(CommonInfo, TimeStampedModel):
         validators=[MinValueValidator(1)])
     start_at = models.DateTimeField(
         db_index=True, verbose_name=_('start date'), auto_now_add=True)
-    begin = models.DateTimeField(db_index=True, verbose_name=_('begin date'))
-    end = models.DateTimeField(db_index=True, verbose_name=_('end date'))
+    begin = models.DateTimeField(
+        db_index=True, blank=True, verbose_name=_('begin date'))
+    end = models.DateTimeField(
+        db_index=True, blank=True, verbose_name=_('end date'))
     service = models.ForeignKey(
         'finances.Service',
         on_delete=models.PROTECT,
@@ -114,6 +120,11 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity
+
+        if self.begin is None:
+            self.begin = self.service.get_default_begin()
+        if self.end is None:
+            self.end = self.service.get_default_end(self.begin)
         if self.country_id is None:
             self.country = self.client.country
         if self.start_at is None:

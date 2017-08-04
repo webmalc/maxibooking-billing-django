@@ -82,19 +82,22 @@ def test_client_service_create_invalid_by_admin(admin_client):
 
 
 def test_client_service_create_by_admin(admin_client):
-    data = {
-        'quantity': 2,
-        'client': 'user-one',
-        'service': 2,
-        'begin': arrow.utcnow().isoformat(),
-        'end': arrow.utcnow().shift(months=+3).isoformat()
-    }
+    data = {'quantity': 2, 'client': 'user-one', 'service': 2}
     response = admin_client.post(
         reverse('clientservice-list'),
         data=json.dumps(data),
         content_type="application/json")
     response_json = response.json()
+
     assert response_json['price'] == '7000.00'
     assert response_json['client'] == 'user-one'
     assert response_json['is_enabled'] is True
     assert response_json['country'] == 'ad'
+
+    begin = arrow.utcnow()
+    end = begin.shift(years=+1)
+    format = '%d.%m.%Y %H:%I'
+    assert arrow.get(response_json['begin']).datetime.strftime(
+        format) == begin.datetime.strftime(format)
+    assert arrow.get(response_json['end']).datetime.strftime(
+        format) == end.datetime.strftime(format)

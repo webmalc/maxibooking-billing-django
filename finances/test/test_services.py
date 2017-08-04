@@ -1,3 +1,4 @@
+import arrow
 import pytest
 from django.core.urlresolvers import reverse
 
@@ -15,6 +16,19 @@ def test_service_period_days():
     service.period = 5
     service.save()
     assert service.period_days == 155
+
+
+@pytest.mark.django_db
+def test_service_default_dates():
+    service = Service.objects.get(pk=1)
+    format = '%d.%m.%Y %H:%I'
+    begin = arrow.utcnow()
+    end = begin.shift(months=+3)
+
+    assert begin.datetime.strftime(
+        format) == service.get_default_begin().strftime(format)
+    assert end.datetime.strftime(format) == service.get_default_end().strftime(
+        format)
 
 
 @pytest.mark.django_db
