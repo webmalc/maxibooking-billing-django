@@ -10,6 +10,8 @@ from django_extensions.db.models import TimeStampedModel
 
 from billing.models import CommonInfo
 
+from .managers import PropertyManager
+
 
 class CityMixin:
     """
@@ -79,6 +81,8 @@ class Property(CommonInfo, TimeStampedModel):
     TYPES = (('hotel', _('Hotel')), ('hostel', _('Hostel')),
              ('flat', _('Flat')), ('b&b', _('B&B')),
              ('vacation_rental', _('Vacation rental')))
+
+    objects = PropertyManager()
 
     name = models.CharField(
         max_length=255,

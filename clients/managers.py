@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from billing.exceptions import BaseException
+from hotels.models import Property
 
 
 class ClientServiceManager(models.Manager):
@@ -29,8 +30,8 @@ class ClientServiceManager(models.Manager):
             raise BaseException('default rooms service not found')
 
         self._make_trial_service(connection, client, 1)
-        # TODO: count client rooms
-        self._make_trial_service(rooms, client, 20)
+        rooms_max = Property.objects.count_rooms(client)
+        self._make_trial_service(rooms, client, rooms_max)
 
     def _make_trial_service(self, service, client, quantity):
         """

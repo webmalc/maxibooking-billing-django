@@ -39,7 +39,8 @@
    CLOSED: [2017-08-03 Thu 11:20]
 ** DONE services defaults
    CLOSED: [2017-08-03 Thu 17:04]
-** TODO client services autocreate
+** DONE client services autocreate
+   CLOSED: [2017-08-07 Mon 15:06]
 ** TODO client services autocreate tests
 ** TODO email error logger
 ** TODO amazon or ?? logs
