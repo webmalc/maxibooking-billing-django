@@ -3,6 +3,8 @@ import json
 from django.core.urlresolvers import reverse
 
 from billing.lib.test import json_contains
+from finances.models import Service
+from hotels.models import Property
 
 from ..models import Client
 
@@ -15,7 +17,7 @@ def test_clients_list_by_user(client):
 def test_clients_list_by_admin(admin_client):
     response = admin_client.get(reverse('client-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 4
+    assert len(response.json()['results']) == 5
     json_contains(response, 'User Two')
 
 
@@ -62,7 +64,7 @@ def test_client_create_by_admin(admin_client):
     assert response_json['created_by'] == 'admin'
 
     response = admin_client.get(reverse('client-list'))
-    assert len(response.json()['results']) == 5
+    assert len(response.json()['results']) == 6
     json_contains(response, 'new@user.mail')
 
 
@@ -181,3 +183,70 @@ def test_client_install_fail_results_by_admin(admin_client, mailoutbox):
 
     mail = mailoutbox[0]
     assert 'failed' in mail.subject
+
+
+def test_client_trial_by_client(client):
+    response = client.post(
+        reverse('client-trial', args=['user-three']),
+        content_type="application/json")
+
+    assert response.status_code == 401
+
+
+def test_admin_trial_invalid_by_admin(admin_client):
+    response = admin_client.post(
+        reverse('client-trial', args=['user-three']),
+        content_type="application/json")
+    response_json = response.json()
+    assert response_json['status'] is False
+    assert response_json[
+        'message'] == 'trial activation failed: client already has services'
+
+    response = admin_client.post(
+        reverse('client-trial', args=['user-four']),
+        content_type="application/json")
+    response_json = response.json()
+    assert response_json['status'] is False
+    assert response_json[
+        'message'] == 'trial activation failed: client confirmed'
+
+    response = admin_client.post(
+        reverse('client-trial', args=['user-five']),
+        content_type="application/json")
+
+    response_json = response.json()
+    assert response_json['status'] is False
+    assert response_json['message'] == \
+        'trial activation failed: default rooms service not found'
+
+    Service.objects.filter(pk=2, type='rooms').update(is_default=True)
+    response = admin_client.post(
+        reverse('client-trial', args=['user-five']),
+        content_type="application/json")
+
+    response_json = response.json()
+    assert response_json['status'] is False
+    assert response_json['message'] == \
+        'trial activation failed: invalid default service: Test service two'
+
+
+def test_admin_trial_by_admin(admin_client):
+    Service.objects.filter(pk=2, type='rooms').update(is_default=True)
+    Property.objects.create(
+        name='Test property five',
+        rooms=12,
+        url='http://property.five',
+        client_id=5,
+        city_id=1)
+    response = admin_client.post(
+        reverse('client-trial', args=['user-five']),
+        content_type="application/json")
+
+    response_json = response.json()
+    assert response_json['status'] is True
+    assert response_json['message'] == 'trial successfully activated'
+
+    client = Client.objects.get(pk=5)
+
+    assert client.services.count() == 2
+    assert client.services.get(service__type='rooms').price == 42000.00

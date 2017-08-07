@@ -12,4 +12,7 @@ class PropertyManager(models.Manager):
         Count client property rooms
         """
 
-        return self.filter(client=client).aggregate(Sum('rooms'))['rooms__sum']
+        rooms_max = self.filter(
+            client=client).aggregate(Sum('rooms'))['rooms__sum']
+
+        return rooms_max if rooms_max else 0

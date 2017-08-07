@@ -70,5 +70,23 @@
         "status": "active",
         "installation": "process"
     }
+},
+{
+    "model": "clients.client",
+    "pk": 5,
+    "fields": {
+        "country":  2,
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z",
+        "login": "user-five",
+        "email": "user@five.com",
+        "phone": "+79250000004",
+        "name": "User Five",
+        "description": "User five description",
+        "status": "not_confirmed",
+        "installation": "installed"
+    }
 }
 ]
