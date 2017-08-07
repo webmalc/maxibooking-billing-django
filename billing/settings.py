@@ -171,6 +171,11 @@ LOGGING = {
             'format': '%(levelname)s %(message)s'
         },
     },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        }
+    },
     'handlers': {
         'file': {
             'level': 'DEBUG',
@@ -178,10 +183,16 @@ LOGGING = {
             'filename': 'logs/billing.log',
             'formatter': 'verbose'
         },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'billing': {
-            'handlers': ['file'],
+            'handlers': ['file', 'mail_admins'],
             'level': 'DEBUG',
         },
     }

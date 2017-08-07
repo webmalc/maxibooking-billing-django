@@ -41,13 +41,6 @@ def install_client(client):
         logging.getLogger('billing').error(
             'Failed client installation. Id: {}; login: {}'.format(
                 client.id, client.login))
-        Mailer.mail_managers(
-            subject=_('Failed client installation'),
-            template='emails/base_manager.html',
-            data={
-                'text':
-                '{}: {}'.format(_('Failed client installation'), client.login)
-            })
         Mailer.mail_client(
             subject=_('Registation failed'),
             template='emails/registration_fail.html',

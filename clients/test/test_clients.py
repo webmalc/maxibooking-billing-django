@@ -114,9 +114,9 @@ def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
     assert len(mailoutbox) == 2
 
     mail = mailoutbox[0]
-    html = mail.alternatives[0][0]
+
     assert 'Failed client installation' in mail.subject
-    assert 'user-one' in html
+    assert 'user-one' in mail.body
 
     assert 'failed' in mailoutbox[1].subject
 
@@ -193,7 +193,7 @@ def test_client_trial_by_client(client):
     assert response.status_code == 401
 
 
-def test_admin_trial_invalid_by_admin(admin_client):
+def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
     response = admin_client.post(
         reverse('client-trial', args=['user-three']),
         content_type="application/json")
@@ -201,6 +201,11 @@ def test_admin_trial_invalid_by_admin(admin_client):
     assert response_json['status'] is False
     assert response_json[
         'message'] == 'trial activation failed: client already has services'
+
+    mail = mailoutbox[0]
+
+    assert 'Failed client installation' in mail.subject
+    assert 'user-three' in mail.body
 
     response = admin_client.post(
         reverse('client-trial', args=['user-four']),
