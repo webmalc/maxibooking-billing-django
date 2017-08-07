@@ -43,8 +43,10 @@
    CLOSED: [2017-08-07 Mon 15:06]
 ** DONE client services autocreate tests
    CLOSED: [2017-08-07 Mon 17:19]
-** TODO email error logger
-** TODO amazon or ?? logs
+** DONE email error logger
+   CLOSED: [2017-08-07 Mon 18:49]
+** DONE amazon or sentry logs
+   CLOSED: [2017-08-07 Mon 18:49]
 ** TODO client services autoupdate
 ** TODO client status info (is_enabled, rooms limit)
 ** TODO orders
