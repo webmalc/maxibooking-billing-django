@@ -4,6 +4,7 @@ arrow==0.10.0
 Babel==2.4.0
 billiard==3.5.0.2
 celery==4.0.2
+contextlib2==0.5.5
 cryptography==1.8.2
 Django==1.11.1
 django-admin-row-actions==0.0.2
@@ -51,6 +52,7 @@ python-dateutil==2.6.0
 python-utils==2.1.0
 pytz==2017.2
 qrcode==4.0.4
+raven==6.1.0
 redis==2.10.5
 sqlparse==0.2.3
 tqdm==4.15.0

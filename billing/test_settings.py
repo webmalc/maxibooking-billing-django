@@ -7,6 +7,7 @@ DATABASES = {
     }
 }
 
+LOGGING.pop('root', None)
 CELERY_ALWAYS_EAGER = True
 
 MB_URL = 'http://example.com'

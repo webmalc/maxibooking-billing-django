@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+import raven
+
 # Local settings
 try:
     from .local_settings import *
@@ -23,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 INSTALLED_APPS = [
+    'raven.contrib.django.raven_compat',
     'adminactions',
     'modeltranslation',
     'django.contrib.admin',
@@ -160,6 +163,10 @@ EMAIL_SUBJECT_PREFIX = '[maxi-booking.com]: '
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry'],
+    },
     'formatters': {
         'verbose': {
             'format':
@@ -188,6 +195,15 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'filters': ['require_debug_false'],
             'formatter': 'verbose'
+        },
+        'sentry': {
+            'level': 'ERROR',
+            'class':
+            'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'filters': ['require_debug_false'],
+            'tags': {
+                'custom-tag': 'x'
+            },
         },
     },
     'loggers': {
@@ -245,3 +261,12 @@ REST_FRAMEWORK = {
 # Cities light
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ru']
 CITIES_LIGHT_APP_NAME = 'hotels'
+
+# Sentry raven
+RAVEN_CONFIG = {
+    'dsn':
+    'https://52126dbda9494c668b7b9dff7722c901:\
+31b56314232c436fb812b98568a5f589@sentry.io/200649',
+    'release':
+    raven.fetch_git_sha(os.path.dirname(os.pardir)),
+}
