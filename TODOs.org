@@ -45,10 +45,10 @@
    CLOSED: [2017-08-07 Mon 17:19]
 ** DONE email error logger
    CLOSED: [2017-08-07 Mon 18:49]
-** DONE amazon or sentry logs
+** DONE amazon and sentry logs
    CLOSED: [2017-08-07 Mon 18:49]
-** TODO client services autoupdate
 ** TODO client status info (is_enabled, rooms limit)
+** TODO client services autoupdate
 ** TODO orders
 ** TODO orders creation by tasks
 ** TODO client disabling by orders 

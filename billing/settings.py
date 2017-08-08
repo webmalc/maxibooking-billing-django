@@ -165,7 +165,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'root': {
         'level': 'WARNING',
-        'handlers': ['sentry'],
+        'handlers': ['sentry', 'watchtower'],
     },
     'formatters': {
         'verbose': {
@@ -204,6 +204,12 @@ LOGGING = {
             'tags': {
                 'custom-tag': 'x'
             },
+        },
+        'watchtower': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'watchtower.CloudWatchLogHandler',
+            'formatter': 'simple'
         },
     },
     'loggers': {
