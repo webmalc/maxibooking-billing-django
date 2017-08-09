@@ -2,9 +2,9 @@
 Maxibooking billing django rest backend
 
 ## urls
-two-factor setup url: account/two_factor/setup/
-admin: admin/
-all urls: ./manage.py show_urls --format=table
+* two-factor setup url: account/two_factor/setup/
+* admin: admin/
+* all urls: ./manage.py show_urls --format=table
 
 ## minimum requirements
 * python >= 3.6
