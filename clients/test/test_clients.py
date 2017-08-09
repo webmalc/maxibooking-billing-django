@@ -21,15 +21,15 @@ def test_clients_list_by_admin(admin_client):
     json_contains(response, 'User Two')
 
 
+def test_client_display_by_user(client):
+    response = client.get(reverse('client-detail', args=['user-three']))
+    assert response.status_code == 401
+
+
 def test_client_display_by_admin(admin_client):
     response = admin_client.get(reverse('client-detail', args=['user-three']))
     assert response.status_code == 200
     json_contains(response, 'user@three.com')
-
-
-def test_client_display_by_user(client):
-    response = client.get(reverse('client-detail', args=['user-three']))
-    assert response.status_code == 401
 
 
 def test_client_create_invalid_by_admin(admin_client):
@@ -243,6 +243,12 @@ def test_admin_trial_by_admin(admin_client):
         url='http://property.five',
         client_id=5,
         city_id=1)
+    Property.objects.create(
+        name='Test property six',
+        rooms=13,
+        url='http://property.six',
+        client_id=5,
+        city_id=2)
     response = admin_client.post(
         reverse('client-trial', args=['user-five']),
         content_type="application/json")
@@ -252,6 +258,7 @@ def test_admin_trial_by_admin(admin_client):
     assert response_json['message'] == 'trial successfully activated'
 
     client = Client.objects.get(pk=5)
-
     assert client.services.count() == 2
+    assert client.rooms_limit == 25
     assert client.services.get(service__type='rooms').price == 42000.00
+    assert client.services.get(service__type='connection').status == 'active'

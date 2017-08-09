@@ -25,8 +25,8 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'installation',
-                  'properties', 'created', 'modified', 'created_by',
-                  'modified_by')
+                  'properties', 'rooms_limit', 'created', 'modified',
+                  'created_by', 'modified_by')
         lookup_field = 'login'
 
 
@@ -56,6 +56,6 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ClientService
-        fields = ('id', 'is_enabled', 'price', 'country', 'quantity',
+        fields = ('id', 'is_enabled', 'status', 'price', 'country', 'quantity',
                   'start_at', 'begin', 'end', 'service', 'client', 'created',
                   'modified', 'created_by', 'modified_by')

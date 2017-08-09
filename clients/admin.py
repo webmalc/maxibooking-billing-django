@@ -15,7 +15,7 @@ class ClientServiceAdmin(VersionAdmin):
     ClientService admin interface
     """
     list_display = ('id', 'service', 'client', 'quantity', 'price', 'begin',
-                    'end', 'is_enabled')
+                    'end', 'status', 'is_enabled')
     list_display_links = ('id', )
     list_filter = ('service', 'is_enabled', 'begin', 'end')
     search_fields = ('id', 'service__title', 'client__name', 'client__email',
@@ -26,8 +26,8 @@ class ClientServiceAdmin(VersionAdmin):
     fieldsets = (('General', {
         'fields': ('service', 'client', 'quantity', 'price', 'begin', 'end')
     }), ('Options', {
-        'fields': ('is_enabled', 'country', 'start_at', 'created', 'modified',
-                   'created_by', 'modified_by')
+        'fields': ('status', 'is_enabled', 'country', 'start_at', 'created',
+                   'modified', 'created_by', 'modified_by')
     }), )
     list_select_related = ('service', 'client')
 
@@ -37,7 +37,8 @@ class ClientServiceInlineAdmin(admin.TabularInline):
     ClientServiceInline admin interface
     """
     model = ClientService
-    fields = ('service', 'client', 'quantity', 'price', 'begin', 'end')
+    fields = ('service', 'client', 'quantity', 'price', 'begin', 'end',
+              'status')
     raw_id_fields = ('service', 'client')
     readonly_fields = ('price', )
     show_change_link = True

@@ -93,6 +93,7 @@ def test_client_service_create_by_admin(admin_client):
     assert response_json['client'] == 'user-one'
     assert response_json['is_enabled'] is True
     assert response_json['country'] == 'ad'
+    assert response_json['status'] == 'waiting'
 
     begin = arrow.utcnow()
     end = begin.shift(years=+1)

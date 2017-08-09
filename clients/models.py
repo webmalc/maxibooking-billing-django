@@ -68,6 +68,16 @@ lowercase letters, numbers, and "-" character.'))
         choices=INSTALLATION,
         db_index=True)
 
+    @property
+    def rooms_limit(self):
+        """
+        Client rooms limit
+        """
+        return sum([
+            s.quantity for s in self.services.all()
+            if s.is_enabled and s.service.type == 'rooms'
+        ])
+
     def __str__(self):
         return '{} - {}'.format(self.login, self.name)
 
@@ -79,10 +89,18 @@ class ClientService(CommonInfo, TimeStampedModel):
     """
     ClientService class
     """
+    STATUSES = (('processing', _('processing')), ('active', _('active')))
+
     objects = ClientServiceManager()
 
     is_enabled = models.BooleanField(
         default=True, db_index=True, verbose_name=_('is enabled'))
+    status = models.CharField(
+        max_length=20,
+        default='waiting',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
     price = models.DecimalField(
         max_digits=20,
         decimal_places=2,

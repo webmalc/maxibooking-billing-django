@@ -38,12 +38,13 @@ class ClientServiceManager(models.Manager):
         Create client service
         """
         client_service_model = apps.get_model('clients', 'ClientService')
-        connection_service = client_service_model()
-        connection_service.service = service
-        connection_service.client = client
-        connection_service.quantity = quantity
+        client_service = client_service_model()
+        client_service.service = service
+        client_service.client = client
+        client_service.quantity = quantity
+        client_service.status = 'active'
         try:
-            connection_service.full_clean()
-            connection_service.save()
+            client_service.full_clean()
+            client_service.save()
         except ValidationError as e:
             raise BaseException('invalid default service: {}'.format(service))
