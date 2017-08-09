@@ -62,6 +62,7 @@
 ** TODO client account rest
 ** TODO client tariff restrictions rest
 ** TODO client status rest
-** TODO django supervisor
 ** TODO organization
 ** TODO bill
+** TODO fab deploy
+
