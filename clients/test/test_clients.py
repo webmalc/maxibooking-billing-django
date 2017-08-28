@@ -1,8 +1,7 @@
 import json
 
-from django.core.urlresolvers import reverse
-
 from billing.lib.test import json_contains
+from django.core.urlresolvers import reverse
 from finances.models import Service
 from hotels.models import Property
 
@@ -260,5 +259,5 @@ def test_admin_trial_by_admin(admin_client):
     client = Client.objects.get(pk=5)
     assert client.services.count() == 2
     assert client.rooms_limit == 25
-    assert client.services.get(service__type='rooms').price == 42000.00
+    assert client.services.get(service__type='rooms').price == 87500.0
     assert client.services.get(service__type='connection').status == 'active'
