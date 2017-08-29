@@ -25,6 +25,8 @@ class CountryViewSet(viewsets.ModelViewSet):
     filter_fields = ('name', 'code2', 'code3', 'continent')
     search_fields = ('name', 'alternate_names', 'code2', 'code3')
     lookup_field = 'tld'
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class RegionViewSet(viewsets.ModelViewSet):

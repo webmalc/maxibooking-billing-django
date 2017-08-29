@@ -11,6 +11,12 @@ class ClientServiceManager(models.Manager):
     ClientService manager
     """
 
+    def find_ended(self):
+        """
+        Find ended client services
+        """
+        return self.all()
+
     def make_trial(self, client):
         """
         Create client trial services

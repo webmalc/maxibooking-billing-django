@@ -21,4 +21,5 @@ Maxibooking billing django rest backend
 ## start project in dev
 * first terminal: ./manage.py runserver_plus
 * second terminal: ./manage.py celery
+* third terminal: ./manage.py celery beat
 

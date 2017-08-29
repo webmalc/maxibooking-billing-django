@@ -2,7 +2,7 @@ from billing.celery import app
 from billing.lib import mb
 from billing.lib.messengers.mailer import Mailer
 
-from .models import Client
+from .models import Client, ClientService
 
 
 @app.task
@@ -43,3 +43,13 @@ def mail_client_task(subject, template, data, client_id=None, email=None):
             return True
         except Client.DoesNotExist:
             return False
+
+
+@app.task
+def client_services_update():
+    """
+    Client services periodical update
+    """
+    client_services = ClientService.objects.find_ended()
+    import ipdb
+    ipdb.set_trace()

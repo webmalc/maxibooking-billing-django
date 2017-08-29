@@ -165,7 +165,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'root': {
         'level': 'WARNING',
-        'handlers': ['sentry'],  # , 'watchtower'],
+        # 'handlers': ['sentry', 'watchtower'],
     },
     'formatters': {
         'verbose': {
@@ -205,12 +205,12 @@ LOGGING = {
                 'custom-tag': 'x'
             },
         },
-        # 'watchtower': {
-        #     'level': 'ERROR',
-        #     'filters': ['require_debug_false'],
-        #     'class': 'watchtower.CloudWatchLogHandler',
-        #     'formatter': 'simple'
-        # },
+        'watchtower': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'watchtower.CloudWatchLogHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         'billing': {
@@ -235,6 +235,12 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Dublin'
 CELERY_ALWAYS_EAGER = False
 CELERY_APP = 'billing'
+CELERYBEAT_SCHEDULE = {
+    'event_notifications_task': {
+        'task': 'clients.tasks.client_services_update',
+        'schedule': 10.00
+    },
+}
 
 # Django phonenumber
 PHONENUMBER_DB_FORMAT = 'INTERNATIONAL'
@@ -249,9 +255,7 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS':
     'rest_framework.versioning.AcceptHeaderVersioning',
     'DEFAULT_PAGINATION_CLASS':
-    'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE':
-    100,
+    'billing.pagination.StandardPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissions',
         'rest_framework.permissions.IsAuthenticated'
