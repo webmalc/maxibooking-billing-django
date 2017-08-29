@@ -196,21 +196,21 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'formatter': 'verbose'
         },
-        'sentry': {
-            'level': 'ERROR',
-            'class':
-            'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            'filters': ['require_debug_false'],
-            'tags': {
-                'custom-tag': 'x'
-            },
-        },
-        'watchtower': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'watchtower.CloudWatchLogHandler',
-            'formatter': 'simple'
-        },
+        # 'sentry': {
+        #     'level': 'ERROR',
+        #     'class':
+        #     'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        #     'filters': ['require_debug_false'],
+        #     'tags': {
+        #         'custom-tag': 'x'
+        #     },
+        # },
+        # 'watchtower': {
+        #     'level': 'ERROR',
+        #     'filters': ['require_debug_false'],
+        #     'class': 'watchtower.CloudWatchLogHandler',
+        #     'formatter': 'simple'
+        # },
     },
     'loggers': {
         'billing': {
