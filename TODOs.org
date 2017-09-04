@@ -51,7 +51,8 @@
    CLOSED: [2017-08-09 Wed 14:25]
 ** DONE client services autoupdate
    CLOSED: [2017-09-04 Mon 12:12]
-** client PUT
+** DONE client PUT
+   CLOSED: [2017-09-04 Mon 12:47]
 ** TODO orders
 ** TODO orders emails
 ** TODO orders creation by tasks
