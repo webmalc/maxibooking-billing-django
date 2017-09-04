@@ -1,4 +1,6 @@
+import arrow
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -15,7 +17,10 @@ class ClientServiceManager(models.Manager):
         """
         Find ended client services
         """
-        return self.all()
+        end = arrow.utcnow().shift(days=+settings.ORDERS_BEFORE_DAYS).datetime
+        return self.filter(end__lt=end, status='active', is_enabled=True).\
+            exclude(service__period=0).\
+            order_by('client', '-created')
 
     def make_trial(self, client):
         """

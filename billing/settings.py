@@ -238,7 +238,7 @@ CELERY_APP = 'billing'
 CELERYBEAT_SCHEDULE = {
     'event_notifications_task': {
         'task': 'clients.tasks.client_services_update',
-        'schedule': 10.00
+        'schedule': 60 * 10
     },
 }
 
@@ -281,3 +281,6 @@ RAVEN_CONFIG = {
     'release':
     raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
+
+# Billing
+ORDERS_BEFORE_DAYS = 14

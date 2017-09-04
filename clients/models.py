@@ -97,7 +97,7 @@ class ClientService(CommonInfo, TimeStampedModel):
         default=True, db_index=True, verbose_name=_('is enabled'))
     status = models.CharField(
         max_length=20,
-        default='waiting',
+        default='active',
         choices=STATUSES,
         verbose_name=_('status'),
         db_index=True)
@@ -175,7 +175,7 @@ class ClientService(CommonInfo, TimeStampedModel):
                 _('Client service with this type already exists.'))
 
     def __str__(self):
-        return '{} - {}'.format(self.client, self.service)
+        return '#{} - {} - {}'.format(self.id, self.client, self.service)
 
     class Meta:
         ordering = ['-created']

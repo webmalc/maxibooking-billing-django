@@ -26,6 +26,9 @@ DEBUG = False
 
 CELERY_LOGLEVEL = 'debug'
 
+# Maxibooking url
 MB_URL = 'https://example.com'
+# Maxibooking token
 MB_TOKEN = 'my_super_secret_token'
+# Requests timeout (sec)
 MB_TIMEOUT = 1

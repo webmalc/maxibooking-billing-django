@@ -4,6 +4,8 @@ import arrow
 from django.core.urlresolvers import reverse
 
 from billing.lib.test import json_contains
+from clients.models import ClientService
+from clients.tasks import client_services_update
 
 
 def test_client_services_list_by_user(client):
@@ -93,7 +95,7 @@ def test_client_service_create_by_admin(admin_client):
     assert response_json['client'] == 'user-one'
     assert response_json['is_enabled'] is True
     assert response_json['country'] == 'ad'
-    assert response_json['status'] == 'waiting'
+    assert response_json['status'] == 'active'
 
     begin = arrow.utcnow()
     end = begin.shift(years=+1)
@@ -102,3 +104,19 @@ def test_client_service_create_by_admin(admin_client):
         format) == begin.datetime.strftime(format)
     assert arrow.get(response_json['end']).datetime.strftime(
         format) == end.datetime.strftime(format)
+
+
+def test_client_services_update_task(admin_client):
+    end = arrow.utcnow().shift(days=+5)
+    client_service = ClientService()
+    client_service.quantity = 1
+    client_service.begin = arrow.utcnow().shift(months=-1).datetime
+    client_service.end = end.datetime
+    client_service.service_id = 1
+    client_service.client_id = 4
+    client_service.save()
+
+    client_services_update.delay()
+    client_service.refresh_from_db()
+    assert client_service.status == 'processing'
+    assert client_service.end == end.shift(months=+3).datetime

@@ -1,3 +1,5 @@
+import logging
+
 from billing.celery import app
 from billing.lib import mb
 from billing.lib.messengers.mailer import Mailer
@@ -51,5 +53,12 @@ def client_services_update():
     Client services periodical update
     """
     client_services = ClientService.objects.find_ended()
-    import ipdb
-    ipdb.set_trace()
+    for client_service in client_services:
+        logging.getLogger('billing').info(
+            'Generating order for client service {}'.format(client_service))
+        client_service.end = client_service.service.get_default_end(
+            client_service.end)
+        client_service.status = 'processing'
+        client_service.save()
+
+        # TODO: order create

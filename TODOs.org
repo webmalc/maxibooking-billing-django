@@ -49,8 +49,11 @@
    CLOSED: [2017-08-07 Mon 18:49]
 ** DONE client status info (is_enabled, rooms limit)
    CLOSED: [2017-08-09 Wed 14:25]
-** TODO client services autoupdate
+** DONE client services autoupdate
+   CLOSED: [2017-09-04 Mon 12:12]
+** client PUT
 ** TODO orders
+** TODO orders emails
 ** TODO orders creation by tasks
 ** TODO client disabling by orders 
 ** TODO orders prolongation
