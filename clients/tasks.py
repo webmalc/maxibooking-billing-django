@@ -59,6 +59,7 @@ def client_services_update():
         client_service.end = client_service.service.get_default_end(
             client_service.end)
         client_service.status = 'processing'
+        client_service.price = None
         client_service.save()
 
         # TODO: order create

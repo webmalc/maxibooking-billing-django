@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from billing.lib.test import json_contains
 from clients.models import ClientService
 from clients.tasks import client_services_update
+from finances.models import Service
 
 
 def test_client_services_list_by_user(client):
@@ -108,15 +109,21 @@ def test_client_service_create_by_admin(admin_client):
 
 def test_client_services_update_task(admin_client):
     end = arrow.utcnow().shift(days=+5)
+    service = Service.objects.get(pk=1)
     client_service = ClientService()
-    client_service.quantity = 1
+    client_service.quantity = 2
     client_service.begin = arrow.utcnow().shift(months=-1).datetime
     client_service.end = end.datetime
-    client_service.service_id = 1
+    client_service.service = service
     client_service.client_id = 4
     client_service.save()
+    assert client_service.price == service.get_price(client=4) * 2
+    price = service.prices.get(pk=8)
+    price.price = 2500
+    price.save()
 
     client_services_update.delay()
     client_service.refresh_from_db()
     assert client_service.status == 'processing'
     assert client_service.end == end.shift(months=+3).datetime
+    assert client_service.price == 5000

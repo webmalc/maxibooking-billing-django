@@ -4,6 +4,6 @@ from .models import Service
 
 
 @register(Service)
-class TechnologyTranslationOptions(TranslationOptions):
+class ServiceTranslationOptions(TranslationOptions):
     fields = ('title', 'description')
     required_languages = ('en', )

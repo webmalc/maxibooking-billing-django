@@ -3,10 +3,48 @@ from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 
+from finances.models import Order
 from hotels.models import Property
 
 from .models import Client, ClientService
 from .tasks import install_client_task
+
+
+@admin.register(Order)
+class OrderAdmin(VersionAdmin):
+    """
+    Order admin interface
+    """
+    list_display = ('id', 'price', 'status', 'client', 'expired_date',
+                    'paid_date', 'created', 'modified')
+    list_display_links = ('id', 'price', )
+    list_filter = ('status', 'expired_date', 'paid_date', 'created')
+    search_fields = ('id', 'services__service__title',
+                     'services__service__description', 'client__name',
+                     'client__email', 'client__login')
+    readonly_fields = ('created', 'modified', 'paid_date', 'created_by',
+                       'modified_by')
+    raw_id_fields = ('client', )
+    fieldsets = (('General', {
+        'fields': ('price', 'client', 'expired_date', 'note')
+    }), ('Options', {
+        'fields': ('status', 'paid_date', 'created', 'modified', 'created_by',
+                   'modified_by')
+    }), )
+    list_select_related = ('client', )
+
+
+class OrdersInlineAdmin(admin.TabularInline):
+    """
+    OrdersInline admin interface
+    """
+    model = Order.client_services.through
+    raw_id_fields = ('order', )
+    show_change_link = True
+    extra = 1
+    verbose_name = 'Order'
+    verbose_name_plural = 'Orders'
+    max_num = 20
 
 
 @admin.register(ClientService)
@@ -16,13 +54,14 @@ class ClientServiceAdmin(VersionAdmin):
     """
     list_display = ('id', 'service', 'client', 'quantity', 'price', 'begin',
                     'end', 'status', 'is_enabled')
-    list_display_links = ('id', )
+    list_display_links = ('id', 'service', )
     list_filter = ('service', 'is_enabled', 'begin', 'end')
     search_fields = ('id', 'service__title', 'client__name', 'client__email',
                      'client__login')
     readonly_fields = ('start_at', 'created', 'modified', 'created_by',
                        'modified_by', 'price', 'country')
     raw_id_fields = ('service', 'client', 'country')
+    inlines = (OrdersInlineAdmin, )
     fieldsets = (('General', {
         'fields': ('service', 'client', 'quantity', 'price', 'begin', 'end')
     }), ('Options', {

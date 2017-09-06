@@ -137,6 +137,7 @@ class ClientService(CommonInfo, TimeStampedModel):
         db_index=True,
         verbose_name=_('client'),
         related_name='services')
+    orders = models.ManyToManyField('finances.Order', verbose_name=_('orders'))
 
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity

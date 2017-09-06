@@ -7,7 +7,7 @@ from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
 from billing.exceptions import BaseException
 from billing.models import CommonInfo
-from clients.models import Client
+from clients.models import Client, ClientService
 from hotels.models import Country
 
 from .managers import ServiceManager
@@ -161,3 +161,39 @@ class Price(CommonInfo, TimeStampedModel):
     class Meta:
         ordering = ['price']
         unique_together = ('service', 'country')
+
+
+class Order(CommonInfo, TimeStampedModel):
+    """
+    Order class
+    """
+    STATUSES = (('new', _('new')), ('processing', _('processing')),
+                ('paid', _('paid')), ('canceled', _('canceled')))
+    status = models.CharField(
+        max_length=20,
+        default='active',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
+    note = models.TextField(blank=True, db_index=True, verbose_name=_('note'))
+    price = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        verbose_name=_('price'),
+        validators=[MinValueValidator(0)],
+        db_index=True)
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        db_index=True,
+        verbose_name=_('client'),
+        related_name='orders')
+    expired_date = models.DateTimeField(
+        db_index=True, blank=True, verbose_name=_('expired date'))
+    paid_date = models.DateTimeField(
+        db_index=True, null=True, blank=True, verbose_name=_('paid date'))
+    client_services = models.ManyToManyField(
+        'clients.ClientService',
+        verbose_name=_('client services'),
+        through=ClientService.orders.through)
