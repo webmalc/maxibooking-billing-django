@@ -53,12 +53,14 @@
    CLOSED: [2017-09-04 Mon 12:12]
 ** DONE client PUT
    CLOSED: [2017-09-04 Mon 12:47]
-** TODO orders
+** DONE orders
+   CLOSED: [2017-09-07 Thu 15:59]
+** DONE orders prolongation
+   CLOSED: [2017-09-07 Thu 16:00]
 ** TODO orders emails
 ** TODO orders creation by tasks
-** TODO client disabling by orders 
-** TODO orders prolongation
 ** TODO orders tests
+** TODO client disabling by orders 
 ** TODO stripe
 ** TODO stripe tests
 ** TODO transaction

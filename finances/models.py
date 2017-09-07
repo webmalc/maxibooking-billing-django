@@ -1,9 +1,12 @@
 import arrow
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
+from model_utils import FieldTracker
 
 from billing.exceptions import BaseException
 from billing.models import CommonInfo
@@ -167,6 +170,8 @@ class Order(CommonInfo, TimeStampedModel):
     """
     Order class
     """
+    tracker = FieldTracker()
+
     STATUSES = (('new', _('new')), ('processing', _('processing')),
                 ('paid', _('paid')), ('canceled', _('canceled')))
     status = models.CharField(
@@ -182,7 +187,8 @@ class Order(CommonInfo, TimeStampedModel):
         blank=True,
         verbose_name=_('price'),
         validators=[MinValueValidator(0)],
-        db_index=True)
+        db_index=True,
+        help_text=_('Delete to recalculate price'))
     client = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
@@ -197,3 +203,44 @@ class Order(CommonInfo, TimeStampedModel):
         'clients.ClientService',
         verbose_name=_('client services'),
         through=ClientService.orders.through)
+
+    def calc_price(self):
+        """
+        Calculate && return price
+        """
+        return self.client_services.total(self.client_services)
+
+    def generate_note(self):
+        """
+        Generate and return default order note
+        """
+        return render_to_string('finances/order_note.md', {'order': self})
+
+    def clean(self):
+        if not self.price and not self.client_services.count():
+            raise ValidationError(_('Empty price and client services.'))
+
+    def save(self, *args, **kwargs):
+        # calculate price
+        if not self.price:
+            self.price = self.calc_price()
+
+        # generate note
+        if not self.note:
+            self.note = self.generate_note()
+
+        # set expired date
+        if not self.expired_date:
+            self.expired_date = arrow.utcnow().shift(
+                days=+settings.MB_ORDER_EXPIRED_DAYS).datetime
+
+        # send notification to client
+
+        # set paid date && update services
+
+        super(Order, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return '#{} - {} - {} - {} - {}'.format(
+            self.id, self.status, self.client, self.price,
+            self.expired_date.strftime('%c'))

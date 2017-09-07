@@ -17,8 +17,11 @@ import raven
 # Local settings
 try:
     from .local_settings import *
+    import psycopg2
 except ImportError:
-    pass
+    # Fall back to psycopg2cffi
+    from psycopg2cffi import compat
+    compat.register()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -165,7 +168,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'root': {
         'level': 'WARNING',
-        # 'handlers': ['sentry', 'watchtower'],
+        'handlers': ['sentry'],  # , 'watchtower'],
     },
     'formatters': {
         'verbose': {
@@ -196,15 +199,15 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'formatter': 'verbose'
         },
-        # 'sentry': {
-        #     'level': 'ERROR',
-        #     'class':
-        #     'raven.contrib.django.raven_compat.handlers.SentryHandler',
-        #     'filters': ['require_debug_false'],
-        #     'tags': {
-        #         'custom-tag': 'x'
-        #     },
-        # },
+        'sentry': {
+            'level': 'ERROR',
+            'class':
+            'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'filters': ['require_debug_false'],
+            'tags': {
+                'custom-tag': 'x'
+            },
+        },
         # 'watchtower': {
         #     'level': 'ERROR',
         #     'filters': ['require_debug_false'],
@@ -273,14 +276,12 @@ REST_FRAMEWORK = {
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ru']
 CITIES_LIGHT_APP_NAME = 'hotels'
 
-# Sentry raven
-RAVEN_CONFIG = {
-    'dsn':
-    'https://52126dbda9494c668b7b9dff7722c901:\
+if not DEBUG:
+    # Sentry raven
+    RAVEN_CONFIG = {
+        'dsn':
+        'https://52126dbda9494c668b7b9dff7722c901:\
 31b56314232c436fb812b98568a5f589@sentry.io/200649',
-    'release':
-    raven.fetch_git_sha(os.path.dirname(os.pardir)),
-}
-
-# Billing
-ORDERS_BEFORE_DAYS = 14
+        'release':
+        raven.fetch_git_sha(os.path.dirname(os.pardir)),
+    }

@@ -176,7 +176,8 @@ class ClientService(CommonInfo, TimeStampedModel):
                 _('Client service with this type already exists.'))
 
     def __str__(self):
-        return '#{} - {} - {}'.format(self.id, self.client, self.service)
+        return '#{} - {} - {} - {}'.format(self.id, self.client, self.service,
+                                           self.price)
 
     class Meta:
         ordering = ['-created']

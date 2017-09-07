@@ -13,11 +13,20 @@ class ClientServiceManager(models.Manager):
     ClientService manager
     """
 
+    def total(self, query=None):
+        """
+        Get total price
+        """
+        query = query if query else self.all()
+        return query.filter(is_enabled=True).aggregate(
+            total=models.Sum('price'))['total']
+
     def find_ended(self):
         """
         Find ended client services
         """
-        end = arrow.utcnow().shift(days=+settings.ORDERS_BEFORE_DAYS).datetime
+        end = arrow.utcnow().shift(
+            days=+settings.MB_ORDER_BEFORE_DAYS).datetime
         return self.filter(end__lt=end, status='active', is_enabled=True).\
             exclude(service__period=0).\
             order_by('client', '-created')

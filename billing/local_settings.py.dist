@@ -32,3 +32,7 @@ MB_URL = 'https://example.com'
 MB_TOKEN = 'my_super_secret_token'
 # Requests timeout (sec)
 MB_TIMEOUT = 1
+# Order expired period (in days)
+MB_ORDER_EXPIRED_DAYS = 21
+# Order creation period (in days)
+MB_ORDER_BEFORE_DAYS = 14
