@@ -61,6 +61,7 @@
 ** TODO orders creation by tasks
 ** TODO orders tests
 ** TODO client disabling by orders 
+** TODO client uninstall
 ** TODO stripe
 ** TODO stripe tests
 ** TODO transaction

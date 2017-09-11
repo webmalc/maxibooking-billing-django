@@ -1,5 +1,20 @@
-/* global tinymce */
 /** Global admin object **/
+mbbAdmin = {
+    color: {
+        'green': '#00a65a',
+        'gray': '#999999',
+        'orange': '#f39c12',
+        'red': '#dd4b39',
+    },
+    list_colors: function(colors, selector) {
+        $.each(colors, function(key, value) {
+            $('td.field-' + selector + ':contains("' + key + '")')
+                .css('color', value);
+            $('.admin-filter-' + selector + ' a:contains("' + key + '")')
+                .css('color', value);
+        });
+    },
+};
 
 $(document).ready(function($) {
     'use strict';
@@ -7,7 +22,6 @@ $(document).ready(function($) {
         event.preventDefault();
         $(this).prev('input').trigger('click');
     });
-     
     $('.vTimeField').inputmask({
         mask: '99:99:99',
     });
@@ -30,8 +44,8 @@ $(document).ready(function($) {
      * begin & end inputs
      */
     (function() {
-        var begin = $('#id_begin_0'),
-            end = $('#id_end_0');
+        var begin = $('#id_begin_0');
+        var end = $('#id_end_0');
 
         if (!begin.length || !end.length) {
             return;
@@ -47,7 +61,7 @@ $(document).ready(function($) {
     // admin filter select
     (function() {
         $('.admin-filter-select').change(function() {
-            window.location.href =  $(this).val();
+            window.location.href = $(this).val();
         });
     }());
 });

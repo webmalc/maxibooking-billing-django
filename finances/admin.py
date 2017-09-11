@@ -44,6 +44,9 @@ class OrderAdmin(VersionAdmin):
     }), )
     list_select_related = ('client', )
 
+    class Media:
+        js = ('js/admin/orders.js', )
+
 
 class PriceInlineAdmin(admin.TabularInline):
     """
