@@ -1,6 +1,7 @@
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
@@ -39,6 +40,13 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
         'client': 'clients',
         'service': 'services',
     })
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['orders'].help_text = """
+        <a href="{}?client_services__exact={}" target="_blank">Orders list</a>
+        """.format(reverse('admin:finances_order_changelist'), obj.pk)
+        return form
 
 
 class ClientServiceInlineAdmin(admin.TabularInline):
