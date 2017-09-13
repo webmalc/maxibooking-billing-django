@@ -11,10 +11,7 @@ $(document).ready(function($) {
             var param = button.attr('data-param');
             var search = url.search(true);
             var params = {};
-            if (search[param]) {
-                input.val(search[param]);
-            }
-            button.click(function(event) {
+            var go = function() {
                 var val = input.val();
                 if (!val) {
                     url.removeSearch(param);
@@ -23,7 +20,18 @@ $(document).ready(function($) {
                     url.setSearch(params);
                 }
                 location.replace(url.toString());
+            };
+            if (search[param]) {
+                input.val(search[param]);
+            }
+
+            input.on('keyup', function(e) {
+                if (e.keyCode == 13) {
+                    go();
+                }
             });
+
+            button.click(go);
         });
     }());
 });
