@@ -1,11 +1,22 @@
 from django.apps import apps
-from django.db import models
+
+from billing.managers import LookupMixin
 
 
-class ServiceManager(models.Manager):
+class OrderManager(LookupMixin):
+    """"
+    Order manager
+    """
+    lookup_search_fields = ('pk', 'client__name', 'client__email',
+                            'client__login')
+
+
+class ServiceManager(LookupMixin):
     """"
     Service manager
     """
+
+    lookup_search_fields = ('pk', 'title', 'description', 'type')
 
     def get_default(self, service_type):
         """

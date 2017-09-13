@@ -1,50 +1,44 @@
+from ajax_select import make_ajax_form
+from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 
-from finances.models import Order
+from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
 from .models import Client, ClientService
 from .tasks import install_client_task
 
 
-class OrdersInlineAdmin(admin.TabularInline):
-    """
-    OrdersInline admin interface
-    """
-    model = Order.client_services.through
-    raw_id_fields = ('order', )
-    show_change_link = True
-    extra = 1
-    verbose_name = 'Order'
-    verbose_name_plural = 'Orders'
-    max_num = 20
-
-
 @admin.register(ClientService)
-class ClientServiceAdmin(VersionAdmin):
+class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
     """
     ClientService admin interface
     """
     list_display = ('id', 'service', 'client', 'quantity', 'price', 'begin',
                     'end', 'status', 'is_enabled')
     list_display_links = ('id', 'service', )
-    list_filter = ('service', 'is_enabled', 'begin', 'end')
-    search_fields = ('id', 'orders__pk', 'service__title', 'client__name',
+    list_filter = ('service', 'is_enabled', ('orders', TextFieldListFilter),
+                   'begin', 'end')
+    search_fields = ('=pk', '=orders__pk', 'service__title', 'client__name',
                      'client__email', 'client__login')
     readonly_fields = ('start_at', 'created', 'modified', 'created_by',
                        'modified_by', 'price', 'country')
-    raw_id_fields = ('service', 'client', 'country')
-    inlines = (OrdersInlineAdmin, )
+    raw_id_fields = ('service', 'client', 'country', 'orders')
     fieldsets = (('General', {
-        'fields': ('service', 'client', 'quantity', 'price', 'begin', 'end')
+        'fields':
+        ('service', 'client', 'quantity', 'price', 'begin', 'end', 'orders')
     }), ('Options', {
         'fields': ('status', 'is_enabled', 'country', 'start_at', 'created',
                    'modified', 'created_by', 'modified_by')
     }), )
     list_select_related = ('service', 'client')
+    form = make_ajax_form(ClientService, {
+        'client': 'clients',
+        'service': 'services',
+    })
 
 
 class ClientServiceInlineAdmin(admin.TabularInline):

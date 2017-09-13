@@ -10,7 +10,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from billing.models import CommonInfo
 from hotels.models import Country
 
-from .managers import ClientServiceManager
+from .managers import ClientManager, ClientServiceManager
 
 
 class Client(CommonInfo, TimeStampedModel):
@@ -22,6 +22,8 @@ class Client(CommonInfo, TimeStampedModel):
 
     INSTALLATION = (('not_installed', _('not installed')),
                     ('process', _('process')), ('installed', _('installed')))
+
+    objects = ClientManager()
 
     login = models.CharField(
         max_length=50,

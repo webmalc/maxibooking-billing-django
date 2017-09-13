@@ -5,21 +5,33 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from hotels.models import Property
 
 
-class ClientServiceManager(models.Manager):
+class ClientManager(LookupMixin):
+    """"
+    Client manager
+    """
+    lookup_search_fields = ('pk', 'login', 'email', 'phone', 'name',
+                            'country__name')
+
+
+class ClientServiceManager(LookupMixin):
     """"
     ClientService manager
     """
+    lookup_search_fields = ('pk', 'service__title', 'client__name',
+                            'client__email', 'client__login')
 
     def total(self, query=None):
         """
         Get total price
         """
         query = query if query else self.all()
-        return query.filter(is_enabled=True).aggregate(
+        total = query.filter(is_enabled=True).aggregate(
             total=models.Sum('price'))['total']
+        return total if total else 0
 
     def find_ended(self):
         """

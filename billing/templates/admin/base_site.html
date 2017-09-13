@@ -1,20 +1,23 @@
 {% extends "admin/base_site.html" %}
 {% load admin_static %}
-
 {% block extrastyle %}
     {{ block.super }}
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'jquery.inputmask/dist/inputmask/inputmask.js' %}"></script>
     <script src="{% static 'jquery.inputmask/dist/inputmask/jquery.inputmask.js' %}"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="{% static 'urijs/src/URI.min.js' %}"></script>
     <script src="{% static 'js/admin/main.js' %}"></script>
-    <link rel="stylesheet"  type="text/css" href="{% static 'css/admin/main.css' %}">
-    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
-{% endblock %}
+    <script src="{% static 'js/admin/filters.js' %}"></script>
 
+    <!-- <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
+    <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/admin/main.css' %}">
+    {% endblock %}
 {% block branding %}
     <h1 id="site-name">
         <a href="{% url 'admin:index' %}">MaxiBooking-billing administration</a>
         <a id="small-site-name" href="{% url 'two_factor:setup' %}"><small>mfa</small></a>
     </h1>
 {% endblock %}
-

@@ -1,5 +1,6 @@
 """billing URL Configuration
 """
+from ajax_select import urls as ajax_select_urls
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
@@ -19,6 +20,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
+    url(r'^ajax_select/', include(ajax_select_urls)),
     url(r'^admin/', admin.site.urls),
     url(r'', include('two_factor.urls', 'two_factor')),
     url(r'^adminactions/', include('adminactions.urls')),

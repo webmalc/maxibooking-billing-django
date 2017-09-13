@@ -1,0 +1,10 @@
+{% load i18n %}
+<h3>{% blocktrans with filter_title=title %}{{ filter_title }}{% endblocktrans %}</h3>
+<ul class="admin-filter-{{ title|cut:' ' }} admin-text-field-filter-ul">
+    {% with choice=choices|first %}
+    <li>
+        <input type="number" class="admin-text-field-filter-input"  value="">
+        <input type="button" class="admin-text-field-filter-button" value="ok" data-url="{{ choice.query_string|iriencode }}" data-param="{{ choice.query_param }}">
+    </li>
+    {% endwith %}
+</ul>

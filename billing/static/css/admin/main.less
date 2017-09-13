@@ -14,6 +14,9 @@
 .text-muted {
     color: #777;
 }
+.display-none {
+    display: none;
+}
 .admin-additional-info {
     margin: 0px !important;
     padding: 0px;
@@ -41,6 +44,74 @@ input[type="tel"] {
 input[type="tel"]:focus {
     border-color: #999;
 }
+.results_on_deck {
+    margin-left: 160px !important;
+    padding: 10px !important;
+}
+
+// Admin filters
 .admin-filter-select {
     max-width: 210px;
+}
+.ajax-select-link {
+    font-weight: bold; 
+}
+#changelist-filter {
+    .selected
+    {
+        a {
+            font-weight: bold;
+        }
+        
+    }
+}
+.admin-text-field-filter-ul {
+    .admin-text-field-filter-input {
+        max-width: 210px;
+    }
+    .admin-text-field-filter-button {
+        padding: 8px 10px;
+    }
+}
+
+// Reset jquery-ui tabs
+.ui-tabs {
+    .ui-widget-header {
+        background: transparent;
+        border: 0px;
+    }
+    .ui-widget.ui-widget-content {
+        border: 0px;
+    }
+    .ui-state-default, .ui-widget-content .ui-state-default,
+    .ui-widget-header .ui-state-default, .ui-button,
+    html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
+    {
+        border: 0px;
+    }
+    .ui-tabs-nav li.ui-tabs-active a,
+    .ui-tabs-nav li.ui-tabs-selected a
+    {
+        background-color: #79aec8 !important; 
+    }
+    .ui-tabs-nav li a {
+        border-radius: 0px !important;
+        -webkit-border-radius: 0px !important;
+        -moz-border-radius: 0px !important;
+        border: 0px !important;
+        margin: 0px !important;
+    }
+}
+
+.ui-tabs.ui-corner-all {
+    border-radius: 0px;
+}
+.ui-tabs.ui-widget-content {
+    border: 0px;
+}
+ul.ui-autocomplete {
+    padding: 10px !important; 
+}
+.ui-icon {
+    margin-top: 0px;
 }

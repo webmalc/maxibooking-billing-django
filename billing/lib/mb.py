@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from .messengers.mailer import Mailer
+from .messengers.mailer import mail_client
 
 
 def install_client(client):
@@ -41,7 +41,7 @@ def install_client(client):
         logging.getLogger('billing').error(
             'Failed client installation. Id: {}; login: {}'.format(
                 client.id, client.login))
-        Mailer.mail_client(
+        mail_client(
             subject=_('Registation failed'),
             template='emails/registration_fail.html',
             data={},

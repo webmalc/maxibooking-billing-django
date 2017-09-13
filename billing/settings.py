@@ -17,6 +17,7 @@ import raven
 # Local settings
 try:
     from .local_settings import *
+    from .local_settings import DEBUG
     import psycopg2
 except ImportError:
     # Fall back to psycopg2cffi
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
+    'ajax_select',
     'rest_framework',
     'rest_framework.authtoken',
     'rosetta',
