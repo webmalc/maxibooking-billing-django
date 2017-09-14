@@ -12,7 +12,6 @@ from clients.models import Client, ClientService
 from hotels.models import Country
 
 from .managers import OrderManager, ServiceManager
-from .tasks import order_notify_task
 
 
 class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
@@ -179,7 +178,12 @@ class Order(CommonInfo, TimeStampedModel):
         choices=STATUSES,
         verbose_name=_('status'),
         db_index=True)
-    note = models.TextField(blank=True, db_index=True, verbose_name=_('note'))
+    note = models.TextField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('note'),
+        help_text=_('Clear to regenerate note'))
     price = models.DecimalField(
         max_digits=20,
         decimal_places=2,
@@ -200,6 +204,7 @@ class Order(CommonInfo, TimeStampedModel):
         db_index=True, null=True, blank=True, verbose_name=_('paid date'))
     client_services = models.ManyToManyField(
         'clients.ClientService',
+        blank=True,
         verbose_name=_('client services'),
         through=ClientService.orders.through)
 
@@ -213,35 +218,9 @@ class Order(CommonInfo, TimeStampedModel):
         """
         Generate and return default order note
         """
-        return render_to_string('finances/order_note.md', {'order': self})
-
-    # def save(self, *args, **kwargs):
-    #     id = self.id
-
-    #     # set expired date
-    #     if not self.expired_date:
-    #         self.expired_date = arrow.utcnow().shift(
-    #             days=+settings.MB_ORDER_EXPIRED_DAYS).datetime
-    #     if not id:
-    #         # save order
-    #         super(Order, self).save(*args, **kwargs)
-
-    #     # calculate price
-    #     if not self.price:
-    #         self.price = self.calc_price()
-
-    #     # generate note
-    #     if not self.note:
-    #         self.note = self.generate_note()
-
-    #     # set paid date && update services
-
-    #     # save order
-    #     super(Order, self).save(*args, **kwargs)
-
-    #     # send notification to client
-    #     if not id:
-    #         order_notify_task.delay(self.id)
+        if self.client_services.count():
+            return render_to_string('finances/order_note.md', {'order': self})
+        return None
 
     def __str__(self):
         return '#{} - {} - {} - {} - {}'.format(

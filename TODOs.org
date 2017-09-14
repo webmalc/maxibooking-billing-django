@@ -57,9 +57,10 @@
    CLOSED: [2017-09-07 Thu 15:59]
 ** DONE orders prolongation
    CLOSED: [2017-09-07 Thu 16:00]
-** TODO orders emails
+** DONE orders emails
+   CLOSED: [2017-09-14 Thu 15:45]
 ** TODO orders creation by tasks
-** TODO orders tests
+** TODO orders tests - calculation, creation, dates, mailer tests
 ** TODO client disabling by orders 
 ** TODO client uninstall
 ** TODO stripe
