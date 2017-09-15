@@ -61,11 +61,16 @@
    CLOSED: [2017-09-14 Thu 15:45]
 ** DONE orders creation by tasks
    CLOSED: [2017-09-15 Fri 12:15]
-** TODO orders tests - calculation, creation, dates, mailer tests
+** DONE tests mailer tests
+   CLOSED: [2017-09-15 Fri 15:03]
+** TODO orders tests - calculation, creation, dates
 ** TODO client disabling by orders 
 ** TODO client uninstall
+** TODO payment type
 ** TODO stripe
 ** TODO stripe tests
+** TODO rbk
+** TODO rbk tests
 ** TODO transaction
 ** TODO transaction tests
 ** TODO client account rest

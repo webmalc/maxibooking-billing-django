@@ -16,8 +16,8 @@ import raven
 
 # Local settings
 try:
-    from .local_settings import *
-    from .local_settings import DEBUG
+    from .settings_local import *
+    from .settings_local import DEBUG
     import psycopg2
 except ImportError:
     # Fall back to psycopg2cffi
