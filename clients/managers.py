@@ -40,7 +40,7 @@ class ClientServiceManager(LookupMixin):
         end = arrow.utcnow().shift(
             days=+settings.MB_ORDER_BEFORE_DAYS).datetime
         return self.filter(end__lt=end, status='active', is_enabled=True).\
-            exclude(service__period=0).\
+            exclude(service__period=0).select_related('client').\
             order_by('client', '-created')
 
     def make_trial(self, client):

@@ -174,7 +174,7 @@ class Order(CommonInfo, TimeStampedModel):
 
     status = models.CharField(
         max_length=20,
-        default='active',
+        default='new',
         choices=STATUSES,
         verbose_name=_('status'),
         db_index=True)

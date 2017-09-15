@@ -1,8 +1,10 @@
 import logging
+from itertools import groupby
 
 from billing.celery import app
 from billing.lib import mb
 from billing.lib.messengers.mailer import mail_client
+from finances.models import Order
 
 from .models import Client, ClientService
 
@@ -51,14 +53,23 @@ def client_services_update():
     """
     Client services periodical update
     """
-    client_services = ClientService.objects.find_ended()
-    for client_service in client_services:
-        logging.getLogger('billing').info(
-            'Generating order for client service {}'.format(client_service))
-        client_service.end = client_service.service.get_default_end(
-            client_service.end)
-        client_service.status = 'processing'
-        client_service.price = None
-        client_service.save()
+    client_services = list(ClientService.objects.find_ended())
 
-        # TODO: order create
+    grouped_services = [
+        list(r) for k, r in groupby(client_services, lambda i: i.client.id)
+    ]
+    for group in grouped_services:
+        order = Order()
+        order.client = group[0].client
+        order.save()
+        for client_service in group:
+            logging.getLogger('billing').info(
+                'Generating order for client service {}'.format(
+                    client_service))
+            client_service.end = client_service.service.get_default_end(
+                client_service.end)
+            client_service.status = 'processing'
+            client_service.price = None
+            client_service.save()
+            order.client_services.add(client_service)
+        order.save()

@@ -1,7 +1,6 @@
 import adminactions.actions as actions
 from django.contrib import admin
 from django.contrib.admin import site
-from django.utils.translation import ugettext_lazy as _
 
 actions.add_to_site(site)
 

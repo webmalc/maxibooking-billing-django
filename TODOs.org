@@ -59,7 +59,8 @@
    CLOSED: [2017-09-07 Thu 16:00]
 ** DONE orders emails
    CLOSED: [2017-09-14 Thu 15:45]
-** TODO orders creation by tasks
+** DONE orders creation by tasks
+   CLOSED: [2017-09-15 Fri 12:15]
 ** TODO orders tests - calculation, creation, dates, mailer tests
 ** TODO client disabling by orders 
 ** TODO client uninstall
@@ -73,4 +74,5 @@
 ** TODO organization
 ** TODO bill
 ** TODO fab deploy
+
 
