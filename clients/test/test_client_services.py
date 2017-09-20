@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from billing.lib.test import json_contains
 from clients.models import ClientService
 from clients.tasks import client_services_update
-from finances.models import Service
+from finances.models import Order, Service
 
 
 def test_client_services_list_by_user(client):
@@ -127,3 +127,8 @@ def test_client_services_update_task(admin_client):
     assert client_service.status == 'processing'
     assert client_service.end == end.shift(months=+3).datetime
     assert client_service.price == 5000
+
+    order = Order.objects.get(
+        client__pk=4, client_services__pk=client_service.pk)
+    assert order.price == 5000
+    assert order.status == 'new'
