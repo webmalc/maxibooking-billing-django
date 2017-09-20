@@ -18,14 +18,19 @@ def order_pre_save(sender, **kwargs):
         order.expired_date = arrow.utcnow().shift(
             days=+settings.MB_ORDER_EXPIRED_DAYS).datetime
 
+    if not order.price and order.id:
+        order.price = order.calc_price()
+    if not order.note and order.id:
+        order.note = order.generate_note()
+
 
 @receiver(post_save, sender=Order, dispatch_uid='order_post_save')
 def order_post_save(sender, **kwargs):
     """
     Order post save
     """
+    order = kwargs['instance']
     if kwargs['created']:
-        order = kwargs['instance']
         order_notify_task.apply_async((order.id, ), countdown=1)
 
 

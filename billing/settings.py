@@ -287,3 +287,6 @@ if not DEBUG:
         'release':
         raven.fetch_git_sha(os.path.dirname(os.pardir)),
     }
+
+CORS_ORIGIN_WHITELIST = ('maxi-booking.com', 'localhost:8000',
+                         '127.0.0.1:8000', '127.0.0.1:9000', 'localhost:8000')

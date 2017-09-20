@@ -63,7 +63,10 @@
    CLOSED: [2017-09-15 Fri 12:15]
 ** DONE tests mailer tests
    CLOSED: [2017-09-15 Fri 15:03]
-** TODO orders tests - calculation, creation, dates
+** DONE orders tests - calculation, creation, dates
+   CLOSED: [2017-09-15 Fri 18:18]
+** TODO orders rest
+** TODO orders rest tests
 ** TODO client disabling by orders 
 ** TODO client uninstall
 ** TODO payment type
