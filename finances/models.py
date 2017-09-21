@@ -226,3 +226,6 @@ class Order(CommonInfo, TimeStampedModel):
         return '#{} - {} - {} - {} - {}'.format(
             self.id, self.status, self.client, self.price,
             self.expired_date.strftime('%c'))
+
+    class Meta:
+        ordering = ('-modified', '-created', )

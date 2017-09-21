@@ -65,7 +65,8 @@
    CLOSED: [2017-09-15 Fri 15:03]
 ** DONE orders tests - calculation, creation, dates
    CLOSED: [2017-09-15 Fri 18:18]
-** TODO orders rest
+** DONE orders rest
+   CLOSED: [2017-09-21 Thu 12:07]
 ** TODO orders rest tests
 ** TODO client disabling by orders 
 ** TODO client uninstall
@@ -83,5 +84,6 @@
 ** TODO bill
 ** TODO not periodical order
 ** TODO fab deploy
+** TODO registration refactor
 
 

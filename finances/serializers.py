@@ -1,6 +1,25 @@
 from rest_framework import serializers
 
-from .models import Price, Service
+from .models import Order, Price, Service
+
+
+class OrderSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Order serializer
+    """
+
+    client_services = serializers.HyperlinkedRelatedField(
+        many=True, read_only=True, view_name='clientservice-detail')
+    client = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field='login')
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ('id', 'status', 'note', 'price', 'expired_date', 'paid_date',
+                  'client', 'client_services', 'created', 'modified',
+                  'created_by', 'modified_by')
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):

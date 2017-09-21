@@ -2,8 +2,25 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from .models import Price, Service
-from .serializers import PriceSerializer, ServiceSerializer
+from .models import Order, Price, Service
+from .serializers import OrderSerializer, PriceSerializer, ServiceSerializer
+
+
+class OrderViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Order viewset
+    """
+    queryset = Order.objects.all().select_related(
+        'created_by', 'modified_by',
+        'client').prefetch_related('client_services')
+    search_fields = ('=id', '=client_services__id',
+                     'client_services__service__title',
+                     'client_services__service__description', 'client__name',
+                     'client__email', 'client__login')
+    serializer_class = OrderSerializer
+    filter_fields = ('status', 'client_services__service',
+                     'client_services__id', 'client__login', 'expired_date',
+                     'paid_date', 'created', )
 
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
