@@ -124,6 +124,7 @@ def test_client_services_update_task(admin_client):
 
     client_services_update.delay()
     client_service.refresh_from_db()
+
     assert client_service.status == 'processing'
     assert client_service.end == end.shift(months=+3).datetime
     assert client_service.price == 5000
