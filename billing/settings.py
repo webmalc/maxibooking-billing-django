@@ -247,7 +247,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'orders_payment_notify_task': {
         'task': 'finances.tasks.orders_payment_notify',
-        'schedule': 60 * 10
+        'schedule': 60 * 60 * 24
     },
 }
 
