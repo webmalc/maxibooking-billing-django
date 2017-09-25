@@ -69,6 +69,8 @@
    CLOSED: [2017-09-21 Thu 12:07]
 ** DONE orders rest tests
    CLOSED: [2017-09-21 Thu 14:47]
+** DONE client expired orders notify 
+   CLOSED: [2017-09-25 Mon 12:13]
 ** TODO client disabling by orders 
 ** TODO client uninstall
 ** TODO payment type
@@ -86,5 +88,6 @@
 ** TODO not periodical order
 ** TODO fab deploy
 ** TODO registration refactor
+** TODO order prolongation interface
 
 

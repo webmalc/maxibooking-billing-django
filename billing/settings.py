@@ -241,8 +241,12 @@ CELERY_TIMEZONE = 'Europe/Dublin'
 CELERY_ALWAYS_EAGER = False
 CELERY_APP = 'billing'
 CELERYBEAT_SCHEDULE = {
-    'event_notifications_task': {
+    'client_services_update_task': {
         'task': 'clients.tasks.client_services_update',
+        'schedule': 60 * 10
+    },
+    'orders_payment_notify_task': {
+        'task': 'finances.tasks.orders_payment_notify',
         'schedule': 60 * 10
     },
 }

@@ -11,6 +11,11 @@ LOGGING.pop('root', None)
 CELERY_ALWAYS_EAGER = True
 
 ADMINS = (('admin', 'admin@example.com'), ('manager', 'manager@example.com'))
-MB_URL = 'http://example.com'
 
 MANAGERS = ADMINS
+
+MB_URL = 'https://example.com'
+MB_TIMEOUT = 1
+MB_ORDER_EXPIRED_DAYS = 21
+MB_ORDER_BEFORE_DAYS = 14
+MB_ORDER_PAYMENT_NOTIFY_DAYS = 3

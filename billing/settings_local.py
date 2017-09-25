@@ -36,3 +36,5 @@ MB_TIMEOUT = 1
 MB_ORDER_EXPIRED_DAYS = 21
 # Order creation period (in days)
 MB_ORDER_BEFORE_DAYS = 14
+# Order payment notify (days before expiration)
+MB_ORDER_PAYMENT_NOTIFY_DAYS = 3

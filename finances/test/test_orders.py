@@ -7,8 +7,34 @@ from billing.lib.test import json_contains
 from clients.tasks import client_services_update
 
 from ..models import Order
+from ..tasks import orders_payment_notify
 
 pytestmark = pytest.mark.django_db
+
+
+@pytest.fixture()
+def make_orders():
+    now = arrow.utcnow()
+    order = Order()
+    order.client_id = 1
+    order.price = 12500.00
+    order.status = 'new'
+    order.note = 'test order'
+    order.expired_date = now.shift(days=2).datetime
+    order.save()
+
+    order.pk = None
+    order.status = 'paid'
+    order.note = None
+    order.save()
+
+    order.pk = None
+    order.status = 'new'
+    order.note = None
+    order.expired_date = now.shift(days=5).datetime
+    order.save()
+
+    return None
 
 
 def test_order_creation_and_modifications(mailoutbox):
@@ -78,3 +104,19 @@ def test_order_display_by_admin(admin_client):
     assert response.status_code == 200
     json_contains(response, 'user-two')
     json_contains(response, '468468.00')
+
+
+def test_manager_get_for_payment_notification(make_orders):
+    orders = Order.objects.get_for_payment_notification()
+    assert orders.count() == 1
+    assert orders[0].note == 'test order'
+    assert orders[0].status in ('new', 'processing')
+    assert orders[0].expired_date <= arrow.utcnow().shift(
+        days=settings.MB_ORDER_PAYMENT_NOTIFY_DAYS).datetime
+
+
+def test_orders_payment_notification(make_orders, mailoutbox):
+    orders_payment_notify.delay()
+    mailoutbox = [m for m in mailoutbox if "will expire soon" in m.subject]
+    assert len(mailoutbox) == 1
+    assert mailoutbox[0].recipients() == ['user@one.com']

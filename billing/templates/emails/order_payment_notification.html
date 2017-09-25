@@ -1,0 +1,11 @@
+{% extends 'emails/base.html' %}
+{% load humanize %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Order will expire soon" %}{{ order.id }}
+{% endblock %}
+
+{% block content %}
+    <p><strong>#</strong>: {{ order.id }}</p>
+{% endblock %}

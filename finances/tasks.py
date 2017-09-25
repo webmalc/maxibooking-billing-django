@@ -25,3 +25,18 @@ def order_notify_task(order_id):
         logger.info('New order created {}.'.format(order))
     except order_model.DoesNotExist:
         logger.error('Order notify task failed {}.'.format(order_id))
+
+
+@app.task
+def orders_payment_notify():
+    """
+    Order payments notification
+    """
+    orders = apps.get_model('finances',
+                            'Order').objects.get_for_payment_notification()
+    for order in orders:
+        mail_client(
+            subject=_('Order #{} will expire soon').format(order.pk),
+            template='emails/order_payment_notification.html',
+            data={'order': order},
+            client=order.client)
