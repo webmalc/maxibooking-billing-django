@@ -19,20 +19,25 @@ def make_orders():
     order.client_id = 1
     order.price = 12500.00
     order.status = 'new'
-    order.note = 'test order'
+    order.note = 'payment notification'
     order.expired_date = now.shift(days=2).datetime
     order.save()
 
     order.pk = None
     order.status = 'paid'
-    order.note = None
+    order.note = 'paid order'
     order.save()
 
     order.pk = None
     order.status = 'new'
+    order.note = 'order expired'
+    order.expired_date = now.shift(days=-1).datetime
+    order.save()
+
+    order.pk = None
+    order.status = 'new order'
     order.note = None
     order.expired_date = now.shift(days=5).datetime
-    order.save()
 
     return None
 
@@ -109,7 +114,7 @@ def test_order_display_by_admin(admin_client):
 def test_manager_get_for_payment_notification(make_orders):
     orders = Order.objects.get_for_payment_notification()
     assert orders.count() == 1
-    assert orders[0].note == 'test order'
+    assert orders[0].note == 'payment notification'
     assert orders[0].status in ('new', 'processing')
     assert orders[0].expired_date <= arrow.utcnow().shift(
         days=settings.MB_ORDER_PAYMENT_NOTIFY_DAYS).datetime
@@ -120,3 +125,11 @@ def test_orders_payment_notification(make_orders, mailoutbox):
     mailoutbox = [m for m in mailoutbox if "will expire soon" in m.subject]
     assert len(mailoutbox) == 1
     assert mailoutbox[0].recipients() == ['user@one.com']
+
+
+def test_manager_get_expired(make_orders):
+    orders = Order.objects.get_expired()
+    assert orders.count() == 1
+    assert orders[0].note == 'order expired'
+    assert orders[0].status in ('new', 'processing')
+    assert orders[0].expired_date > arrow.utcnow()

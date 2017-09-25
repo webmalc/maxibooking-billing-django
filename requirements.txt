@@ -13,8 +13,10 @@ cryptography==1.8.2
 Django==1.11.1
 django-admin-row-actions==0.0.2
 django-adminactions==1.5
+django-ajax-selects==1.6.1
 django-autoslug==1.9.3
 django-cities-light==3.3.0
+django-cors-headers==2.1.0
 django-crispy-forms==1.6.1
 django-debug-toolbar==1.8
 django-extensions==1.7.9
@@ -45,7 +47,7 @@ pep8==1.7.0
 phonenumberslite==8.5.0
 polib==1.0.8
 progressbar2==3.30.2
-psycopg2==2.7.1
+psycopg2==2.7.3.1
 ptyprocess==0.5.1
 py==1.4.34
 pytest==3.1.2
