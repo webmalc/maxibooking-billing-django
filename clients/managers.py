@@ -16,6 +16,16 @@ class ClientManager(LookupMixin):
     lookup_search_fields = ('pk', 'login', 'email', 'phone', 'name',
                             'country__name')
 
+    def get_for_archivation(self, query=None):
+        """
+        Get clients for archivation
+        """
+        return self.filter(
+            status='disabled',
+            disabled_at__lte=arrow.utcnow().shift(
+                months=-settings.MB_CLIENT_ARCHIVE_MONTHS).datetime).exclude(
+                    disabled_at__isnull=True)
+
 
 class ClientServiceManager(LookupMixin):
     """"

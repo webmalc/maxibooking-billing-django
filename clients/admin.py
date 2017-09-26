@@ -84,14 +84,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     list_filter = ('status', 'installation', 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
     raw_id_fields = ('country', )
-    readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
-                       'rooms_limit')
+    readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
+                       'modified_by', 'rooms_limit')
     list_select_related = ('country', )
     fieldsets = (('General', {
         'fields': ('login', 'email', 'phone', 'name', 'description', 'country')
     }), ('Options', {
-        'fields': ('status', 'installation', 'rooms_limit', 'created',
-                   'modified', 'created_by', 'modified_by')
+        'fields': ('status', 'installation', 'rooms_limit', 'disabled_at',
+                   'created', 'modified', 'created_by', 'modified_by')
     }), )
     inlines = (PropertyInlineAdmin, ClientServiceInlineAdmin)
 

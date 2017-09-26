@@ -1,11 +1,13 @@
 import json
 
-from billing.lib.test import json_contains
 from django.core.urlresolvers import reverse
+
+from billing.lib.test import json_contains
 from finances.models import Service
 from hotels.models import Property
 
 from ..models import Client
+from ..tasks import client_archivation
 
 
 def test_clients_list_by_user(client):
@@ -16,7 +18,7 @@ def test_clients_list_by_user(client):
 def test_clients_list_by_admin(admin_client):
     response = admin_client.get(reverse('client-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 5
+    assert len(response.json()['results']) == 6
     json_contains(response, 'User Two')
 
 
@@ -63,7 +65,7 @@ def test_client_create_by_admin(admin_client):
     assert response_json['created_by'] == 'admin'
 
     response = admin_client.get(reverse('client-list'))
-    assert len(response.json()['results']) == 6
+    assert len(response.json()['results']) == 7
     json_contains(response, 'new@user.mail')
 
 
@@ -261,3 +263,16 @@ def test_admin_trial_by_admin(admin_client):
     assert client.rooms_limit == 25
     assert client.services.get(service__type='rooms').price == 87500.0
     assert client.services.get(service__type='connection').status == 'active'
+
+
+def test_clients_archivation(admin_client):
+    client_archivation.delay()
+    client = Client.objects.get(login='user-six')
+    assert client.status == 'archived'
+
+
+def test_clients_archivation_invalid(admin_client, settings):
+    settings.MB_ARCHIVE_URL = 'http://invalid-domain-name.com'
+    client_archivation.delay()
+    client = Client.objects.get(login='user-six')
+    assert client.status == 'disabled'

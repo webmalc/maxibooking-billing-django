@@ -249,6 +249,14 @@ CELERYBEAT_SCHEDULE = {
         'task': 'finances.tasks.orders_payment_notify',
         'schedule': 60 * 60 * 24
     },
+    'orders_clients_disable': {
+        'task': 'finances.tasks.orders_clients_disable',
+        'schedule': 60 * 10
+    },
+    'clients_archivation': {
+        'task': 'clients.tasks.clients_activation',
+        'schedule': 60 * 10
+    },
 }
 
 # Django phonenumber

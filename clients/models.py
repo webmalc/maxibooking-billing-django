@@ -69,6 +69,8 @@ lowercase letters, numbers, and "-" character.'))
         verbose_name=_('installation status'),
         choices=INSTALLATION,
         db_index=True)
+    disabled_at = models.DateTimeField(
+        db_index=True, null=True, blank=True, verbose_name=_('disabled at'))
 
     @property
     def rooms_limit(self):

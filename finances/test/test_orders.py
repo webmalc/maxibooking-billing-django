@@ -36,7 +36,7 @@ def make_orders():
     order.save()
 
     order.pk = None
-    order.status = 'new order'
+    order.status = 'new'
     order.note = None
     order.expired_date = now.shift(days=5).datetime
 
@@ -143,3 +143,6 @@ def test_orders_clients_disable(make_orders, mailoutbox):
     assert mailoutbox[0].recipients() == ['user@one.com']
     client = Client.objects.get(pk=1)
     assert client.status == 'disabled'
+    format = '%d.%m.%Y %H:%I'
+    assert client.disabled_at.strftime(format) == arrow.utcnow().strftime(
+        format)

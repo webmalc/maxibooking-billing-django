@@ -73,7 +73,8 @@
    CLOSED: [2017-09-25 Mon 12:13]
 ** DONE client disabling by orders 
    CLOSED: [2017-09-25 Mon 16:58]
-** TODO client uninstall
+** DONE client uninstall
+   CLOSED: [2017-09-26 Tue 16:36]
 ** TODO payment type
 ** TODO stripe
 ** TODO stripe tests

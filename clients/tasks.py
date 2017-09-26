@@ -21,7 +21,7 @@ def install_client_task(client_id):
     if client.installation == 'installed':
         return False
 
-    if mb.install_client(client):
+    if mb.client_install(client):
         client.installation = 'process'
         client.save()
         return True
@@ -73,3 +73,13 @@ def client_services_update():
             client_service.save()
             order.client_services.add(client_service)
         order.save()
+
+
+@app.task
+def client_archivation():
+    """
+    Client archivation
+    """
+    clients = Client.objects.get_for_archivation()
+    for client in clients:
+        mb.client_archive(client)

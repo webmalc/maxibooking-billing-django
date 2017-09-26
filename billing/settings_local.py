@@ -28,6 +28,8 @@ CELERY_LOGLEVEL = 'debug'
 
 # Maxibooking url
 MB_URL = 'https://example.com'
+# Maxibooking archive url
+MB_ARCHIVE_URL = 'https://example.com'
 # Maxibooking token
 MB_TOKEN = 'my_super_secret_token'
 # Requests timeout (sec)
@@ -38,3 +40,5 @@ MB_ORDER_EXPIRED_DAYS = 21
 MB_ORDER_BEFORE_DAYS = 14
 # Order payment notify (days before expiration)
 MB_ORDER_PAYMENT_NOTIFY_DAYS = 3
+# Client archive period (in months)
+MB_CLIENT_ARCHIVE_MONTHS = 6

@@ -1,5 +1,6 @@
 import logging
 
+import arrow
 from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
 
@@ -51,6 +52,7 @@ def orders_clients_disable():
     for order in orders:
         client = order.client
         client.status = 'disabled'
+        client.disabled_at = arrow.utcnow().datetime
         client.save()
 
         mail_client(
