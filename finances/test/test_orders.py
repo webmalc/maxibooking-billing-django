@@ -4,10 +4,11 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from billing.lib.test import json_contains
+from clients.models import Client
 from clients.tasks import client_services_update
 
 from ..models import Order
-from ..tasks import orders_payment_notify
+from ..tasks import orders_clients_disable, orders_payment_notify
 
 pytestmark = pytest.mark.django_db
 
@@ -122,7 +123,7 @@ def test_manager_get_for_payment_notification(make_orders):
 
 def test_orders_payment_notification(make_orders, mailoutbox):
     orders_payment_notify.delay()
-    mailoutbox = [m for m in mailoutbox if "will expire soon" in m.subject]
+    mailoutbox = [m for m in mailoutbox if 'will expire soon' in m.subject]
     assert len(mailoutbox) == 1
     assert mailoutbox[0].recipients() == ['user@one.com']
 
@@ -132,4 +133,13 @@ def test_manager_get_expired(make_orders):
     assert orders.count() == 1
     assert orders[0].note == 'order expired'
     assert orders[0].status in ('new', 'processing')
-    assert orders[0].expired_date > arrow.utcnow()
+    assert orders[0].expired_date <= arrow.utcnow()
+
+
+def test_orders_clients_disable(make_orders, mailoutbox):
+    orders_clients_disable.delay()
+    mailoutbox = [m for m in mailoutbox if 'account is disabled' in m.subject]
+    assert len(mailoutbox) == 1
+    assert mailoutbox[0].recipients() == ['user@one.com']
+    client = Client.objects.get(pk=1)
+    assert client.status == 'disabled'

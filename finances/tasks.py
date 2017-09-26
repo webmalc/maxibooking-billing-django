@@ -40,3 +40,21 @@ def orders_payment_notify():
             template='emails/order_payment_notification.html',
             data={'order': order},
             client=order.client)
+
+
+@app.task
+def orders_clients_disable():
+    """
+    Expired orders clients disable
+    """
+    orders = apps.get_model('finances', 'Order').objects.get_expired()
+    for order in orders:
+        client = order.client
+        client.status = 'disabled'
+        client.save()
+
+        mail_client(
+            subject=_('Your account is disabled'),
+            template='emails/order_client_disabled.html',
+            data={'order': order},
+            client=order.client)

@@ -43,6 +43,8 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
+        if not obj:
+            return form
         form.base_fields['orders'].help_text = """
         <a href="{}?client_services__exact={}" target="_blank">Orders list</a>
         """.format(reverse('admin:finances_order_changelist'), obj.pk)

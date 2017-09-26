@@ -71,7 +71,8 @@
    CLOSED: [2017-09-21 Thu 14:47]
 ** DONE client expired orders notify 
    CLOSED: [2017-09-25 Mon 12:13]
-** TODO client disabling by orders 
+** DONE client disabling by orders 
+   CLOSED: [2017-09-25 Mon 16:58]
 ** TODO client uninstall
 ** TODO payment type
 ** TODO stripe
