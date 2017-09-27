@@ -75,6 +75,12 @@
    CLOSED: [2017-09-25 Mon 16:58]
 ** DONE client uninstall
    CLOSED: [2017-09-26 Tue 16:36]
+** DONE client tariff restrictions rest
+   CLOSED: [2017-09-27 Wed 11:51]
+** DONE client status rest
+   CLOSED: [2017-09-27 Wed 11:51]
+** DONE client account rest
+   CLOSED: [2017-09-27 Wed 11:52]
 ** TODO payment type
 ** TODO stripe
 ** TODO stripe tests
@@ -82,9 +88,6 @@
 ** TODO rbk tests
 ** TODO transaction
 ** TODO transaction tests
-** TODO client account rest
-** TODO client tariff restrictions rest
-** TODO client status rest
 ** TODO organization
 ** TODO bill
 ** TODO not periodical order
