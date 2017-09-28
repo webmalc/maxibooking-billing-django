@@ -25,12 +25,12 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
                    'begin', 'end')
     search_fields = ('=pk', '=orders__pk', 'service__title', 'client__name',
                      'client__email', 'client__login')
-    readonly_fields = ('start_at', 'created', 'modified', 'created_by',
-                       'modified_by', 'price', 'country')
+    readonly_fields = ('start_at', 'created', 'price_repr', 'modified',
+                       'created_by', 'modified_by', 'country')
     raw_id_fields = ('service', 'client', 'country', 'orders')
     fieldsets = (('General', {
-        'fields':
-        ('service', 'client', 'quantity', 'price', 'begin', 'end', 'orders')
+        'fields': ('service', 'client', 'quantity', 'price_repr', 'begin',
+                   'end', 'orders')
     }), ('Options', {
         'fields': ('status', 'is_enabled', 'country', 'start_at', 'created',
                    'modified', 'created_by', 'modified_by')
@@ -56,10 +56,11 @@ class ClientServiceInlineAdmin(admin.TabularInline):
     ClientServiceInline admin interface
     """
     model = ClientService
-    fields = ('service', 'client', 'quantity', 'price', 'begin', 'end',
+    fields = ('service', 'client', 'quantity', 'price_repr', 'begin', 'end',
               'status')
     raw_id_fields = ('service', 'client')
-    readonly_fields = ('price', )
+    readonly_fields = ('price_repr', )
+
     show_change_link = True
 
 

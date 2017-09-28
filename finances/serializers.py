@@ -17,9 +17,9 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'status', 'note', 'price', 'expired_date', 'paid_date',
-                  'client', 'client_services', 'created', 'modified',
-                  'created_by', 'modified_by')
+        fields = ('id', 'status', 'note', 'price', 'price_currency',
+                  'expired_date', 'paid_date', 'client', 'client_services',
+                  'created', 'modified', 'created_by', 'modified_by')
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,9 +34,10 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Service
-        fields = ('id', 'title', 'description', 'price', 'prices', 'period',
-                  'period_units', 'period_days', 'is_enabled', 'is_default',
-                  'created', 'modified', 'created_by', 'modified_by')
+        fields = ('id', 'title', 'description', 'price', 'price_currency',
+                  'prices', 'period', 'period_units', 'period_days',
+                  'is_enabled', 'is_default', 'created', 'modified',
+                  'created_by', 'modified_by')
 
 
 class PriceSerializer(serializers.HyperlinkedModelSerializer):
@@ -53,5 +54,6 @@ class PriceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Price
-        fields = ('id', 'price', 'country', 'service', 'is_enabled', 'created',
-                  'modified', 'created_by', 'modified_by')
+        fields = ('id', 'price', 'price_currency', 'country', 'service',
+                  'is_enabled', 'created', 'modified', 'created_by',
+                  'modified_by')

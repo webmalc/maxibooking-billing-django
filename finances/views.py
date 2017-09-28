@@ -42,11 +42,14 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         service = self.get_object()
         client = request.GET.get('client', None)
         country = request.GET.get('country', None)
+        price = service.get_price(client=client, country=country)
         return Response({
             'status':
             True,
             'price':
-            service.get_price(client=client, country=country)
+            getattr(price, 'amount', None),
+            'price_currency':
+            getattr(getattr(price, 'currency', None), 'code', None)
         })
 
 

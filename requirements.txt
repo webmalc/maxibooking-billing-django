@@ -25,6 +25,7 @@ django-formtools==2.0
 django-material==1.0.0
 django-model-utils==3.0.0
 django-modeltranslation==0.12.1
+django-money==0.11.4
 django-object-actions==0.10.0
 django-ordered-model==1.4.1
 django-otp==0.3.14
@@ -50,6 +51,7 @@ progressbar2==3.30.2
 psycopg2==2.7.3.1
 ptyprocess==0.5.1
 py==1.4.34
+py-moneyed==0.7.0
 pytest==3.1.2
 pytest-cache==1.0
 pytest-django==3.1.2

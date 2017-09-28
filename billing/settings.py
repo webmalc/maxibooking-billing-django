@@ -29,6 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 INSTALLED_APPS = [
+    'djmoney',
     'raven.contrib.django.raven_compat',
     'adminactions',
     'modeltranslation',
@@ -302,3 +303,6 @@ if not DEBUG:
 
 CORS_ORIGIN_WHITELIST = ('maxi-booking.com', 'localhost:8000',
                          '127.0.0.1:8000', '127.0.0.1:9000', 'localhost:8000')
+# Django money
+DEFAULT_CURRENCY = 'EUR'
+CURRENCIES = ('RUB', 'EUR')

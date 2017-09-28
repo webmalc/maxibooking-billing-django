@@ -81,6 +81,10 @@
    CLOSED: [2017-09-27 Wed 11:51]
 ** DONE client account rest
    CLOSED: [2017-09-27 Wed 11:52]
+** DONE currencies
+   CLOSED: [2017-09-28 Thu 17:05]
+** TODO currencies tests
+** TODO ru mb links
 ** TODO payment type
 ** TODO stripe
 ** TODO stripe tests

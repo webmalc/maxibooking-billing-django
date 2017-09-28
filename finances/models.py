@@ -5,6 +5,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
+from djmoney.models.fields import MoneyField
 
 from billing.exceptions import BaseException
 from billing.models import CommonInfo
@@ -46,12 +47,21 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         db_index=True)
 
     @property
-    def price(self):
+    def price_money(self):
         try:
             return self.prices.filter(
                 country__isnull=True, is_enabled=True)[0].price
         except IndexError:
             return None
+
+    @property
+    def price(self):
+        return getattr(self.price_money, 'amount', None)
+
+    @property
+    def price_currency(self):
+        return getattr(
+            getattr(self.price_money, 'currency', None), 'code', None)
 
     def get_price(self, country=None, client=None):
         """
@@ -80,7 +90,7 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
             except IndexError:
                 pass
 
-        return self.price
+        return self.price_money
 
     @property
     def period_days(self):
@@ -124,7 +134,7 @@ class Price(CommonInfo, TimeStampedModel):
     """
     Price class
     """
-    price = models.DecimalField(
+    price = MoneyField(
         max_digits=20,
         decimal_places=2,
         verbose_name=_('price'),
@@ -184,7 +194,7 @@ class Order(CommonInfo, TimeStampedModel):
         db_index=True,
         verbose_name=_('note'),
         help_text=_('Clear to regenerate note'))
-    price = models.DecimalField(
+    price = MoneyField(
         max_digits=20,
         decimal_places=2,
         default=0,

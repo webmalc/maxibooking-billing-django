@@ -69,6 +69,7 @@
         "created_by": 1,
         "modified_by": 1,
         "price": "12332.00",
+        "price_currency": "EUR",
         "country": null,
         "is_enabled": true,
         "service": 1
@@ -83,6 +84,7 @@
         "created_by": 1,
         "modified_by": 1,
         "price": "2300.00",
+        "price_currency": "EUR",
         "country": 1,
         "is_enabled": true,
         "service": 1
@@ -97,6 +99,7 @@
         "created_by": 1,
         "modified_by": 1,
         "price": "234234.00",
+        "price_currency": "EUR",
         "country": 2,
         "is_enabled": true,
         "service": 1
@@ -111,6 +114,7 @@
         "created_by": 1,
         "modified_by": 1,
         "price": "2000.00",
+        "price_currency": "EUR",
         "country": null,
         "is_enabled": true,
         "service": 2
@@ -125,6 +129,7 @@
         "created_by": 1,
         "modified_by": 1,
         "price": "3500.00",
+        "price_currency": "EUR",
         "country": null,
         "is_enabled": true,
         "service": 2

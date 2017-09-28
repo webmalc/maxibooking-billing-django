@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
+from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import CommonInfo
@@ -105,7 +106,7 @@ class ClientService(CommonInfo, TimeStampedModel):
         choices=STATUSES,
         verbose_name=_('status'),
         db_index=True)
-    price = models.DecimalField(
+    price = MoneyField(
         max_digits=20,
         decimal_places=2,
         blank=True,
@@ -142,6 +143,12 @@ class ClientService(CommonInfo, TimeStampedModel):
         verbose_name=_('client'),
         related_name='services')
     orders = models.ManyToManyField('finances.Order', verbose_name=_('orders'))
+
+    def price_repr(self):
+        return '{} {}'.format(
+            getattr(self.price, 'amount', ''), self.price.currency)
+
+    price_repr.short_description = _('price')
 
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity

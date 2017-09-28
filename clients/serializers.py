@@ -44,7 +44,6 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
         many=False, read_only=False, queryset=Service.objects.all())
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    price = serializers.DecimalField(20, 2, read_only=True)
     country = serializers.SlugRelatedField(
         many=False, read_only=True, slug_field='tld')
 
@@ -56,6 +55,6 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ClientService
-        fields = ('id', 'is_enabled', 'status', 'price', 'country', 'quantity',
-                  'start_at', 'begin', 'end', 'service', 'client', 'created',
-                  'modified', 'created_by', 'modified_by')
+        fields = ('id', 'is_enabled', 'status', 'price', 'price_currency',
+                  'country', 'quantity', 'start_at', 'begin', 'end', 'service',
+                  'client', 'created', 'modified', 'created_by', 'modified_by')

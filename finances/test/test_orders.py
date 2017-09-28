@@ -2,6 +2,7 @@ import arrow
 import pytest
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
 
 from billing.lib.test import json_contains
 from clients.models import Client
@@ -18,7 +19,7 @@ def make_orders():
     now = arrow.utcnow()
     order = Order()
     order.client_id = 1
-    order.price = 12500.00
+    order.price = Money(12500, EUR)
     order.status = 'new'
     order.note = 'payment notification'
     order.expired_date = now.shift(days=2).datetime
@@ -47,7 +48,7 @@ def test_order_creation_and_modifications(mailoutbox):
     order = Order()
     order.client_id = 1
     order.save()
-    assert order.price == 0
+    assert order.price == Money(0, EUR)
     assert order.status == 'new'
     expired_date = arrow.get(order.created).shift(
         days=+settings.MB_ORDER_EXPIRED_DAYS).floor('second').datetime
@@ -59,23 +60,23 @@ def test_order_creation_and_modifications(mailoutbox):
     assert mail.recipients() == ['user@one.com']
 
     order.client_services.add(1, 2)
-    assert float(order.price) == 14001.83
+    assert order.price == Money(14001.83, EUR)
     assert 'Test service two' in order.note
-    assert '1999.98' in order.note
+    assert '1,999.98' in order.note
 
     order.note = 'test note'
-    order.price = 111.25
+    order.price = Money(111.25, EUR)
     order.save()
 
-    assert float(order.price) == 111.25
+    assert order.price == Money(111.25, EUR)
     assert order.note == 'test note'
 
     order.note = None
     order.price = 0
     order.save()
-    assert float(order.price) == 14001.83
+    assert order.price == Money(14001.83, EUR)
     assert 'Test service one' in order.note
-    assert '12001.85' in order.note
+    assert '12,001.85' in order.note
 
 
 def test_ordrers_list_by_user(client):
@@ -88,8 +89,8 @@ def test_order_list_by_admin(admin_client):
     response = admin_client.get(reverse('order-list'))
     assert response.status_code == 200
     assert len(response.json()['results']) == 3
-    json_contains(response, 'Test service one 24664.00')
-    json_contains(response, 'Test service one 4600.00')
+    json_contains(response, 'Test service one 24,664.00')
+    json_contains(response, 'Test service one 4,600.00')
 
     response = admin_client.get(
         reverse('order-list') + '?client__login=user-one')
@@ -109,7 +110,7 @@ def test_order_display_by_admin(admin_client):
     response = admin_client.get(reverse('order-detail', args=[2]))
     assert response.status_code == 200
     json_contains(response, 'user-two')
-    json_contains(response, '468468.00')
+    json_contains(response, '468,468.00')
 
 
 def test_manager_get_for_payment_notification(make_orders):

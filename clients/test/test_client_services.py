@@ -2,6 +2,7 @@ import json
 
 import arrow
 from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
 
 from billing.lib.test import json_contains
 from clients.models import ClientService
@@ -119,7 +120,7 @@ def test_client_services_update_task(admin_client):
     client_service.save()
     assert client_service.price == service.get_price(client=4) * 2
     price = service.prices.get(pk=8)
-    price.price = 2500
+    price.price = Money(2500, EUR)
     price.save()
 
     client_services_update.delay()
@@ -127,9 +128,9 @@ def test_client_services_update_task(admin_client):
 
     assert client_service.status == 'processing'
     assert client_service.end == end.shift(months=+3).datetime
-    assert client_service.price == 5000
+    assert client_service.price == Money(5000, EUR)
 
     order = Order.objects.get(
         client__pk=4, client_services__pk=client_service.pk)
-    assert order.price == 5000
+    assert order.price == Money(5000, EUR)
     assert order.status == 'new'

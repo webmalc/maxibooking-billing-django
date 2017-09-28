@@ -1,6 +1,7 @@
 import arrow
 import pytest
 from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
 
 from billing.lib.test import json_contains
 from clients.models import Client
@@ -34,14 +35,16 @@ def test_service_default_dates():
 @pytest.mark.django_db
 def test_service_get_price():
     service = Service.objects.get(pk=1)
-    assert service.get_price() == 12332.00
-    assert service.get_price(client=1) == 2300.00
-    assert service.get_price(client=9999) == 12332.00
-    assert service.get_price(country=2) == 234234.00
-    assert service.get_price(country=93434) == 12332.00
-    assert service.get_price(country='ad') == 2300.00
-    assert service.get_price(country=Country.objects.get(pk=1)) == 2300.00
-    assert service.get_price(client=Client.objects.get(pk=1)) == 2300.00
+    assert service.get_price() == Money(12332.00, EUR)
+    assert service.get_price(client=1) == Money(2300.00, EUR)
+    assert service.get_price(client=9999) == Money(12332.00, EUR)
+    assert service.get_price(country=2) == Money(234234.00, EUR)
+    assert service.get_price(country=93434) == Money(12332.00, EUR)
+    assert service.get_price(country='ad') == Money(2300.00, EUR)
+    assert service.get_price(country=Country.objects.get(pk=1)) == Money(
+        2300.00, EUR)
+    assert service.get_price(client=Client.objects.get(pk=1)) == Money(2300.00,
+                                                                       EUR)
 
 
 def test_services_list_by_user(client):
