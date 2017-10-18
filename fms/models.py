@@ -13,10 +13,11 @@ class FmsMixin(CommonInfo, TimeStampedModel):
     code = models.CharField(
         max_length=255, db_index=True, verbose_name=_('code'))
     end_date = models.CharField(
-        max_length=255, db_index=True, verbose_name=_('end date'))
+        max_length=100, db_index=True, verbose_name=_('end date'))
 
     class Meta:
         abstract = True
+        unique_together = (('internal_id', 'name', 'code', 'end_date'))
 
 
 class Fms(FmsMixin):
