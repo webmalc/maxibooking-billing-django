@@ -83,7 +83,10 @@
    CLOSED: [2017-09-27 Wed 11:52]
 ** DONE currencies
    CLOSED: [2017-09-28 Thu 17:05]
-** TODO currencies tests
+** TODO currencies test
+** TODO fixtures model
+** TODO fixtures complete link
+** TODO fixtures install link
 ** TODO ru mb links
 ** TODO payment type
 ** TODO stripe
