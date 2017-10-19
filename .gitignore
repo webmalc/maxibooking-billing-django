@@ -92,6 +92,7 @@ rest_client.txt
 
 #Project
 local_settings.py
+settings_local.py
 /nbproject/private/
 node_modules
 google_api_key.json
