@@ -17,12 +17,15 @@ class FmsMixin(CommonInfo, TimeStampedModel):
 
     class Meta:
         abstract = True
-        unique_together = (('internal_id', 'name', 'code', 'end_date'))
 
 
 class Fms(FmsMixin):
-    pass
+    class Meta:
+        verbose_name_plural = _('fms')
+        unique_together = (('internal_id', 'name', 'code', 'end_date'))
 
 
 class Kpp(FmsMixin):
-    pass
+    class Meta:
+        verbose_name_plural = _('kpp')
+        unique_together = (('internal_id', 'name', 'code', 'end_date'))
