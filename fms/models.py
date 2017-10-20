@@ -11,7 +11,11 @@ class FmsMixin(CommonInfo, TimeStampedModel):
     name = models.CharField(
         max_length=255, db_index=True, verbose_name=_('name'))
     code = models.CharField(
-        max_length=255, db_index=True, verbose_name=_('code'))
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('code'))
     end_date = models.CharField(
         max_length=100,
         null=True,
@@ -26,10 +30,10 @@ class FmsMixin(CommonInfo, TimeStampedModel):
 class Fms(FmsMixin):
     class Meta:
         verbose_name_plural = _('fms')
-        unique_together = (('internal_id', 'name', 'code'))
+        unique_together = (('internal_id', 'name'))
 
 
 class Kpp(FmsMixin):
     class Meta:
         verbose_name_plural = _('kpp')
-        unique_together = (('internal_id', 'name', 'code'))
+        unique_together = (('internal_id', 'name'))
