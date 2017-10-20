@@ -83,8 +83,9 @@
    CLOSED: [2017-09-27 Wed 11:52]
 ** DONE currencies
    CLOSED: [2017-09-28 Thu 17:05]
+** DONE kontyr.fms
+   CLOSED: [2017-10-20 Fri 15:26]
 ** TODO currencies test
-** TODO kontyr.fms
 ** TODO fixtures model
 ** TODO fixtures complete link
 ** TODO fixtures install link

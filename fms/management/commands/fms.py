@@ -13,6 +13,7 @@ class Command(BaseCommand):
         parser.add_argument(
             'type', nargs='?', type=str, choices=('fms', 'kpp'))
         parser.add_argument('filepath', nargs='?', type=str)
+        parser.add_argument('silently', nargs='?', type=bool, default=False)
 
     def handle(self, *args, **options):
         with open(options['filepath'], 'r', encoding='utf-8-sig') as f:
@@ -28,6 +29,8 @@ class Command(BaseCommand):
                     entry.full_clean()
                     entry.save()
                 except ValidationError:
-                    self.stdout.write(
-                        self.style.ERROR('{} - ignore'.format(row['ID'])))
-        self.stdout.write(self.style.SUCCESS('Successfully imported'))
+                    if not options['silently']:
+                        self.stdout.write(
+                            self.style.ERROR('{} - ignore'.format(row['ID'])))
+        if not options['silently']:
+            self.stdout.write(self.style.SUCCESS('Successfully imported'))

@@ -31,9 +31,11 @@ class Fms(FmsMixin):
     class Meta:
         verbose_name_plural = _('fms')
         unique_together = (('internal_id', 'name'))
+        ordering = ['internal_id']
 
 
 class Kpp(FmsMixin):
     class Meta:
         verbose_name_plural = _('kpp')
         unique_together = (('internal_id', 'name'))
+        ordering = ['internal_id']
