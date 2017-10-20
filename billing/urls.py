@@ -8,12 +8,13 @@ from django.contrib import admin
 
 from clients.urls import router as clients_router
 from finances.urls import router as finances_router
+from fms.urls import router as fms_router
 from hotels.urls import router as hotels_router
 
 from .routers import DefaultRouter
 
 router = DefaultRouter()
-router.extend(hotels_router, clients_router, finances_router)
+router.extend(hotels_router, clients_router, finances_router, fms_router)
 
 urlpatterns = [
     url(r'^rosetta/', include('rosetta.urls')),
