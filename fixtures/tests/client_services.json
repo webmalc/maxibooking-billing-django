@@ -78,5 +78,25 @@
         "service": 1,
         "client": 3
     }
+},
+{
+    "model": "clients.clientservice",
+    "pk": 5,
+    "fields": {
+        "created": "2017-08-01T11:57:59.183Z",
+        "modified": "2017-08-01T11:57:59.183Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "country": 3,
+        "is_enabled": true,
+        "price": "4000.00",
+        "price_currency": "RUB",
+        "quantity": 2,
+        "start_at": "2017-08-01T11:57:59.183Z",
+        "begin": "2017-08-01T11:57:53Z",
+        "end": "2017-08-30T11:57:57Z",
+        "service": 2,
+        "client": 3
+    }
 }
 ]

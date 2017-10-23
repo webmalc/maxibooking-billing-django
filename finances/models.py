@@ -1,3 +1,5 @@
+import logging
+
 import arrow
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -6,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from djmoney.models.fields import MoneyField
+from moneyed import EUR, Money
 
 from billing.exceptions import BaseException
 from billing.models import CommonInfo
@@ -19,8 +22,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     """
     Service class
     """
-    PERIODS_UNITS = (('day', _('day')), ('month', _('month')),
-                     ('year', _('year')))
+    PERIODS_UNITS = (('day', _('day')), ('month', _('month')), ('year',
+                                                                _('year')))
     PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
     TYPES = (('connection', _('connection')), ('rooms', _('rooms')),
              ('other', _('other')))
@@ -67,8 +70,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         """
         Get price by country or client
         """
-        if isinstance(client, int) or (isinstance(client, str) and
-                                       client.isnumeric()):
+        if isinstance(client, int) or (isinstance(client, str)
+                                       and client.isnumeric()):
             try:
                 client = Client.objects.get(pk=int(client))
             except Client.DoesNotExist:
@@ -78,8 +81,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
 
         if country:
             query = self.prices.filter(is_enabled=True)
-            if isinstance(country, int) or (isinstance(country, str) and
-                                            country.isnumeric()):
+            if isinstance(country, int) or (isinstance(country, str)
+                                            and country.isnumeric()):
                 query = query.filter(country__id=int(country))
             elif isinstance(country, Country):
                 query = query.filter(country=country)
@@ -178,8 +181,13 @@ class Order(CommonInfo, TimeStampedModel):
     """
     Order class
     """
-    STATUSES = (('new', _('new')), ('processing', _('processing')),
-                ('paid', _('paid')), ('canceled', _('canceled')))
+    STATUSES = (
+        ('new', _('new')),
+        ('processing', _('processing')),
+        ('paid', _('paid')),
+        ('canceled', _('canceled')),
+        ('corrupted', _('corrupted')),
+    )
     objects = OrderManager()
 
     status = models.CharField(
@@ -222,7 +230,21 @@ class Order(CommonInfo, TimeStampedModel):
         """
         Calculate && return price
         """
+        if self.status == 'corrupted':
+            return Money(0, EUR)
         return self.client_services.total(self.client_services)
+
+    def set_corrupted(self):
+        """
+        Set corrupted orders
+        """
+        if len(set([s.price.currency
+                    for s in self.client_services.all()])) > 1:
+            self.status = 'corrupted'
+            self.price = self.calc_price()
+            self.save()
+            logger = logging.getLogger('billing')
+            logger.error('Order corrupted #{}.'.format(self.pk))
 
     def generate_note(self):
         """
@@ -238,4 +260,7 @@ class Order(CommonInfo, TimeStampedModel):
             self.expired_date.strftime('%c'))
 
     class Meta:
-        ordering = ('-modified', '-created', )
+        ordering = (
+            '-modified',
+            '-created',
+        )

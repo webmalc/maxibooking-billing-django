@@ -2,7 +2,7 @@ import arrow
 import pytest
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from moneyed import EUR, Money
+from moneyed import EUR, RUB, Money
 
 from billing.lib.test import json_contains
 from clients.models import Client
@@ -147,3 +147,15 @@ def test_orders_clients_disable(make_orders, mailoutbox):
     format = '%d.%m.%Y %H:%I'
     assert client.disabled_at.strftime(format) == arrow.utcnow().strftime(
         format)
+
+
+def test_order_with_invalid_currencies():
+    order = Order()
+    order.client_id = 1
+    order.save()
+    assert order.price == Money(0, EUR)
+    order.client_services.add(5)
+    assert order.price == Money(4000, RUB)
+    order.client_services.add(4)
+    assert order.status == 'corrupted'
+    assert order.price == Money(0, EUR)

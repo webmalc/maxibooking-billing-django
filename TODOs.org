@@ -85,11 +85,14 @@
    CLOSED: [2017-09-28 Thu 17:05]
 ** DONE kontyr.fms
    CLOSED: [2017-10-20 Fri 15:26]
-** TODO currencies test
+** DONE currencies test
+   CLOSED: [2017-10-23 Mon 12:31]
 ** TODO fixtures model
-** TODO fixtures complete link
 ** TODO fixtures install link
+** TODO fixtures complete link
 ** TODO ru mb links
+
+
 ** TODO payment type
 ** TODO stripe
 ** TODO stripe tests

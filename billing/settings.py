@@ -153,16 +153,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'billing/static'),
-                    os.path.join(BASE_DIR, 'node_modules'), )
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'billing/static'),
+    os.path.join(BASE_DIR, 'node_modules'),
+)
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder', )
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
 
 FIXTURE_DIRS = (os.path.join(BASE_DIR, 'fixtures'), )
-LOCALE_PATHS = (os.path.join(os.path.dirname(__file__), "locale"),
-                os.path.join(os.path.dirname(__file__), "app_locale"), )
+LOCALE_PATHS = (
+    os.path.join(os.path.dirname(__file__), "locale"),
+    os.path.join(os.path.dirname(__file__), "app_locale"),
+)
 
 EMAIL_SUBJECT_PREFIX = '[maxi-booking.com]: '
 
@@ -221,7 +226,7 @@ LOGGING = {
     },
     'loggers': {
         'billing': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['file', 'mail_admins', 'sentry'],
             'level': 'DEBUG',
         },
     }
@@ -279,13 +284,15 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
         'rest_framework.permissions.IsAuthenticated'
     ],
-    'DEFAULT_FILTER_BACKENDS':
-    ('django_filters.rest_framework.DjangoFilterBackend',
-     'rest_framework.filters.SearchFilter',
-     'rest_framework.filters.OrderingFilter', ),
-    'DEFAULT_AUTHENTICATION_CLASSES':
-    ('rest_framework.authentication.TokenAuthentication',
-     'rest_framework.authentication.SessionAuthentication', )
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
 
 # Cities light

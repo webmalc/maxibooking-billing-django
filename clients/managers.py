@@ -2,7 +2,6 @@ import arrow
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db import models
 
 from billing.exceptions import BaseException
 from billing.managers import LookupMixin
@@ -39,8 +38,9 @@ class ClientServiceManager(LookupMixin):
         Get total price
         """
         query = query if query else self.all()
-        total = query.filter(is_enabled=True).aggregate(
-            total=models.Sum('price'))['total']
+        total = 0
+        for s in query.filter(is_enabled=True):
+            total += s.price
         return total if total else 0
 
     def find_ended(self):

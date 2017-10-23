@@ -45,6 +45,11 @@ def order_m2m_changed(sender, **kwargs):
     if kwargs['action'] not in ('post_add', 'post_remove', 'post_clear'):
         return None
     order = kwargs['instance']
+    if order.status == 'corrupted':
+        return None
+
+    order.set_corrupted()
+
     is_changed = False
     if not order.note:
         order.note = order.generate_note()

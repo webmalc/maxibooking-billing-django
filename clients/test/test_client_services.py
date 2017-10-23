@@ -18,7 +18,7 @@ def test_client_services_list_by_user(client):
 def test_client_services_list_by_admin(admin_client):
     response = admin_client.get(reverse('clientservice-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 4
+    assert len(response.json()['results']) == 5
     json_contains(response, '12001.85')
 
 
@@ -48,12 +48,15 @@ def test_client_service_create_invalid_by_admin(admin_client):
         content_type="application/json")
     response_json = response.json()
 
-    assert response_json[
-        'quantity'] == ['Ensure this value is greater than or equal to 1.']
-    assert response_json[
-        'service'] == ['Invalid pk "312" - object does not exist.']
-    assert response_json[
-        'client'] == ['Object with login=invalid-user does not exist.']
+    assert response_json['quantity'] == [
+        'Ensure this value is greater than or equal to 1.'
+    ]
+    assert response_json['service'] == [
+        'Invalid pk "312" - object does not exist.'
+    ]
+    assert response_json['client'] == [
+        'Object with login=invalid-user does not exist.'
+    ]
 
     data['quantity'] = 1
     data['client'] = 'user-one'
