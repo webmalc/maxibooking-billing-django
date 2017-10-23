@@ -33,11 +33,11 @@ class RoomSerializer(serializers.HyperlinkedModelSerializer):
     """
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    property = serializers.HyperlinkedRelatedField(
+    property = serializers.PrimaryKeyRelatedField(
         many=False,
         read_only=False,
         queryset=Property.objects.all(),
-        view_name='property-detail')
+    )
 
     class Meta:
         model = Room

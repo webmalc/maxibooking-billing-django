@@ -1,0 +1,44 @@
+[
+{
+    "model": "hotels.room",
+    "pk": 1,
+    "fields": {
+        "created": "2017-10-23T11:21:07.238Z",
+        "modified": "2017-10-23T11:21:07.238Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "name": "Room one",
+        "description": "Room one description",
+        "rooms": 45,
+        "property": 1
+    }
+},
+{
+    "model": "hotels.room",
+    "pk": 2,
+    "fields": {
+        "created": "2017-10-23T11:21:07.238Z",
+        "modified": "2017-10-23T11:21:07.238Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "name": "Room two",
+        "description": "Room two description",
+        "rooms": 12,
+        "property": 1
+    }
+},
+{
+    "model": "hotels.room",
+    "pk": 3,
+    "fields": {
+        "created": "2017-10-23T11:21:07.238Z",
+        "modified": "2017-10-23T11:21:07.238Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "name": "Room three",
+        "description": "Room three description",
+        "rooms": 120,
+        "property": 2
+    }
+}
+]
