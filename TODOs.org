@@ -87,9 +87,12 @@
    CLOSED: [2017-10-20 Fri 15:26]
 ** DONE currencies test
    CLOSED: [2017-10-23 Mon 12:31]
-** TODO fixtures model
-** TODO fixtures install link
-** TODO fixtures complete link
+** DONE fixtures model
+   CLOSED: [2017-10-23 Mon 16:05]
+** DONE fixtures install link
+   CLOSED: [2017-10-23 Mon 18:07]
+** DONE fixtures complete link
+   CLOSED: [2017-10-23 Mon 18:07]
 ** TODO ru mb links
 
 

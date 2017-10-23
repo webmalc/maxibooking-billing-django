@@ -7,6 +7,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 from billing.exceptions import BaseException
+from billing.lib import mb
 
 from .models import Client, ClientService
 from .serializers import ClientSerializer, ClientServiceSerializer
@@ -78,7 +79,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'])
     def install(self, request, login=None):
         """
-        Install user
+        Install client maxibooking
         """
         client = self.get_object()
         if client.installation == 'installed':
@@ -94,6 +95,36 @@ class ClientViewSet(viewsets.ModelViewSet):
         })
 
     @detail_route(methods=['post'])
+    def fixtures(self, request, login=None):
+        """
+        Install client fixtures
+        """
+        client = self.get_object()
+        if client.installation == 'not_installed':
+            return Response({
+                'status': False,
+                'message': 'client not installed'
+            })
+        if client.installation == 'process':
+            return Response({
+                'status': False,
+                'message': 'client installation in process'
+            })
+
+        response = mb.client_fixtures(client)
+        if response:
+            return Response({
+                'status': True,
+                'message': 'client fixtures installed',
+                'url': response['url']
+            })
+        else:
+            return Response({
+                'status': False,
+                'message': 'client fixtures installation error',
+            })
+
+    @detail_route(methods=['post'])
     def install_result(self, request, login=None):
         """
         Receive installation status
@@ -102,8 +133,8 @@ class ClientViewSet(viewsets.ModelViewSet):
         request_json = json.loads(request.body)
         logging.getLogger('billing').info(
             'Client installation result. Client: {}; status: {}; url: {};'.
-            format(client, request_json.get('status'), request_json.get(
-                'url')))
+            format(client, request_json.get('status'),
+                   request_json.get('url')))
 
         if client.installation == 'installed':
             return Response({

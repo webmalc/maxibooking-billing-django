@@ -30,6 +30,8 @@ CELERY_LOGLEVEL = 'debug'
 MB_URL = 'https://example.com'
 # Maxibooking archive url
 MB_ARCHIVE_URL = 'https://example.com'
+# Maxibooking fixtures url
+MB_FIXTURES_URL = 'https://example.com'
 # Maxibooking token
 MB_TOKEN = 'my_super_secret_token'
 # Requests timeout (sec)

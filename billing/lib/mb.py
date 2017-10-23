@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -18,7 +19,10 @@ def _request(url, data, error_callback):
             response = requests.post(
                 url, timeout=settings.MB_TIMEOUT, json=data)
             if response.status_code == 200:
-                return True
+                try:
+                    return response.json()
+                except json.decoder.JSONDecodeError:
+                    return response
         except requests.exceptions.RequestException:
             pass
 
@@ -31,13 +35,42 @@ def _request(url, data, error_callback):
     return False
 
 
+def client_fixtures(client):
+    """
+    Install client fixtures
+    """
+    logging.getLogger('billing').info(
+        'Begin client fixtures installation. Id: {}; login: {}'.format(
+            client.id, client.login))
+
+    def _error_callback():
+        logging.getLogger('billing').error(
+            'Failed client fixtures installation. Id: {}; login: {}'.format(
+                client.id, client.login))
+        mail_client(
+            subject=_('Registation failed'),
+            template='emails/registration_fail.html',
+            data={},
+            client=client)
+
+    return _request(
+        url=settings.MB_FIXTURES_URL,
+        data={
+            'client_login': client.login,
+            'token': settings.MB_TOKEN,
+            'results_url': reverse(
+                'client-install-result', args=[client.login])
+        },
+        error_callback=_error_callback)
+
+
 def client_install(client):
     """
     Client installation
     """
     logging.getLogger('billing').info(
-        'Begin client installation. Id: {}; login: {}'.format(client.id,
-                                                              client.login))
+        'Begin client installation. Id: {}; login: {}'.format(
+            client.id, client.login))
 
     def _error_callback():
         logging.getLogger('billing').error(
@@ -54,8 +87,8 @@ def client_install(client):
         data={
             'client_login': client.login,
             'token': settings.MB_TOKEN,
-            'results_url':
-            reverse('client-install-result', args=[client.login])
+            'results_url': reverse(
+                'client-install-result', args=[client.login])
         },
         error_callback=_error_callback)
 
@@ -65,8 +98,8 @@ def client_archive(client):
     Client archivation
     """
     logging.getLogger('billing').info(
-        'Begin client archivation. Id: {}; login: {}'.format(client.id,
-                                                             client.login))
+        'Begin client archivation. Id: {}; login: {}'.format(
+            client.id, client.login))
 
     def _error_callback():
         logging.getLogger('billing').error(

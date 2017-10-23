@@ -17,6 +17,7 @@ TESTS = True
 
 MB_URL = 'https://example.com'
 MB_ARCHIVE_URL = 'https://example.com'
+MB_FIXTURES_URL = 'https://example.com'
 MB_TIMEOUT = 1
 MB_ORDER_EXPIRED_DAYS = 21
 MB_ORDER_BEFORE_DAYS = 14

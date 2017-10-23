@@ -3,6 +3,7 @@ import json
 from django.core.urlresolvers import reverse
 from moneyed import EUR, Money
 
+from billing.lib import mb
 from billing.lib.test import json_contains
 from finances.models import Service
 from hotels.models import Property, Room
@@ -86,6 +87,58 @@ def test_client_confirm_by_admin(admin_client):
     assert response.json()['status'] is True
     client = Client.objects.get(login='user-three')
     assert client.status == 'active'
+
+
+def test_client_fixtures_by_user(client):
+    response = client.post(
+        reverse('client-fixtures', args=['user-three']),
+        content_type="application/json")
+    assert response.status_code == 401
+
+
+def test_client_not_installed_fixtures_by_admin(admin_client):
+    response = admin_client.post(
+        reverse('client-fixtures', args=['user-one']),
+        content_type="application/json")
+    assert response.json()['status'] is False
+    assert response.json()['message'] == 'client not installed'
+
+
+def test_client_process_fixtures_by_admin(admin_client):
+    response = admin_client.post(
+        reverse('client-fixtures', args=['user-four']),
+        content_type="application/json")
+    assert response.json()['status'] is False
+    assert response.json()['message'] == 'client installation in process'
+
+
+def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
+    settings.MB_FIXTURES_URL = 'http://invalid-domain-name.com'
+    response = admin_client.post(
+        reverse('client-fixtures', args=['user-two']),
+        content_type="application/json")
+
+    assert response.json()['status'] is False
+    assert len(mailoutbox) == 2
+
+    mail = mailoutbox[0]
+
+    assert 'Failed client fixtures installation' in mail.subject
+    assert 'user-two' in mail.body
+
+    assert 'failed' in mailoutbox[1].subject
+
+
+def test_client_fixtures_by_admin(admin_client, mocker):
+    mb.client_fixtures = mocker.MagicMock(return_value={
+        'url': 'test url',
+    })
+    response = admin_client.post(
+        reverse('client-fixtures', args=['user-two']),
+        content_type="application/json")
+    assert response.json()['status'] is True
+    assert response.json()['message'] == 'client fixtures installed'
+    assert response.json()['url'] == 'test url'
 
 
 def test_client_install_by_user(client):
