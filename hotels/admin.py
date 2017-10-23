@@ -5,7 +5,15 @@ from django.contrib import admin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
 
-from .models import City, Country, Property, Region
+from .models import City, Country, Property, Region, Room
+
+
+class RoomsInlineAdmin(admin.TabularInline):
+    """
+    ClientServiceInline admin interface
+    """
+    model = Room
+    fields = ('name', 'rooms', 'description')
 
 
 @admin.register(Property)
@@ -13,21 +21,30 @@ class PropertyAdmin(VersionAdmin):
     """
     Property admin interface
     """
-    list_display = ('id', 'name', 'type', 'city', 'rooms', 'client', 'created')
+    list_display = ('id', 'name', 'type', 'city', 'client', 'created')
     list_display_links = ('id', 'name')
-    list_filter = ('type', 'created_by', )
+    list_filter = (
+        'type',
+        'created_by',
+    )
     search_fields = ('id', 'name', 'city__name', 'city__alternate_names',
                      'description', 'client__login', 'client__name',
                      'client__email')
     raw_id_fields = ('city', 'client')
-    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
-    fieldsets = (('General', {
-        'fields': ('client', 'name', 'description', 'type', 'rooms')
-    }), ('Location', {
-        'fields': ('city', 'address', 'url')
-    }), ('Options', {
-        'fields': ('created', 'modified', 'created_by', 'modified_by')
-    }), )
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
+                       'rooms_count')
+    inlines = (RoomsInlineAdmin, )
+    fieldsets = (
+        ('General', {
+            'fields': ('client', 'name', 'description', 'type', 'rooms_count')
+        }),
+        ('Location', {
+            'fields': ('city', 'address', 'url')
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
     list_select_related = ('city', 'client')
 
 

@@ -10,7 +10,7 @@ from django_extensions.db.models import TimeStampedModel
 
 from billing.models import CommonInfo
 
-from .managers import PropertyManager
+from .managers import PropertyManager, RoomManager
 
 
 class CityMixin:
@@ -79,8 +79,8 @@ class Property(CommonInfo, TimeStampedModel):
     Property class
     """
     TYPES = (('hotel', _('Hotel')), ('hostel', _('Hostel')),
-             ('flat', _('Flat')), ('b&b', _('B&B')),
-             ('vacation_rental', _('Vacation rental')))
+             ('flat', _('Flat')), ('b&b', _('B&B')), ('vacation_rental',
+                                                      _('Vacation rental')))
 
     objects = PropertyManager()
 
@@ -103,11 +103,6 @@ class Property(CommonInfo, TimeStampedModel):
         validators=[MinLengthValidator(2)])
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, verbose_name=_('city'), db_index=True)
-    rooms = models.PositiveIntegerField(
-        verbose_name=_('rooms'),
-        db_index=True,
-        validators=[MinValueValidator(1)],
-        help_text=_('max rooms'))
     type = models.CharField(
         max_length=20,
         default='hotel',
@@ -123,6 +118,44 @@ class Property(CommonInfo, TimeStampedModel):
         db_index=True,
         related_name='properties')
 
+    @property
+    def rooms_count(self):
+        return self.rooms.count_rooms(self.client)
+
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'properties'
+
+
+class Room(CommonInfo, TimeStampedModel):
+    """
+    Room class
+    """
+    objects = RoomManager()
+
+    name = models.CharField(
+        max_length=255,
+        verbose_name=_('name'),
+        db_index=True,
+        validators=[MinLengthValidator(2)])
+    description = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_('description'),
+        db_index=True,
+        validators=[MinLengthValidator(2)])
+    rooms = models.PositiveIntegerField(
+        verbose_name=_('rooms'),
+        db_index=True,
+        validators=[MinValueValidator(1)],
+        help_text=_('max rooms'))
+    property = models.ForeignKey(
+        Property,
+        on_delete=models.CASCADE,
+        verbose_name=_('property'),
+        db_index=True,
+        related_name='rooms')
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'rooms'

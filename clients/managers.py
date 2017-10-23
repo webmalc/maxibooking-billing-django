@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 from billing.exceptions import BaseException
 from billing.managers import LookupMixin
-from hotels.models import Property
+from hotels.models import Room
 
 
 class ClientManager(LookupMixin):
@@ -72,7 +72,7 @@ class ClientServiceManager(LookupMixin):
             raise BaseException('default rooms service not found')
 
         self._make_trial_service(connection, client, 1)
-        rooms_max = Property.objects.count_rooms(client)
+        rooms_max = Room.objects.count_rooms(client)
         self._make_trial_service(rooms, client, rooms_max)
 
     def _make_trial_service(self, service, client, quantity):

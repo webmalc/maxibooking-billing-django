@@ -29,24 +29,23 @@ def test_property_display_by_user(client):
 
 
 def test_property_create_invalid_by_admin(admin_client):
-    data = json.dumps({'name': '1', 'rooms': 'test'})
+    data = json.dumps({'name': '1'})
     response = admin_client.post(
         reverse('property-list'), data=data, content_type="application/json")
     response_json = response.json()
 
-    assert response_json[
-        'name'] == ['Ensure this field has at least 2 characters.']
+    assert response_json['name'] == [
+        'Ensure this field has at least 2 characters.'
+    ]
     assert response_json['city'] == ['This field is required.']
     assert response_json['client'] == ['This field is required.']
-    assert response_json['rooms'] == ['A valid integer is required.']
 
 
 def test_property_create_by_admin(admin_client):
     data = json.dumps({
         'name': 'new test property',
         'city': 1,
-        'client': 'user-one',
-        'rooms': 20
+        'client': 'user-one'
     })
     response = admin_client.post(
         reverse('property-list'), data=data, content_type="application/json")

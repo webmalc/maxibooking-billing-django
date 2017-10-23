@@ -70,8 +70,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         """
         Get price by country or client
         """
-        if isinstance(client, int) or (isinstance(client, str)
-                                       and client.isnumeric()):
+        if isinstance(client, int) or \
+           (isinstance(client, str) and client.isnumeric()):
             try:
                 client = Client.objects.get(pk=int(client))
             except Client.DoesNotExist:
@@ -81,8 +81,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
 
         if country:
             query = self.prices.filter(is_enabled=True)
-            if isinstance(country, int) or (isinstance(country, str)
-                                            and country.isnumeric()):
+            if isinstance(country, int) or \
+               (isinstance(country, str) and country.isnumeric()):
                 query = query.filter(country__id=int(country))
             elif isinstance(country, Country):
                 query = query.filter(country=country)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from clients.models import Client
 
-from .models import City, Country, Property, Region
+from .models import City, Country, Property, Region, Room
 
 
 class PropertySerializer(serializers.HyperlinkedModelSerializer):
@@ -18,11 +18,31 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
         read_only=False,
         slug_field='login',
         queryset=Client.objects.all())
+    rooms = serializers.HyperlinkedRelatedField(
+        many=True, read_only=True, view_name='room-detail')
 
     class Meta:
         model = Property
-        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'rooms',
-                  'client', 'created', 'modified', 'created_by', 'modified_by')
+        fields = ('id', 'name', 'type', 'city', 'address', 'url', 'client',
+                  'rooms', 'created', 'modified', 'created_by', 'modified_by')
+
+
+class RoomSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Room serializer
+    """
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    property = serializers.HyperlinkedRelatedField(
+        many=False,
+        read_only=False,
+        queryset=Property.objects.all(),
+        view_name='property-detail')
+
+    class Meta:
+        model = Room
+        fields = ('id', 'name', 'rooms', 'description', 'property', 'created',
+                  'modified', 'created_by', 'modified_by')
 
 
 class CountrySerializer(serializers.HyperlinkedModelSerializer):

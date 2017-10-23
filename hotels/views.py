@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from .models import City, Country, Property, Region
+from .models import City, Country, Property, Region, Room
 from .serializers import (CitySerializer, CountrySerializer,
-                          PropertySerializer, RegionSerializer)
+                          PropertySerializer, RegionSerializer, RoomSerializer)
 
 
 class PropertyViewSet(viewsets.ModelViewSet):
@@ -14,6 +14,18 @@ class PropertyViewSet(viewsets.ModelViewSet):
     search_fields = ('name', 'city__name', 'city__alternate_names',
                      'description')
     serializer_class = PropertySerializer
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    """
+    Room viewset
+    """
+    queryset = Room.objects.all().select_related('property', 'created_by',
+                                                 'modified_by')
+    search_fields = ('property__name', 'property__client__username', 'name',
+                     'description')
+    filter_fields = ('property', 'property__client')
+    serializer_class = RoomSerializer
 
 
 class CountryViewSet(viewsets.ModelViewSet):

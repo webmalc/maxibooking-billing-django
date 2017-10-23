@@ -5,7 +5,7 @@ from moneyed import EUR, Money
 
 from billing.lib.test import json_contains
 from finances.models import Service
-from hotels.models import Property
+from hotels.models import Property, Room
 
 from ..models import Client
 from ..tasks import client_archivation
@@ -44,8 +44,9 @@ def test_client_create_invalid_by_admin(admin_client):
         'Enter a valid login. This value may \
 contain only lowercase letters, numbers, and "-" character.'
     ]
-    assert response_json[
-        'email'] == ['client with this e-mail already exists.']
+    assert response_json['email'] == [
+        'client with this e-mail already exists.'
+    ]
     assert response_json['phone'] == ['This field is required.']
 
 
@@ -240,17 +241,18 @@ def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
 def test_admin_trial_by_admin(admin_client):
     Service.objects.filter(pk=2, type='rooms').update(is_default=True)
     Property.objects.create(
-        name='Test property five',
-        rooms=12,
+        name='Test property four',
         url='http://property.five',
         client_id=5,
         city_id=1)
+    Room.objects.create(name='Test room one', property_id=4, rooms=13)
+    Room.objects.create(name='Test room another', property_id=2, rooms=23)
     Property.objects.create(
-        name='Test property six',
-        rooms=13,
+        name='Test property five',
         url='http://property.six',
         client_id=5,
         city_id=2)
+    Room.objects.create(name='Test room two', property_id=5, rooms=12)
     response = admin_client.post(
         reverse('client-trial', args=['user-five']),
         content_type="application/json")
@@ -260,10 +262,11 @@ def test_admin_trial_by_admin(admin_client):
     assert response_json['message'] == 'trial successfully activated'
 
     client = Client.objects.get(pk=5)
+
     assert client.services.count() == 2
     assert client.rooms_limit == 25
-    assert client.services.get(service__type='rooms').price == Money(87500.0,
-                                                                     EUR)
+    assert client.services.get(service__type='rooms').price == Money(
+        87500.0, EUR)
     assert client.services.get(service__type='connection').status == 'active'
 
 
