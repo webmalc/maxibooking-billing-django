@@ -14,36 +14,6 @@ from ..tasks import orders_clients_disable, orders_payment_notify
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture()
-def make_orders():
-    now = arrow.utcnow()
-    order = Order()
-    order.client_id = 1
-    order.price = Money(12500, EUR)
-    order.status = 'new'
-    order.note = 'payment notification'
-    order.expired_date = now.shift(days=2).datetime
-    order.save()
-
-    order.pk = None
-    order.status = 'paid'
-    order.note = 'paid order'
-    order.save()
-
-    order.pk = None
-    order.status = 'new'
-    order.note = 'order expired'
-    order.expired_date = now.shift(days=-1).datetime
-    order.save()
-
-    order.pk = None
-    order.status = 'new'
-    order.note = None
-    order.expired_date = now.shift(days=5).datetime
-
-    return None
-
-
 def test_order_creation_and_modifications(mailoutbox):
     order = Order()
     order.client_id = 1
