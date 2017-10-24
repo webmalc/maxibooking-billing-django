@@ -3,6 +3,24 @@ from rest_framework import serializers
 from .models import Order, Price, Service
 
 
+class PaymentSystemSerializer(serializers.Serializer):
+    """
+    PaymentSystem serializer
+    """
+    id = serializers.CharField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    countries = serializers.ListField()
+    countries_excluded = serializers.ListField()
+
+
+class PaymentSystemDisplaySerializer(PaymentSystemSerializer):
+    """
+    PaymentSystem display serializer
+    """
+    html = serializers.CharField()
+
+
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """
     Order serializer

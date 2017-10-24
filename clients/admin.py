@@ -20,7 +20,10 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
     """
     list_display = ('id', 'service', 'client', 'quantity', 'price', 'begin',
                     'end', 'status', 'is_enabled')
-    list_display_links = ('id', 'service', )
+    list_display_links = (
+        'id',
+        'service',
+    )
     list_filter = ('service', 'is_enabled', ('orders', TextFieldListFilter),
                    'begin', 'end')
     search_fields = ('=pk', '=orders__pk', 'service__title', 'client__name',
@@ -28,13 +31,16 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
     readonly_fields = ('start_at', 'created', 'price_repr', 'modified',
                        'created_by', 'modified_by', 'country')
     raw_id_fields = ('service', 'client', 'country', 'orders')
-    fieldsets = (('General', {
-        'fields': ('service', 'client', 'quantity', 'price_repr', 'begin',
-                   'end', 'orders')
-    }), ('Options', {
-        'fields': ('status', 'is_enabled', 'country', 'start_at', 'created',
-                   'modified', 'created_by', 'modified_by')
-    }), )
+    fieldsets = (
+        ('General', {
+            'fields': ('service', 'client', 'quantity', 'price_repr', 'begin',
+                       'end', 'orders')
+        }),
+        ('Options', {
+            'fields': ('status', 'is_enabled', 'country', 'start_at',
+                       'created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
     list_select_related = ('service', 'client')
     form = make_ajax_form(ClientService, {
         'client': 'clients',
@@ -69,7 +75,7 @@ class PropertyInlineAdmin(admin.TabularInline):
     PropertyInline admin interface
     """
     model = Property
-    fields = ('name', 'type', 'city', 'rooms')
+    fields = ('name', 'type', 'city')
     raw_id_fields = ('city', )
     show_change_link = True
 
@@ -88,12 +94,16 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
                        'modified_by', 'rooms_limit')
     list_select_related = ('country', )
-    fieldsets = (('General', {
-        'fields': ('login', 'email', 'phone', 'name', 'description', 'country')
-    }), ('Options', {
-        'fields': ('status', 'installation', 'rooms_limit', 'disabled_at',
-                   'created', 'modified', 'created_by', 'modified_by')
-    }), )
+    fieldsets = (
+        ('General', {
+            'fields': ('login', 'email', 'phone', 'name', 'description',
+                       'country')
+        }),
+        ('Options', {
+            'fields': ('status', 'installation', 'rooms_limit', 'disabled_at',
+                       'created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
     inlines = (PropertyInlineAdmin, ClientServiceInlineAdmin)
 
     def install(self, request, obj):

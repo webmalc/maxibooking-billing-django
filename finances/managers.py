@@ -12,6 +12,12 @@ class OrderManager(LookupMixin):
     lookup_search_fields = ('pk', 'client__name', 'client__email',
                             'client__login')
 
+    def get_for_payment_system(self, pk):
+        """
+        Get order for payment systems
+        """
+        return self.get(pk=pk, status='new', client__phone__isnull=False)
+
     def get_for_payment_notification(self):
         """
         Get orders for payment notification
@@ -19,9 +25,10 @@ class OrderManager(LookupMixin):
         now = arrow.utcnow()
         return self.filter(
             status__in=('new', 'processing'),
-            expired_date__range=(now.datetime, now.shift(
-                days=settings.MB_ORDER_PAYMENT_NOTIFY_DAYS).datetime)).exclude(
-                    client__status__in=('disabled', 'archived'))
+            expired_date__range=(
+                now.datetime,
+                now.shift(days=settings.MB_ORDER_PAYMENT_NOTIFY_DAYS).datetime
+            )).exclude(client__status__in=('disabled', 'archived'))
 
     def get_expired(self):
         """
@@ -29,9 +36,9 @@ class OrderManager(LookupMixin):
         """
         now = arrow.utcnow()
         return self.filter(
-            status__in=('new', 'processing'),
-            expired_date__lte=now.datetime).exclude(
-                client__status__in=('disabled', 'archived'))
+            status__in=('new',
+                        'processing'), expired_date__lte=now.datetime).exclude(
+                            client__status__in=('disabled', 'archived'))
 
 
 class ServiceManager(LookupMixin):

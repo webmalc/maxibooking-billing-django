@@ -1,9 +1,36 @@
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Order, Price, Service
-from .serializers import OrderSerializer, PriceSerializer, ServiceSerializer
+from .serializers import (OrderSerializer, PaymentSystemDisplaySerializer,
+                          PaymentSystemSerializer, PriceSerializer,
+                          ServiceSerializer)
+from .systems import manager
+
+
+class PaymentSystemViewSet(viewsets.ViewSet):
+    """
+    PaymentSystem viewset
+    """
+    serializer_class = PaymentSystemSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def list(self, request):
+        entries = manager.list(request.query_params.get('order', None))
+        serializer = PaymentSystemSerializer(
+            instance=entries.values(), many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk):
+        entry = manager.get(pk, request.query_params.get('order', None))
+        if not entry:
+            return Response(status=404)
+        serializer = PaymentSystemDisplaySerializer(instance=entry, many=False)
+
+        return Response(serializer.data)
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
@@ -18,9 +45,15 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
                      'client_services__service__description', 'client__name',
                      'client__email', 'client__login')
     serializer_class = OrderSerializer
-    filter_fields = ('status', 'client_services__service',
-                     'client_services__id', 'client__login', 'expired_date',
-                     'paid_date', 'created', )
+    filter_fields = (
+        'status',
+        'client_services__service',
+        'client_services__id',
+        'client__login',
+        'expired_date',
+        'paid_date',
+        'created',
+    )
 
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
