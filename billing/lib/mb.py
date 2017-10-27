@@ -19,8 +19,9 @@ def _request(url, data, error_callback):
             response = requests.post(
                 url, timeout=settings.MB_TIMEOUT, json=data)
             if response.status_code == 200:
+                content = response.content
                 try:
-                    return response.json()
+                    return json.loads(content)
                 except json.decoder.JSONDecodeError:
                     return response
         except requests.exceptions.RequestException:
