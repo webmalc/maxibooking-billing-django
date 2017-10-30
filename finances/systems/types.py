@@ -82,9 +82,14 @@ class Rbk(BaseType):
     id = 'rbk'
     name = _('rbk')
     description = _('rbk description')
+    template = 'finances/rbk.html'
     html = ''
     countries_excluded = []
     countries = ['ru']
+
+    @property
+    def html(self):
+        return render_to_string(self.template, {'order': self.order})
 
 
 class Stripe(BaseType):
