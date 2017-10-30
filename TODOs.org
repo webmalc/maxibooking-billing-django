@@ -93,7 +93,11 @@
    CLOSED: [2017-10-23 Mon 18:07]
 ** DONE fixtures complete link
    CLOSED: [2017-10-23 Mon 18:07]
-** TODO ru mb links
+** DONE ru mb links
+   CLOSED: [2017-10-30 Mon 13:50]
+
+** DONE fab deploy
+   CLOSED: [2017-10-30 Mon 13:50]
 
 
 ** TODO payment type
@@ -106,7 +110,6 @@
 ** TODO organization
 ** TODO bill
 ** TODO not periodical order
-** TODO fab deploy
 ** TODO registration refactor
 ** TODO order prolongation interface
 
