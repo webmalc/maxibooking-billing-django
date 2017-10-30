@@ -2,10 +2,11 @@ import json
 import logging
 import time
 
-import requests
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+
+import requests
 
 from .messengers.mailer import mail_client
 
@@ -36,6 +37,17 @@ def _request(url, data, error_callback):
     return False
 
 
+def mb_settings(client=None, country=None):
+    """
+    Get MB_URLS by country code
+    """
+    if not client and not country:
+        raise AttributeError('client is None and country is None.')
+    if not country and client:
+        country = client.country.tld
+    return settings.MB_URLS.get(country, settings.MB_URLS['__all__'])
+
+
 def client_fixtures(client):
     """
     Install client fixtures
@@ -43,6 +55,8 @@ def client_fixtures(client):
     logging.getLogger('billing').info(
         'Begin client fixtures installation. Id: {}; login: {}'.format(
             client.id, client.login))
+
+    urls = mb_settings(client)
 
     def _error_callback():
         logging.getLogger('billing').error(
@@ -55,10 +69,10 @@ def client_fixtures(client):
             client=client)
 
     return _request(
-        url=settings.MB_FIXTURES_URL,
+        url=urls['fixtures'],
         data={
             'client_login': client.login,
-            'token': settings.MB_TOKEN,
+            'token': urls['token'],
             'results_url': reverse(
                 'client-install-result', args=[client.login])
         },
@@ -73,6 +87,8 @@ def client_install(client):
         'Begin client installation. Id: {}; login: {}'.format(
             client.id, client.login))
 
+    urls = mb_settings(client)
+
     def _error_callback():
         logging.getLogger('billing').error(
             'Failed client installation. Id: {}; login: {}'.format(
@@ -84,10 +100,10 @@ def client_install(client):
             client=client)
 
     return _request(
-        url=settings.MB_URL,
+        url=urls['install'],
         data={
             'client_login': client.login,
-            'token': settings.MB_TOKEN,
+            'token': urls['token'],
             'results_url': reverse(
                 'client-install-result', args=[client.login])
         },
@@ -102,15 +118,17 @@ def client_archive(client):
         'Begin client archivation. Id: {}; login: {}'.format(
             client.id, client.login))
 
+    urls = mb_settings(client)
+
     def _error_callback():
         logging.getLogger('billing').error(
             'Failed client archivation. Id: {}; login: {}'.format(
                 client.id, client.login))
 
     result = _request(
-        url=settings.MB_ARCHIVE_URL,
+        url=urls['archive'],
         data={'client_login': client.login,
-              'token': settings.MB_TOKEN},
+              'token': urls['token']},
         error_callback=_error_callback)
     if result:
         client.status = 'archived'

@@ -113,7 +113,7 @@ def test_client_process_fixtures_by_admin(admin_client):
 
 
 def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_FIXTURES_URL = 'http://invalid-domain-name.com'
+    settings.MB_URLS['__all__']['fixtures'] = 'http://invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-fixtures', args=['user-two']),
         content_type="application/json")
@@ -159,7 +159,7 @@ def test_client_install_by_admin(admin_client):
 
 
 def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_URL = 'http://invalid-domain-name.com'
+    settings.MB_URLS['__all__']['install'] = 'http://invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-install', args=['user-one']),
         content_type="application/json")
@@ -330,7 +330,7 @@ def test_clients_archivation(admin_client):
 
 
 def test_clients_archivation_invalid(admin_client, settings):
-    settings.MB_ARCHIVE_URL = 'http://invalid-domain-name.com'
+    settings.MB_URLS['__all__']['archive'] = 'http://invalid-domain-name.com'
     client_archivation.delay()
     client = Client.objects.get(login='user-six')
     assert client.status == 'disabled'

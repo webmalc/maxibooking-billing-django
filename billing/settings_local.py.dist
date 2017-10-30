@@ -26,14 +26,21 @@ DEBUG = False
 
 CELERY_LOGLEVEL = 'debug'
 
-# Maxibooking url
-MB_URL = 'https://example.com'
-# Maxibooking archive url
-MB_ARCHIVE_URL = 'https://example.com'
-# Maxibooking fixtures url
-MB_FIXTURES_URL = 'https://example.com'
-# Maxibooking token
-MB_TOKEN = 'my_super_secret_token'
+# Maxibooking urls
+MB_URLS = {
+    'ru': {
+        'install': 'https://example.com',
+        'archive': 'https://example.com',
+        'fixtures': 'https://example.com',
+        'token': 'token_ru'
+    },
+    '__all__': {
+        'install': 'https://example.com',
+        'archive': 'https://example.com',
+        'fixtures': 'https://example.com',
+        'token': 'token_all'
+    }
+}
 # Requests timeout (sec)
 MB_TIMEOUT = 1
 # Order expired period (in days)
