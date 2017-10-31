@@ -100,7 +100,8 @@
    CLOSED: [2017-10-30 Mon 13:50]
 
 
-** TODO payment type
+** DONE payment type
+   CLOSED: [2017-10-31 Tue 14:44]
 ** TODO stripe
 ** TODO stripe tests
 ** TODO rbk
@@ -112,5 +113,6 @@
 ** TODO not periodical order
 ** TODO registration refactor
 ** TODO order prolongation interface
+** TODO cache pages
 
 

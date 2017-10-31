@@ -26,6 +26,19 @@ DEBUG = False
 
 CELERY_LOGLEVEL = 'debug'
 
+# Django-cors
+CORS_ORIGIN_WHITELIST = (
+    'maxi-booking.com',
+    'maxi-booking.ru',
+    'maxibooking.ru',
+)
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_REGEX_WHITELIST = (r'^(https?://)?(\w+\.)?google\.com$', )
+
+# Rbk
+RBK_SHOP_ID = 'rbk_shop_id'
+RBK_SECRET_KEY = 'rbk_secret_key'
+
 # Maxibooking urls
 MB_URLS = {
     'ru': {

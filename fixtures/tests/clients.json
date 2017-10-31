@@ -101,9 +101,28 @@
         "login": "user-six",
         "email": "user@six.com",
         "phone": "+79250000009",
-        "name": "User Six",
-        "description": "User six description",
+        "name": "user six",
+        "description": "user six description",
         "status": "disabled",
+        "installation": "installed",
+        "disabled_at": "2015-07-19T09:12:27.554Z"
+    }
+},
+{
+    "model": "clients.client",
+    "pk": 7,
+    "fields": {
+        "country":  192,
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z",
+        "login": "user-rus",
+        "email": "user@rus.com",
+        "phone": "+79250000019",
+        "name": "user rus",
+        "description": "user rus description",
+        "status": "active",
         "installation": "installed",
         "disabled_at": "2015-07-19T09:12:27.554Z"
     }

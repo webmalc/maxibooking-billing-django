@@ -13,7 +13,7 @@ def test_countries_list_by_user(client):
 def test_countries_list_by_admin(admin_client):
     response = admin_client.get(reverse('country-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 3
+    assert len(response.json()['results']) == 4
     json_contains(response, 'Andorra')
 
 

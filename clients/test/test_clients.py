@@ -20,7 +20,7 @@ def test_clients_list_by_user(client):
 def test_clients_list_by_admin(admin_client):
     response = admin_client.get(reverse('client-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 6
+    assert len(response.json()['results']) == 7
     json_contains(response, 'User Two')
 
 
@@ -68,7 +68,7 @@ def test_client_create_by_admin(admin_client):
     assert response_json['created_by'] == 'admin'
 
     response = admin_client.get(reverse('client-list'))
-    assert len(response.json()['results']) == 7
+    assert len(response.json()['results']) == 8
     json_contains(response, 'new@user.mail')
 
 

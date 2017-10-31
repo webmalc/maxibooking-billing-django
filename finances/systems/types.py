@@ -1,5 +1,7 @@
 from abc import ABC, abstractproperty
+from hashlib import sha512
 
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -45,6 +47,13 @@ class BaseType(ABC):
         pass
 
     @abstractproperty
+    def template(self):
+        """
+        Payment type template
+        """
+        pass
+
+    @abstractproperty
     def countries_excluded(self):
         """
         Payment type excluded countries
@@ -57,6 +66,10 @@ class BaseType(ABC):
         Payment type html
         """
         pass
+
+    @property
+    def get_template(self):
+        return self.template if self.order else 'finances/invalid_type.html'
 
 
 class Bill(BaseType):
@@ -72,7 +85,7 @@ class Bill(BaseType):
 
     @property
     def html(self):
-        return render_to_string(self.template, {'order': self.order})
+        return render_to_string(self.get_template, {'order': self.order})
 
 
 class Rbk(BaseType):
@@ -87,9 +100,43 @@ class Rbk(BaseType):
     countries_excluded = []
     countries = ['ru']
 
+    # Rbk config
+    action = 'https://rbkmoney.ru/acceptpurchase.aspx'
+    shop_id = settings.RBK_SHOP_ID
+    secret_key = settings.RBK_SECRET_KEY
+
+    @property
+    def signature(self):
+        data = (
+            self.shop_id,
+            str(self.order.price.amount),
+            self.currency,
+            self.order.client.email,
+            self.service_name,
+            self.order.pk,
+            self.secret_key,
+        )
+        return sha512('::'.join(map(str, data)).encode('utf-8')).hexdigest()
+
+    @property
+    def currency(self):
+        if not self.order:
+            return None
+        code = self.order.price.currency.code
+        return 'RUR' if code == 'RUB' else code
+
+    @property
+    def service_name(self):
+        if not self.order:
+            return None
+        return _('order') + ' #' + str(self.order.pk)
+
     @property
     def html(self):
-        return render_to_string(self.template, {'order': self.order})
+        return render_to_string(self.get_template, {
+            'order': self.order,
+            'rbk': self
+        })
 
 
 class Stripe(BaseType):
@@ -99,6 +146,7 @@ class Stripe(BaseType):
     id = 'stripe'
     name = _('stripe')
     description = _('stripe description')
+    template = 'finances/stripe.html'
     html = ''
     countries_excluded = ['ru']
     countries = []

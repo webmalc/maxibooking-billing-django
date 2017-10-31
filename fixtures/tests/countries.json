@@ -33,6 +33,21 @@
 },
 {
     "model": "hotels.country",
+    "pk": 192,
+    "fields": {
+        "name_ascii": "Russia",
+        "slug": "russia",
+        "geoname_id": 1111111,
+        "name": "Russia",
+        "code2": "RU",
+        "code3": "RUS",
+        "continent": "EU",
+        "tld": "ru",
+        "phone": "7"
+    }
+},
+{
+    "model": "hotels.country",
     "pk": 3,
     "fields": {
         "name_ascii": "Afghanistan",

@@ -15,6 +15,11 @@ ADMINS = (('admin', 'admin@example.com'), ('manager', 'manager@example.com'))
 MANAGERS = ADMINS
 TESTS = True
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+# Rbk
+RBK_SHOP_ID = 'rbk_shop_id'
+
 MB_URLS = {
     'ru': {
         'install': 'https://www.example.com',

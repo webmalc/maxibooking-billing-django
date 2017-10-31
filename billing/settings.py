@@ -30,6 +30,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 INSTALLED_APPS = [
     'djmoney',
+    'corsheaders',
     'raven.contrib.django.raven_compat',
     'adminactions',
     'modeltranslation',
@@ -69,6 +70,7 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -309,8 +311,6 @@ if not DEBUG:
         raven.fetch_git_sha(os.path.dirname(os.pardir)),
     }
 
-CORS_ORIGIN_WHITELIST = ('maxi-booking.com', 'localhost:8000',
-                         '127.0.0.1:8000', '127.0.0.1:9000', 'localhost:8000')
 # Django money
 DEFAULT_CURRENCY = 'EUR'
 CURRENCIES = ('RUB', 'EUR')

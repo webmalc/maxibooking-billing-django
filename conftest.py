@@ -1,7 +1,7 @@
 import arrow
 import pytest
 from django.core.management import call_command
-from moneyed import EUR, Money
+from moneyed import EUR, RUB, Money
 
 from finances.models import Order
 
@@ -41,5 +41,12 @@ def make_orders():
     order.status = 'new'
     order.note = None
     order.expired_date = now.shift(days=5).datetime
+    order.save()
+
+    order.pk = None
+    order.status = 'new'
+    order.client_id = 7
+    order.price = Money(2500.50, RUB)
+    order.save()
 
     return None
