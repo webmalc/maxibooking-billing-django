@@ -19,6 +19,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Rbk
 RBK_SHOP_ID = 'rbk_shop_id'
+RBK_SECRET_KEY = 'rbk_secret_key'
 
 MB_URLS = {
     'ru': {

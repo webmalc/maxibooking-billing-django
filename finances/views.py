@@ -1,3 +1,6 @@
+import logging
+
+from django.http import HttpResponseNotFound
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
@@ -95,3 +98,18 @@ class PriceViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ('country__name', 'service__title', 'price', 'id')
     serializer_class = PriceSerializer
     filter_fields = ('is_enabled', 'service', 'country')
+
+
+def payment_system_response(request, system_id):
+    """
+    Payment system check order response view.
+    """
+    logger = logging.getLogger('billing')
+    logger.info(
+        'Payment system response; System_id: {}; GET: {}; POST: {}'.format(
+            system_id, dict(request.GET), dict(request.POST)))
+
+    system = manager.get(system_id)
+    if not system or not hasattr(system, 'response'):
+        return HttpResponseNotFound('Payment system not found.')
+    return system.response(request)

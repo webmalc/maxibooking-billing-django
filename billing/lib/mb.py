@@ -68,7 +68,7 @@ def client_fixtures(client):
             data={},
             client=client)
 
-    return _request(
+    response = _request(
         url=urls['fixtures'],
         data={
             'client_login': client.login,
@@ -77,6 +77,10 @@ def client_fixtures(client):
                 'client-install-result', args=[client.login])
         },
         error_callback=_error_callback)
+    if response:
+        client.url = response.get('url', None)
+        client.save()
+    return response
 
 
 def client_install(client):

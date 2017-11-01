@@ -32,7 +32,8 @@ class Client(CommonInfo, TimeStampedModel):
         db_index=True,
         verbose_name=_('login'),
         validators=[
-            MinLengthValidator(4), RegexValidator(
+            MinLengthValidator(4),
+            RegexValidator(
                 regex='^[a-z0-9\-]*$',
                 code='invalid_login',
                 message=_('Enter a valid login. This value may contain only \
@@ -72,6 +73,12 @@ lowercase letters, numbers, and "-" character.'))
         db_index=True)
     disabled_at = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('disabled at'))
+    url = models.URLField(
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('url'),
+        help_text=_('maxibooking url'))
 
     @property
     def rooms_limit(self):

@@ -2,6 +2,7 @@ from abc import ABC, abstractproperty
 from hashlib import sha512
 
 from django.conf import settings
+from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -68,6 +69,10 @@ class BaseType(ABC):
         pass
 
     @property
+    def url(self):
+        return self.order.client.url if self.order else None
+
+    @property
     def get_template(self):
         return self.template if self.order else 'finances/invalid_type.html'
 
@@ -117,6 +122,11 @@ class Rbk(BaseType):
             self.secret_key,
         )
         return sha512('::'.join(map(str, data)).encode('utf-8')).hexdigest()
+
+    def response(self, request):
+        if not self.order:
+            self.order = Order.objects.get_for_payment_system(1)
+        return HttpResponse(self.order)
 
     @property
     def currency(self):

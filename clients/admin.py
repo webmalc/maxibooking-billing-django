@@ -100,8 +100,9 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
                        'country')
         }),
         ('Options', {
-            'fields': ('status', 'installation', 'rooms_limit', 'disabled_at',
-                       'created', 'modified', 'created_by', 'modified_by')
+            'fields':
+            ('status', 'installation', 'url', 'rooms_limit', 'disabled_at',
+             'created', 'modified', 'created_by', 'modified_by')
         }),
     )
     inlines = (PropertyInlineAdmin, ClientServiceInlineAdmin)

@@ -7,6 +7,12 @@
     <input type="hidden" name="recipientCurrency" value="{{ rbk.currency }}">
     <input type="hidden" name="user_email" value="{{ order.client.email }}">
     <input type="hidden" name="hash" value="{{ rbk.signature }}">
+    {% with url=rbk.url %}
+        {% if url %}
+            <input type="hidden" name="successUrl" value="{{ url }}">
+            <input type="hidden" name="failUrl" value="{{ url }}">
+        {% endif %}
+    {% endwith %}
     <button class="billing-payment-button">
        {% trans 'pay' %} {{ order.price }}
     </button>
