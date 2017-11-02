@@ -88,7 +88,7 @@
 ** DONE currencies test
    CLOSED: [2017-10-23 Mon 12:31]
 ** DONE fixtures model
-   CLOSED: [2017-10-23 Mon 16:05]
+   CLOSED: [2017-11-02 Thu 17:12]
 ** DONE fixtures install link
    CLOSED: [2017-10-23 Mon 18:07]
 ** DONE fixtures complete link
@@ -111,7 +111,9 @@
    CLOSED: [2017-11-02 Thu 13:53]
 
 
-** TODO cache pages
+** DONE cache pages
+   CLOSED: [2017-11-02 Thu 17:12]
+
 
 ** TODO stripe
 ** TODO stripe tests
