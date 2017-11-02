@@ -82,11 +82,8 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
         slug_field='tld',
         queryset=Country.objects.all())
 
-    region = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='display_name',
-        queryset=Region.objects.all())
+    region = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=Region.objects.all())
 
     class Meta:
         model = City
