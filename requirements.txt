@@ -78,6 +78,7 @@ pytest-mock==1.6.3
 pytest-pep8==1.0.6
 pytest-xdist==1.18.0
 python-dateutil==2.6.0
+python-memcached==1.58
 python-utils==2.1.0
 pytz==2017.2
 qrcode==4.0.4
