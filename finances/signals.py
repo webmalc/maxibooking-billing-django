@@ -1,7 +1,12 @@
+import logging
+
 import arrow
 from django.conf import settings
 from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
+from django.utils.translation import ugettext_lazy as _
+
+from clients.tasks import mail_client_task
 
 from .models import Order
 from .tasks import order_notify_task
@@ -30,6 +35,20 @@ def order_post_save(sender, **kwargs):
     Order post save
     """
     order = kwargs['instance']
+    if not kwargs['created'] and order.tracker.has_changed('status') and \
+       order.status == 'paid':
+        mail_client_task.delay(
+            subject=_('Your payment was successful'),
+            template='emails/order_paid.html',
+            data={'order_id': order.pk},
+            client_id=order.client.id)
+
+        logger = logging.getLogger('billing')
+        logger.info('Order paid #{}. Payment system: {}'.format(
+            order.pk, order.payment_system))
+
+        order.client.check_status()
+
     if kwargs['created']:
         order_notify_task.apply_async((order.id, ), countdown=1)
 

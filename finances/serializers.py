@@ -36,8 +36,9 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'status', 'note', 'price', 'price_currency',
-                  'expired_date', 'paid_date', 'client', 'client_services',
-                  'created', 'modified', 'created_by', 'modified_by')
+                  'expired_date', 'paid_date', 'payment_system', 'client',
+                  'client_services', 'created', 'modified', 'created_by',
+                  'modified_by')
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):

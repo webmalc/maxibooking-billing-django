@@ -90,6 +90,15 @@ lowercase letters, numbers, and "-" character.'))
             if s.is_enabled and s.service.type == 'rooms'
         ])
 
+    def check_status(self):
+        """
+        Check client status
+        """
+        if self.status == 'disabled' and\
+           not self.orders.get_expired(('archived',)).count():
+            self.status = 'active'
+            self.save()
+
     def __str__(self):
         return '{} - {}'.format(self.login, self.name)
 

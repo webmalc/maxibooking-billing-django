@@ -102,17 +102,24 @@
 
 ** DONE payment type
    CLOSED: [2017-10-31 Tue 14:44]
+** DONE rbk
+   CLOSED: [2017-11-02 Thu 13:27]
+** DONE rbk tests
+   CLOSED: [2017-11-02 Thu 13:26]
+
+** DONE validate order - payment_date, payment_system, status
+   CLOSED: [2017-11-02 Thu 13:53]
+
+
+** TODO cache pages
+
 ** TODO stripe
 ** TODO stripe tests
-** TODO rbk
-** TODO rbk tests
-** TODO transaction
-** TODO transaction tests
 ** TODO organization
 ** TODO bill
 ** TODO not periodical order
 ** TODO registration refactor
 ** TODO order prolongation interface
-** TODO cache pages
+** TODO client additional info (ip, mb actions)
 
 

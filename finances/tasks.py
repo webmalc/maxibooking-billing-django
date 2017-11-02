@@ -54,6 +54,7 @@ def orders_clients_disable():
         client.status = 'disabled'
         client.disabled_at = arrow.utcnow().datetime
         client.save()
+        # TODO: log disabled
 
         mail_client(
             subject=_('Your account is disabled'),

@@ -1,5 +1,10 @@
+from importlib import import_module
+
+from django.conf import settings
+
 from ..models import Order
-from .types import Bill, Rbk, Stripe
+
+# from .types import Bill, Rbk, Stripe
 
 
 def list(order=None):
@@ -9,9 +14,9 @@ def list(order=None):
     if order and not isinstance(order, Order):
         order = Order.objects.get_for_payment_system(order)
     types = {}
-    types['stripe'] = Stripe(order)
-    types['rbk'] = Rbk(order)
-    types['bill'] = Bill(order)
+    for s in settings.PAYMENT_SYSTEMS:
+        s_class = getattr(import_module('finances.systems.types'), s.title())
+        types[s] = s_class(order)
     if order:
         country = order.client.country.tld
         result = {}

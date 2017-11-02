@@ -2,7 +2,7 @@ from abc import ABC, abstractproperty
 from hashlib import sha512
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -110,6 +110,9 @@ class Rbk(BaseType):
     shop_id = settings.RBK_SHOP_ID
     secret_key = settings.RBK_SECRET_KEY
 
+    def _calc_signature(self, data):
+        return sha512('::'.join(map(str, data)).encode('utf-8')).hexdigest()
+
     @property
     def signature(self):
         data = (
@@ -121,12 +124,51 @@ class Rbk(BaseType):
             self.order.pk,
             self.secret_key,
         )
-        return sha512('::'.join(map(str, data)).encode('utf-8')).hexdigest()
+        return self._calc_signature(data)
 
     def response(self, request):
+        """
+        Check payment system calback response
+        """
+        order_id = request.POST.get('orderId')
+        eshop_id = request.POST.get('eshopId')
+        service_name = request.POST.get('serviceName')
+        eshop_account = request.POST.get('eshopAccount')
+        recipient_amount = request.POST.get('recipientAmount')
+        recipient_currency = request.POST.get('recipientCurrency')
+        payment_status = request.POST.get('paymentStatus')
+        username = request.POST.get('userName')
+        email = request.POST.get('userEmail')
+        payment_date = request.POST.get('paymentData')
+        request_hash = request.POST.get('hash')
+
+        if not all([eshop_id, payment_status, request_hash, payment_status]):
+            return HttpResponseBadRequest('Bad request.')
+        if int(payment_status) != 5:
+            return HttpResponseBadRequest('Invalid payment status != 5.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
         if not self.order:
-            self.order = Order.objects.get_for_payment_system(1)
-        return HttpResponse(self.order)
+            return HttpResponseBadRequest(
+                'Order #{} not found.'.format(order_id))
+
+        signature = self._calc_signature([
+            eshop_id, order_id, service_name, eshop_account, recipient_amount,
+            recipient_currency, payment_status, username, email, payment_date,
+            self.secret_key
+        ])
+        if request_hash != signature:
+            return HttpResponseBadRequest('Invalid signature.')
+        if request_hash != signature:
+            return HttpResponseBadRequest('Invalid signature.')
+        if recipient_currency != self.currency:
+            return HttpResponseBadRequest('Invalid currency.')
+        if str(self.order.price.amount) != recipient_amount:
+            return HttpResponseBadRequest('Invalid payment amount.')
+
+        self.order.set_paid('rbk')
+
+        return HttpResponse('OK')
 
     @property
     def currency(self):

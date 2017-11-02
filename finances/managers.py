@@ -31,7 +31,7 @@ class OrderManager(LookupMixin):
                 now.shift(days=settings.MB_ORDER_PAYMENT_NOTIFY_DAYS).datetime
             )).exclude(client__status__in=('disabled', 'archived'))
 
-    def get_expired(self):
+    def get_expired(self, exclude_client_statuses=('disabled', 'archived')):
         """
         Get expired orders
         """
@@ -39,7 +39,7 @@ class OrderManager(LookupMixin):
         return self.filter(
             status__in=('new',
                         'processing'), expired_date__lte=now.datetime).exclude(
-                            client__status__in=('disabled', 'archived'))
+                            client__status__in=exclude_client_statuses)
 
 
 class ServiceManager(LookupMixin):

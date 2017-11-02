@@ -1,13 +1,14 @@
 import logging
 
 import arrow
-from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.conf import settings
+from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from djmoney.models.fields import MoneyField
+from model_utils import FieldTracker
 from moneyed import EUR, Money
 
 from billing.exceptions import BaseException
@@ -189,6 +190,7 @@ class Order(CommonInfo, TimeStampedModel):
         ('corrupted', _('corrupted')),
     )
     objects = OrderManager()
+    tracker = FieldTracker()
 
     status = models.CharField(
         max_length=20,
@@ -220,6 +222,13 @@ class Order(CommonInfo, TimeStampedModel):
         db_index=True, blank=True, verbose_name=_('expired date'))
     paid_date = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('paid date'))
+    payment_system = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        choices=[(s, _(s)) for s in settings.PAYMENT_SYSTEMS],
+        verbose_name=_('payment system'),
+        db_index=True)
     client_services = models.ManyToManyField(
         'clients.ClientService',
         blank=True,
@@ -246,6 +255,16 @@ class Order(CommonInfo, TimeStampedModel):
             logger = logging.getLogger('billing')
             logger.error('Order corrupted #{}.'.format(self.pk))
 
+    def set_paid(self, payment_system):
+        """
+        Set paid orders
+        """
+        self.status = 'paid'
+        self.payment_system = payment_system
+        self.paid_date = arrow.utcnow().datetime
+        self.full_clean()
+        self.save()
+
     def generate_note(self):
         """
         Generate and return default order note
@@ -253,6 +272,16 @@ class Order(CommonInfo, TimeStampedModel):
         if self.client_services.count():
             return render_to_string('finances/order_note.md', {'order': self})
         return None
+
+    def clean(self, *args, **kwargs):
+        if self.status == 'paid' and \
+           (not self.payment_system or not self.paid_date):
+            raise ValidationError({
+                'status':
+                _('Can`t set "paid" status with empty payment system \
+and paid date')
+            })
+        super(Order, self).clean(*args, **kwargs)
 
     def __str__(self):
         return '#{} - {} - {} - {} - {}'.format(

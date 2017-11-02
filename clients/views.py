@@ -145,6 +145,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         if all(k in request_json for k in ('status', 'url', 'password')):
             if request_json['status']:
                 client.installation = 'installed'
+                client.url = request_json['url']
                 client.save()
                 mail_client_task.delay(
                     subject=_('Registation successefull'),

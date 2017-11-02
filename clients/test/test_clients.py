@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from django.core.urlresolvers import reverse
 from moneyed import EUR, Money
 
@@ -10,6 +11,8 @@ from hotels.models import Property, Room
 
 from ..models import Client
 from ..tasks import client_archivation
+
+pytestmark = pytest.mark.django_db
 
 
 def test_clients_list_by_user(client):
@@ -217,6 +220,7 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
 
     client = Client.objects.get(login='user-one')
     assert client.installation == 'installed'
+    assert client.url == 'http://example.com'
 
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
@@ -335,3 +339,9 @@ def test_clients_archivation_invalid(admin_client, settings):
     client_archivation.delay()
     client = Client.objects.get(login='user-six')
     assert client.status == 'disabled'
+
+
+def test_client_check_status():
+    client = Client.objects.get(login='user-six')
+    client.check_status()
+    assert client.status == 'active'

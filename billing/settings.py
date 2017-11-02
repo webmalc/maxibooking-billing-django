@@ -314,3 +314,6 @@ if not DEBUG:
 # Django money
 DEFAULT_CURRENCY = 'EUR'
 CURRENCIES = ('RUB', 'EUR')
+
+# Billing
+PAYMENT_SYSTEMS = ('stripe', 'rbk', 'bill')

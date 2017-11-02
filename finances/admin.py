@@ -16,24 +16,34 @@ class OrderAdmin(VersionAdmin, AjaxSelectAdmin):
     """
     list_display = ('id', 'price', 'status', 'client', 'expired_date',
                     'paid_date', 'created', 'modified')
-    list_display_links = ('id', 'price', )
-    list_filter = ('status', 'client_services__service',
-                   ('client_services', TextFieldListFilter), 'expired_date',
-                   'paid_date', 'created', )
+    list_display_links = (
+        'id',
+        'price',
+    )
+    list_filter = (
+        'status',
+        'client_services__service',
+        ('client_services', TextFieldListFilter),
+        'expired_date',
+        'paid_date',
+        'created',
+    )
     search_fields = ('=pk', '=client_services__pk',
                      'client_services__service__title',
                      'client_services__service__description', 'client__name',
                      'client__email', 'client__login')
-    readonly_fields = ('created', 'modified', 'paid_date', 'created_by',
-                       'modified_by')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     raw_id_fields = ('client', )
-    fieldsets = (('General', {
-        'fields':
-        ('price', 'client', 'expired_date', 'note', 'client_services')
-    }), ('Options', {
-        'fields': ('status', 'paid_date', 'created', 'modified', 'created_by',
-                   'modified_by')
-    }), )
+    fieldsets = (
+        ('General', {
+            'fields': ('price', 'client', 'expired_date', 'note',
+                       'client_services')
+        }),
+        ('Options', {
+            'fields': ('status', 'paid_date', 'payment_system', 'created',
+                       'modified', 'created_by', 'modified_by')
+        }),
+    )
     form = make_ajax_form(Order, {
         'client_services': 'order_client_services',
         'client': 'clients',
@@ -69,10 +79,13 @@ class ServiceAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
                        'period_days', 'price')
     inlines = (PriceInlineAdmin, )
-    fieldsets = (('General', {
-        'fields': ('title', 'description', 'price')
-    }), ('Options', {
-        'fields':
-        ('period', 'period_units', 'type', 'is_default', 'period_days',
-         'is_enabled', 'created', 'modified', 'created_by', 'modified_by')
-    }), )
+    fieldsets = (
+        ('General', {
+            'fields': ('title', 'description', 'price')
+        }),
+        ('Options', {
+            'fields':
+            ('period', 'period_units', 'type', 'is_default', 'period_days',
+             'is_enabled', 'created', 'modified', 'created_by', 'modified_by')
+        }),
+    )

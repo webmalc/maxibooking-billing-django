@@ -112,11 +112,17 @@ def test_orders_clients_disable(make_orders, mailoutbox):
     mailoutbox = [m for m in mailoutbox if 'account is disabled' in m.subject]
     assert len(mailoutbox) == 1
     assert mailoutbox[0].recipients() == ['user@one.com']
-    client = Client.objects.get(pk=1)
+    client = Client.objects.get(login='user-one')
     assert client.status == 'disabled'
     format = '%d.%m.%Y %H:%I'
-    assert client.disabled_at.strftime(format) == arrow.utcnow().strftime(
-        format)
+    assert client.disabled_at.strftime(format) == arrow.utcnow().\
+        strftime(format)
+    client.check_status()
+    client.refresh_from_db()
+    assert client.status == 'disabled'
+    Order.objects.get(pk=3).set_paid('bill')
+    client.refresh_from_db()
+    assert client.status == 'active'
 
 
 def test_order_with_invalid_currencies():

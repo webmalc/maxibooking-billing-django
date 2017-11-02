@@ -1,0 +1,11 @@
+{% extends 'emails/base.html' %}
+{% load humanize %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Your payment was successful" %}
+{% endblock %}
+
+{% block content %}
+    <p><strong>#</strong>: {{ order_id }}</p>
+{% endblock %}
