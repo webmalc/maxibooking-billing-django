@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
 from .models import Fms, Kpp
 from .serializers import FmsSerializer, KppSerializer
@@ -13,7 +14,8 @@ class BaseViewSet():
     max_page_size = 1000
 
 
-class KppViewSet(viewsets.ReadOnlyModelViewSet, BaseViewSet):
+class KppViewSet(CacheResponseMixin, viewsets.ReadOnlyModelViewSet,
+                 BaseViewSet):
     """
     Kpp viewset
     """
@@ -22,7 +24,8 @@ class KppViewSet(viewsets.ReadOnlyModelViewSet, BaseViewSet):
     lookup_field = 'internal_id'
 
 
-class FmsViewSet(viewsets.ReadOnlyModelViewSet, BaseViewSet):
+class FmsViewSet(CacheResponseMixin, viewsets.ReadOnlyModelViewSet,
+                 BaseViewSet):
     """
     Fms viewset
     """

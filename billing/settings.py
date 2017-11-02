@@ -70,6 +70,7 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'django.middleware.gzip.GZipMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -314,6 +315,22 @@ if not DEBUG:
 # Django money
 DEFAULT_CURRENCY = 'EUR'
 CURRENCIES = ('RUB', 'EUR')
+
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        # 'LOCATION': 'unix:/tmp/memcached.sock',
+    }
+}
+
+# DRM exceptions
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60 * 24 * 7,
+    'DEFAULT_CACHE_ERRORS': False,
+    'DEFAULT_USE_CACHE': 'default'
+}
 
 # Billing
 PAYMENT_SYSTEMS = ('stripe', 'rbk', 'bill')

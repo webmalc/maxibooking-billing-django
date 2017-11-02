@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
 from .models import City, Country, Property, Region, Room
 from .serializers import (CitySerializer, CountrySerializer,
@@ -28,7 +29,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
 
 
-class CountryViewSet(viewsets.ModelViewSet):
+class CountryViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     Country viewset
     """
@@ -41,7 +42,7 @@ class CountryViewSet(viewsets.ModelViewSet):
     max_page_size = 1000
 
 
-class RegionViewSet(viewsets.ModelViewSet):
+class RegionViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     Region viewset
     """
@@ -52,7 +53,7 @@ class RegionViewSet(viewsets.ModelViewSet):
     serializer_class = RegionSerializer
 
 
-class CityViewSet(viewsets.ModelViewSet):
+class CityViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     City viewset
     """

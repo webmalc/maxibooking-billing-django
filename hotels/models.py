@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
-from billing.models import CommonInfo
+from billing.models import CachedModel, CommonInfo
 
 from .managers import PropertyManager, RoomManager
 
@@ -35,7 +35,7 @@ class CityMixin:
         return self.name
 
 
-class Country(CityMixin, AbstractCountry):
+class Country(CachedModel, CityMixin, AbstractCountry):
     """ HH country model."""
 
     class Meta:
@@ -46,17 +46,20 @@ class Country(CityMixin, AbstractCountry):
 connect_default_signals(Country)
 
 
-class Region(CityMixin, AbstractRegion):
+class Region(CachedModel, CityMixin, AbstractRegion):
     """ HH region model."""
 
     def get_display_name(self):
         return '%s, %s' % (self, self)
 
+    class Meta:
+        ordering = ['name']
+
 
 connect_default_signals(Region)
 
 
-class City(CityMixin, AbstractCity):
+class City(CachedModel, CityMixin, AbstractCity):
     """ HH city model."""
 
     def get_display_name(self):

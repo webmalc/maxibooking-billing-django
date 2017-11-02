@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
-from billing.models import CommonInfo
+from billing.models import CachedModel, CommonInfo
 
 
 class FmsMixin(CommonInfo, TimeStampedModel):
@@ -27,14 +27,14 @@ class FmsMixin(CommonInfo, TimeStampedModel):
         abstract = True
 
 
-class Fms(FmsMixin):
+class Fms(CachedModel, FmsMixin):
     class Meta:
         verbose_name_plural = _('fms')
         unique_together = (('internal_id', 'name'))
         ordering = ['internal_id']
 
 
-class Kpp(FmsMixin):
+class Kpp(CachedModel, FmsMixin):
     class Meta:
         verbose_name_plural = _('kpp')
         unique_together = (('internal_id', 'name'))
