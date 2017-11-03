@@ -1,0 +1,14 @@
+{% load i18n %}
+<form action="/your-server-side-code" method="POST">
+  <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+    data-key="{{ stripe.publishable_key }}"
+    data-amount="{{ stripe.price_in_cents }}"
+    data-name="Maxi-booking.com"
+    data-description="{{ stripe.service_name }}"
+    data-locale="auto"
+    data-email="{{ order.client.email }}"
+    data-label="pay {{ order.price }}"
+    data-currency="eur">
+  </script>
+</form>

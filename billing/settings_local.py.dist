@@ -39,6 +39,10 @@ CORS_ORIGIN_REGEX_WHITELIST = (r'^(https?://)?(\w+\.)?google\.com$', )
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
 
+# Stripe
+STRIPE_PUBLISHABLE_KEY = 'stripe_publishable_key'
+STRIPE_SECRET_KEY = 'stripe_secret_key'
+
 # Maxibooking urls
 MB_URLS = {
     'ru': {

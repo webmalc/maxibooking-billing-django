@@ -1,4 +1,4 @@
-from abc import ABC, abstractproperty
+from abc import ABC, abstractmethod
 from hashlib import sha512
 
 from django.conf import settings
@@ -19,49 +19,63 @@ class BaseType(ABC):
         if self.order and not isinstance(self.order, Order):
             self.order = Order.objects.get_for_payment_system(order)
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def id(self):
         """
         Payment type ID
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def name(self):
         """
         Payment type name
         """
         pass
 
-    @abstractproperty
+    @abstractmethod
     def description(self):
         """
         Payment type description
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def countries(self):
         """
         Payment type countries
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def template(self):
         """
         Payment type template
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def countries_excluded(self):
         """
         Payment type excluded countries
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
+    def currencies(self):
+        """
+        Payment type currencies
+        """
+        pass
+
+    @property
+    @abstractmethod
     def html(self):
         """
         Payment type html
@@ -74,7 +88,16 @@ class BaseType(ABC):
 
     @property
     def get_template(self):
-        return self.template if self.order else 'finances/invalid_type.html'
+        if self.order and self.order.price.currency.code in self.currencies:
+            return self.template
+        else:
+            return 'finances/invalid_type.html'
+
+    @property
+    def service_name(self):
+        if not self.order:
+            return None
+        return _('order') + ' #' + str(self.order.pk)
 
 
 class Bill(BaseType):
@@ -87,6 +110,7 @@ class Bill(BaseType):
     template = 'finances/bill.html'
     countries_excluded = []
     countries = ['ru']
+    currencies = ['RUB']
 
     @property
     def html(self):
@@ -104,6 +128,7 @@ class Rbk(BaseType):
     html = ''
     countries_excluded = []
     countries = ['ru']
+    currencies = ['RUB', 'EUR']
 
     # Rbk config
     action = 'https://rbkmoney.ru/acceptpurchase.aspx'
@@ -178,12 +203,6 @@ class Rbk(BaseType):
         return 'RUR' if code == 'RUB' else code
 
     @property
-    def service_name(self):
-        if not self.order:
-            return None
-        return _('order') + ' #' + str(self.order.pk)
-
-    @property
     def html(self):
         return render_to_string(self.get_template, {
             'order': self.order,
@@ -199,6 +218,23 @@ class Stripe(BaseType):
     name = _('stripe')
     description = _('stripe description')
     template = 'finances/stripe.html'
-    html = ''
     countries_excluded = ['ru']
     countries = []
+    currencies = ['EUR']
+
+    # Stripe config
+    publishable_key = settings.STRIPE_PUBLISHABLE_KEY
+    secret_key = settings.STRIPE_SECRET_KEY
+
+    @property
+    def price_in_cents(self):
+        if not self.order:
+            return None
+        return self.order.price.amount * 100
+
+    @property
+    def html(self):
+        return render_to_string(self.get_template, {
+            'order': self.order,
+            'stripe': self
+        })
