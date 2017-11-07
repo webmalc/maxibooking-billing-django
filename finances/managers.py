@@ -16,8 +16,11 @@ class OrderManager(LookupMixin):
         """
         Get order for payment systems
         """
-        return self.select_related('client').get(
-            pk=pk, status='new', client__phone__isnull=False)
+        try:
+            return self.select_related('client').get(
+                pk=pk, status='new', client__phone__isnull=False)
+        except self.model.DoesNotExist:
+            return None
 
     def get_for_payment_notification(self):
         """

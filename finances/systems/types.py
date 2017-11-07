@@ -250,7 +250,8 @@ class Stripe(BaseType):
         if not self.order:
             return HttpResponseBadRequest(
                 'Order #{} not found.'.format(order_id))
-        if self.order.client.email != email:
+        client = self.order.client
+        if client.email != email:
             return HttpResponseBadRequest('Invalid client email.')
 
         stripe.api_key = self.secret_key
@@ -269,8 +270,8 @@ class Stripe(BaseType):
 
         self.order.set_paid('stripe')
 
-        return HttpResponseRedirect(
-            getattr(self.order.client, 'url', settings.MB_SITE_URL))
+        return HttpResponseRedirect(client.url
+                                    if client.url else settings.MB_SITE_URL)
 
     @property
     def html(self):

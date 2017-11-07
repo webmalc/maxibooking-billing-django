@@ -1,5 +1,6 @@
 import arrow
 import pytest
+import stripe
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -117,6 +118,59 @@ c1d3c0dc88bfb22d2d5ed68c2f4128e726d7ad1ed12c2b50159440358e06371368d739'
     format = '%d.%m.%Y %H:%I'
     assert order.status == 'paid'
     assert order.payment_system == 'rbk'
+    assert order.paid_date.strftime(format) == now.strftime(format)
+
+    mail = mailoutbox[-1]
+    assert mail.recipients() == [order.client.email]
+    assert 'Your payment was successful' in mail.subject
+
+
+def test_stripe_display_by_admin(admin_client, make_orders):
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('stripe', )) + '?order=4')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert settings.STRIPE_PUBLISHABLE_KEY in html
+    assert 'order #4' in html
+    assert '12500' in html
+    assert 'eur' in html
+
+
+def test_stripe_response(client, make_orders, mailoutbox, mocker):
+    url = reverse('finances:payment-system-response', args=('stripe', ))
+    response = client.post(url)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data = {
+        'order_id': 1111,
+        'stripeToken': 'stripe_token',
+        'stripeEmail': 'invalid_email',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Order #1111 not found.'
+
+    data['order_id'] = 4
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid client email.'
+
+    data['stripeEmail'] = 'user@one.com'
+    customer = stripe.Customer()
+    customer.id = 'test_id'
+    stripe.Customer.create = mocker.MagicMock(return_value=customer)
+    stripe.Charge.create = mocker.MagicMock(return_value='test_charge')
+    response = client.post(url, data)
+
+    assert response.status_code == 302
+    assert response.url == settings.MB_SITE_URL
+
+    order = Order.objects.get(pk=4)
+    now = arrow.now().datetime
+    format = '%d.%m.%Y %H:%I'
+    assert order.status == 'paid'
+    assert order.payment_system == 'stripe'
     assert order.paid_date.strftime(format) == now.strftime(format)
 
     mail = mailoutbox[-1]
