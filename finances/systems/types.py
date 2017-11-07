@@ -1,8 +1,11 @@
+import logging
 from abc import ABC, abstractmethod
 from hashlib import sha512
 
+import stripe
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import (HttpResponse, HttpResponseBadRequest,
+                         HttpResponseRedirect)
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -14,8 +17,9 @@ class BaseType(ABC):
     Base payment system
     """
 
-    def __init__(self, order=None):
+    def __init__(self, order=None, request=None):
         self.order = order
+        self.request = request
         if self.order and not isinstance(self.order, Order):
             self.order = Order.objects.get_for_payment_system(order)
 
@@ -184,8 +188,6 @@ class Rbk(BaseType):
         ])
         if request_hash != signature:
             return HttpResponseBadRequest('Invalid signature.')
-        if request_hash != signature:
-            return HttpResponseBadRequest('Invalid signature.')
         if recipient_currency != self.currency:
             return HttpResponseBadRequest('Invalid currency.')
         if str(self.order.price.amount) != recipient_amount:
@@ -230,11 +232,50 @@ class Stripe(BaseType):
     def price_in_cents(self):
         if not self.order:
             return None
-        return self.order.price.amount * 100
+        return int(self.order.price.amount * 100)
+
+    def response(self, request):
+        """
+        Check payment system calback response
+        """
+        order_id = request.POST.get('order_id')
+        token = request.POST.get('stripeToken')
+        email = request.POST.get('stripeEmail')
+        logger = logging.getLogger('billing')
+
+        if not all([order_id, token, email]):
+            return HttpResponseBadRequest('Bad request.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
+        if not self.order:
+            return HttpResponseBadRequest(
+                'Order #{} not found.'.format(order_id))
+        if self.order.client.email != email:
+            return HttpResponseBadRequest('Invalid client email.')
+
+        stripe.api_key = self.secret_key
+        try:
+            customer = stripe.Customer.create(email=email, source=token)
+            charge = stripe.Charge.create(
+                customer=customer.id,
+                amount=self.price_in_cents,
+                currency='eur',
+                description=self.service_name)
+
+            logger.info('Stripe response {}'.format(charge))
+        except stripe.error.StripeError as error:
+            logger.info('Stripe error {}'.format(error))
+            return HttpResponseBadRequest('Stripe error.')
+
+        self.order.set_paid('stripe')
+
+        return HttpResponseRedirect(
+            getattr(self.order.client, 'url', settings.MB_SITE_URL))
 
     @property
     def html(self):
         return render_to_string(self.get_template, {
             'order': self.order,
+            'request': self.request,
             'stripe': self
         })

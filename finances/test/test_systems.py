@@ -63,7 +63,7 @@ a67e6c22e4af02099ba91643d87bfe2d23041e4d038035fb37d573bd19524f' in html
 
 
 def test_rbk_response(client, make_orders, mailoutbox):
-    url = reverse('finances:payment_system_response', args=('rbk', ))
+    url = reverse('finances:payment-system-response', args=('rbk', ))
     response = client.post(url)
     assert response.status_code == 400
     assert response.content == b'Bad request.'

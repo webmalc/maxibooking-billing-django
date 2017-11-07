@@ -1,6 +1,7 @@
 import logging
 
 from django.http import HttpResponseNotFound
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
@@ -21,14 +22,16 @@ class PaymentSystemViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
 
     def list(self, request):
-        entries = manager.list(request.query_params.get('order', None))
+        entries = manager.list(
+            request.query_params.get('order', None), request=request)
         serializer = PaymentSystemSerializer(
             instance=entries.values(), many=True)
 
         return Response(serializer.data)
 
     def retrieve(self, request, pk):
-        entry = manager.get(pk, request.query_params.get('order', None))
+        entry = manager.get(
+            pk, request.query_params.get('order', None), request=request)
         if not entry:
             return Response(status=404)
         serializer = PaymentSystemDisplaySerializer(instance=entry, many=False)
@@ -100,6 +103,7 @@ class PriceViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('is_enabled', 'service', 'country')
 
 
+@csrf_exempt
 def payment_system_response(request, system_id):
     """
     Payment system check order response view.

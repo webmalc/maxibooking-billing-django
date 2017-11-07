@@ -334,3 +334,6 @@ REST_FRAMEWORK_EXTENSIONS = {
 
 # Billing
 PAYMENT_SYSTEMS = ('stripe', 'rbk', 'bill')
+
+# MB
+MB_SITE_URL = 'https://maxi-booking.com'

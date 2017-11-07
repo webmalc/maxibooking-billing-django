@@ -7,7 +7,7 @@ from ..models import Order
 # from .types import Bill, Rbk, Stripe
 
 
-def list(order=None):
+def list(order=None, request=None):
     """
     Get payment systems list
     """
@@ -16,7 +16,7 @@ def list(order=None):
     types = {}
     for s in settings.PAYMENT_SYSTEMS:
         s_class = getattr(import_module('finances.systems.types'), s.title())
-        types[s] = s_class(order)
+        types[s] = s_class(order, request=request)
     if order:
         country = order.client.country.tld
         result = {}
@@ -31,11 +31,11 @@ def list(order=None):
     return result
 
 
-def get(id, order=None):
+def get(id, order=None, request=None):
     """
     Get payment system by name
     """
     try:
-        return list(order)[id]
+        return list(order, request=request)[id]
     except KeyError:
         return None

@@ -14,5 +14,5 @@ router.register(
 urlpatterns = [
     url(r'^payment-system/response/(?P<system_id>[a-zA-z0-9\-_]+)',
         payment_system_response,
-        name='payment_system_response')
+        name='payment-system-response')
 ]
