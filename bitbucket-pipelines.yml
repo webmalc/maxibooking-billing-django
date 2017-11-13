@@ -3,6 +3,8 @@ image: python:3.6.3
 pipelines:
   default:
     - step:
+        caches:
+          - pip
         script:
           - cp -n billing/settings_local.py.dist billing/settings_local.py
           - pip install -r requirements.txt
