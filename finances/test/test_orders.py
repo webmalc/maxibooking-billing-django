@@ -59,6 +59,7 @@ def test_order_list_by_admin(admin_client):
     response = admin_client.get(reverse('order-list'))
     assert response.status_code == 200
     assert len(response.json()['results']) == 3
+
     json_contains(response, 'Test service one 24,664.00')
     json_contains(response, 'Test service one 4,600.00')
 
@@ -77,10 +78,12 @@ def test_order_display_by_user(client):
 
 def test_order_display_by_admin(admin_client):
     client_services_update.delay()
-    response = admin_client.get(reverse('order-detail', args=[2]))
+    order = Order.objects.first()
+    response = admin_client.get(reverse('order-detail', args=[order.id]))
     assert response.status_code == 200
-    json_contains(response, 'user-two')
-    json_contains(response, '468,468.00')
+
+    json_contains(response, order.client.login)
+    json_contains(response, str(order.price.amount))
 
 
 def test_manager_get_for_payment_notification(make_orders):

@@ -70,12 +70,12 @@ def test_rbk_response(client, make_orders, mailoutbox):
     assert response.content == b'Bad request.'
 
     data = {
-        'orderId': 5,
-        'eshopId': 1,
-        'serviceName': 2,
-        'recipientAmount': 1300,
+        'orderId': '5',
+        'eshopId': '1',
+        'serviceName': '2',
+        'recipientAmount': '1300',
         'recipientCurrency': 'EUR',
-        'paymentStatus': 1,
+        'paymentStatus': '1',
         'userName': 'user-seven',
         'userEmail': 'user@seven.com',
         'paymentData': '2017-09-09 12:12:12',
@@ -119,6 +119,7 @@ c1d3c0dc88bfb22d2d5ed68c2f4128e726d7ad1ed12c2b50159440358e06371368d739'
     assert order.status == 'paid'
     assert order.payment_system == 'rbk'
     assert order.paid_date.strftime(format) == now.strftime(format)
+    assert order.transactions.first().data == data
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
@@ -159,8 +160,9 @@ def test_stripe_response(client, make_orders, mailoutbox, mocker):
     data['stripeEmail'] = 'user@one.com'
     customer = stripe.Customer()
     customer.id = 'test_id'
+    mock_data = {'test': 'test_charge'}
     stripe.Customer.create = mocker.MagicMock(return_value=customer)
-    stripe.Charge.create = mocker.MagicMock(return_value='test_charge')
+    stripe.Charge.create = mocker.MagicMock(return_value=mock_data)
     response = client.post(url, data)
 
     assert response.status_code == 302
@@ -172,6 +174,7 @@ def test_stripe_response(client, make_orders, mailoutbox, mocker):
     assert order.status == 'paid'
     assert order.payment_system == 'stripe'
     assert order.paid_date.strftime(format) == now.strftime(format)
+    assert order.transactions.first().data == mock_data
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]

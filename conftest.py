@@ -12,13 +12,14 @@ def django_db_setup(django_db_setup, django_db_blocker):
         call_command('loaddata', 'tests/users', 'tests/countries',
                      'tests/regions', 'tests/cities', 'tests/clients',
                      'tests/properties', 'tests/rooms', 'tests/services',
-                     'tests/client_services')
+                     'tests/client_services', 'tests/transactions')
 
 
 @pytest.fixture()
 def make_orders():
     now = arrow.utcnow()
     order = Order()
+    order.pk = 1
     order.client_id = 1
     order.price = Money(12500, EUR)
     order.status = 'new'
@@ -26,24 +27,24 @@ def make_orders():
     order.expired_date = now.shift(days=2).datetime
     order.save()
 
-    order.pk = None
+    order.pk = 2
     order.status = 'paid'
     order.note = 'paid order'
     order.save()
 
-    order.pk = None
+    order.pk = 3
     order.status = 'new'
     order.note = 'order expired'
     order.expired_date = now.shift(days=-1).datetime
     order.save()
 
-    order.pk = None
+    order.pk = 4
     order.status = 'new'
     order.note = None
     order.expired_date = now.shift(days=5).datetime
     order.save()
 
-    order.pk = None
+    order.pk = 5
     order.status = 'new'
     order.client_id = 7
     order.price = Money(2500.50, RUB)

@@ -2,6 +2,7 @@ import logging
 
 import arrow
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
 from django.template.loader import render_to_string
@@ -287,6 +288,30 @@ and paid date')
         return '#{} - {} - {} - {} - {}'.format(
             self.id, self.status, self.client, self.price,
             self.expired_date.strftime('%c'))
+
+    class Meta:
+        ordering = (
+            '-modified',
+            '-created',
+        )
+
+
+class Transaction(CommonInfo, TimeStampedModel):
+    """
+    Payment systems transaction model
+    """
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.SET_NULL,
+        verbose_name=_('order'),
+        null=True,
+        blank=True,
+        db_index=True,
+        related_name='transactions')
+    data = JSONField(verbose_name=_('transaction'))
+
+    def set_data(self, data):
+        self.data = data if isinstance(data, dict) else vars(data)
 
     class Meta:
         ordering = (

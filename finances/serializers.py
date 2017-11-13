@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Order, Price, Service
+from .models import Order, Price, Service, Transaction
 
 
 class PaymentSystemSerializer(serializers.Serializer):
@@ -19,6 +19,21 @@ class PaymentSystemDisplaySerializer(PaymentSystemSerializer):
     PaymentSystem display serializer
     """
     html = serializers.CharField()
+
+
+class TransactionSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Transaction serializer
+    """
+
+    order = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = Transaction
+        fields = ('id', 'order', 'data', 'created', 'modified', 'created_by',
+                  'modified_by')
 
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):

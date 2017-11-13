@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'cities_light',
     'django_filters',
     'django_admin_row_actions',
+    'prettyjson',
 
     # mb apps
     'finances',

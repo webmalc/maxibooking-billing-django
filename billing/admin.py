@@ -1,6 +1,8 @@
 import adminactions.actions as actions
 from django.contrib import admin
 from django.contrib.admin import site
+from django.contrib.postgres.fields import JSONField
+from prettyjson import PrettyJSONWidget
 
 actions.add_to_site(site)
 
@@ -21,3 +23,13 @@ class TextFieldListFilter(admin.ChoicesFieldListFilter):
             'display':
             self.field
         }
+
+
+class JsonAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        JSONField: {
+            'widget': PrettyJSONWidget(attrs={
+                'initial': 'parsed'
+            })
+        }
+    }

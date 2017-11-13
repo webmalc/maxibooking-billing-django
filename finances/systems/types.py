@@ -9,7 +9,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import Order
+from ..models import Order, Transaction
 
 
 class BaseType(ABC):
@@ -103,6 +103,14 @@ class BaseType(ABC):
             return None
         return _('order') + ' #' + str(self.order.pk)
 
+    def _process_order(self, data):
+        self.order.set_paid(self.id)
+
+        transaction = Transaction()
+        transaction.set_data(data)
+        transaction.order = self.order
+        transaction.save()
+
 
 class Bill(BaseType):
     """
@@ -193,7 +201,7 @@ class Rbk(BaseType):
         if str(self.order.price.amount) != recipient_amount:
             return HttpResponseBadRequest('Invalid payment amount.')
 
-        self.order.set_paid('rbk')
+        self._process_order(request.POST)
 
         return HttpResponse('OK')
 
@@ -268,7 +276,7 @@ class Stripe(BaseType):
             logger.info('Stripe error {}'.format(error))
             return HttpResponseBadRequest('Stripe error.')
 
-        self.order.set_paid('stripe')
+        self._process_order(charge)
 
         return HttpResponseRedirect(client.url
                                     if client.url else settings.MB_SITE_URL)

@@ -4,9 +4,52 @@ from django.contrib import admin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
 
-from billing.admin import TextFieldListFilter
+from billing.admin import JsonAdmin, TextFieldListFilter
 
-from .models import Order, Price, Service
+from .models import Order, Price, Service, Transaction
+
+
+@admin.register(Transaction)
+class TransactionAdmin(VersionAdmin, JsonAdmin):
+    """
+    Transaction admin interface
+    """
+    list_display = ('id', 'order', 'created', 'modified')
+    list_display_links = ('id', )
+    list_filter = (
+        ('order', TextFieldListFilter),
+        'created',
+    )
+    search_fields = ('=pk', '=order__pk', 'order__client__name',
+                     'order__client__email', 'order__client__login')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    raw_id_fields = ('order', )
+    fieldsets = (
+        ('General', {
+            'fields': (
+                'order',
+                'data',
+            )
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
+    list_select_related = ('order', )
+
+
+class TransactionInlineAdmin(admin.TabularInline):
+    """
+    Transaction inline admin interface
+    """
+    model = Transaction
+    fields = ('data', 'modified')
+    readonly_fields = fields
+    show_change_link = True
+    can_delete = False
+
+    def has_add_permission(self, *args, **kwargs):
+        return False
 
 
 @admin.register(Order)
@@ -34,6 +77,7 @@ class OrderAdmin(VersionAdmin, AjaxSelectAdmin):
                      'client__email', 'client__login')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     raw_id_fields = ('client', )
+    inlines = (TransactionInlineAdmin, )
     fieldsets = (
         ('General', {
             'fields': ('price', 'client', 'expired_date', 'note',

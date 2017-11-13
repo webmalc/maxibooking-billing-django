@@ -7,10 +7,10 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Order, Price, Service
+from .models import Order, Price, Service, Transaction
 from .serializers import (OrderSerializer, PaymentSystemDisplaySerializer,
                           PaymentSystemSerializer, PriceSerializer,
-                          ServiceSerializer)
+                          ServiceSerializer, TransactionSerializer)
 from .systems import manager
 
 
@@ -37,6 +37,18 @@ class PaymentSystemViewSet(viewsets.ViewSet):
         serializer = PaymentSystemDisplaySerializer(instance=entry, many=False)
 
         return Response(serializer.data)
+
+
+class TransactionViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Order viewset
+    """
+    queryset = Transaction.objects.all().select_related(
+        'created_by', 'modified_by', 'order')
+    search_fields = ('=pk', '=order__pk', 'order__client__name',
+                     'order__client__email', 'order__client__login')
+    serializer_class = TransactionSerializer
+    filter_fields = ('order', 'created')
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
