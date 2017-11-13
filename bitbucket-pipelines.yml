@@ -1,0 +1,25 @@
+image: python:3.6.3
+
+pipelines:
+  default:
+    - step:
+        script:
+          - pip install -r requirements.txt
+          - python manage.py collectstatic --no-input
+          - python manage.py migrate --no-input
+          - python manage.py compilemessages --no-input
+          - python -m pytest --pep8 --flakes
+        services: 
+          - redis
+          - postgres
+        
+definitions: 
+  services: 
+    redis: 
+      image: redis
+    postgres: 
+      image: postgres 
+      environment: 
+        POSTGRES_DB: billing 
+        POSTGRES_USER: postgres 
+        POSTGRES_PASSWORD: postgres
