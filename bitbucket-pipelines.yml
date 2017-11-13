@@ -7,7 +7,7 @@ pipelines:
           - cp -n billing/settings_local.py.dist billing/settings_local.py
           - pip install -r requirements.txt
           - python manage.py migrate --no-input
-          - python manage.py compilemessages --no-input
+          - python manage.py compilemessages
           - python -m pytest --pep8 --flakes
         services: 
           - redis
