@@ -19,7 +19,7 @@ try:
     from .settings_local import *
     from .settings_local import DEBUG
     import psycopg2
-except ImportError:
+except ImportError:  # pragma: no cover
     # Fall back to psycopg2cffi
     from psycopg2cffi import compat
     compat.register()
@@ -303,7 +303,7 @@ REST_FRAMEWORK = {
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ru']
 CITIES_LIGHT_APP_NAME = 'hotels'
 
-if not DEBUG:
+if not DEBUG:  # pragma: no cover
     # Sentry raven
     RAVEN_CONFIG = {
         'dsn':

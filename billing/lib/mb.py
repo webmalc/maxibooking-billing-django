@@ -2,11 +2,10 @@ import json
 import logging
 import time
 
+import requests
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-
-import requests
 
 from .messengers.mailer import mail_client
 
@@ -28,7 +27,7 @@ def _request(url, data, error_callback):
         except requests.exceptions.RequestException:
             pass
 
-        if not getattr(settings, 'TESTS', False):
+        if not getattr(settings, 'TESTS', False):  # pragma: no cover
             time.sleep(settings.MB_TIMEOUT)
 
     else:
