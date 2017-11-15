@@ -7,6 +7,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .filters import OrderFilterSet
 from .models import Order, Price, Service, Transaction
 from .serializers import (OrderSerializer, PaymentSystemDisplaySerializer,
                           PaymentSystemSerializer, PriceSerializer,
@@ -62,16 +63,8 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
                      'client_services__service__title',
                      'client_services__service__description', 'client__name',
                      'client__email', 'client__login')
+    filter_class = OrderFilterSet
     serializer_class = OrderSerializer
-    filter_fields = (
-        'status',
-        'client_services__service',
-        'client_services__id',
-        'client__login',
-        'expired_date',
-        'paid_date',
-        'created',
-    )
 
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):

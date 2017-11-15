@@ -41,6 +41,7 @@ django-reversion==2.0.8
 django-rosetta==0.7.13
 django-two-factor-auth==1.6.1
 djangorestframework==3.6.3
+djangorestframework-filters==0.10.2
 docutils==0.14
 drf-extensions==0.3.1
 execnet==1.4.1

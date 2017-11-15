@@ -292,6 +292,7 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
+        'rest_framework_filters.backends.DjangoFilterBackend',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -326,7 +327,7 @@ CACHES = {
     }
 }
 
-# DRM exceptions
+# DRM estensions
 REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60 * 24 * 7,
     'DEFAULT_CACHE_ERRORS': False,
