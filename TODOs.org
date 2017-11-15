@@ -119,6 +119,8 @@
    CLOSED: [2017-11-08 Wed 12:31]
 ** DONE stripe tests
    CLOSED: [2017-11-08 Wed 12:31]
+** TODO client_services validation and order generation
+** TODO service default rooms count
 ** TODO order note trans
 ** TODO organization
 ** TODO bill

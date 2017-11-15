@@ -7,7 +7,7 @@ class OrderFilterSet(filters.FilterSet):
     class Meta:
         model = Order
         fields = {
-            'status': ['exact'],
+            'status': ['exact', 'in'],
             'client_services__service': ['exact'],
             'client_services__id': ['exact'],
             'client__login': ['exact', 'startswith'],

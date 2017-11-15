@@ -167,6 +167,12 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     price_repr.short_description = _('price')
 
+    def get_default_begin(self):
+        """
+        Get default begin for client_service
+        """
+        return self.service.get_default_begin()
+
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity
 

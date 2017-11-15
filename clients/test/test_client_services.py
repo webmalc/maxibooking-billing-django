@@ -147,3 +147,7 @@ def test_client_services_update_task(admin_client):
         client__pk=4, client_services__pk=client_service.pk)
     assert order.price == Money(5000, EUR)
     assert order.status == 'new'
+
+
+def test_client_services_default_dates(admin_client):
+    assert False
