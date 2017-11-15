@@ -33,6 +33,18 @@ class ClientServiceManager(LookupMixin):
     lookup_search_fields = ('pk', 'service__title', 'client__name',
                             'client__email', 'client__login')
 
+    def disable(self, client, service_type=None, exclude_pk=None):
+        """
+        Disable client services by params
+        """
+        query = self.filter(client=client, is_enabled=True)
+
+        if service_type:
+            query = query.filter(service__type=service_type)
+        if exclude_pk:
+            query = query.exclude(pk=exclude_pk)
+        return query.update(is_enabled=False)
+
     def total(self, query=None):
         """
         Get total price

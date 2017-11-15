@@ -11,7 +11,7 @@ def test_price_list_by_user(client):
 def test_price_list_by_admin(admin_client, settings):
     response = admin_client.get(reverse('price-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 4
+    assert len(response.json()['results']) == 5
     json_contains(response, '234234.00')
 
 

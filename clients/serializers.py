@@ -48,7 +48,8 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
         many=False, read_only=True, slug_field='tld')
 
     def validate(self, attrs):
-        ClientService.validate_dates(attrs.get('begin'), attrs.get('end'))
+        ClientService.validate_dates(
+            attrs.get('begin'), attrs.get('end'), attrs.get('pk') is None)
         ClientService.validate_service(
             attrs.get('service'), attrs.get('client'))
         return attrs

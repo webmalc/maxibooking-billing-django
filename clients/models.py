@@ -158,7 +158,8 @@ class ClientService(CommonInfo, TimeStampedModel):
         db_index=True,
         verbose_name=_('client'),
         related_name='services')
-    orders = models.ManyToManyField('finances.Order', verbose_name=_('orders'))
+    orders = models.ManyToManyField(
+        'finances.Order', verbose_name=_('orders'), blank=True)
 
     def price_repr(self):
         return '{} {}'.format(
@@ -179,8 +180,16 @@ class ClientService(CommonInfo, TimeStampedModel):
             self.start_at = timezone.now()
         super(ClientService, self).save(*args, **kwargs)
 
+        if self.is_enabled:
+            ClientService.objects.disable(
+                client=self.client,
+                service_type=self.service.type,
+                exclude_pk=self.pk)
+
     @staticmethod
-    def validate_dates(begin, end):
+    def validate_dates(begin, end, is_new):
+        if is_new and begin and begin < timezone.now():
+            raise ValidationError(_('Please correct begin date.'))
         if begin and end and begin > end:
             raise ValidationError(_('Please correct dates.'))
 
@@ -190,14 +199,18 @@ class ClientService(CommonInfo, TimeStampedModel):
             raise ValidationError(_('Empty service prices.'))
 
     def clean(self):
-        ClientService.validate_dates(self.begin, self.end)
+        ClientService.validate_dates(self.begin, self.end, self.pk is None)
         ClientService.validate_service(self.service, self.client)
 
     def validate_unique(self, exclude=None):
         super(ClientService, self).validate_unique(exclude)
-        service_type = self.service.type
-        if service_type != 'other' and ClientService.objects.filter(
-                client=self.client, service__type=service_type,
+        service = self.service
+
+        if service.type != 'other' and ClientService.objects.filter(
+                client=self.client,
+                service__type=service.type,
+                service__period=service.period,
+                service__period_units=service.period_units,
                 is_enabled=True).exclude(id=self.id).exists():
             raise ValidationError(
                 _('Client service with this type already exists.'))

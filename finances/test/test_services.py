@@ -43,8 +43,8 @@ def test_service_get_price():
     assert service.get_price(country='ad') == Money(2300.00, EUR)
     assert service.get_price(country=Country.objects.get(pk=1)) == Money(
         2300.00, EUR)
-    assert service.get_price(client=Client.objects.get(pk=1)) == Money(2300.00,
-                                                                       EUR)
+    assert service.get_price(client=Client.objects.get(pk=1)) == Money(
+        2300.00, EUR)
 
 
 def test_services_list_by_user(client):
@@ -55,7 +55,7 @@ def test_services_list_by_user(client):
 def test_service_list_by_admin(admin_client):
     response = admin_client.get(reverse('service-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 3
+    assert len(response.json()['results']) == 4
     json_contains(response, 'Test service three')
 
 
@@ -63,7 +63,7 @@ def test_service_list_by_admin_ru(admin_client, settings):
     settings.LANGUAGE_CODE = 'ru'
     response = admin_client.get(reverse('service-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 3
+    assert len(response.json()['results']) == 4
     json_contains(response, 'Описание тестового сервиса 2')
 
 

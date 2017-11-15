@@ -119,6 +119,7 @@
    CLOSED: [2017-11-08 Wed 12:31]
 ** DONE stripe tests
    CLOSED: [2017-11-08 Wed 12:31]
+** TODO order note trans
 ** TODO organization
 ** TODO bill
 ** TODO not periodical order

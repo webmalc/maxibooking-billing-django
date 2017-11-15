@@ -122,9 +122,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
 
     def validate_unique(self, exclude=None):
         super(Service, self).validate_unique(exclude)
-        service_type = self.type
-        if service_type != 'other' and Service.objects.filter(
-                type=service_type, is_enabled=True,
+        if self.is_default and self.type != 'other' and Service.objects.filter(
+                type=self.type, is_enabled=True,
                 is_default=True).exclude(id=self.id).exists():
             raise ValidationError(
                 _('Default service with this type already exists.'))

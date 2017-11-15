@@ -39,13 +39,12 @@ def test_client_service_create_invalid_by_admin(admin_client):
         'quantity': -3,
         'client': 'invalid-user',
         'service': 312,
-        'begin': arrow.utcnow().isoformat(),
+        'begin': arrow.utcnow().shift(days=-1).isoformat(),
         'end': arrow.utcnow().shift(days=-3).isoformat()
     }
+    url = reverse('clientservice-list')
     response = admin_client.post(
-        reverse('clientservice-list'),
-        data=json.dumps(data),
-        content_type="application/json")
+        url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
     assert response_json['quantity'] == [
@@ -62,9 +61,7 @@ def test_client_service_create_invalid_by_admin(admin_client):
     data['client'] = 'user-one'
     data['service'] = 1
     response = admin_client.post(
-        reverse('clientservice-list'),
-        data=json.dumps(data),
-        content_type="application/json")
+        url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
     assert response_json['non_field_errors'] == [
@@ -73,9 +70,14 @@ def test_client_service_create_invalid_by_admin(admin_client):
 
     data['service'] = 3
     response = admin_client.post(
-        reverse('clientservice-list'),
-        data=json.dumps(data),
-        content_type="application/json")
+        url, data=json.dumps(data), content_type="application/json")
+    response_json = response.json()
+
+    assert response_json['non_field_errors'] == ['Please correct begin date.']
+
+    data['begin'] = arrow.utcnow().shift(days=1).isoformat()
+    response = admin_client.post(
+        url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
     assert response_json['non_field_errors'] == ['Please correct dates.']
@@ -86,14 +88,14 @@ def test_client_service_create_invalid_by_admin(admin_client):
         data=json.dumps(data),
         content_type="application/json")
     response_json = response.json()
+    assert response_json['non_field_errors'] == ['Empty service prices.']
 
 
 def test_client_service_create_by_admin(admin_client):
     data = {'quantity': 2, 'client': 'user-one', 'service': 2}
+    url = reverse('clientservice-list')
     response = admin_client.post(
-        reverse('clientservice-list'),
-        data=json.dumps(data),
-        content_type="application/json")
+        url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
     assert response_json['price'] == '7000.00'
@@ -109,6 +111,14 @@ def test_client_service_create_by_admin(admin_client):
         format) == begin.datetime.strftime(format)
     assert arrow.get(response_json['end']).datetime.strftime(
         format) == end.datetime.strftime(format)
+
+    client_service = ClientService.objects.get(pk=1)
+    assert client_service.is_enabled is True
+    data['service'] = 4
+    response = admin_client.post(
+        url, data=json.dumps(data), content_type="application/json")
+    client_service.refresh_from_db()
+    assert client_service.is_enabled is False
 
 
 def test_client_services_update_task(admin_client):

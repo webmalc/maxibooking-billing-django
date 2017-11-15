@@ -61,6 +61,27 @@
     }
 },
 {
+    "model": "finances.service",
+    "pk": 4,
+    "fields": {
+        "created": "2017-07-24T14:04:53.829Z",
+        "modified": "2017-07-24T14:05:53.916Z",
+        "title": "Test service four",
+        "title_ru": "Тестовый сервис 4",
+        "title_en": "Test service four",
+        "description": "Test service four description",
+        "description_en": "Test service four description",
+        "description_ru": "Описание тестового сервиса 4",
+        "type": "connection",
+        "is_default": false,
+        "created_by": 1,
+        "modified_by": 1,
+        "is_enabled": true,
+        "period": 1,
+        "period_units": "month"
+    }
+},
+{
     "model": "finances.price",
     "pk": 6,
     "fields": {
@@ -113,7 +134,7 @@
         "modified": "2017-07-31T13:58:32.720Z",
         "created_by": 1,
         "modified_by": 1,
-        "price": "2000.00",
+        "price": "3500.00",
         "price_currency": "EUR",
         "country": null,
         "is_enabled": true,
@@ -122,17 +143,17 @@
 },
 {
     "model": "finances.price",
-    "pk": 9,
+    "pk": 10,
     "fields": {
         "created": "2017-07-31T13:58:08.269Z",
         "modified": "2017-07-31T13:58:32.720Z",
         "created_by": 1,
         "modified_by": 1,
-        "price": "3500.00",
+        "price": "3000.00",
         "price_currency": "EUR",
         "country": null,
         "is_enabled": true,
-        "service": 2
+        "service": 4
     }
 }
 ]
