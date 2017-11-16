@@ -53,7 +53,8 @@ class TransactionInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Order)
-class OrderAdmin(VersionAdmin, AjaxSelectAdmin):
+class OrderAdmin(VersionAdmin, AjaxSelectAdmin,
+                 TabbedExternalJqueryTranslationAdmin):
     """
     Order admin interface
     """

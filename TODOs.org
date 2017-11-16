@@ -121,8 +121,9 @@
    CLOSED: [2017-11-08 Wed 12:31]
 ** DONE client_services validation and order generation
    CLOSED: [2017-11-16 Thu 12:21]
+** DONE order note trans
+   CLOSED: [2017-11-16 Thu 17:40]
 ** TODO service default rooms count
-** TODO order note trans
 ** TODO organization
 ** TODO bill
 ** TODO coverage 100%

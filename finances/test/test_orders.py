@@ -31,7 +31,8 @@ def test_order_creation_and_modifications(mailoutbox):
 
     order.client_services.add(1, 2)
     assert order.price == Money(14001.83, EUR)
-    assert 'Test service two' in order.note
+    assert 'Test service two' in order.note_en
+    assert 'Тестовый сервис' in order.note_ru
     assert '1,999.98' in order.note
 
     order.note = 'test note'
@@ -60,8 +61,8 @@ def test_order_list_by_admin(admin_client):
     assert response.status_code == 200
     assert len(response.json()['results']) == 3
 
-    json_contains(response, 'Test service one 24,664.00')
-    json_contains(response, 'Test service one 4,600.00')
+    json_contains(response, 'Test service one - 24,664.00')
+    json_contains(response, 'Test service one - 4,600.00')
 
     response = admin_client.get(
         reverse('order-list') + '?client__login=user-one')

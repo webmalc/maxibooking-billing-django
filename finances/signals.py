@@ -6,6 +6,7 @@ from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
+from billing.lib.trans import auto_populate
 from clients.tasks import mail_client_task
 
 from .models import Order
@@ -26,7 +27,7 @@ def order_pre_save(sender, **kwargs):
     if not order.price and order.id:
         order.price = order.calc_price()
     if not order.note and order.id:
-        order.note = order.generate_note()
+        auto_populate(order, 'note', order.generate_note)
 
 
 @receiver(post_save, sender=Order, dispatch_uid='order_post_save')
@@ -72,7 +73,7 @@ def order_m2m_changed(sender, **kwargs):
 
     is_changed = False
     if not order.note:
-        order.note = order.generate_note()
+        auto_populate(order, 'note', order.generate_note)
         is_changed = True
     if not order.price:
         order.price = order.calc_price()
