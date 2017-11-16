@@ -150,4 +150,15 @@ def test_client_services_update_task(admin_client):
 
 
 def test_client_services_default_dates(admin_client):
-    assert False
+    prev_client_service = ClientService.objects.get(pk=1)
+    assert prev_client_service.is_enabled is True
+    data = {'quantity': 1, 'client': 'user-one', 'service': 4}
+    url = reverse('clientservice-list')
+    response = admin_client.post(
+        url, data=json.dumps(data), content_type="application/json")
+
+    assert response.status_code == 201
+    prev_client_service.refresh_from_db()
+    assert prev_client_service.is_enabled is False
+    next_client_service = ClientService.objects.get(service__pk=4)
+    assert next_client_service.begin == prev_client_service.end

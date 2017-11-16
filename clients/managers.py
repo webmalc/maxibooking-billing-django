@@ -33,6 +33,15 @@ class ClientServiceManager(LookupMixin):
     lookup_search_fields = ('pk', 'service__title', 'client__name',
                             'client__email', 'client__login')
 
+    def get_prev(self, client_service):
+        try:
+            return self.get(
+                is_enabled=True,
+                client=client_service.client,
+                service__type=client_service.service.type)
+        except apps.get_model('clients', 'ClientService').DoesNotExist:
+            return None
+
     def disable(self, client, service_type=None, exclude_pk=None):
         """
         Disable client services by params

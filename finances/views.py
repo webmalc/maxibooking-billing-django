@@ -9,9 +9,9 @@ from rest_framework.response import Response
 
 from .filters import OrderFilterSet
 from .models import Order, Price, Service, Transaction
-from .serializers import (OrderSerializer, PaymentSystemDisplaySerializer,
-                          PaymentSystemSerializer, PriceSerializer,
-                          ServiceSerializer, TransactionSerializer)
+from .serializers import (OrderSerializer, PaymentSystemSerializer,
+                          PriceSerializer, ServiceSerializer,
+                          TransactionSerializer)
 from .systems import manager
 
 
@@ -35,7 +35,7 @@ class PaymentSystemViewSet(viewsets.ViewSet):
             pk, request.query_params.get('order', None), request=request)
         if not entry:
             return Response(status=404)
-        serializer = PaymentSystemDisplaySerializer(instance=entry, many=False)
+        serializer = PaymentSystemSerializer(instance=entry, many=False)
 
         return Response(serializer.data)
 

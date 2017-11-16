@@ -119,14 +119,17 @@
    CLOSED: [2017-11-08 Wed 12:31]
 ** DONE stripe tests
    CLOSED: [2017-11-08 Wed 12:31]
-** TODO client_services validation and order generation
+** DONE client_services validation and order generation
+   CLOSED: [2017-11-16 Thu 12:21]
 ** TODO service default rooms count
 ** TODO order note trans
 ** TODO organization
 ** TODO bill
+** TODO coverage 100%
 ** TODO not periodical order
 ** TODO registration refactor
 ** TODO order prolongation interface
 ** TODO client additional info (ip, mb actions)
+** TODO multiprocessing
 
 

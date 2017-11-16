@@ -171,13 +171,17 @@ class ClientService(CommonInfo, TimeStampedModel):
         """
         Get default begin for client_service
         """
+        prev = ClientService.objects.get_prev(self)
+        if prev:
+            return prev.end
+
         return self.service.get_default_begin()
 
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity
 
         if self.begin is None:
-            self.begin = self.service.get_default_begin()
+            self.begin = self.get_default_begin()
         if self.end is None:
             self.end = self.service.get_default_end(self.begin)
         if self.country_id is None:

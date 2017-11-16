@@ -12,12 +12,6 @@ class PaymentSystemSerializer(serializers.Serializer):
     description = serializers.CharField()
     countries = serializers.ListField()
     countries_excluded = serializers.ListField()
-
-
-class PaymentSystemDisplaySerializer(PaymentSystemSerializer):
-    """
-    PaymentSystem display serializer
-    """
     html = serializers.CharField()
 
 
