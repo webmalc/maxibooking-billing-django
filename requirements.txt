@@ -67,7 +67,6 @@ pew==1.1.0
 phonenumberslite==8.5.0
 pickleshare==0.7.4
 pipenv==8.3.1
-pkg-resources==0.0.0
 polib==1.0.8
 progressbar2==3.30.2
 prompt-toolkit==1.0.15
