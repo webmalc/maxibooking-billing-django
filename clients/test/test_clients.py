@@ -322,7 +322,7 @@ def test_admin_trial_by_admin(admin_client):
     client = Client.objects.get(pk=5)
 
     assert client.services.count() == 2
-    assert client.rooms_limit == 25
+    assert client.restrictions.rooms_limit == 25
     assert client.services.get(service__type='rooms').price == Money(
         87500.0, EUR)
     assert client.services.get(service__type='connection').status == 'active'
@@ -345,3 +345,10 @@ def test_client_check_status():
     client = Client.objects.get(login='user-six')
     client.check_status()
     assert client.status == 'active'
+
+
+def test_client_restrictions_update():
+    client = Client.objects.get(login='user-two')
+    assert client.restrictions.rooms_limit == 5
+    client.restrictions_update(rooms=125)
+    assert client.restrictions.rooms_limit == 125

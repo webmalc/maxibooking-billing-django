@@ -9,7 +9,7 @@ from reversion.admin import VersionAdmin
 from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
-from .models import Client, ClientService
+from .models import Client, ClientService, Restrictions
 from .tasks import install_client_task
 
 
@@ -80,6 +80,15 @@ class PropertyInlineAdmin(admin.TabularInline):
     show_change_link = True
 
 
+class RestrictionsInlineAdmin(admin.StackedInline):
+    """
+    StackedInline admin interface
+    """
+    model = Restrictions
+    fields = ('rooms_limit', )
+    can_delete = False
+
+
 @admin.register(Client)
 class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     """
@@ -92,7 +101,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
     raw_id_fields = ('country', )
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
-                       'modified_by', 'rooms_limit')
+                       'modified_by')
     list_select_related = ('country', )
     fieldsets = (
         ('General', {
@@ -100,12 +109,15 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
                        'country')
         }),
         ('Options', {
-            'fields':
-            ('status', 'installation', 'url', 'rooms_limit', 'disabled_at',
-             'created', 'modified', 'created_by', 'modified_by')
+            'fields': ('status', 'installation', 'url', 'disabled_at',
+                       'created', 'modified', 'created_by', 'modified_by')
         }),
     )
-    inlines = (PropertyInlineAdmin, ClientServiceInlineAdmin)
+    inlines = (
+        RestrictionsInlineAdmin,
+        PropertyInlineAdmin,
+        ClientServiceInlineAdmin,
+    )
 
     def install(self, request, obj):
         """

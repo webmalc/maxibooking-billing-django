@@ -19,6 +19,7 @@ Django==1.11.1
 django-admin-row-actions==0.0.2
 django-adminactions==1.5
 django-ajax-selects==1.6.1
+django-annoying==0.10.3
 django-autoslug==1.9.3
 django-cities-light==3.3.0
 django-cors-headers==2.1.0

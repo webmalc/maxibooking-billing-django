@@ -2,6 +2,7 @@ import arrow
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db.models import Sum
 
 from billing.exceptions import BaseException
 from billing.managers import LookupMixin
@@ -24,6 +25,16 @@ class ClientManager(LookupMixin):
             disabled_at__lte=arrow.utcnow().shift(
                 months=-settings.MB_CLIENT_ARCHIVE_MONTHS).datetime).exclude(
                     disabled_at__isnull=True)
+
+    def count_rooms(self, client):
+        """
+        Count client service rooms
+        """
+        rooms = client.services.filter(
+            service__type='rooms',
+            is_enabled=True).aggregate(Sum('quantity'))['quantity__sum']
+
+        return rooms if rooms else 0
 
 
 class ClientServiceManager(LookupMixin):

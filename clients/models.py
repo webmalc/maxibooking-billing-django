@@ -1,3 +1,4 @@
+from annoying.fields import AutoOneToOneField
 from django.core.exceptions import ValidationError
 from django.core.validators import (MinLengthValidator, MinValueValidator,
                                     RegexValidator)
@@ -12,6 +13,26 @@ from billing.models import CommonInfo
 from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager
+
+
+class Restrictions(CommonInfo, TimeStampedModel):
+    """
+    Client restrictions class
+    """
+    rooms_limit = models.PositiveIntegerField(
+        verbose_name=_('rooms limit'), db_index=True, null=True, blank=True)
+
+    client = AutoOneToOneField(
+        'clients.Client',
+        on_delete=models.CASCADE,
+        related_name='restrictions',
+        primary_key=True)
+
+    class Meta:
+        verbose_name_plural = _('restrictions')
+
+    def __str__(self):
+        return 'Client "{}" restrictions'.format(self.client)
 
 
 class Client(CommonInfo, TimeStampedModel):
@@ -80,16 +101,6 @@ lowercase letters, numbers, and "-" character.'))
         verbose_name=_('url'),
         help_text=_('maxibooking url'))
 
-    @property
-    def rooms_limit(self):
-        """
-        Client rooms limit
-        """
-        return sum([
-            s.quantity for s in self.services.all()
-            if s.is_enabled and s.service.type == 'rooms'
-        ])
-
     def check_status(self):
         """
         Check client status
@@ -98,6 +109,15 @@ lowercase letters, numbers, and "-" character.'))
            not self.orders.get_expired(('archived',)).count():
             self.status = 'active'
             self.save()
+
+    def restrictions_update(self, rooms=None):
+        """
+        Update client restrictions
+        """
+        if not rooms:
+            rooms = Client.objects.count_rooms(client=self)
+        self.restrictions.rooms_limit = rooms
+        self.restrictions.save()
 
     def __str__(self):
         return '{} - {}'.format(self.login, self.name)

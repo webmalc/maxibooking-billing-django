@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_admin_row_actions',
     'prettyjson',
+    'annoying',
 
     # mb apps
     'finances',

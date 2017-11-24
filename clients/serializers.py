@@ -1,3 +1,4 @@
+from django.forms.models import model_to_dict
 from rest_framework import serializers
 
 from finances.models import Service
@@ -20,13 +21,17 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         read_only=False,
         slug_field='tld',
         queryset=Country.objects.all())
+    restrictions = serializers.SerializerMethodField()
+
+    def get_restrictions(self, obj):
+        return model_to_dict(obj.restrictions)
 
     class Meta:
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'installation',
-                  'url', 'properties', 'rooms_limit', 'disabled_at', 'created',
-                  'modified', 'created_by', 'modified_by')
+                  'url', 'properties', 'restrictions', 'disabled_at',
+                  'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
 
 

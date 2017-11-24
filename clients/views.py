@@ -28,7 +28,8 @@ class ClientViewSet(viewsets.ModelViewSet):
     Client viewset
     """
     queryset = Client.objects.all().select_related(
-        'created_by', 'modified_by', 'country').prefetch_related(
+        'created_by',
+        'modified_by', 'country', 'restrictions').prefetch_related(
             'properties', 'services', 'services__service')
     search_fields = ('login', 'email', 'description', 'phone', 'status')
     serializer_class = ClientSerializer
