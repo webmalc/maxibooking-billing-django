@@ -1,6 +1,7 @@
 amqp==2.1.4
 apipkg==1.4
 arrow==0.10.0
+asn1crypto==0.23.0
 awscli==1.11.129
 Babel==2.4.0
 bcrypt==3.1.4
@@ -71,6 +72,7 @@ polib==1.0.8
 progressbar2==3.30.2
 prompt-toolkit==1.0.15
 psycopg2==2.7.3.1
+psycopg2cffi==2.7.7
 ptyprocess==0.5.1
 py==1.4.34
 py-moneyed==0.7.0
@@ -92,6 +94,7 @@ python-dateutil==2.6.0
 python-memcached==1.58
 python-utils==2.1.0
 pytz==2017.2
+PyYAML==3.12
 qrcode==4.0.4
 raven==6.1.0
 redis==2.10.5
@@ -99,6 +102,7 @@ requests==2.18.4
 rsa==3.4.2
 s3transfer==0.1.10
 simplegeneric==0.8.1
+six==1.11.0
 sqlparse==0.2.3
 standardjson==0.3.1
 stripe==1.73.0
