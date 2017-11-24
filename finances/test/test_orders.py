@@ -61,7 +61,7 @@ def test_order_list_by_admin(admin_client):
     assert response.status_code == 200
     assert len(response.json()['results']) == 3
 
-    json_contains(response, 'Test service one - 24,664.00')
+    json_contains(response, 'Test service two - 7,000.00')
     json_contains(response, 'Test service one - 4,600.00')
 
     response = admin_client.get(

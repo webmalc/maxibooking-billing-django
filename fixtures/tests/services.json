@@ -12,6 +12,7 @@
         "description_en": "Test service one description",
         "description_ru": "Описание тестового сервиса 1",
         "type": "connection",
+        "default_rooms": 10,
         "is_default": true,
         "created_by": 1,
         "modified_by": 1,

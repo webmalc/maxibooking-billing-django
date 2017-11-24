@@ -49,6 +49,7 @@ def order_post_save(sender, **kwargs):
             order.pk, order.payment_system))
 
         order.client.check_status()
+        order.client_services.update(status='active')
 
     if kwargs['created']:
         order_notify_task.apply_async((order.id, ), countdown=1)

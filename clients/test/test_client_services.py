@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from moneyed import EUR, Money
 
 from billing.lib.test import json_contains
-from clients.models import ClientService
+from clients.models import Client, ClientService
 from clients.tasks import client_services_update
 from finances.models import Order, Service
 
@@ -92,17 +92,23 @@ def test_client_service_create_invalid_by_admin(admin_client):
 
 
 def test_client_service_create_by_admin(admin_client):
-    data = {'quantity': 2, 'client': 'user-one', 'service': 2}
+    client = Client.objects.get(login='user-one')
+    assert client.restrictions.rooms_limit == 10
+
+    data = {'quantity': 2, 'client': client.login, 'service': 2}
     url = reverse('clientservice-list')
     response = admin_client.post(
         url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
     assert response_json['price'] == '7000.00'
-    assert response_json['client'] == 'user-one'
+    assert response_json['client'] == client.login
     assert response_json['is_enabled'] is True
     assert response_json['country'] == 'ad'
     assert response_json['status'] == 'active'
+
+    client.restrictions.refresh_from_db()
+    assert client.restrictions.rooms_limit == 12
 
     begin = arrow.utcnow()
     end = begin.shift(years=+1)
@@ -115,10 +121,14 @@ def test_client_service_create_by_admin(admin_client):
     client_service = ClientService.objects.get(pk=1)
     assert client_service.is_enabled is True
     data['service'] = 4
+    data['quantity'] = 3
     response = admin_client.post(
         url, data=json.dumps(data), content_type="application/json")
     client_service.refresh_from_db()
     assert client_service.is_enabled is False
+
+    client.restrictions.refresh_from_db()
+    assert client.restrictions.rooms_limit == 12
 
 
 def test_client_services_update_task(admin_client):

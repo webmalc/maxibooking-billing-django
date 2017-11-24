@@ -44,6 +44,8 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         default='month',
         choices=PERIODS_UNITS,
         db_index=True)
+    default_rooms = models.PositiveIntegerField(
+        verbose_name=_('default rooms'), db_index=True, null=True, blank=True)
     type = models.CharField(
         verbose_name=_('type'),
         max_length=20,

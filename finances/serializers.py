@@ -64,8 +64,8 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         model = Service
         fields = ('id', 'title', 'description', 'price', 'price_currency',
                   'prices', 'period', 'period_units', 'period_days',
-                  'is_enabled', 'is_default', 'created', 'modified',
-                  'created_by', 'modified_by')
+                  'default_rooms', 'is_enabled', 'is_default', 'created',
+                  'modified', 'created_by', 'modified_by')
 
 
 class PriceSerializer(serializers.HyperlinkedModelSerializer):

@@ -123,7 +123,8 @@
    CLOSED: [2017-11-16 Thu 12:21]
 ** DONE order note trans
    CLOSED: [2017-11-16 Thu 17:40]
-** TODO service default rooms count
+** DONE service default rooms count
+   CLOSED: [2017-11-24 Fri 19:05]
 ** TODO organization
 ** TODO bill
 ** TODO coverage 100%

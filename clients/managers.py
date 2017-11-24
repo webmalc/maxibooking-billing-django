@@ -32,9 +32,16 @@ class ClientManager(LookupMixin):
         """
         rooms = client.services.filter(
             service__type='rooms',
+            begin__lte=arrow.utcnow().datetime,
             is_enabled=True).aggregate(Sum('quantity'))['quantity__sum']
 
-        return rooms if rooms else 0
+        default_rooms = client.services.filter(
+            service__type='connection',
+            begin__lte=arrow.utcnow().datetime,
+            is_enabled=True).aggregate(
+                Sum('service__default_rooms'))['service__default_rooms__sum']
+
+        return int(rooms or 0) + int(default_rooms or 0)
 
 
 class ClientServiceManager(LookupMixin):

@@ -129,8 +129,8 @@ class ServiceAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
             'fields': ('title', 'description', 'price')
         }),
         ('Options', {
-            'fields':
-            ('period', 'period_units', 'type', 'is_default', 'period_days',
-             'is_enabled', 'created', 'modified', 'created_by', 'modified_by')
+            'fields': ('period', 'period_units', 'type', 'is_default',
+                       'period_days', 'default_rooms', 'is_enabled', 'created',
+                       'modified', 'created_by', 'modified_by')
         }),
     )
