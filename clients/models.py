@@ -63,7 +63,11 @@ lowercase letters, numbers, and "-" character.'))
     email = models.EmailField(
         db_index=True, unique=True, verbose_name=_('e-mail'))
     phone = PhoneNumberField(
-        max_length=50, db_index=True, verbose_name=_('phone'))
+        max_length=50,
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('phone'))
     name = models.CharField(
         max_length=255,
         db_index=True,
@@ -100,6 +104,7 @@ lowercase letters, numbers, and "-" character.'))
         blank=True,
         verbose_name=_('url'),
         help_text=_('maxibooking url'))
+    ip = models.GenericIPAddressField(null=True, blank=True)
 
     def check_status(self):
         """

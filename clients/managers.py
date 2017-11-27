@@ -30,15 +30,14 @@ class ClientManager(LookupMixin):
         """
         Count client service rooms
         """
+        now = arrow.utcnow().datetime
         rooms = client.services.filter(
-            service__type='rooms',
-            begin__lte=arrow.utcnow().datetime,
-            is_enabled=True).aggregate(Sum('quantity'))['quantity__sum']
+            service__type='rooms', begin__lte=now, is_enabled=True).aggregate(
+                Sum('quantity'))['quantity__sum']
 
         default_rooms = client.services.filter(
             service__type='connection',
-            begin__lte=arrow.utcnow().datetime,
-            is_enabled=True).aggregate(
+            begin__lte=now, is_enabled=True).aggregate(
                 Sum('service__default_rooms'))['service__default_rooms__sum']
 
         return int(rooms or 0) + int(default_rooms or 0)

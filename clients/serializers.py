@@ -30,7 +30,7 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'installation',
-                  'url', 'properties', 'restrictions', 'disabled_at',
+                  'url', 'properties', 'restrictions', 'disabled_at', 'ip',
                   'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
 

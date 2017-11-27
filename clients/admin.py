@@ -109,7 +109,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
                        'country')
         }),
         ('Options', {
-            'fields': ('status', 'installation', 'url', 'disabled_at',
+            'fields': ('status', 'installation', 'url', 'disabled_at', 'ip',
                        'created', 'modified', 'created_by', 'modified_by')
         }),
     )
