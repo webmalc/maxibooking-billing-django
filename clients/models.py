@@ -1,7 +1,7 @@
 from annoying.fields import AutoOneToOneField
 from django.core.exceptions import ValidationError
-from django.core.validators import (MinLengthValidator, MinValueValidator,
-                                    RegexValidator)
+from django.core.validators import (MaxLengthValidator, MinLengthValidator,
+                                    MinValueValidator, RegexValidator)
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -10,7 +10,7 @@ from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import CommonInfo
-from hotels.models import Country
+from hotels.models import City, Country, Region
 
 from .managers import ClientManager, ClientServiceManager
 
@@ -129,6 +129,146 @@ lowercase letters, numbers, and "-" character.'))
 
     class Meta:
         ordering = ['-created']
+
+
+class Company(CommonInfo, TimeStampedModel):
+    """
+    Company class
+    """
+    FORMS = (
+        ('ooo', _('ooo')),
+        ('oao', _('oao')),
+        ('ip', _('ip')),
+        ('zao', _('zao')),
+    )
+    OPERATION_BASES = (
+        ('charter', _('charter')),
+        ('proxy', _('proxy')),
+    )
+
+    name = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('name'))
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        verbose_name=_('client'),
+        db_index=True)
+    form = models.CharField(
+        max_length=20,
+        default='active',
+        choices=FORMS,
+        null=True,
+        blank=True,
+        verbose_name=_('form'),
+        db_index=True)
+    ogrn = models.CharField(
+        max_length=13,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(13),
+                    MaxLengthValidator(13)],
+        verbose_name=_('ogrn'))
+    inn = models.CharField(
+        max_length=12,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(10),
+                    MaxLengthValidator(13)],
+        verbose_name=_('inn'))
+    kpp = models.CharField(
+        max_length=9,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(9),
+                    MaxLengthValidator(9)],
+        verbose_name=_('kpp'))
+    city = models.ForeignKey(
+        City, on_delete=models.PROTECT, verbose_name=_('city'), db_index=True)
+    region = models.ForeignKey(
+        Region,
+        on_delete=models.PROTECT,
+        verbose_name=_('region'),
+        db_index=True)
+    address = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('address'))
+    postal_code = models.CharField(
+        max_length=100, db_index=True, validators=[MinLengthValidator(2)])
+    account_number = models.CharField(
+        max_length=100, db_index=True, validators=[MinLengthValidator(10)])
+    bank = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('bank'))
+    swift = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('swift'))
+    bik = models.CharField(
+        max_length=100,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(7)],
+        verbose_name=_('bik'))
+    corr_account = models.CharField(
+        max_length=30,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(20),
+                    MaxLengthValidator(30)],
+        verbose_name=_('correspondent account'))
+    boss_firstname = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss firstname'))
+    boss_lastname = models.CharField(
+        max_length=255,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss lastname'))
+    boss_patronymic = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss patronymic'))
+    boss_operation_base = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        choices=OPERATION_BASES,
+        verbose_name=_('boss operation base'))
+    proxy_number = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('proxy number'))
+    proxy_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name=_('proxy date'),
+    )
+
+    class Meta:
+        ordering = ['-created']
+        unique_together = (('client', 'name'), )
+        verbose_name_plural = _('companies')
 
 
 class ClientService(CommonInfo, TimeStampedModel):

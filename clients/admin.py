@@ -9,7 +9,7 @@ from reversion.admin import VersionAdmin
 from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
-from .models import Client, ClientService, Restrictions
+from .models import Client, ClientService, Company, Restrictions
 from .tasks import install_client_task
 
 
@@ -82,11 +82,28 @@ class PropertyInlineAdmin(admin.TabularInline):
 
 class RestrictionsInlineAdmin(admin.StackedInline):
     """
-    StackedInline admin interface
+    RestrictionsInline admin interface
     """
     model = Restrictions
     fields = ('rooms_limit', )
     can_delete = False
+
+
+class CompanyInlineAdmin(admin.TabularInline):
+    """
+    CompanyInline admin interface
+    """
+    model = Company
+    fields = (
+        'name',
+        'bank',
+    )
+    readonly_fields = fields
+    show_change_link = True
+    can_delete = False
+
+    def has_add_permission(self, *args, **kwargs):
+        return False
 
 
 @admin.register(Client)
@@ -117,6 +134,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
         RestrictionsInlineAdmin,
         PropertyInlineAdmin,
         ClientServiceInlineAdmin,
+        CompanyInlineAdmin,
     )
 
     def install(self, request, obj):
@@ -139,3 +157,42 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     class Media:
         js = ('js/admin/clients.js', )
         css = {'all': ('css/admin/clients.css', )}
+
+
+@admin.register(Company)
+class CompanyAdmin(VersionAdmin, AjaxSelectAdmin):
+    """
+    Company admin interface
+    """
+    list_display = ('id', 'name', 'client', 'bank', 'created')
+    list_display_links = ('id', 'name')
+    list_filter = (('client', TextFieldListFilter), )
+    search_fields = ('id', 'client__login', 'client__email', 'client__name',
+                     'name', 'boss_lastname', 'ogrn', 'inn', 'kpp',
+                     'account_number', 'bik', 'swift')
+    raw_id_fields = ('city', 'region', 'client')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    list_select_related = ('client', )
+    form = make_ajax_form(Company, {
+        'client': 'clients',
+    })
+    fieldsets = (
+        ('General', {
+            'fields': ('client', 'name', 'form', 'ogrn', 'inn', 'kpp')
+        }),
+        ('Address', {
+            'fields': ('region', 'city', 'address', 'postal_code', 'inn',
+                       'kpp')
+        }),
+        ('Bank', {
+            'fields': ('account_number', 'bank', 'swift', 'bik',
+                       'corr_account')
+        }),
+        ('Boss', {
+            'fields': ('boss_firstname', 'boss_lastname', 'boss_patronymic',
+                       'boss_operation_base', 'proxy_number', 'proxy_date')
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
