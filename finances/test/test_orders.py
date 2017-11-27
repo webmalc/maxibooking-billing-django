@@ -17,7 +17,10 @@ pytestmark = pytest.mark.django_db
 def test_order_creation_and_modifications(mailoutbox):
     order = Order()
     order.client_id = 1
+    order.note = 'test note'
     order.save()
+
+    assert order.note == 'test note'
     assert order.price == Money(0, EUR)
     assert order.status == 'new'
     expired_date = arrow.get(order.created).shift(
@@ -35,14 +38,11 @@ def test_order_creation_and_modifications(mailoutbox):
     assert 'Тестовый сервис' in order.note_ru
     assert '1,999.98' in order.note
 
-    order.note = 'test note'
     order.price = Money(111.25, EUR)
     order.save()
 
     assert order.price == Money(111.25, EUR)
-    assert order.note == 'test note'
 
-    order.note = None
     order.price = 0
     order.save()
     assert order.price == Money(14001.83, EUR)
@@ -60,7 +60,6 @@ def test_order_list_by_admin(admin_client):
     response = admin_client.get(reverse('order-list'))
     assert response.status_code == 200
     assert len(response.json()['results']) == 3
-
     json_contains(response, 'Test service two - 7,000.00')
     json_contains(response, 'Test service one - 4,600.00')
 

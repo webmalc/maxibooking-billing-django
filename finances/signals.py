@@ -26,7 +26,7 @@ def order_pre_save(sender, **kwargs):
 
     if not order.price and order.id:
         order.price = order.calc_price()
-    if not order.note and order.id:
+    if order.id and order.client_services.count():
         auto_populate(order, 'note', order.generate_note)
 
 
@@ -73,7 +73,7 @@ def order_m2m_changed(sender, **kwargs):
     order.set_corrupted()
 
     is_changed = False
-    if not order.note:
+    if order.client_services.count():
         auto_populate(order, 'note', order.generate_note)
         is_changed = True
     if not order.price:
