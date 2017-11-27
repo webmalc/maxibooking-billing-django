@@ -51,7 +51,6 @@ contain only lowercase letters, numbers, and "-" character.'
     assert response_json['email'] == [
         'client with this e-mail already exists.'
     ]
-    assert response_json['phone'] == ['This field is required.']
 
 
 def test_client_create_by_admin(admin_client):
