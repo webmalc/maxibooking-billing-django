@@ -10,7 +10,7 @@ pipelines:
           - pip install -r requirements.txt
           - python manage.py migrate --no-input
           # - python manage.py compilemessages
-          - python -m pytest --pep8 --flakes
+          - python -m pytest --pep8 --flakes --create-db
         services: 
           - redis
           - postgres
