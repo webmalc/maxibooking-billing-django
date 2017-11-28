@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from annoying.fields import AutoOneToOneField
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
@@ -9,7 +11,7 @@ from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import CommonInfo
+from billing.models import ABCModel, CommonInfo
 from hotels.models import City, Country, Region
 
 from .managers import ClientManager, ClientServiceManager
@@ -131,20 +133,39 @@ lowercase letters, numbers, and "-" character.'))
         ordering = ['-created']
 
 
+class CompanyCountryBase(ABCModel):
+    """
+    Base country class
+    """
+
+    @property
+    @abstractmethod
+    def countries(self):
+        """
+        Payment type countries
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def countries_excluded(self):
+        """
+        Payment type excluded countries
+        """
+        pass
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return 'Company #{} {} fields'.format(self.company.id,
+                                              self._meta.verbose_name)
+
+
 class Company(CommonInfo, TimeStampedModel):
     """
-    Company class
+    Company base class
     """
-    FORMS = (
-        ('ooo', _('ooo')),
-        ('oao', _('oao')),
-        ('ip', _('ip')),
-        ('zao', _('zao')),
-    )
-    OPERATION_BASES = (
-        ('charter', _('charter')),
-        ('proxy', _('proxy')),
-    )
 
     name = models.CharField(
         max_length=255,
@@ -156,38 +177,6 @@ class Company(CommonInfo, TimeStampedModel):
         on_delete=models.CASCADE,
         verbose_name=_('client'),
         db_index=True)
-    form = models.CharField(
-        max_length=20,
-        default='active',
-        choices=FORMS,
-        null=True,
-        blank=True,
-        verbose_name=_('form'),
-        db_index=True)
-    ogrn = models.CharField(
-        max_length=13,
-        db_index=True,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(13),
-                    MaxLengthValidator(13)],
-        verbose_name=_('ogrn'))
-    inn = models.CharField(
-        max_length=12,
-        db_index=True,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(10),
-                    MaxLengthValidator(13)],
-        verbose_name=_('inn'))
-    kpp = models.CharField(
-        max_length=9,
-        db_index=True,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(9),
-                    MaxLengthValidator(9)],
-        verbose_name=_('kpp'))
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, verbose_name=_('city'), db_index=True)
     region = models.ForeignKey(
@@ -201,74 +190,125 @@ class Company(CommonInfo, TimeStampedModel):
         validators=[MinLengthValidator(2)],
         verbose_name=_('address'))
     postal_code = models.CharField(
-        max_length=100, db_index=True, validators=[MinLengthValidator(2)])
+        max_length=50, db_index=True, validators=[MinLengthValidator(2)])
     account_number = models.CharField(
-        max_length=100, db_index=True, validators=[MinLengthValidator(10)])
+        max_length=50, db_index=True, validators=[MinLengthValidator(10)])
     bank = models.CharField(
         max_length=255,
         db_index=True,
         validators=[MinLengthValidator(2)],
         verbose_name=_('bank'))
-    swift = models.CharField(
-        max_length=255,
-        db_index=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('swift'))
-    bik = models.CharField(
-        max_length=100,
-        db_index=True,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(7)],
-        verbose_name=_('bik'))
-    corr_account = models.CharField(
-        max_length=30,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(20),
-                    MaxLengthValidator(30)],
-        verbose_name=_('correspondent account'))
-    boss_firstname = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('boss firstname'))
-    boss_lastname = models.CharField(
-        max_length=255,
-        db_index=True,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('boss lastname'))
-    boss_patronymic = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('boss patronymic'))
-    boss_operation_base = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        choices=OPERATION_BASES,
-        verbose_name=_('boss operation base'))
-    proxy_number = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('proxy number'))
-    proxy_date = models.DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_('proxy date'),
-    )
 
     class Meta:
         ordering = ['-created']
         unique_together = (('client', 'name'), )
         verbose_name_plural = _('companies')
+
+
+class CompanyWorld(CompanyCountryBase):
+    """
+    Company world class
+    """
+    countries_excluded = ['ru']
+    countries = []
+
+    swift = models.CharField(
+        max_length=20,
+        db_index=True,
+        validators=[MinLengthValidator(8)],
+        verbose_name=_('swift'))
+    company = AutoOneToOneField(
+        Company,
+        on_delete=models.CASCADE,
+        related_name='world',
+        primary_key=True)
+
+    class Meta:
+        verbose_name_plural = _('world')
+        verbose_name = _('world')
+
+
+class CompanyRu(CompanyCountryBase):
+    """
+    Company ru class
+    """
+    countries_excluded = []
+    countries = ['ru']
+
+    FORMS = (
+        ('ooo', _('ooo')),
+        ('oao', _('oao')),
+        ('ip', _('ip')),
+        ('zao', _('zao')),
+    )
+    OPERATION_BASES = (
+        ('charter', _('charter')),
+        ('proxy', _('proxy')),
+    )
+
+    form = models.CharField(
+        max_length=20,
+        default='active',
+        choices=FORMS,
+        verbose_name=_('form'),
+        db_index=True)
+    ogrn = models.CharField(
+        max_length=13,
+        db_index=True,
+        validators=[MinLengthValidator(13),
+                    MaxLengthValidator(13)],
+        verbose_name=_('ogrn'))
+    inn = models.CharField(
+        max_length=12,
+        db_index=True,
+        validators=[MinLengthValidator(10),
+                    MaxLengthValidator(13)],
+        verbose_name=_('inn'))
+    kpp = models.CharField(
+        max_length=9,
+        db_index=True,
+        validators=[MinLengthValidator(9),
+                    MaxLengthValidator(9)],
+        verbose_name=_('kpp'))
+
+    bik = models.CharField(
+        max_length=20,
+        db_index=True,
+        validators=[MinLengthValidator(7)],
+        verbose_name=_('bik'))
+    corr_account = models.CharField(
+        max_length=30,
+        validators=[MinLengthValidator(20),
+                    MaxLengthValidator(30)],
+        verbose_name=_('correspondent account'))
+    boss_firstname = models.CharField(
+        max_length=255,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss firstname'))
+    boss_lastname = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss lastname'))
+    boss_patronymic = models.CharField(
+        max_length=255,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss patronymic'))
+    boss_operation_base = models.CharField(
+        max_length=255,
+        choices=OPERATION_BASES,
+        verbose_name=_('boss operation base'))
+    proxy_number = models.CharField(
+        max_length=50,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('proxy number'))
+    proxy_date = models.DateTimeField(verbose_name=_('proxy date'), )
+    company = AutoOneToOneField(
+        Company, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+
+    class Meta:
+        verbose_name_plural = _('ru')
+        verbose_name = _('ru')
 
 
 class ClientService(CommonInfo, TimeStampedModel):

@@ -1,3 +1,5 @@
+from abc import ABCMeta
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -27,6 +29,20 @@ class CommonInfo(models.Model):
     def __str__(self):
         return getattr(self, 'name', '{} #{}'.format(
             type(self).__name__, str(self.id)))
+
+    class Meta:
+        abstract = True
+
+
+class AbstractModelMeta(ABCMeta, type(models.Model)):
+    pass
+
+
+class ABCModel(models.Model):
+    """
+    Abstract Django model
+    """
+    __metaclass__ = AbstractModelMeta
 
     class Meta:
         abstract = True
