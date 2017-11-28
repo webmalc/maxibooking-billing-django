@@ -217,7 +217,7 @@ class CompanyWorld(CompanyCountryBase):
         db_index=True,
         validators=[MinLengthValidator(8)],
         verbose_name=_('swift'))
-    company = AutoOneToOneField(
+    company = models.OneToOneField(
         Company,
         on_delete=models.CASCADE,
         related_name='world',
@@ -247,11 +247,7 @@ class CompanyRu(CompanyCountryBase):
     )
 
     form = models.CharField(
-        max_length=20,
-        default='active',
-        choices=FORMS,
-        verbose_name=_('form'),
-        db_index=True)
+        max_length=20, choices=FORMS, verbose_name=_('form'), db_index=True)
     ogrn = models.CharField(
         max_length=13,
         db_index=True,
@@ -303,7 +299,7 @@ class CompanyRu(CompanyCountryBase):
         validators=[MinLengthValidator(2)],
         verbose_name=_('proxy number'))
     proxy_date = models.DateTimeField(verbose_name=_('proxy date'), )
-    company = AutoOneToOneField(
+    company = models.OneToOneField(
         Company, on_delete=models.CASCADE, related_name='ru', primary_key=True)
 
     class Meta:

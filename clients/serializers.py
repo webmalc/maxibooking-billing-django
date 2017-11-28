@@ -1,10 +1,67 @@
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
+from billing.serializers import UpdateInstanceSerializerMixin
 from finances.models import Service
-from hotels.models import Country
+from hotels.models import City, Country, Region
 
-from .models import Client, ClientService
+from .models import Client, ClientService, Company, CompanyRu, CompanyWorld
+
+
+class CompanyWorldSerializer(serializers.ModelSerializer):
+    """
+    Company world serializer
+    """
+
+    class Meta:
+        model = CompanyWorld
+        fields = ('swift', )
+
+
+class CompanyRuSerializer(serializers.ModelSerializer):
+    """
+    Company ru serializer
+    """
+
+    class Meta:
+        model = CompanyRu
+        fields = ('form', 'ogrn', 'inn', 'kpp', 'bik', 'corr_account',
+                  'boss_firstname', 'boss_lastname', 'boss_patronymic',
+                  'boss_operation_base', 'proxy_number', 'proxy_date')
+
+
+class CompanySerializer(UpdateInstanceSerializerMixin,
+                        serializers.ModelSerializer):
+    """
+    Company serializer
+    """
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    city = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=City.objects.all())
+    region = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=Region.objects.all())
+    client = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='login',
+        queryset=Client.objects.all())
+
+    world = CompanyWorldSerializer()
+    ru = CompanyRuSerializer()
+
+    def _update(self, instance, validated_data):
+        self._update_instance(instance, validated_data, ('ru', 'world'))
+        self._update_reference(
+            instance, validated_data, 'world', CompanyWorld(company=instance))
+        self._update_reference(
+            instance, validated_data, 'ru', CompanyRu(company=instance))
+
+    class Meta:
+        model = Company
+        fields = ('id', 'name', 'client', 'city', 'region', 'address',
+                  'postal_code', 'account_number', 'bank', 'created',
+                  'modified', 'created_by', 'modified_by', 'world', 'ru')
 
 
 class ClientSerializer(serializers.HyperlinkedModelSerializer):

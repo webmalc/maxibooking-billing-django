@@ -9,9 +9,21 @@ from rest_framework.response import Response
 from billing.exceptions import BaseException
 from billing.lib import mb
 
-from .models import Client, ClientService
-from .serializers import ClientSerializer, ClientServiceSerializer
+from .models import Client, ClientService, Company
+from .serializers import (ClientSerializer, ClientServiceSerializer,
+                          CompanySerializer)
 from .tasks import install_client_task, mail_client_task
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all().select_related(
+        'created_by', 'modified_by', 'client', 'region', 'city', 'ru', 'world')
+
+    search_fields = ('id', 'client__login', 'client__email', 'client__name',
+                     'name', 'ru__boss_lastname', 'ru__ogrn', 'ru__inn',
+                     'ru__kpp', 'account_number', 'ru__bik', 'world__swift')
+    serializer_class = CompanySerializer
+    filter_fields = ('client', )
 
 
 class ClientServiceViewSet(viewsets.ModelViewSet):
