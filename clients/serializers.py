@@ -1,7 +1,7 @@
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
-from billing.serializers import UpdateInstanceSerializerMixin
+from billing.serializers import NestedUpdateSerializerMixin
 from finances.models import Service
 from hotels.models import City, Country, Region
 
@@ -30,7 +30,7 @@ class CompanyRuSerializer(serializers.ModelSerializer):
                   'boss_operation_base', 'proxy_number', 'proxy_date')
 
 
-class CompanySerializer(UpdateInstanceSerializerMixin,
+class CompanySerializer(NestedUpdateSerializerMixin,
                         serializers.ModelSerializer):
     """
     Company serializer
@@ -50,18 +50,15 @@ class CompanySerializer(UpdateInstanceSerializerMixin,
     world = CompanyWorldSerializer()
     ru = CompanyRuSerializer()
 
-    def _update(self, instance, validated_data):
-        self._update_instance(instance, validated_data, ('ru', 'world'))
-        self._update_reference(
-            instance, validated_data, 'world', CompanyWorld(company=instance))
-        self._update_reference(
-            instance, validated_data, 'ru', CompanyRu(company=instance))
-
     class Meta:
         model = Company
         fields = ('id', 'name', 'client', 'city', 'region', 'address',
                   'postal_code', 'account_number', 'bank', 'created',
                   'modified', 'created_by', 'modified_by', 'world', 'ru')
+        references = {
+            'ru': 'clients.CompanyRu',
+            'world': 'clients.CompanyWorld'
+        }
 
 
 class ClientSerializer(serializers.HyperlinkedModelSerializer):

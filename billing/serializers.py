@@ -1,4 +1,7 @@
-class UpdateInstanceSerializerMixin(object):
+from django.apps import apps
+
+
+class NestedUpdateSerializerMixin(object):
     """
     Base nested serializer update and create
     """
@@ -26,3 +29,11 @@ class UpdateInstanceSerializerMixin(object):
     def update(self, instance, validated_data):
         self._update(instance, validated_data)
         return instance
+
+    def _update(self, instance, validated_data):
+        self._update_instance(instance, validated_data,
+                              self.Meta.references.keys())
+        for key, model_name in self.Meta.references.items():
+            model = apps.get_model(model_name)
+            self._update_reference(
+                instance, validated_data, key, model(company=instance))
