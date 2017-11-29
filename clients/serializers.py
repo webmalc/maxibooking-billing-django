@@ -47,8 +47,8 @@ class CompanySerializer(NestedUpdateSerializerMixin,
         slug_field='login',
         queryset=Client.objects.all())
 
-    world = CompanyWorldSerializer()
-    ru = CompanyRuSerializer()
+    world = CompanyWorldSerializer(allow_null=True, required=False)
+    ru = CompanyRuSerializer(allow_null=True, required=False)
 
     class Meta:
         model = Company

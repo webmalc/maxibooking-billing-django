@@ -1,0 +1,81 @@
+[
+{
+    "model": "clients.company",
+    "pk": 1,
+    "fields": {
+        "created": "2017-11-27T13:57:42.379Z",
+        "modified": "2017-11-28T08:40:20.289Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "name": "test company",
+        "client": 1,
+        "city": 2,
+        "region": 2,
+        "address": "test company address",
+        "postal_code": "12345678_postal_code",
+        "account_number": "12345678_account_number",
+        "bank": "test company bank"
+    }
+},
+{
+    "model": "clients.company",
+    "pk": 2,
+    "fields": {
+        "created": "2017-11-28T10:57:09.603Z",
+        "modified": "2017-11-28T10:57:09.603Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "name": "company ru",
+        "client": 1,
+        "city": 2,
+        "region": 2,
+        "address": "company ru address",
+        "postal_code": "1222222222222222222222",
+        "account_number": "12333123333333333333333333",
+        "bank": "comapany ru bank"
+    }
+},
+{
+    "model": "clients.company",
+    "pk": 3,
+    "fields": {
+        "created": "2017-11-28T10:57:09.603Z",
+        "modified": "2017-11-28T10:57:09.603Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "name": "company en",
+        "client": 1,
+        "city": 1,
+        "region": 1,
+        "address": "company en address",
+        "postal_code": "12222222222222233333",
+        "account_number": "123331233333333312334123",
+        "bank": "comapany en bank"
+    }
+},
+{
+    "model": "clients.companyworld",
+    "pk": 3,
+    "fields": {
+        "swift": "1221212331_swift"
+    }
+},
+{
+    "model": "clients.companyru",
+    "pk": 2,
+    "fields": {
+        "form": "ooo",
+        "ogrn": "1222222222221",
+        "inn": "222222222222",
+        "kpp": "222222222",
+        "bik": "22222222222222222222",
+        "corr_account": "222222222222222222222222222222",
+        "boss_firstname": "boss firstname",
+        "boss_lastname": "boss lastname",
+        "boss_patronymic": "boss patronymic",
+        "boss_operation_base": "charter",
+        "proxy_number": "123123",
+        "proxy_date": "2017-11-28T13:28:08Z"
+    }
+}
+]
