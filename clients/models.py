@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 from annoying.fields import AutoOneToOneField
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
@@ -11,8 +9,8 @@ from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import ABCModel, CommonInfo
-from hotels.models import City, Country, Region
+from billing.models import CommonInfo, CountryBase
+from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager
 
@@ -86,6 +84,33 @@ lowercase letters, numbers, and "-" character.'))
         on_delete=models.PROTECT,
         verbose_name=_('country'),
         db_index=True)
+    city = models.ForeignKey(
+        'hotels.City',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('city'),
+        db_index=True)
+    region = models.ForeignKey(
+        'hotels.Region',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('region'),
+        db_index=True)
+    address = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('address'))
+    postal_code = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        validators=[MinLengthValidator(2)])
     status = models.CharField(
         max_length=20,
         default='not_confirmed',
@@ -133,35 +158,6 @@ lowercase letters, numbers, and "-" character.'))
         ordering = ['-created']
 
 
-class CompanyCountryBase(ABCModel):
-    """
-    Base country class
-    """
-
-    @property
-    @abstractmethod
-    def countries(self):
-        """
-        Payment type countries
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def countries_excluded(self):
-        """
-        Payment type excluded countries
-        """
-        pass
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return 'Company #{} {} fields'.format(self.company.id,
-                                              self._meta.verbose_name)
-
-
 class Company(CommonInfo, TimeStampedModel):
     """
     Company base class
@@ -177,10 +173,15 @@ class Company(CommonInfo, TimeStampedModel):
         on_delete=models.CASCADE,
         verbose_name=_('client'),
         db_index=True)
+    account_number = models.CharField(
+        max_length=50, db_index=True, validators=[MinLengthValidator(10)])
     city = models.ForeignKey(
-        City, on_delete=models.PROTECT, verbose_name=_('city'), db_index=True)
+        'hotels.City',
+        on_delete=models.PROTECT,
+        verbose_name=_('city'),
+        db_index=True)
     region = models.ForeignKey(
-        Region,
+        'hotels.Region',
         on_delete=models.PROTECT,
         verbose_name=_('region'),
         db_index=True)
@@ -191,8 +192,7 @@ class Company(CommonInfo, TimeStampedModel):
         verbose_name=_('address'))
     postal_code = models.CharField(
         max_length=50, db_index=True, validators=[MinLengthValidator(2)])
-    account_number = models.CharField(
-        max_length=50, db_index=True, validators=[MinLengthValidator(10)])
+
     bank = models.CharField(
         max_length=255,
         db_index=True,
@@ -205,7 +205,7 @@ class Company(CommonInfo, TimeStampedModel):
         verbose_name_plural = _('companies')
 
 
-class CompanyWorld(CompanyCountryBase):
+class CompanyWorld(CountryBase):
     """
     Company world class
     """
@@ -228,7 +228,7 @@ class CompanyWorld(CompanyCountryBase):
         verbose_name = _('world')
 
 
-class CompanyRu(CompanyCountryBase):
+class CompanyRu(CountryBase):
     """
     Company ru class
     """

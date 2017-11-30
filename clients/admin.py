@@ -117,14 +117,16 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     list_display_links = ('id', 'login')
     list_filter = ('status', 'installation', 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
-    raw_id_fields = ('country', )
+    raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
                        'modified_by')
     list_select_related = ('country', )
     fieldsets = (
         ('General', {
-            'fields': ('login', 'email', 'phone', 'name', 'description',
-                       'country')
+            'fields': ('login', 'email', 'phone', 'name', 'description')
+        }),
+        ('Address', {
+            'fields': ('country', 'region', 'city', 'address', 'postal_code')
         }),
         ('Options', {
             'fields': ('status', 'installation', 'url', 'disabled_at', 'ip',

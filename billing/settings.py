@@ -266,7 +266,7 @@ CELERYBEAT_SCHEDULE = {
         'schedule': 60 * 10
     },
     'clients_archivation': {
-        'task': 'clients.tasks.clients_activation',
+        'task': 'clients.tasks.clients_archivation',
         'schedule': 60 * 10
     },
 }

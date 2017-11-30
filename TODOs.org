@@ -125,8 +125,12 @@
    CLOSED: [2017-11-16 Thu 17:40]
 ** DONE service default rooms count
    CLOSED: [2017-11-24 Fri 19:05]
-** TODO client additional info (ip)
-** TODO organization
+** DONE client additional info (ip)
+   CLOSED: [2017-11-29 Wed 17:07]
+** DONE organization
+   CLOSED: [2017-11-30 Thu 13:35]
+
+** TODO individual user
 ** TODO bill
 ** TODO coverage 100%
 ** TODO not periodical order

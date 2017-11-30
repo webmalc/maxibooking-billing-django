@@ -75,6 +75,18 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         read_only=False,
         slug_field='tld',
         queryset=Country.objects.all())
+    city = serializers.PrimaryKeyRelatedField(
+        many=False,
+        read_only=False,
+        allow_null=True,
+        required=False,
+        queryset=City.objects.all())
+    region = serializers.PrimaryKeyRelatedField(
+        many=False,
+        read_only=False,
+        allow_null=True,
+        required=False,
+        queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
 
     def get_restrictions(self, obj):
@@ -83,9 +95,10 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
-                  'get_status_display', 'status', 'country', 'installation',
-                  'url', 'properties', 'restrictions', 'disabled_at', 'ip',
-                  'created', 'modified', 'created_by', 'modified_by')
+                  'get_status_display', 'status', 'country', 'region', 'city',
+                  'address', 'postal_code', 'installation', 'url',
+                  'properties', 'restrictions', 'disabled_at', 'ip', 'created',
+                  'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
 
 

@@ -59,7 +59,9 @@ def test_client_create_by_admin(admin_client):
         'email': 'new@user.mail',
         'name': 'New User',
         'phone': '+79239999999',
-        'country': 'af'
+        'country': 'af',
+        'postal_code': '123456',
+        'address': 'test address'
     })
     response = admin_client.post(
         reverse('client-list'), data=data, content_type="application/json")
@@ -68,6 +70,8 @@ def test_client_create_by_admin(admin_client):
     assert response_json['login'] == 'new-user'
     assert response_json['status'] == 'not_confirmed'
     assert response_json['created_by'] == 'admin'
+    assert response_json['postal_code'] == '123456'
+    assert response_json['address'] == 'test address'
 
     response = admin_client.get(reverse('client-list'))
     assert len(response.json()['results']) == 8

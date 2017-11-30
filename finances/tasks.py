@@ -1,11 +1,10 @@
 import logging
 
 import arrow
-from django.apps import apps
-from django.utils.translation import ugettext_lazy as _
-
 from billing.celery import app
 from billing.lib.messengers.mailer import mail_client
+from django.apps import apps
+from django.utils.translation import ugettext_lazy as _
 
 
 @app.task
@@ -54,7 +53,7 @@ def orders_clients_disable():
         client.status = 'disabled'
         client.disabled_at = arrow.utcnow().datetime
         client.save()
-        # TODO: log disabled
+        # TODO:Company log disabled
 
         mail_client(
             subject=_('Your account is disabled'),

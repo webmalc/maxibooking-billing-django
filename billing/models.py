@@ -1,4 +1,4 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
 from django.conf import settings
 from django.db import models
@@ -49,5 +49,30 @@ class ABCModel(models.Model):
 
 
 class CachedModel(models.Model):
+    class Meta:
+        abstract = True
+
+
+class CountryBase(ABCModel):
+    """
+    Base country class
+    """
+
+    @property
+    @abstractmethod
+    def countries(self):
+        """
+        Payment type countries
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def countries_excluded(self):
+        """
+        Payment type excluded countries
+        """
+        pass
+
     class Meta:
         abstract = True
