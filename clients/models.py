@@ -1,7 +1,8 @@
 from annoying.fields import AutoOneToOneField
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
-                                    MinValueValidator, RegexValidator)
+                                    MinValueValidator, RegexValidator,
+                                    integer_validator)
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -158,6 +159,47 @@ lowercase letters, numbers, and "-" character.'))
         ordering = ['-created']
 
 
+class ClientRu(CountryBase):
+    """
+    Client ru fields
+    """
+    passport_serial = models.CharField(
+        max_length=4,
+        db_index=True,
+        validators=[
+            MinLengthValidator(4),
+            MaxLengthValidator(4),
+            integer_validator,
+        ],
+        verbose_name=_('passport serial'))
+    passport_number = models.CharField(
+        max_length=6,
+        db_index=True,
+        validators=[
+            MinLengthValidator(6),
+            MaxLengthValidator(6),
+            integer_validator,
+        ],
+        verbose_name=_('passport number'))
+    passport_date = models.DateTimeField(verbose_name=_('passport date'))
+    passport_issued_by = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(4)],
+        verbose_name=_('passport issued by'))
+    inn = models.CharField(
+        max_length=13,
+        db_index=True,
+        validators=[
+            MinLengthValidator(10),
+            MaxLengthValidator(13),
+            integer_validator,
+        ],
+        verbose_name=_('inn'))
+    client = models.OneToOneField(
+        Client, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+
+
 class Company(CommonInfo, TimeStampedModel):
     """
     Company base class
@@ -215,7 +257,10 @@ class CompanyWorld(CountryBase):
     swift = models.CharField(
         max_length=20,
         db_index=True,
-        validators=[MinLengthValidator(8)],
+        validators=[
+            MinLengthValidator(8),
+            integer_validator,
+        ],
         verbose_name=_('swift'))
     company = models.OneToOneField(
         Company,
@@ -251,31 +296,46 @@ class CompanyRu(CountryBase):
     ogrn = models.CharField(
         max_length=13,
         db_index=True,
-        validators=[MinLengthValidator(13),
-                    MaxLengthValidator(13)],
+        validators=[
+            MinLengthValidator(13),
+            MaxLengthValidator(13),
+            integer_validator,
+        ],
         verbose_name=_('ogrn'))
     inn = models.CharField(
-        max_length=12,
+        max_length=13,
         db_index=True,
-        validators=[MinLengthValidator(10),
-                    MaxLengthValidator(13)],
+        validators=[
+            MinLengthValidator(10),
+            MaxLengthValidator(13),
+            integer_validator,
+        ],
         verbose_name=_('inn'))
     kpp = models.CharField(
         max_length=9,
         db_index=True,
-        validators=[MinLengthValidator(9),
-                    MaxLengthValidator(9)],
+        validators=[
+            MinLengthValidator(9),
+            MaxLengthValidator(9),
+            integer_validator,
+        ],
         verbose_name=_('kpp'))
 
     bik = models.CharField(
-        max_length=20,
+        max_length=30,
         db_index=True,
-        validators=[MinLengthValidator(7)],
+        validators=[
+            MinLengthValidator(7),
+            integer_validator,
+        ],
         verbose_name=_('bik'))
     corr_account = models.CharField(
         max_length=30,
-        validators=[MinLengthValidator(20),
-                    MaxLengthValidator(30)],
+        validators=[
+            MinLengthValidator(20),
+            MaxLengthValidator(30),
+            integer_validator,
+        ],
         verbose_name=_('correspondent account'))
     boss_firstname = models.CharField(
         max_length=255,
@@ -296,7 +356,10 @@ class CompanyRu(CountryBase):
         verbose_name=_('boss operation base'))
     proxy_number = models.CharField(
         max_length=50,
-        validators=[MinLengthValidator(2)],
+        validators=[
+            MinLengthValidator(2),
+            integer_validator,
+        ],
         verbose_name=_('proxy number'))
     proxy_date = models.DateTimeField(verbose_name=_('proxy date'), )
     company = models.OneToOneField(

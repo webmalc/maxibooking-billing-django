@@ -5,7 +5,8 @@ from billing.serializers import NestedUpdateSerializerMixin
 from finances.models import Service
 from hotels.models import City, Country, Region
 
-from .models import Client, ClientService, Company, CompanyRu, CompanyWorld
+from .models import (Client, ClientRu, ClientService, Company, CompanyRu,
+                     CompanyWorld)
 
 
 class CompanyWorldSerializer(serializers.ModelSerializer):
@@ -59,9 +60,22 @@ class CompanySerializer(NestedUpdateSerializerMixin,
             'ru': 'clients.CompanyRu',
             'world': 'clients.CompanyWorld'
         }
+        reference_parent = 'company'
 
 
-class ClientSerializer(serializers.HyperlinkedModelSerializer):
+class ClientRuSerializer(serializers.ModelSerializer):
+    """
+    CLient ru serializer
+    """
+
+    class Meta:
+        model = ClientRu
+        fields = ('passport_serial', 'passport_number', 'passport_date',
+                  'passport_issued_by', 'inn')
+
+
+class ClientSerializer(NestedUpdateSerializerMixin,
+                       serializers.HyperlinkedModelSerializer):
     """
     Client serializer
     """
@@ -88,6 +102,7 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         required=False,
         queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
+    ru = ClientRuSerializer(allow_null=True, required=False)
 
     def get_restrictions(self, obj):
         return model_to_dict(obj.restrictions)
@@ -97,9 +112,13 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'region', 'city',
                   'address', 'postal_code', 'installation', 'url',
-                  'properties', 'restrictions', 'disabled_at', 'ip', 'created',
-                  'modified', 'created_by', 'modified_by')
+                  'properties', 'restrictions', 'ru', 'disabled_at', 'ip',
+                  'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
+        references = {
+            'ru': 'clients.ClientRu',
+        }
+        reference_parent = 'client'
 
 
 class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):

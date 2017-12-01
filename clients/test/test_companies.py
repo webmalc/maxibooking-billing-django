@@ -85,11 +85,11 @@ def test_company_create_ru_by_admin(admin_client):
         'bank': 'bank',
         'ru': {
             'form': 'ooo',
-            'ogrn': 'invalid',
-            'inn': 'invalid',
-            'kpp': 'invalid',
-            'bik': 'inval',
-            'corr_account': 'invalid',
+            'ogrn': 1,
+            'inn': 1,
+            'kpp': 1,
+            'bik': 1,
+            'corr_account': 1,
             'boss_firstname': '123123',
             'boss_lastname': 'sdfsdfsdfsdf',
             'boss_patronymic': '123123',
@@ -141,7 +141,7 @@ def test_company_update_world_by_admin(admin_client):
     data = {
         'name': 'updated',
         'world': {
-            'swift': 'updated swift'
+            'swift': '56565656'
         },
     }
     url = reverse('company-detail', args=[3])
@@ -151,4 +151,4 @@ def test_company_update_world_by_admin(admin_client):
 
     assert response.status_code == 200
     assert response_json['name'] == 'updated'
-    assert response_json['world']['swift'] == 'updated swift'
+    assert response_json['world']['swift'] == '56565656'

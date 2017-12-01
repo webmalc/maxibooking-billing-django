@@ -130,7 +130,8 @@
 ** DONE organization
    CLOSED: [2017-11-30 Thu 13:35]
 
-** TODO individual user
+** DONE individual user
+   CLOSED: [2017-12-01 Fri 13:43]
 ** TODO bill
 ** TODO coverage 100%
 ** TODO not periodical order

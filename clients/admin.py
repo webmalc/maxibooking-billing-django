@@ -9,8 +9,8 @@ from reversion.admin import VersionAdmin
 from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
-from .models import (Client, ClientService, Company, CompanyRu, CompanyWorld,
-                     Restrictions)
+from .models import (Client, ClientRu, ClientService, Company, CompanyRu,
+                     CompanyWorld, Restrictions)
 from .tasks import install_client_task
 
 
@@ -107,6 +107,22 @@ class CompanyInlineAdmin(admin.TabularInline):
         return False
 
 
+class ClientRuAdmin(admin.StackedInline):
+    """
+    ClientRu admin interface
+    """
+    model = ClientRu
+    fieldsets = (
+        ('Passport', {
+            'fields': ('passport_serial', 'passport_number', 'passport_date',
+                       'passport_issued_by')
+        }),
+        ('Finance', {
+            'fields': ('inn', )
+        }),
+    )
+
+
 @admin.register(Client)
 class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     """
@@ -134,6 +150,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
         }),
     )
     inlines = (
+        ClientRuAdmin,
         RestrictionsInlineAdmin,
         PropertyInlineAdmin,
         ClientServiceInlineAdmin,

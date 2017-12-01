@@ -15,10 +15,13 @@ class NestedUpdateSerializerMixin(object):
 
     def _update_reference(self, instance, data, ref_name, ref_new=None):
         ref_data = data.pop(ref_name, None)
-        if ref_data:
-            ref = getattr(instance, ref_name, ref_new)
-            if ref:
+        ref = getattr(instance, ref_name, ref_new)
+        if ref:
+            if isinstance(ref_data, dict):
                 self._update_instance(ref, ref_data)
+            elif ref_data is None:
+                ref.delete()
+
         return instance
 
     def create(self, validated_data):
@@ -35,5 +38,6 @@ class NestedUpdateSerializerMixin(object):
                               self.Meta.references.keys())
         for key, model_name in self.Meta.references.items():
             model = apps.get_model(model_name)
-            self._update_reference(
-                instance, validated_data, key, model(company=instance))
+            obj = model()
+            setattr(obj, self.Meta.reference_parent, instance)
+            self._update_reference(instance, validated_data, key, obj)
