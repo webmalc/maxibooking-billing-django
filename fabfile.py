@@ -1,6 +1,6 @@
 from fabric.api import cd, env, prefix, run, sudo
 
-env.hosts = ['52.48.250.156']
+env.hosts = ['billing.maxi-booking.com']
 env.port = 22
 env.key_filename = '~/.ssh/maxibookingltd.pem'
 env.user = "ubuntu"
