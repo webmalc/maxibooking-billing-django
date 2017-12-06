@@ -1,0 +1,47 @@
+html {
+    max-width: 1200px;
+}
+body {
+    font-size: 12px;
+    text-align: center;
+}
+small {
+    font-size: 80%;
+}
+strong {
+    font-weight: bold;
+}
+.left {
+    text-align: left !important;
+}
+.right {
+    text-align: right !important;
+}
+#attention {
+    text-align: center;
+}
+.table {
+    margin: 20px auto;
+    width: 100%
+}
+.table td, .table th {
+    padding: 5px;
+    text-align: left;
+}
+.table th {
+    font-weight: bold;
+}
+#recipient-bank td, #services td, #services th {
+    border: 1px solid black; 
+}
+#title, #sum {
+    font-weight: bold;
+    font-size: 150%;
+    border-bottom: 2px solid black;
+    margin: 10px auto;
+    line-height: 50px;
+}
+#sum {
+    font-size: 120%;
+    line-height: 30px;
+}

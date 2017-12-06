@@ -8,6 +8,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from num2words import num2words
 
 from ..models import Order, Transaction
 
@@ -16,6 +17,7 @@ class BaseType(ABC):
     """
     Base payment system
     """
+    invalid_template = 'finances/invalid_type.html'
 
     def __init__(self, order=None, request=None):
         self.order = order
@@ -92,16 +94,23 @@ class BaseType(ABC):
 
     @property
     def get_template(self):
-        if self.order and self.order.price.currency.code in self.currencies:
-            return self.template
-        else:
-            return 'finances/invalid_type.html'
+        if not self.order:
+            return self.invalid_template
+        if self.order.price.currency.code not in self.currencies:
+            return self.invalid_template
+        if self.order.client.status not in ('active', 'disabled'):
+            return self.invalid_template
+        return self.template
 
     @property
     def service_name(self):
         if not self.order:
             return None
         return _('order') + ' #' + str(self.order.pk)
+
+    @property
+    def client(self):
+        return getattr(self.order, 'client', None)
 
     def _process_order(self, data):
         self.order.set_paid(self.id)
@@ -125,8 +134,36 @@ class Bill(BaseType):
     currencies = ['RUB']
 
     @property
+    def company(self):
+        return self.client.get_bill_company() if self.client else None
+
+    @property
+    def get_template(self):
+        client_ru = getattr(self.client, 'ru', None)
+        if self.client and not (self.company or client_ru):
+            return self.invalid_template
+        return super().get_template
+
+    @property
     def html(self):
-        return render_to_string(self.get_template, {'order': self.order})
+        return render_to_string(self.get_template, {
+            'order':
+            self.order,
+            'client':
+            self.client,
+            'company':
+            self.company,
+            'request':
+            self.request,
+            'recipient':
+            settings.MB_BILL_RECIPIENT_COMPANY,
+            'price_text':
+            num2words(
+                self.order.price.amount,
+                lang='ru',
+                to='currency',
+                currency='RUB')
+        })
 
 
 class Rbk(BaseType):

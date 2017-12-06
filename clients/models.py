@@ -13,7 +13,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from billing.models import CommonInfo, CountryBase
 from hotels.models import Country
 
-from .managers import ClientManager, ClientServiceManager
+from .managers import ClientManager, ClientServiceManager, CompanyManager
 
 
 class Restrictions(CommonInfo, TimeStampedModel):
@@ -36,174 +36,12 @@ class Restrictions(CommonInfo, TimeStampedModel):
         return 'Client "{}" restrictions'.format(self.client)
 
 
-class Client(CommonInfo, TimeStampedModel):
-    """
-    Client class
-    """
-    STATUSES = (('not_confirmed', _('not confirmed')), ('active', _('active')),
-                ('disabled', _('disabled')), ('archived', _('archived')))
-
-    INSTALLATION = (('not_installed', _('not installed')),
-                    ('process', _('process')), ('installed', _('installed')))
-
-    objects = ClientManager()
-
-    login = models.CharField(
-        max_length=50,
-        unique=True,
-        db_index=True,
-        verbose_name=_('login'),
-        validators=[
-            MinLengthValidator(4),
-            RegexValidator(
-                regex='^[a-z0-9\-]*$',
-                code='invalid_login',
-                message=_('Enter a valid login. This value may contain only \
-lowercase letters, numbers, and "-" character.'))
-        ])
-    email = models.EmailField(
-        db_index=True, unique=True, verbose_name=_('e-mail'))
-    phone = PhoneNumberField(
-        max_length=50,
-        db_index=True,
-        null=True,
-        blank=True,
-        verbose_name=_('phone'))
-    name = models.CharField(
-        max_length=255,
-        db_index=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('full name'))
-    description = models.TextField(
-        null=True,
-        blank=True,
-        db_index=True,
-        verbose_name=_('description'),
-        validators=[MinLengthValidator(2)])
-    country = models.ForeignKey(
-        Country,
-        on_delete=models.PROTECT,
-        verbose_name=_('country'),
-        db_index=True)
-    city = models.ForeignKey(
-        'hotels.City',
-        null=True,
-        blank=True,
-        on_delete=models.PROTECT,
-        verbose_name=_('city'),
-        db_index=True)
-    region = models.ForeignKey(
-        'hotels.Region',
-        null=True,
-        blank=True,
-        on_delete=models.PROTECT,
-        verbose_name=_('region'),
-        db_index=True)
-    address = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        db_index=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('address'))
-    postal_code = models.CharField(
-        max_length=50,
-        null=True,
-        blank=True,
-        db_index=True,
-        validators=[MinLengthValidator(2)])
-    status = models.CharField(
-        max_length=20,
-        default='not_confirmed',
-        choices=STATUSES,
-        verbose_name=_('status'),
-        db_index=True)
-    installation = models.CharField(
-        max_length=20,
-        default='not_installed',
-        verbose_name=_('installation status'),
-        choices=INSTALLATION,
-        db_index=True)
-    disabled_at = models.DateTimeField(
-        db_index=True, null=True, blank=True, verbose_name=_('disabled at'))
-    url = models.URLField(
-        db_index=True,
-        null=True,
-        blank=True,
-        verbose_name=_('url'),
-        help_text=_('maxibooking url'))
-    ip = models.GenericIPAddressField(null=True, blank=True)
-
-    def check_status(self):
-        """
-        Check client status
-        """
-        if self.status == 'disabled' and\
-           not self.orders.get_expired(('archived',)).count():
-            self.status = 'active'
-            self.save()
-
-    def restrictions_update(self, rooms=None):
-        """
-        Update client restrictions
-        """
-        if not rooms:
-            rooms = Client.objects.count_rooms(client=self)
-        self.restrictions.rooms_limit = rooms
-        self.restrictions.save()
-
-    def __str__(self):
-        return '{} - {}'.format(self.login, self.name)
-
-    class Meta:
-        ordering = ['-created']
-
-
-class ClientRu(CountryBase):
-    """
-    Client ru fields
-    """
-    passport_serial = models.CharField(
-        max_length=4,
-        db_index=True,
-        validators=[
-            MinLengthValidator(4),
-            MaxLengthValidator(4),
-            integer_validator,
-        ],
-        verbose_name=_('passport serial'))
-    passport_number = models.CharField(
-        max_length=6,
-        db_index=True,
-        validators=[
-            MinLengthValidator(6),
-            MaxLengthValidator(6),
-            integer_validator,
-        ],
-        verbose_name=_('passport number'))
-    passport_date = models.DateTimeField(verbose_name=_('passport date'))
-    passport_issued_by = models.CharField(
-        max_length=255,
-        db_index=True,
-        validators=[MinLengthValidator(4)],
-        verbose_name=_('passport issued by'))
-    inn = models.CharField(
-        max_length=13,
-        db_index=True,
-        validators=[
-            MinLengthValidator(10),
-            MaxLengthValidator(13),
-            integer_validator,
-        ],
-        verbose_name=_('inn'))
-    client = models.OneToOneField(
-        Client, on_delete=models.CASCADE, related_name='ru', primary_key=True)
-
-
 class Company(CommonInfo, TimeStampedModel):
     """
     Company base class
     """
+
+    objects = CompanyManager()
 
     name = models.CharField(
         max_length=255,
@@ -211,9 +49,10 @@ class Company(CommonInfo, TimeStampedModel):
         validators=[MinLengthValidator(2)],
         verbose_name=_('name'))
     client = models.ForeignKey(
-        Client,
+        'clients.Client',
         on_delete=models.CASCADE,
         verbose_name=_('client'),
+        related_name='companies',
         db_index=True)
     account_number = models.CharField(
         max_length=50, db_index=True, validators=[MinLengthValidator(10)])
@@ -370,6 +209,176 @@ class CompanyRu(CountryBase):
         verbose_name = _('ru')
 
 
+class Client(CommonInfo, TimeStampedModel):
+    """
+    Client class
+    """
+    STATUSES = (('not_confirmed', _('not confirmed')), ('active', _('active')),
+                ('disabled', _('disabled')), ('archived', _('archived')))
+
+    INSTALLATION = (('not_installed', _('not installed')),
+                    ('process', _('process')), ('installed', _('installed')))
+
+    objects = ClientManager()
+
+    login = models.CharField(
+        max_length=50,
+        unique=True,
+        db_index=True,
+        verbose_name=_('login'),
+        validators=[
+            MinLengthValidator(4),
+            RegexValidator(
+                regex='^[a-z0-9\-]*$',
+                code='invalid_login',
+                message=_('Enter a valid login. This value may contain only \
+lowercase letters, numbers, and "-" character.'))
+        ])
+    email = models.EmailField(
+        db_index=True, unique=True, verbose_name=_('e-mail'))
+    phone = PhoneNumberField(
+        max_length=50,
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('phone'))
+    name = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('full name'))
+    description = models.TextField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('description'),
+        validators=[MinLengthValidator(2)])
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        verbose_name=_('country'),
+        db_index=True)
+    city = models.ForeignKey(
+        'hotels.City',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('city'),
+        db_index=True)
+    region = models.ForeignKey(
+        'hotels.Region',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('region'),
+        db_index=True)
+    address = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('address'))
+    postal_code = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        validators=[MinLengthValidator(2)])
+    status = models.CharField(
+        max_length=20,
+        default='not_confirmed',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
+    installation = models.CharField(
+        max_length=20,
+        default='not_installed',
+        verbose_name=_('installation status'),
+        choices=INSTALLATION,
+        db_index=True)
+    disabled_at = models.DateTimeField(
+        db_index=True, null=True, blank=True, verbose_name=_('disabled at'))
+    url = models.URLField(
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('url'),
+        help_text=_('maxibooking url'))
+    ip = models.GenericIPAddressField(null=True, blank=True)
+
+    def check_status(self):
+        """
+        Check client status
+        """
+        if self.status == 'disabled' and\
+           not self.orders.get_expired(('archived',)).count():
+            self.status = 'active'
+            self.save()
+
+    def get_bill_company(self):
+        """
+        Get company for bill
+        """
+        return Company.objects.get_for_bill(self)
+
+    def restrictions_update(self, rooms=None):
+        """
+        Update client restrictions
+        """
+        if not rooms:
+            rooms = Client.objects.count_rooms(client=self)
+        self.restrictions.rooms_limit = rooms
+        self.restrictions.save()
+
+    def __str__(self):
+        return '{} - {}'.format(self.login, self.name)
+
+    class Meta:
+        ordering = ['-created']
+
+
+class ClientRu(CountryBase):
+    """
+    Client ru fields
+    """
+    passport_serial = models.CharField(
+        max_length=4,
+        db_index=True,
+        validators=[
+            MinLengthValidator(4),
+            MaxLengthValidator(4),
+            integer_validator,
+        ],
+        verbose_name=_('passport serial'))
+    passport_number = models.CharField(
+        max_length=6,
+        db_index=True,
+        validators=[
+            MinLengthValidator(6),
+            MaxLengthValidator(6),
+            integer_validator,
+        ],
+        verbose_name=_('passport number'))
+    passport_date = models.DateTimeField(verbose_name=_('passport date'))
+    passport_issued_by = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(4)],
+        verbose_name=_('passport issued by'))
+    inn = models.CharField(
+        max_length=13,
+        db_index=True,
+        validators=[
+            MinLengthValidator(10),
+            MaxLengthValidator(13),
+            integer_validator,
+        ],
+        verbose_name=_('inn'))
+    client = models.OneToOneField(
+        Client, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+
+
 class ClientService(CommonInfo, TimeStampedModel):
     """
     ClientService class
@@ -424,6 +433,10 @@ class ClientService(CommonInfo, TimeStampedModel):
         related_name='services')
     orders = models.ManyToManyField(
         'finances.Order', verbose_name=_('orders'), blank=True)
+
+    @property
+    def price_for_unit(self):
+        return self.price / self.quantity
 
     def price_repr(self):
         return '{} {}'.format(

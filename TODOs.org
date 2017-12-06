@@ -133,6 +133,8 @@
 ** DONE individual user
    CLOSED: [2017-12-01 Fri 13:43]
 ** TODO bill
+** TODO test rbk
+** TODO test stripe
 ** TODO coverage 100%
 ** TODO not periodical order
 ** TODO registration refactor

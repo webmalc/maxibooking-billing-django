@@ -1,15 +1,161 @@
+{% load staticfiles %}
+{% load i18n %}
+
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>Page Title {{ order.pk}}</title>
-</head>
+    <head>
+        <title>Счет #{{ order.pk}}</title>
+        <link rel="stylesheet" href="{{ request.scheme }}://{{ request.get_host }}{% static 'reset-css/reset.css' %}">
+        <link rel="stylesheet" href="{{ request.scheme }}://{{ request.get_host }}{% static 'css/finances/bill.css' %}">
+    </head>
 
-<body>
+    <body>
+        <p id="attention">
+            <small>
+                Внимание! Оплата данного счета означает согласие с условиями поставки товара.
+            </small>
+        </p>
 
-    <h1>My ' First Heading</h1>
-    <p>My "" first paragraph.</p>
+        <table id="recipient-bank" class="table">
+            <tbody>
+                <tr>
+                    <td style="border-bottom: 0px;" colspan="2">
+                        {{ recipient.bank }}
+                    </td>
+                    <td style="width: 100px;">БИК</td>
+                    <td style="width: 30%; border-bottom: 0px;">
+                        {{ recipient.bik }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border-top: 0px;" colspan="2">
+                        <small>Банк получателя</small>
+                    </td>
+                    <td>Сч.&nbsp;№</td>
+                    <td style="border-top: 0px;">
+                        {{ recipient.bank_account }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        ИНН&nbsp;{{ recipient.inn }}
+                    </td>
+                    <td>
+                        КПП&nbsp;{{ recipient.kpp }}
+                    </td>
+                    <td style="border-bottom: 0px;">Сч.&nbsp;№</td>
+                    <td style="border-bottom: 0px;">
+                        {{ recipient.company_account }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border-top: 0px; border-bottom: 0px;" colspan="2">
+                        {{ recipient.company_name }}
+                    </td>
+                    <td style="border-top: 0px; border-bottom: 0px;"></td>
+                    <td style="border-top: 0px; border-bottom: 0px;"></td>
+                </tr>
+                <tr>
+                    <td style="border-top: 0px;" colspan="2">
+                        <small>Получатель</small>
+                    </td>
+                    <td style="border-top: 0px;"></td>
+                    <td style="border-top: 0px;"></td>
+                </tr>
+            </tbody>
+        <table>
 
+        <h3 id="title" class="left"> 
+            Счет на оплату № {{ order.id }} от {{ order.created|date:'d.m.Y' }}
+        </h3>
+
+        <table id="info" class="table">
+            <tbody>
+                <tr>
+                    <td style="width: 100px;">Поставщик:</td>
+                    <td>
+                        <strong>{{ recipient.company_text }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Покупатель:</td>
+                    <td>
+                        <strong>
+                        ава вааааааааааааааава авваааааааааааааааааааааааааааава авааввава
+                        ава вааааааааааааааава авваааааааааааааааааааааааааааава авааввава
+                        </strong>
+                    </td>
+                </tr>
+            </tbody>
+        <table>
+        <table id="services" class="table">
+            <tbody>
+                <tr>
+                    <th style="width: 50px;">№</th>
+                    <th>Товары (работы, услуги)</th>
+                    <th style="width: 50px;">Кол-во</th>
+                    <th style="width: 50px;">Ед.</th>
+                    <th style="width: 150px;">Цена</th>
+                    <th style="width: 150px;">Сумма</th>
+                </tr>
+                {% for client_service in order.client_services.all %}
+                {% with service=client_service.service %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {{ service.title }}
+                    </td>
+                    <td>{{ client_service.quantity }}</td>
+                    <td>{% trans service.get_period_units_display %}</td>
+                    <td>{{ client_service.price_for_unit.amount }}</td>
+                    <td>{{ client_service.price.amount }}</td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+            </tbody>
+        <table>
+        <table id="services-total" class="table">
+            <tbody>
+                <tr>
+                    <td class="right"><strong>Итого:</strong></td>
+                    <td style="width: 150px;">{{ order.price.amount }}</td>
+                </tr>
+                <tr>
+                <tr>
+                    <td class="right"><strong>Без налога (НДС):</strong></td>
+                    <td>-</td>
+                </tr>
+                    <td class="right"><strong>Всего к опалате:</strong></td>
+                    <td>{{ order.price.amount }}</td>
+                </tr>
+            </tbody>
+        <table>
+            <p class="left">
+                Всего наименований {{ order.client_services.count }},
+                на сумму {{ order.price }}
+            </p>
+        <h4 id="sum" class="left"> 
+            {{ price_text }}
+        </h4>
+        <table id="footer" class="table">
+            <tbody>
+                <tr>
+                    <td style="width: 100px;">
+                        <strong>Руководитель</strong>
+                    </td>
+                    <td style="border-bottom: 1px solid black;" class="right">
+                        {{ recipient.boss }}
+                    </td>
+                    <td style="width: 100px; padding-left: 60px;">
+                        <strong>Бухгалтер</strong>
+                    </td>
+                    <td style="border-bottom: 1px solid black;" class="right">
+                        {{ recipient.bookkeeper }}
+                    </td>
+                </tr>
+            </tbody>
+        <table>
 </body>
 
 </html>

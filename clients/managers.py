@@ -9,6 +9,19 @@ from billing.managers import LookupMixin
 from hotels.models import Room
 
 
+class CompanyManager(LookupMixin):
+    """"
+    Company manager
+    """
+    lookup_search_fields = ('id', 'client__login', 'client__email',
+                            'client__name', 'name', 'ru__boss_lastname',
+                            'ru__ogrn', 'ru__inn', 'ru__kpp', 'account_number',
+                            'ru__bik', 'world__swift')
+
+    def get_for_bill(self, client):
+        return self.filter(client=client).exclude(ru__isnull=True).first()
+
+
 class ClientManager(LookupMixin):
     """"
     Client manager
