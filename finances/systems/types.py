@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
+
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -22,6 +23,7 @@ class BaseType(ABC):
     def __init__(self, order=None, request=None):
         self.order = order
         self.request = request
+        self.payer = self.order.payer if self.order else None
         if self.order and not isinstance(self.order, Order):
             self.order = Order.objects.get_for_payment_system(order)
 
@@ -94,7 +96,7 @@ class BaseType(ABC):
 
     @property
     def get_template(self):
-        if not self.order:
+        if not self.order or not self.payer:
             return self.invalid_template
         if self.order.price.currency.code not in self.currencies:
             return self.invalid_template
@@ -134,36 +136,22 @@ class Bill(BaseType):
     currencies = ['RUB']
 
     @property
-    def company(self):
-        return self.client.get_bill_company() if self.client else None
-
-    @property
-    def get_template(self):
-        client_ru = getattr(self.client, 'ru', None)
-        if self.client and not (self.company or client_ru):
-            return self.invalid_template
-        return super().get_template
-
-    @property
     def html(self):
-        return render_to_string(self.get_template, {
-            'order':
-            self.order,
-            'client':
-            self.client,
-            'company':
-            self.company,
-            'request':
-            self.request,
-            'recipient':
-            settings.MB_BILL_RECIPIENT_COMPANY,
-            'price_text':
-            num2words(
+        data = {}
+        if self.order:
+            price_text = num2words(
                 self.order.price.amount,
                 lang='ru',
                 to='currency',
                 currency='RUB')
-        })
+            data = {
+                'order': self.order,
+                'request': self.request,
+                'recipient': settings.MB_BILL_RECIPIENT_COMPANY,
+                'price_text': price_text
+            }
+
+        return render_to_string(self.get_template, data)
 
 
 class Rbk(BaseType):

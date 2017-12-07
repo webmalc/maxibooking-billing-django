@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from moneyed import EUR, RUB, Money
 
 from billing.lib.test import json_contains
-from clients.models import Client
+from clients.models import Client, ClientRu, Company
 from clients.tasks import client_services_update
 
 from ..models import Order
@@ -108,6 +108,46 @@ def test_manager_get_expired(make_orders):
     assert orders[0].note == 'order expired'
     assert orders[0].status in ('new', 'processing')
     assert orders[0].expired_date <= arrow.utcnow()
+
+
+def test_order_payer(make_orders, settings):
+    def _get_order():
+        return Order.objects.get(pk=1)
+
+    client = Client.objects.get(login='user-one')
+    company = Company.objects.get(pk=2)
+    phone = client.phone
+    order = _get_order()
+
+    assert order.payer == client
+    client.phone = None
+    client.save()
+
+    order = _get_order()
+    assert order.payer is None
+
+    client.phone = phone
+    client.country_id = 192
+    client.save()
+
+    order = _get_order()
+    assert order.payer == company
+
+    company.client_id = 2
+    company.save()
+    order = _get_order()
+
+    assert order.payer is None
+
+    ClientRu.objects.create(
+        client=client,
+        passport_serial=1 * 4,
+        passport_number=1 * 6,
+        passport_date='2017-12-01T10:22:48.995041Z',
+        passport_issued_by=1 * 10,
+    )
+    order = _get_order()
+    assert order.payer == client
 
 
 def test_orders_clients_disable(make_orders, mailoutbox):

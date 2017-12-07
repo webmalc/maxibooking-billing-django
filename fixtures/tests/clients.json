@@ -126,5 +126,16 @@
         "installation": "installed",
         "disabled_at": "2015-07-19T09:12:27.554Z"
     }
+},
+{
+    "model": "clients.clientru",
+    "pk": 7,
+    "fields": {
+        "passport_serial": "1111",
+        "passport_number": "123333",
+        "passport_date": "2017-12-01T09:36:33Z",
+        "passport_issued_by": "test issued by",
+        "inn": "1212222222222"
+    }
 }
 ]

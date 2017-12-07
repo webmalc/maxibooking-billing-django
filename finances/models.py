@@ -13,6 +13,7 @@ from model_utils import FieldTracker
 from moneyed import EUR, Money
 
 from billing.exceptions import BaseException
+from billing.lib.lang import get_lang
 from billing.models import CommonInfo
 from clients.models import Client, ClientService
 from hotels.models import Country
@@ -236,6 +237,21 @@ class Order(CommonInfo, TimeStampedModel):
         blank=True,
         verbose_name=_('client services'),
         through=ClientService.orders.through)
+
+    @property
+    def payer(self, lang=None):
+        """
+        Return payer
+        """
+        company = self.client.get_bill_company()
+        client = self.client if self.client.phone else None
+        lang = get_lang(self.client.country.tld)
+        local_company = getattr(company, lang, None)
+        local_client = getattr(client, lang, None)
+        if local_company:
+            return company
+        if local_client and client.phone:
+            return client
 
     def calc_price(self):
         """

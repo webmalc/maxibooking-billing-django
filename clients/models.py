@@ -1,4 +1,5 @@
 from annoying.fields import AutoOneToOneField
+from billing.models import CommonInfo, CountryBase
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -8,10 +9,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from phonenumber_field.modelfields import PhoneNumberField
-
-from billing.models import CommonInfo, CountryBase
 from hotels.models import Country
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 
@@ -36,7 +35,16 @@ class Restrictions(CommonInfo, TimeStampedModel):
         return 'Client "{}" restrictions'.format(self.client)
 
 
-class Company(CommonInfo, TimeStampedModel):
+class Payer():
+    @property
+    def text(self):
+        """
+        Payer text representation
+        """
+        raise NotImplementedError()
+
+
+class Company(CommonInfo, TimeStampedModel, Payer):
     """
     Company base class
     """
@@ -79,6 +87,20 @@ class Company(CommonInfo, TimeStampedModel):
         db_index=True,
         validators=[MinLengthValidator(2)],
         verbose_name=_('bank'))
+
+    @property
+    def text(self):
+        return '{form} {name}, ИНН {inn}, КПП {kpp}, \
+        {postal_code}, {region}, {city}, {address}'.format(
+            form=self.ru.get_form_display(),
+            name=self.name,
+            inn=self.ru.inn,
+            kpp=self.ru.kpp,
+            postal_code=self.postal_code,
+            region=self.city.name,
+            city=self.region.name,
+            address=self.address,
+        )
 
     class Meta:
         ordering = ['-created']
@@ -209,7 +231,7 @@ class CompanyRu(CountryBase):
         verbose_name = _('ru')
 
 
-class Client(CommonInfo, TimeStampedModel):
+class Client(CommonInfo, TimeStampedModel, Payer):
     """
     Client class
     """
@@ -306,6 +328,22 @@ lowercase letters, numbers, and "-" character.'))
         verbose_name=_('url'),
         help_text=_('maxibooking url'))
     ip = models.GenericIPAddressField(null=True, blank=True)
+
+    @property
+    def text(self):
+        return '{name}, ИНН {inn}, \
+        {postal_code}, {region}, {city}, {address}'.format(
+            name=self.name,
+            inn=self.ru.inn,
+            postal_code=self.postal_code,
+            region=self.city,
+            city=self.region,
+            address=self.address,
+        )
+
+    @property
+    def world(self):
+        return self
 
     def check_status(self):
         """

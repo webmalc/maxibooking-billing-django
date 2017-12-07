@@ -1,6 +1,7 @@
 import pytest
+from django.utils import translation
 
-from billing.lib import trans
+from billing.lib import lang, trans
 from finances.models import Order
 
 pytestmark = pytest.mark.django_db
@@ -14,3 +15,10 @@ def test_trans_auto_populate(mailoutbox):
     trans.auto_populate(order, 'note', order.generate_note)
     assert 'Test service two' in order.note_en
     assert 'Тестовый сервис' in order.note_ru
+
+
+def test_get_lang(settings):
+    assert lang.get_lang() == lang.DEFAULT_LANG
+    translation.activate('ru')
+    assert lang.get_lang() == 'ru'
+    translation.activate(settings.LANGUAGE_CODE)
