@@ -1,13 +1,15 @@
 {% load staticfiles %}
 {% load i18n %}
 
+{% with host=request.scheme|add:'://'|add:request.get_host %}
+
 <!DOCTYPE html>
 <html>
 
     <head>
-        <title>Счет #{{ order.pk}}</title>
-        <link rel="stylesheet" href="{{ request.scheme }}://{{ request.get_host }}{% static 'reset-css/reset.css' %}">
-        <link rel="stylesheet" href="{{ request.scheme }}://{{ request.get_host }}{% static 'css/finances/bill.css' %}">
+        <title>Счет №{{ order.pk }}</title>
+        <link rel="stylesheet" href="{{ host }}{% static 'reset-css/reset.css' %}">
+        <link rel="stylesheet" href="{{ host }}{% static 'css/finances/bill.css' %}">
     </head>
 
     <body>
@@ -81,7 +83,7 @@
                 <tr>
                     <td>Покупатель:</td>
                     <td>
-                        <strong>{{ order.payer.text }}</strong>
+                        <strong>{{ payer.text }}</strong>
                     </td>
                 </tr>
             </tbody>
@@ -133,7 +135,7 @@
                 на сумму {{ order.price }}
             </p>
         <h4 id="sum" class="left"> 
-            {{ price_text }}
+            {{ price_text|capfirst }}
         </h4>
         <table id="footer" class="table">
             <tbody>
@@ -142,17 +144,24 @@
                         <strong>Руководитель</strong>
                     </td>
                     <td style="border-bottom: 1px solid black;" class="right">
+                        <img id="sign" src="{{ host }}{% static 'images/finances/sign.png' %}">
                         {{ recipient.boss }}
                     </td>
                     <td style="width: 100px; padding-left: 60px;">
                         <strong>Бухгалтер</strong>
                     </td>
                     <td style="border-bottom: 1px solid black;" class="right">
+                        <img id="sign" src="{{ host }}{% static 'images/finances/sign.png' %}">
                         {{ recipient.bookkeeper }}
                     </td>
                 </tr>
             </tbody>
         <table>
+        <div id="press">
+            <img width="160" src="{{ host }}{% static 'images/finances/press.png' %}">
+        </div>
 </body>
 
 </html>
+
+{% endwith %}

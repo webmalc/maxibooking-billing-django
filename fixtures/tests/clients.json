@@ -113,6 +113,10 @@
     "pk": 7,
     "fields": {
         "country":  192,
+        "region":  2,
+        "city":  1,
+        "address":  "russian address",
+        "postal_code":  "12122331321233131313313132",
         "created_by": 1,
         "modified_by": 1,
         "created": "2017-07-18T14:06:27.890Z",

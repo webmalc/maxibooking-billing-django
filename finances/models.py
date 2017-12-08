@@ -238,19 +238,22 @@ class Order(CommonInfo, TimeStampedModel):
         verbose_name=_('client services'),
         through=ClientService.orders.through)
 
-    @property
-    def payer(self, lang=None):
+    def get_payer(self, client_filter=None):
         """
         Return payer
         """
         company = self.client.get_bill_company()
-        client = self.client if self.client.phone else None
+        client = self.client
+        if client_filter:
+            if not all([getattr(client, f, None) for f in client_filter]):
+                client = None
         lang = get_lang(self.client.country.tld)
         local_company = getattr(company, lang, None)
         local_client = getattr(client, lang, None)
+
         if local_company:
             return company
-        if local_client and client.phone:
+        if local_client:
             return client
 
     def calc_price(self):

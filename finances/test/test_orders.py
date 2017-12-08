@@ -114,30 +114,32 @@ def test_order_payer(make_orders, settings):
     def _get_order():
         return Order.objects.get(pk=1)
 
+    client_filter = ('phone', )
     client = Client.objects.get(login='user-one')
     company = Company.objects.get(pk=2)
     phone = client.phone
     order = _get_order()
 
-    assert order.payer == client
+    assert order.get_payer() == client
     client.phone = None
     client.save()
 
     order = _get_order()
-    assert order.payer is None
+
+    assert order.get_payer(client_filter) is None
 
     client.phone = phone
     client.country_id = 192
     client.save()
 
     order = _get_order()
-    assert order.payer == company
+    assert order.get_payer() == company
 
     company.client_id = 2
     company.save()
     order = _get_order()
 
-    assert order.payer is None
+    assert order.get_payer() is None
 
     ClientRu.objects.create(
         client=client,
@@ -147,7 +149,7 @@ def test_order_payer(make_orders, settings):
         passport_issued_by=1 * 10,
     )
     order = _get_order()
-    assert order.payer == client
+    assert order.get_payer() == client
 
 
 def test_orders_clients_disable(make_orders, mailoutbox):

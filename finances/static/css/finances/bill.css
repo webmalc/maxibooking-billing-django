@@ -45,3 +45,10 @@ strong {
     font-size: 120%;
     line-height: 30px;
 }
+#sign {
+    margin-right: 10px;
+}
+#press {
+    text-align: left;    
+    padding-left: 200px;
+}

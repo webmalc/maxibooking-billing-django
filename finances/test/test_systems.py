@@ -179,3 +179,12 @@ def test_stripe_response(client, make_orders, mailoutbox, mocker):
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
     assert 'Your payment was successful' in mail.subject
+
+
+def test_bill_display_by_admin(admin_client, make_orders):
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('bill', )) + '?order=5')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert 'Счет №5' in html
+    assert 'Две тысячи пятьсот рублей, пятьдесят копеек' in html

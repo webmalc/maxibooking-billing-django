@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
-
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -23,7 +22,8 @@ class BaseType(ABC):
     def __init__(self, order=None, request=None):
         self.order = order
         self.request = request
-        self.payer = self.order.payer if self.order else None
+        self.payer = self.order.get_payer(
+            self.client_filter_fields) if self.order else None
         if self.order and not isinstance(self.order, Order):
             self.order = Order.objects.get_for_payment_system(order)
 
@@ -40,6 +40,14 @@ class BaseType(ABC):
     def name(self):
         """
         Payment type name
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def client_filter_fields(self):
+        """
+        Client payer not null fields
         """
         pass
 
@@ -134,6 +142,8 @@ class Bill(BaseType):
     countries_excluded = []
     countries = ['ru']
     currencies = ['RUB']
+    client_filter_fields = ('phone', 'address', 'postal_code', 'region',
+                            'city')
 
     @property
     def html(self):
@@ -146,6 +156,7 @@ class Bill(BaseType):
                 currency='RUB')
             data = {
                 'order': self.order,
+                'payer': self.payer,
                 'request': self.request,
                 'recipient': settings.MB_BILL_RECIPIENT_COMPANY,
                 'price_text': price_text
@@ -166,6 +177,7 @@ class Rbk(BaseType):
     countries_excluded = []
     countries = ['ru']
     currencies = ['RUB', 'EUR']
+    client_filter_fields = ('phone', )
 
     # Rbk config
     action = 'https://rbkmoney.ru/acceptpurchase.aspx'
@@ -256,6 +268,7 @@ class Stripe(BaseType):
     countries_excluded = ['ru']
     countries = []
     currencies = ['EUR']
+    client_filter_fields = ('phone', )
 
     # Stripe config
     publishable_key = settings.STRIPE_PUBLISHABLE_KEY
