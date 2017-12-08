@@ -45,8 +45,16 @@ strong {
     font-size: 120%;
     line-height: 30px;
 }
-#sign {
+#sign1 {
     margin-right: 10px;
+}
+#sign2 {
+    margin-right: 7px;
+    -webkit-transform: rotate(5deg);    
+    -moz-transform: rotate(5deg);      
+    -o-transform: rotate(5deg);       
+    -ms-transform: rotate(5deg);     
+    transform: rotate(5deg);        
 }
 #press {
     text-align: left;    
