@@ -302,9 +302,8 @@ class Stripe(BaseType):
 
         stripe.api_key = self.secret_key
         try:
-            customer = stripe.Customer.create(email=email, source=token)
             charge = stripe.Charge.create(
-                customer=customer.id,
+                source=token,
                 amount=self.price_in_cents,
                 currency='eur',
                 description=self.service_name)
@@ -312,7 +311,8 @@ class Stripe(BaseType):
             logger.info('Stripe response {}'.format(charge))
         except stripe.error.StripeError as error:
             logger.info('Stripe error {}'.format(error))
-            return HttpResponseBadRequest('Stripe error.')
+            return HttpResponseBadRequest(
+                'Stripe error. Your card was declined')
 
         self._process_order(charge)
 

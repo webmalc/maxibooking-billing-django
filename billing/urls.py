@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 from clients.urls import router as clients_router
 from finances.urls import router as finances_router
@@ -26,7 +27,11 @@ urlpatterns += i18n_patterns(
     url(r'', include('two_factor.urls', 'two_factor')),
     url(r'^adminactions/', include('adminactions.urls')),
     url(r'^finances/', include('finances.urls', namespace='finances')),
-    url(r'^', include(router.urls)))
+    url(r'^billing/processing$',
+        TemplateView.as_view(template_name='billing/processing.html'),
+        name='billing-processing'),
+    url(r'^', include(router.urls)),
+)
 
 if settings.DEBUG:
     import debug_toolbar
