@@ -125,6 +125,7 @@
             }
 
             function stripe3DSecureResponseHandler(status, response) {
+
                 if (response.error) {
                     var message = response.error.message;
                     displayResult("Unexpected 3DS source creation response status: " + status + ". Error: " + message);
