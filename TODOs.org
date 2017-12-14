@@ -134,12 +134,14 @@
    CLOSED: [2017-12-01 Fri 13:43]
 ** DONE bill
    CLOSED: [2017-12-11 Mon 11:38]
+** DONE test stripe
+   CLOSED: [2017-12-12 Tue 14:02]
 ** TODO service category
+** TODO client users and acl
 ** TODO update endpoint
 ** TODO todos
 ** TODO django 2.0
 ** TODO test rbk
-** TODO test stripe
 ** TODO coverage 100%
 ** TODO not periodical order
 ** TODO registration refactor

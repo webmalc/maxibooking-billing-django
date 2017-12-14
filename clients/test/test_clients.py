@@ -146,6 +146,7 @@ def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
 def test_client_fixtures_by_admin(admin_client, mocker):
     mb.client_fixtures = mocker.MagicMock(return_value={
         'url': 'test url',
+        'token': 'test token',
     })
     response = admin_client.post(
         reverse('client-fixtures', args=['user-two']),
@@ -154,6 +155,7 @@ def test_client_fixtures_by_admin(admin_client, mocker):
     assert response_json['status'] is True
     assert response_json['message'] == 'client fixtures installed'
     assert response_json['url'] == 'test url'
+    assert response_json['token'] == 'test token'
 
 
 def test_client_install_by_user(client):

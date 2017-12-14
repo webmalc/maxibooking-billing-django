@@ -128,7 +128,8 @@ class ClientViewSet(viewsets.ModelViewSet):
             return Response({
                 'status': True,
                 'message': 'client fixtures installed',
-                'url': response['url']
+                'url': response['url'],
+                'token': response['token']
             })
         else:
             return Response({

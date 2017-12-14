@@ -59,8 +59,8 @@ def test_rbk_display_by_admin(admin_client, make_orders):
     assert 'order #5' in html
     assert '2500.50' in html
     assert 'RUR' in html
-    assert '1571bad0f3b71baf0f12e5e146818e2ec7e1c618feb4280116af5d6cf6e78657ed\
-a67e6c22e4af02099ba91643d87bfe2d23041e4d038035fb37d573bd19524f' in html
+    assert '460cccb4cd0431b526058776cc9dbd2c7e2f81e0e1f9f86baa2cdf271f70dfcf8b\
+6fa90f0f7dc7b4e562bf16ca4e422a1bc0e1165d0774e7e440879f51e12919' in html
 
 
 def test_rbk_response(client, make_orders, mailoutbox):

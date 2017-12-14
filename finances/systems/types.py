@@ -196,6 +196,7 @@ class Rbk(BaseType):
             self.order.client.email,
             self.service_name,
             self.order.pk,
+            '',
             self.secret_key,
         )
         return self._calc_signature(data)
