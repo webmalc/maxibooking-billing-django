@@ -9,11 +9,11 @@ from finances.models import Order
 @pytest.fixture(scope='session')
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
-        call_command('loaddata', 'tests/users', 'tests/countries',
-                     'tests/regions', 'tests/cities', 'tests/clients',
-                     'tests/properties', 'tests/rooms', 'tests/services',
-                     'tests/client_services', 'tests/transactions',
-                     'tests/companies')
+        call_command(
+            'loaddata', 'tests/users', 'tests/countries', 'tests/regions',
+            'tests/cities', 'tests/clients', 'tests/properties', 'tests/rooms',
+            'tests/service_categories', 'tests/services',
+            'tests/client_services', 'tests/transactions', 'tests/companies')
 
 
 @pytest.fixture()

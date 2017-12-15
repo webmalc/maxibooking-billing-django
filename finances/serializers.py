@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Order, Price, Service, Transaction
+from .models import Order, Price, Service, ServiceCategory, Transaction
 
 
 class PaymentSystemSerializer(serializers.Serializer):
@@ -50,6 +50,22 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
                   'modified_by')
 
 
+class ServiceCategorySerializer(serializers.HyperlinkedModelSerializer):
+    """
+    ServiceCategory serializer
+    """
+
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    services = serializers.HyperlinkedRelatedField(
+        many=True, read_only=True, view_name='service-detail')
+
+    class Meta:
+        model = ServiceCategory
+        fields = ('id', 'title', 'description', 'services', 'created',
+                  'modified', 'created_by', 'modified_by')
+
+
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
     """
     Service serializer
@@ -59,13 +75,15 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         many=True, read_only=True, view_name='price-detail')
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    category = serializers.HyperlinkedRelatedField(
+        many=False, read_only=True, view_name='servicecategory-detail')
 
     class Meta:
         model = Service
-        fields = ('id', 'title', 'description', 'price', 'price_currency',
-                  'prices', 'period', 'period_units', 'period_days',
-                  'default_rooms', 'is_enabled', 'is_default', 'created',
-                  'modified', 'created_by', 'modified_by')
+        fields = ('id', 'category', 'title', 'description', 'price',
+                  'price_currency', 'prices', 'period', 'period_units',
+                  'period_days', 'default_rooms', 'is_enabled', 'is_default',
+                  'created', 'modified', 'created_by', 'modified_by')
 
 
 class PriceSerializer(serializers.HyperlinkedModelSerializer):

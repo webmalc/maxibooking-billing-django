@@ -8,10 +8,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import OrderFilterSet
-from .models import Order, Price, Service, Transaction
+from .models import Order, Price, Service, ServiceCategory, Transaction
 from .serializers import (OrderSerializer, PaymentSystemSerializer,
-                          PriceSerializer, ServiceSerializer,
-                          TransactionSerializer)
+                          PriceSerializer, ServiceCategorySerializer,
+                          ServiceSerializer, TransactionSerializer)
 from .systems import manager
 
 
@@ -67,12 +67,22 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderSerializer
 
 
+class ServiceCategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Service viewset
+    """
+    queryset = ServiceCategory.objects.all().select_related(
+        'created_by', 'modified_by').prefetch_related('services')
+    search_fields = ('title', 'description', 'id')
+    serializer_class = ServiceCategorySerializer
+
+
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Service viewset
     """
     queryset = Service.objects.all().select_related(
-        'created_by', 'modified_by').prefetch_related('prices')
+        'created_by', 'modified_by', 'category').prefetch_related('prices')
     search_fields = ('title', 'description', 'id')
     serializer_class = ServiceSerializer
     filter_fields = ('is_enabled', 'is_default', 'period_units', 'type',

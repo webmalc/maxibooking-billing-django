@@ -1,0 +1,50 @@
+[
+{
+    "model": "finances.servicecategory",
+    "pk": 1,
+    "fields": {
+        "created": "2017-12-15T09:55:33.657Z",
+        "modified": "2017-12-15T11:12:57.571Z",
+        "title": "Test category 1",
+        "title_en": "Test category 1",
+        "title_ru": "Тестовая категория 1",
+        "description": "Test category 1 description",
+        "description_en": "Test category 1 description",
+        "description_ru": "Тестовая категория 1 описание",
+        "created_by": 1,
+        "modified_by": 1
+    }
+},
+{
+    "model": "finances.servicecategory",
+    "pk": 2,
+    "fields": {
+        "created": "2017-12-15T09:55:33.657Z",
+        "modified": "2017-12-15T11:12:57.571Z",
+        "title": "Test category 2",
+        "title_en": "Test category 2",
+        "title_ru": "Тестовая категория 2",
+        "description": "Test category 2 description",
+        "description_en": "Test category 2 description",
+        "description_ru": "Тестовая категория 2 описание",
+        "created_by": 1,
+        "modified_by": 1
+    }
+},
+{
+    "model": "finances.servicecategory",
+    "pk": 3,
+    "fields": {
+        "created": "2017-12-15T09:55:33.657Z",
+        "modified": "2017-12-15T11:12:57.571Z",
+        "title": "Test category 3",
+        "title_en": "Test category 3",
+        "title_ru": "Тестовая категория 3",
+        "description": "Test category 3 description",
+        "description_en": "Test category 3 description",
+        "description_ru": "Тестовая категория 3 описание",
+        "created_by": 1,
+        "modified_by": 1
+    }
+}
+]

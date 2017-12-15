@@ -21,6 +21,16 @@ from hotels.models import Country
 from .managers import OrderManager, ServiceManager
 
 
+class ServiceCategory(CommonInfo, TimeStampedModel, TitleDescriptionModel):
+    """
+    ServiceCategory class
+    """
+
+    class Meta:
+        ordering = ['title']
+        verbose_name_plural = _('service categories')
+
+
 class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     """
     Service class
@@ -53,6 +63,13 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         default='other',
         choices=TYPES,
         db_index=True)
+    category = models.ForeignKey(
+        ServiceCategory,
+        on_delete=models.CASCADE,
+        verbose_name=_('category'),
+        db_index=True,
+        related_name='services',
+    )
 
     @property
     def price_money(self):

@@ -137,8 +137,10 @@
 ** DONE test stripe
    CLOSED: [2017-12-12 Tue 14:02]
 ** TODO service category
-** TODO client users and acl
+** TODO successful payment page
 ** TODO update endpoint
+** TODO calc endpoint
+** TODO client users and acl
 ** TODO todos
 ** TODO django 2.0
 ** TODO test rbk

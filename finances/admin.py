@@ -6,7 +6,7 @@ from reversion.admin import VersionAdmin
 
 from billing.admin import JsonAdmin, TextFieldListFilter
 
-from .models import Order, Price, Service, Transaction
+from .models import Order, Price, Service, ServiceCategory, Transaction
 
 
 @admin.register(Transaction)
@@ -110,13 +110,49 @@ class PriceInlineAdmin(admin.TabularInline):
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
 
 
+class ServiceInlineAdmin(admin.TabularInline):
+    """
+    Service inline admin
+    """
+    model = Service
+    fields = ('title', 'period', 'period_units', 'type', 'is_default',
+              'is_enabled')
+
+    show_change_link = True
+
+
+@admin.register(ServiceCategory)
+class ServiceCategoryAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
+    """
+    ServiceCategory admin interface
+    """
+    list_display = ('id', 'title', 'created')
+    list_display_links = ('id', 'title')
+    list_filter = ('created', )
+    search_fields = ('pk', 'title', 'description', 'services_title')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    inlines = (ServiceInlineAdmin, )
+    fieldsets = (
+        ('General', {
+            'fields': (
+                'title',
+                'description',
+            )
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
+
+
 @admin.register(Service)
 class ServiceAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
     """
     Service admin interface
     """
-    list_display = ('id', 'title', 'period', 'period_units', 'type',
-                    'is_default', 'is_enabled', 'created')
+    list_display = ('id', 'title', 'category', 'period', 'period_units',
+                    'type', 'is_default', 'is_enabled', 'created')
+    list_select_related = ('category', )
     list_display_links = ('id', 'title')
     list_filter = ('is_enabled', 'period_units', 'created', 'type',
                    'is_default')
@@ -126,7 +162,7 @@ class ServiceAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
     inlines = (PriceInlineAdmin, )
     fieldsets = (
         ('General', {
-            'fields': ('title', 'description', 'price')
+            'fields': ('category', 'title', 'description', 'price')
         }),
         ('Options', {
             'fields': ('period', 'period_units', 'type', 'is_default',
