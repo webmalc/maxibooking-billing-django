@@ -255,6 +255,13 @@ class Order(CommonInfo, TimeStampedModel):
         verbose_name=_('client services'),
         through=ClientService.orders.through)
 
+    @property
+    def client_services_by_category(self):
+        """
+        Grouped services
+        """
+        return self.client_services.get_order_services_by_category(self)
+
     def get_payer(self, client_filter=None):
         """
         Return payer

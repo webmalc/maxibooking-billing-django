@@ -17,7 +17,7 @@ class OrderManager(LookupMixin):
         Get order for payment systems
         """
         try:
-            return self.select_related('client').get(
+            return self.select_related('client', 'client__ru').get(
                 pk=pk, status='new', client__phone__isnull=False)
         except self.model.DoesNotExist:
             return None

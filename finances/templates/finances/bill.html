@@ -1,7 +1,7 @@
 {% load staticfiles %}
 {% load i18n %}
 
-{% with host=request.scheme|add:'://'|add:request.get_host %}
+{% with host=request.scheme|add:'://'|add:request.get_host services=order.client_services_by_category %}
 
 <!DOCTYPE html>
 <html>
@@ -93,24 +93,28 @@
                 <tr>
                     <th style="width: 50px;">№</th>
                     <th>Товары (работы, услуги)</th>
+                    <th style="width: 50p">Период</th>
                     <th style="width: 50px;">Кол-во</th>
                     <th style="width: 50px;">Ед.</th>
                     <th style="width: 150px;">Цена</th>
                     <th style="width: 150px;">Сумма</th>
                 </tr>
-                {% for client_service in order.client_services.all %}
-                {% with service=client_service.service %}
+                {% for cat in services %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>
-                        {{ service.title }}
+                        {{ cat.category.title }}
                     </td>
-                    <td>{{ client_service.quantity }}</td>
-                    <td>{% trans service.get_period_units_display %}</td>
-                    <td>{{ client_service.price_for_unit.amount }}</td>
-                    <td>{{ client_service.price.amount }}</td>
+                    <td>
+                        {% if cat.begin and cat.end %}
+                        {{ cat.begin|date:'d.m.Y' }}-{{ cat.end|date:'d.m.Y' }}
+                        {% endif %}
+                    </td>
+                    <td>{{ cat.quantity }}</td>
+                    <td>{% trans 'piece' %}</td>
+                    <td>{{ cat.price.amount }}</td>
+                    <td>{{ cat.price.amount }}</td>
                 </tr>
-                {% endwith %}
                 {% endfor %}
             </tbody>
         <table>
@@ -131,7 +135,7 @@
             </tbody>
         <table>
             <p class="left">
-                Всего наименований {{ order.client_services.count }},
+                Всего наименований {{ services|length }},
                 на сумму {{ order.price }}
             </p>
         <h4 id="sum" class="left"> 

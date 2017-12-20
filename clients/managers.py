@@ -22,6 +22,26 @@ class CompanyManager(LookupMixin):
         return self.filter(client=client).exclude(ru__isnull=True).first()
 
 
+class ServiceCategoryGroup(object):
+    """
+    Container for grouped client services
+    """
+
+    def __init__(self, category, price=0, quantity=0):
+        self.client_services = []
+        self.category = category
+        self.price = price
+        self.quantity = quantity
+
+    @property
+    def begin(self):
+        return self.client_services[0].begin
+
+    @property
+    def end(self):
+        return self.client_services[0].end
+
+
 class ClientManager(LookupMixin):
     """"
     Client manager
@@ -71,6 +91,29 @@ class ClientServiceManager(LookupMixin):
                 service__type=client_service.service.type)
         except apps.get_model('clients', 'ClientService').DoesNotExist:
             return None
+
+    def get_order_services_by_category(self, order):
+        """
+        Get order services grouped by category
+        """
+
+        entries = self.filter(
+            orders__pk=getattr(order, 'pk', order)).select_related(
+                'service', 'client', 'service__category')
+        grouped_services = {}
+        for e in entries:
+            cat = e.service.category
+            if cat.id not in grouped_services:
+                grouped_services[cat.id] = ServiceCategoryGroup(cat)
+            group = grouped_services[cat.id]
+            group.client_services.append(e)
+            try:
+                group.price += e.price
+            except TypeError:
+                group.price = -1
+
+            group.quantity += e.group_quantity
+        return list(grouped_services.values())
 
     def disable(self, client, service_type=None, exclude_pk=None):
         """
