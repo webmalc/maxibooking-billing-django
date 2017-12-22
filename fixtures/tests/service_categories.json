@@ -5,7 +5,6 @@
     "fields": {
         "created": "2017-12-15T09:55:33.657Z",
         "modified": "2017-12-15T11:12:57.571Z",
-        "title": "Test category 1",
         "title_en": "Test category 1",
         "title_ru": "Тестовая категория 1",
         "description": "Test category 1 description",
@@ -21,7 +20,6 @@
     "fields": {
         "created": "2017-12-15T09:55:33.657Z",
         "modified": "2017-12-15T11:12:57.571Z",
-        "title": "Test category 2",
         "title_en": "Test category 2",
         "title_ru": "Тестовая категория 2",
         "description": "Test category 2 description",
@@ -37,7 +35,6 @@
     "fields": {
         "created": "2017-12-15T09:55:33.657Z",
         "modified": "2017-12-15T11:12:57.571Z",
-        "title": "Test category 3",
         "title_en": "Test category 3",
         "title_ru": "Тестовая категория 3",
         "description": "Test category 3 description",

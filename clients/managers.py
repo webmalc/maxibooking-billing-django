@@ -28,10 +28,25 @@ class ServiceCategoryGroup(object):
     """
 
     def __init__(self, category, price=0, quantity=0):
-        self.client_services = []
+        self.client_services = set()
         self.category = category
         self.price = price
         self.quantity = quantity
+
+    def add_client_services(self, *args):
+        """
+        Add client service to group
+        """
+        for client_service in args:
+            if client_service.service.category != self.category:
+                raise ValueError('Invalid client_service category')
+            self.client_services.add(client_service)
+            try:
+                self.price += client_service.price
+            except TypeError:
+                self.price = -1
+
+            self.quantity += client_service.group_quantity
 
     @property
     def begin(self):
@@ -106,13 +121,7 @@ class ClientServiceManager(LookupMixin):
             if cat.id not in grouped_services:
                 grouped_services[cat.id] = ServiceCategoryGroup(cat)
             group = grouped_services[cat.id]
-            group.client_services.append(e)
-            try:
-                group.price += e.price
-            except TypeError:
-                group.price = -1
-
-            group.quantity += e.group_quantity
+            group.add_client_services(e)
         return list(grouped_services.values())
 
     def disable(self, client, service_type=None, exclude_pk=None):

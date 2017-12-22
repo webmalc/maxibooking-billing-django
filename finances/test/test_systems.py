@@ -181,10 +181,16 @@ def test_stripe_response(client, make_orders, mailoutbox, mocker):
     assert 'Your payment was successful' in mail.subject
 
 
-def test_bill_display_by_admin(admin_client, make_orders):
+def test_bill_display_by_admin(admin_client, make_orders, settings):
+    settings.LANGUAGE_CODE = 'ru'
+    order = Order.objects.get(pk=5)
+    order.client_services.add(1, 2)
     response = admin_client.get(
         reverse('payment-systems-detail', args=('bill', )) + '?order=5')
     assert response.status_code == 200
     html = response.json()['html']
     assert 'Счет №5' in html
     assert 'Две тысячи пятьсот рублей, пятьдесят копеек' in html
+    assert 'Тестовая категория 1' in html
+    assert '14001,83' in html
+    assert '25' in html

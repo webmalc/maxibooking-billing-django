@@ -1,13 +1,40 @@
 import json
 
 import arrow
+import pytest
 from django.core.urlresolvers import reverse
 from moneyed import EUR, Money
 
 from billing.lib.test import json_contains
+from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_update
-from finances.models import Order, Service
+from finances.models import Order, Service, ServiceCategory
+
+pytestmark = pytest.mark.django_db
+
+
+def test_client_service_category_group_class():
+
+    cat = ServiceCategory.objects.get(pk=1)
+    group = ServiceCategoryGroup(cat)
+    service1 = ClientService.objects.get(pk=1)
+    service2 = ClientService.objects.get(pk=2)
+    group.add_client_services(service1, service2)
+
+    assert len(group.client_services) == 2
+    assert group.price == Money(14001.83, EUR)
+    assert group.quantity == 25
+
+    service2.pk = None
+    service2.service_id = 3
+    service2.save()
+    service2.refresh_from_db()
+
+    with pytest.raises(ValueError) as e:
+        group.add_client_services(service2)
+
+    assert str(e.value) == 'Invalid client_service category'
 
 
 def test_client_services_list_by_user(client):

@@ -5,13 +5,37 @@ from django.core.urlresolvers import reverse
 from moneyed import EUR, RUB, Money
 
 from billing.lib.test import json_contains
-from clients.models import Client, ClientRu, Company
+from clients.models import Client, ClientRu, ClientService, Company
 from clients.tasks import client_services_update
 
-from ..models import Order
+from ..models import Order, Price, Service
 from ..tasks import orders_clients_disable, orders_payment_notify
 
 pytestmark = pytest.mark.django_db
+
+
+def test_order_client_services_by_category(make_orders):
+    order = Order.objects.get(pk=1)
+    client_service = ClientService.objects.get(pk=2)
+    service = Service.objects.get(pk=3)
+    service.prices.add(
+        Price.objects.create(
+            price=Money(750, EUR),
+            service=service,
+        ))
+    client_service.pk = None
+    client_service.service = service
+    client_service.save()
+
+    order.client_services.add(1, 2, client_service)
+    cats = order.client_services_by_category
+
+    assert len(cats) == 2
+    assert len(cats[1].client_services) == 2
+    assert len(cats[0].client_services) == 1
+
+    assert cats[0].price == Money(3750, EUR)
+    assert cats[1].quantity == 25
 
 
 def test_order_creation_and_modifications(mailoutbox):
