@@ -205,7 +205,8 @@ def test_client_process_fixtures_by_admin(admin_client):
 
 
 def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_URLS['__all__']['fixtures'] = 'http://invalid-domain-name.com'
+    settings.MB_URLS['__all__'][
+        'fixtures'] = 'http://{}.invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-fixtures', args=['user-two']),
         content_type="application/json")
