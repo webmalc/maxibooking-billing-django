@@ -29,13 +29,13 @@ MB_URLS = {
     'ru': {
         'install': 'https://www.example.com',
         'archive': 'https://www.example.com',
-        'fixtures': 'https://www.example.com',
+        'fixtures': 'https://{}.example.com',
         'token': 'token_ru'
     },
     '__all__': {
         'install': 'https://example.com',
         'archive': 'https://example.com',
-        'fixtures': 'https://example.com',
+        'fixtures': 'https://{}.example.com',
         'token': 'token_all'
     }
 }

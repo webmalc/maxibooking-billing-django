@@ -3,6 +3,7 @@ import logging
 import time
 
 import requests
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -68,7 +69,7 @@ def client_fixtures(client):
             client=client)
 
     response = _request(
-        url=urls['fixtures'],
+        url=urls['fixtures'].format(client.login),
         data={'client_login': client.login,
               'token': urls['token']},
         error_callback=_error_callback)
