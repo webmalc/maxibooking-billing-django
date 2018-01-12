@@ -2,14 +2,13 @@ import json
 
 import arrow
 import pytest
-from django.core.urlresolvers import reverse
-from moneyed import EUR, Money
-
 from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_update
+from django.core.urlresolvers import reverse
 from finances.models import Order, Service, ServiceCategory
+from moneyed import EUR, Money
 
 pytestmark = pytest.mark.django_db
 
@@ -84,7 +83,7 @@ def test_client_service_create_invalid_by_admin(admin_client):
         'Object with login=invalid-user does not exist.'
     ]
 
-    data['quantity'] = 1
+    data['quantity'] = 2
     data['client'] = 'user-one'
     data['service'] = 1
     response = admin_client.post(
@@ -92,7 +91,8 @@ def test_client_service_create_invalid_by_admin(admin_client):
     response_json = response.json()
 
     assert response_json['non_field_errors'] == [
-        'The fields client, is_enabled, service must make a unique set.'
+        'The fields client, is_enabled, service, \
+quantity must make a unique set.'
     ]
 
     data['service'] = 3
@@ -188,6 +188,9 @@ def test_client_services_update_task(admin_client):
 
 def test_client_services_default_dates(admin_client):
     prev_client_service = ClientService.objects.get(pk=1)
+    prev_client_service.end = arrow.utcnow().shift(days=4).datetime
+    prev_client_service.save()
+
     assert prev_client_service.is_enabled is True
     data = {'quantity': 1, 'client': 'user-one', 'service': 4}
     url = reverse('clientservice-list')

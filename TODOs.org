@@ -141,6 +141,10 @@
 ** DONE service category
    CLOSED: [2017-12-20 Wed 12:50]
 ** TODO update endpoint
+** TODO manual order
+** TODO fix trial
+** TODO update endpoint tests (client services status, disable, orders)
+** TODO trans custom json response
 ** TODO calc endpoint
 ** TODO client users and acl
 ** TODO todos

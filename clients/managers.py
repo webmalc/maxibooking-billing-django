@@ -1,11 +1,10 @@
 import arrow
+from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.models import Sum
-
-from billing.exceptions import BaseException
-from billing.managers import LookupMixin
+from django.db.models import Q, Sum
 from hotels.models import Room
 
 
@@ -98,6 +97,27 @@ class ClientServiceManager(LookupMixin):
     lookup_search_fields = ('pk', 'service__title', 'client__name',
                             'client__email', 'client__login')
 
+    def client_tariff_update(self, client, rooms, period):
+        """
+        Update clients connection and rooms services
+        """
+        service_manager = apps.get_model('finances', 'Service').objects
+        connection = service_manager.get_by_period('connection', period)
+        if not connection:
+            raise BaseException('connection service not found')
+
+        rooms_service = service_manager.get_by_period('rooms', period)
+        if not rooms:
+            raise BaseException('rooms service not found')
+
+        self._get_or_create_service(connection, client, 1, 'next')
+        default_rooms = connection.default_rooms
+
+        rooms_count = rooms - default_rooms
+        if rooms_count > 0:
+            self._get_or_create_service(rooms_service, client, rooms_count,
+                                        'next')
+
     def get_prev(self, client_service):
         try:
             return self.get(
@@ -134,7 +154,7 @@ class ClientServiceManager(LookupMixin):
             query = query.filter(service__type=service_type)
         if exclude_pk:
             query = query.exclude(pk=exclude_pk)
-        return query.update(is_enabled=False)
+        return query.update(is_enabled=False, status='archive')
 
     def total(self, query=None):
         """
@@ -152,9 +172,13 @@ class ClientServiceManager(LookupMixin):
         """
         end = arrow.utcnow().shift(
             days=+settings.MB_ORDER_BEFORE_DAYS).datetime
-        return self.filter(end__lt=end, status='active', is_enabled=True).\
-            exclude(service__period=0, client__status='archived').\
-            select_related('client').order_by('client', '-created')
+        return self.filter(
+            Q(end__lt=end, status='active') | Q(begin__lt=end, status='next'),
+            is_enabled=True,
+        ).exclude(
+            service__period=0,
+            client__status='archived',
+        ).select_related('client').order_by('client', '-created')
 
     def make_trial(self, client):
         """
@@ -174,22 +198,44 @@ class ClientServiceManager(LookupMixin):
         if not rooms:
             raise BaseException('default rooms service not found')
 
-        self._make_trial_service(connection, client, 1)
+        self._get_or_create_service(connection, client, 1)
+        default_rooms = connection.default_rooms
         rooms_max = Room.objects.count_rooms(client)
-        self._make_trial_service(rooms, client, rooms_max)
 
-    def _make_trial_service(self, service, client, quantity):
+        rooms_count = rooms_max - default_rooms
+
+        if rooms_count > 0:
+            self._get_or_create_service(rooms, client, rooms_count)
+
+    def _get_or_create_service(
+            self,
+            service,
+            client,
+            quantity,
+            status='active',
+    ):
         """
         Create client service
         """
         client_service_model = apps.get_model('clients', 'ClientService')
-        client_service = client_service_model()
-        client_service.service = service
-        client_service.client = client
-        client_service.quantity = quantity
-        client_service.status = 'active'
-        try:
-            client_service.full_clean()
-            client_service.save()
-        except ValidationError as e:
-            raise BaseException('invalid default service: {}'.format(service))
+
+        old = client_service_model.objects.filter(
+            service=service,
+            client=client,
+            quantity=quantity,
+            is_enabled=True,
+        ).count()
+
+        if not old:
+            client_service = client_service_model()
+            client_service.service = service
+            client_service.client = client
+            client_service.quantity = quantity
+            client_service.status = status
+            try:
+                client_service.full_clean()
+                client_service.save()
+            except ValidationError as e:
+                raise BaseException(
+                    'invalid default service: {}. Error: {}'.format(
+                        service, e))

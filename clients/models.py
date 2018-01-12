@@ -1,4 +1,5 @@
 from annoying.fields import AutoOneToOneField
+from billing.models import CommonInfo, CountryBase
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -8,10 +9,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from phonenumber_field.modelfields import PhoneNumberField
-
-from billing.models import CommonInfo, CountryBase
 from hotels.models import Country
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 
@@ -422,7 +421,12 @@ class ClientService(CommonInfo, TimeStampedModel):
     """
     ClientService class
     """
-    STATUSES = (('processing', _('processing')), ('active', _('active')))
+    STATUSES = (
+        ('archive', _('archive')),
+        ('processing', _('processing')),
+        ('active', _('active')),
+        ('next', _('next')),
+    )
 
     objects = ClientServiceManager()
 
@@ -500,10 +504,14 @@ class ClientService(CommonInfo, TimeStampedModel):
         Get default begin for client_service
         """
         prev = ClientService.objects.get_prev(self)
-        if prev:
-            return prev.end
+        default_begin = self.service.get_default_begin()
+        begin = default_begin
+        if prev and prev.status == 'active':
+            begin = prev.end
+        if prev and prev.status == 'next':
+            begin = prev.begin
 
-        return self.service.get_default_begin()
+        return begin if begin >= default_begin else default_begin
 
     def save(self, *args, **kwargs):
         self.price = self.service.get_price(client=self.client) * self.quantity
@@ -548,6 +556,8 @@ class ClientService(CommonInfo, TimeStampedModel):
                 client=self.client,
                 service__type=service.type,
                 service__period=service.period,
+                status=self.status,
+                quantity=self.quantity,
                 service__period_units=service.period_units,
                 is_enabled=True).exclude(id=self.id).exists():
             raise ValidationError(
@@ -559,4 +569,4 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     class Meta:
         ordering = ['-created']
-        unique_together = (('client', 'is_enabled', 'service'), )
+        unique_together = (('client', 'is_enabled', 'service', 'quantity'), )

@@ -64,7 +64,7 @@ class ClientServiceInlineAdmin(admin.TabularInline):
     """
     model = ClientService
     fields = ('service', 'client', 'quantity', 'price_repr', 'begin', 'end',
-              'status')
+              'status', 'is_enabled')
     raw_id_fields = ('service', 'client')
     readonly_fields = ('price_repr', )
 

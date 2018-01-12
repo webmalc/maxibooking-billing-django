@@ -52,6 +52,20 @@ class ServiceManager(LookupMixin):
 
     lookup_search_fields = ('pk', 'title', 'description', 'type')
 
+    def get_by_period(self, service_type, period, period_units='month'):
+        """
+        Get service by duration
+        """
+        try:
+            return self.get(
+                type=service_type,
+                is_enabled=True,
+                period=period,
+                period_units=period_units,
+            )
+        except apps.get_model('finances', 'Service').DoesNotExist:
+            return None
+
     def get_default(self, service_type):
         """
         Get default service

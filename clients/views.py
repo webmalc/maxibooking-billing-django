@@ -48,6 +48,40 @@ class ClientViewSet(viewsets.ModelViewSet):
     lookup_field = 'login'
 
     @detail_route(methods=['post'])
+    def services_update(self, request, login=None):
+        """
+        Update client services
+        """
+        client = self.get_object()
+        if client.status != 'active':
+            return Response({'status': False, 'message': 'invalid client'})
+
+        request_json = json.loads(request.body)
+        logging.getLogger('billing').info(
+            'Client services update. Client {}; rooms {}; period: {}'.format(
+                client, request_json.get('rooms'), request_json.get('period')))
+
+        if all(k in request_json for k in ('rooms', 'period')):
+            try:
+                ClientService.objects.client_tariff_update(
+                    client, request_json['rooms'], request_json['period'])
+                return Response({
+                    'status':
+                    True,
+                    'message':
+                    'client services successfully updated'
+                })
+            except BaseException as e:
+                logging.getLogger('billing').error(
+                    'Failed client services up. Client: {}. Error: {}'.format(
+                        client, e))
+                return Response({
+                    'status': False,
+                    'message': 'failed update. Error: {}'.format(e)
+                })
+        return Response({'status': False, 'message': 'invalid request'})
+
+    @detail_route(methods=['post'])
     def confirm(self, request, login=None):
         """
         Change user status to active
