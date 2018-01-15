@@ -1,12 +1,13 @@
 import json
 
 import pytest
+from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
+
 from billing.lib import mb
 from billing.lib.test import json_contains
-from django.core.urlresolvers import reverse
 from finances.models import Price, Service
 from hotels.models import Property, Room
-from moneyed import EUR, Money
 
 from ..models import Client
 from ..tasks import client_archivation
@@ -118,6 +119,7 @@ def test_client_services_update_invalid_by_admin(admin_client):
 
 
 def test_client_services_update_by_admin(admin_client):
+    format = '%d.%m.%Y %H:%I'
     service = Service.objects.create(
         title='Temp service',
         type='rooms',
@@ -154,14 +156,38 @@ def test_client_services_update_by_admin(admin_client):
     assert client.services.filter(status='next').count() == 1
     assert client.services.get(
         status='next', service__type='rooms').quantity == 34
-    # TODO: dates check
+
+    next_rooms = client.services.get(status='next', service__type='rooms')
+    prev_rooms = client.services.get(status='archive', service__type='rooms')
+    begin = next_rooms.begin
+    assert begin.strftime(format) == prev_rooms.end.strftime(format)
 
     _update(12, 3)
     assert client.services.count() == 4
     assert client.services.filter(status='next', is_enabled=True).count() == 1
-    assert client.services.get(
-        status='next', service__type='rooms').quantity == 2
-    # TODO: complete test
+    next_rooms = client.services.get(
+        status='next',
+        service__type='rooms',
+        is_enabled=True,
+    )
+    assert begin.strftime(format) == next_rooms.begin.strftime(format)
+    assert next_rooms.quantity == 2
+
+    _update(5, 3)
+    assert client.services.count() == 4
+    assert client.services.filter(status='next', is_enabled=True).count() == 0
+    assert client.services.filter(is_enabled=True).count() == 1
+
+    _update(12, 3)
+    assert client.services.count() == 5
+    assert client.services.filter(status='next', is_enabled=True).count() == 1
+    next_rooms = client.services.get(
+        status='next',
+        service__type='rooms',
+        is_enabled=True,
+    )
+    assert begin.strftime(format) == next_rooms.begin.strftime(format)
+    assert next_rooms.quantity == 2
 
 
 def test_client_confirm_by_user(client):

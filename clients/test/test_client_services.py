@@ -2,13 +2,14 @@ import json
 
 import arrow
 import pytest
+from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
+
 from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_update
-from django.core.urlresolvers import reverse
 from finances.models import Order, Service, ServiceCategory
-from moneyed import EUR, Money
 
 pytestmark = pytest.mark.django_db
 
@@ -100,7 +101,7 @@ quantity must make a unique set.'
         url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
-    assert response_json['non_field_errors'] == ['Please correct begin date.']
+    assert response_json['non_field_errors'] == ['Please correct dates.']
 
     data['begin'] = arrow.utcnow().shift(days=1).isoformat()
     response = admin_client.post(

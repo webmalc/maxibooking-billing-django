@@ -1,5 +1,4 @@
 from annoying.fields import AutoOneToOneField
-from billing.models import CommonInfo, CountryBase
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -9,8 +8,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from hotels.models import Country
 from phonenumber_field.modelfields import PhoneNumberField
+
+from billing.models import CommonInfo, CountryBase
+from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 
@@ -499,11 +500,13 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     price_repr.short_description = _('price')
 
-    def get_default_begin(self):
+    def get_default_begin(self, connection=False):
         """
         Get default begin for client_service
         """
         prev = ClientService.objects.get_prev(self)
+        if connection and not prev:
+            prev = ClientService.objects.get_prev(self, 'connection')
         default_begin = self.service.get_default_begin()
         begin = default_begin
         if prev and prev.status == 'active':
@@ -534,8 +537,8 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     @staticmethod
     def validate_dates(begin, end, is_new):
-        if is_new and begin and begin < timezone.now():
-            raise ValidationError(_('Please correct begin date.'))
+        # if is_new and begin and begin < timezone.now():
+        #     raise ValidationError(_('Please correct begin date.'))
         if begin and end and begin > end:
             raise ValidationError(_('Please correct dates.'))
 

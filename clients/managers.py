@@ -1,10 +1,11 @@
 import arrow
-from billing.exceptions import BaseException
-from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
+
+from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from hotels.models import Room
 
 
@@ -116,14 +117,24 @@ class ClientServiceManager(LookupMixin):
         rooms_count = rooms - default_rooms
         if rooms_count > 0:
             self._get_or_create_service(rooms_service, client, rooms_count,
-                                        'next')
+                                        'next', True)
+        else:
+            client.services.filter(
+                status='next',
+                service__type='rooms',
+            ).update(
+                status='archive',
+                is_enabled=False,
+            )
 
-    def get_prev(self, client_service):
+    def get_prev(self, client_service, service_type=None):
+        if not service_type:
+            service_type = client_service.service.type
         try:
             return self.get(
                 is_enabled=True,
                 client=client_service.client,
-                service__type=client_service.service.type)
+                service__type=service_type)
         except apps.get_model('clients', 'ClientService').DoesNotExist:
             return None
 
@@ -213,6 +224,7 @@ class ClientServiceManager(LookupMixin):
             client,
             quantity,
             status='active',
+            connection=False,
     ):
         """
         Create client service
@@ -232,6 +244,8 @@ class ClientServiceManager(LookupMixin):
             client_service.client = client
             client_service.quantity = quantity
             client_service.status = status
+            if connection:
+                client_service.begin = client_service.get_default_begin(True)
             try:
                 client_service.full_clean()
                 client_service.save()
