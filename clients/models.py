@@ -572,4 +572,3 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     class Meta:
         ordering = ['-created']
-        unique_together = (('client', 'is_enabled', 'service', 'quantity'), )

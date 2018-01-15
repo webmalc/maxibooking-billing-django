@@ -76,7 +76,7 @@
 ** DONE client uninstall
    CLOSED: [2017-09-26 Tue 16:36]
 ** DONE client tariff restrictions rest
-   CLOSED: [2017-09-27 Wed 11:51]
+   CLOSED: [2018-01-15 Mon 16:17]
 ** DONE client status rest
    CLOSED: [2017-09-27 Wed 11:51]
 ** DONE client account rest
@@ -140,12 +140,15 @@
    CLOSED: [2017-12-19 Tue 13:27]
 ** DONE service category
    CLOSED: [2017-12-20 Wed 12:50]
-** TODO update endpoint
-** TODO manual order
-** TODO fix trial
-** TODO update endpoint tests (client services status, disable, orders)
-** TODO trans custom json response
+** DONE update endpoint
+   CLOSED: [2018-01-15 Mon 16:17]
+** DONE update endpoint tests (client services status, disable, orders)
+   CLOSED: [2018-01-15 Mon 16:17]
 ** TODO calc endpoint
+** TODO client tariff endpoint
+** TODO manual order
+** TODO fix trial test
+** TODO trans custom json response
 ** TODO client users and acl
 ** TODO todos
 ** TODO django 2.0

@@ -189,6 +189,34 @@ def test_client_services_update_by_admin(admin_client):
     assert begin.strftime(format) == next_rooms.begin.strftime(format)
     assert next_rooms.quantity == 2
 
+    service_rooms_year = Service.objects.create(
+        title='Temp service rooms year',
+        type='rooms',
+        period=12,
+        category_id=1,
+        period_units='month',
+    )
+    service_connection_year = Service.objects.create(
+        title='Temp service connection year',
+        type='connection',
+        period=12,
+        category_id=1,
+        period_units='month',
+    )
+    Price.objects.create(service=service_rooms_year, price=Money(233, EUR))
+    Price.objects.create(
+        service=service_connection_year, price=Money(1500, EUR))
+
+    _update(22, 12)
+    assert client.services.filter(status='next', is_enabled=True).count() == 2
+    next_rooms = client.services.get(
+        status='next',
+        service__type='rooms',
+        is_enabled=True,
+    )
+    assert next_rooms.quantity == 22
+    assert begin.strftime(format) == next_rooms.begin.strftime(format)
+
 
 def test_client_confirm_by_user(client):
     response = client.post(
