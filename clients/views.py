@@ -47,8 +47,31 @@ class ClientViewSet(viewsets.ModelViewSet):
     filter_fields = ('status', 'installation', 'country')
     lookup_field = 'login'
 
+    @detail_route(methods=['get'])
+    def tariff_show(self, request, login=None):
+        """
+        Show client tariff
+        """
+        # import ipdb
+        # ipdb.set_trace()
+
+        result = {
+            'main': {
+                'rooms': 12,
+                'price': 12323,
+                'currency': 'RUR'
+            },
+            'next': {
+                'rooms': 33,
+                'price': 12323,
+                'currency': 'RUR',
+                'begin': '12,32323,23'
+            },
+        }
+        return Response(result)
+
     @detail_route(methods=['post'])
-    def services_update(self, request, login=None):
+    def tariff_update(self, request, login=None):
         """
         Update client services
         """
@@ -56,7 +79,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         if client.status != 'active':
             return Response({'status': False, 'message': 'invalid client'})
 
-        request_json = json.loads(request.body)
+        request_json = request.data
         logging.getLogger('billing').info(
             'Client services update. Client {}; rooms {}; period: {}'.format(
                 client, request_json.get('rooms'), request_json.get('period')))
@@ -177,7 +200,8 @@ class ClientViewSet(viewsets.ModelViewSet):
         Receive installation status
         """
         client = self.get_object()
-        request_json = json.loads(request.body)
+        request_json = request.data
+
         logging.getLogger('billing').info(
             'Client installation result. Client: {}; status: {}; url: {};'.
             format(client, request_json.get('status'),

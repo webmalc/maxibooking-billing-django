@@ -138,6 +138,25 @@ class ClientServiceManager(LookupMixin):
         except apps.get_model('clients', 'ClientService').DoesNotExist:
             return None
 
+    def get_services_by_category(self, query):
+        """
+        Get query services grouped by category
+        """
+        grouped_services = {}
+        for e in query:
+            cat = e.service.category
+            if cat.id not in grouped_services:
+                grouped_services[cat.id] = ServiceCategoryGroup(cat)
+            group = grouped_services[cat.id]
+            group.add_client_services(e)
+        return list(grouped_services.values())
+
+    def get_client_services_by_category(self, client):
+        """
+        Get client services grouped by category
+        """
+        pass
+
     def get_order_services_by_category(self, order):
         """
         Get order services grouped by category
@@ -146,14 +165,7 @@ class ClientServiceManager(LookupMixin):
         entries = self.filter(
             orders__pk=getattr(order, 'pk', order)).select_related(
                 'service', 'client', 'service__category')
-        grouped_services = {}
-        for e in entries:
-            cat = e.service.category
-            if cat.id not in grouped_services:
-                grouped_services[cat.id] = ServiceCategoryGroup(cat)
-            group = grouped_services[cat.id]
-            group.add_client_services(e)
-        return list(grouped_services.values())
+        return self.get_services_by_category(entries)
 
     def disable(self, client, service_type=None, exclude_pk=None):
         """

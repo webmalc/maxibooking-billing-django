@@ -86,22 +86,36 @@ def test_client_create_by_admin(admin_client):
     json_contains(response, 'new@user.mail')
 
 
-def test_client_services_update_by_user(client):
+def test_client_tariff_update_by_user(client):
     response = client.post(
-        reverse('client-services-update', args=['user-one']),
+        reverse('client-tariff-update', args=['user-one']),
         content_type="application/json")
     assert response.status_code == 401
 
 
-def test_client_services_update_invalid_by_admin(admin_client):
+def test_client_tariff_show_by_user(client):
+    response = client.post(
+        reverse('client-tariff-show', args=['user-one']),
+        content_type="application/json")
+    assert response.status_code == 401
+
+
+def test_client_tariff_show_by_admin(admin_client):
+    response = admin_client.get(
+        reverse('client-tariff-show', args=['user-one']),
+        content_type="application/json")
+    assert response.status_code == 200
+
+
+def test_client_tariff_update_invalid_by_admin(admin_client):
     response = admin_client.post(
-        reverse('client-services-update', args=['user-five']),
+        reverse('client-tariff-update', args=['user-five']),
         content_type="application/json")
     assert response.json()['status'] is False
     assert response.json()['message'] == 'invalid client'
 
     response = admin_client.post(
-        reverse('client-services-update', args=['user-four']),
+        reverse('client-tariff-update', args=['user-four']),
         content_type="application/json")
 
     assert response.json()['status'] is False
@@ -109,7 +123,7 @@ def test_client_services_update_invalid_by_admin(admin_client):
 
     data = json.dumps({'rooms': 34, 'period': 5})
     response = admin_client.post(
-        reverse('client-services-update', args=['user-four']),
+        reverse('client-tariff-update', args=['user-four']),
         content_type="application/json",
         data=data,
     )
@@ -118,7 +132,7 @@ def test_client_services_update_invalid_by_admin(admin_client):
         'message'] == 'failed update. Error: connection service not found'
 
 
-def test_client_services_update_by_admin(admin_client):
+def test_client_tariff_update_by_admin(admin_client):
     format = '%d.%m.%Y %H:%I'
     service = Service.objects.create(
         title='Temp service',
@@ -133,7 +147,7 @@ def test_client_services_update_by_admin(admin_client):
     def _update(rooms, period):
         data = json.dumps({'rooms': rooms, 'period': period})
         response = admin_client.post(
-            reverse('client-services-update', args=['user-four']),
+            reverse('client-tariff-update', args=['user-four']),
             content_type="application/json",
             data=data,
         )
