@@ -36,8 +36,10 @@ def order_post_save(sender, **kwargs):
     Order post save
     """
     order = kwargs['instance']
+
     if not kwargs['created'] and order.tracker.has_changed('status') and \
        order.status == 'paid':
+
         mail_client_task.delay(
             subject=_('Your payment was successful'),
             template='emails/order_paid.html',
@@ -49,7 +51,10 @@ def order_post_save(sender, **kwargs):
             order.pk, order.payment_system))
 
         order.client.check_status()
-        order.client_services.update(status='active')
+        for service in order.client_services.all():
+            service.status = 'active'
+            service.save()
+        order.client.restrictions_update()
 
     if kwargs['created']:
         order_notify_task.apply_async((order.id, ), countdown=1)

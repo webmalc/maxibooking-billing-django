@@ -1,13 +1,11 @@
-import json
 import logging
 
+from billing.exceptions import BaseException
+from billing.lib import mb
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-
-from billing.exceptions import BaseException
-from billing.lib import mb
 
 from .models import Client, ClientService, Company
 from .serializers import (ClientSerializer, ClientServiceSerializer,
@@ -48,26 +46,30 @@ class ClientViewSet(viewsets.ModelViewSet):
     lookup_field = 'login'
 
     @detail_route(methods=['get'])
-    def tariff_show(self, request, login=None):
+    def tariff_detail(self, request, login=None):
         """
         Show client tariff
         """
-        # import ipdb
-        # ipdb.set_trace()
+        client = self.get_object()
+        tariff = client.services_by_category()
+        next_tariff = client.services_by_category(next=True)
+        result = {'main': None, 'next': None}
 
-        result = {
-            'main': {
-                'rooms': 12,
-                'price': 12323,
-                'currency': 'RUR'
-            },
-            'next': {
-                'rooms': 33,
-                'price': 12323,
-                'currency': 'RUR',
-                'begin': '12,32323,23'
-            },
-        }
+        def to_dict(group):
+            return {
+                'rooms': group.quantity,
+                'title': group.category.title,
+                'price': group.price.amount,
+                'currency': str(group.price.currency),
+                'begin': group.begin,
+                'end': group.end,
+            }
+
+        if len(tariff):
+            result['main'] = to_dict(tariff[0])
+        if len(next_tariff):
+            result['next'] = to_dict(next_tariff[0])
+
         return Response(result)
 
     @detail_route(methods=['post'])

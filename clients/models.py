@@ -346,6 +346,12 @@ lowercase letters, numbers, and "-" character.'))
     def world(self):
         return self
 
+    def services_by_category(self, next=False):
+        """
+        Grouped client services
+        """
+        return self.services.get_client_services_by_category(self, next)
+
     def check_status(self):
         """
         Check client status
@@ -505,14 +511,10 @@ class ClientService(CommonInfo, TimeStampedModel):
         Get default begin for client_service
         """
         prev = ClientService.objects.get_prev(self)
-        if connection and not prev:
-            prev = ClientService.objects.get_prev(self, 'connection')
         default_begin = self.service.get_default_begin()
         begin = default_begin
-        if prev and prev.status == 'active':
+        if prev:
             begin = prev.end
-        if prev and prev.status == 'next':
-            begin = prev.begin
 
         return begin if begin >= default_begin else default_begin
 
@@ -531,6 +533,12 @@ class ClientService(CommonInfo, TimeStampedModel):
 
         if self.is_enabled:
             ClientService.objects.disable(
+                client=self.client,
+                service_type=self.service.type,
+                exclude_pk=self.pk)
+
+        if self.status == 'active':
+            ClientService.objects.deactivate(
                 client=self.client,
                 service_type=self.service.type,
                 exclude_pk=self.pk)

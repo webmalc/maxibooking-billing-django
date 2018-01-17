@@ -1,18 +1,33 @@
 import json
 
+import arrow
 import pytest
 from django.core.urlresolvers import reverse
 from moneyed import EUR, Money
 
 from billing.lib import mb
 from billing.lib.test import json_contains
-from finances.models import Price, Service
+from finances.models import Order, Price, Service
 from hotels.models import Property, Room
 
 from ..models import Client
 from ..tasks import client_archivation
 
 pytestmark = pytest.mark.django_db
+
+
+@pytest.fixture
+def service():
+    service = Service.objects.create(
+        title='Temp service',
+        type='rooms',
+        period=3,
+        category_id=1,
+        period_units='month',
+    )
+    Price.objects.create(service=service, price=Money(1233, EUR))
+
+    return service
 
 
 def test_clients_list_by_user(client):
@@ -93,18 +108,58 @@ def test_client_tariff_update_by_user(client):
     assert response.status_code == 401
 
 
-def test_client_tariff_show_by_user(client):
+def _update_tariff(rooms, period, admin_client):
+    data = json.dumps({'rooms': rooms, 'period': period})
+    response = admin_client.post(
+        reverse('client-tariff-update', args=['user-four']),
+        content_type="application/json",
+        data=data,
+    )
+    response_json = response.json()
+    assert response.status_code == 200
+    assert response_json['status'] is True
+    assert response_json['message'] == 'client services successfully updated'
+
+    return response
+
+
+def test_client_tariff_detail_by_user(client):
     response = client.post(
-        reverse('client-tariff-show', args=['user-one']),
+        reverse('client-tariff-detail', args=['user-one']),
         content_type="application/json")
     assert response.status_code == 401
 
 
-def test_client_tariff_show_by_admin(admin_client):
+def test_client_tariff_detail_by_admin(admin_client, service):
+    client = Client.objects.get(login='user-four')
+    now = arrow.utcnow().format('YYYY-MM-DD')
+    next_begin = arrow.utcnow().shift(months=3).format('YYYY-MM-DD')
+    _update_tariff(25, 3, admin_client)
     response = admin_client.get(
-        reverse('client-tariff-show', args=['user-one']),
+        reverse('client-tariff-detail', args=['user-four']),
         content_type="application/json")
     assert response.status_code == 200
+    response_json = response.json()
+
+    next_tariff = response_json['next']
+    assert next_tariff['title'] == 'Test category 1'
+    assert next_tariff['rooms'] == 25
+    assert now in next_tariff['begin']
+
+    client.services.update(status='active')
+    _update_tariff(44, 3, admin_client)
+    response = admin_client.get(
+        reverse('client-tariff-detail', args=['user-four']),
+        content_type="application/json")
+
+    response_json = response.json()
+
+    next_tariff = response_json['next']
+    current_tariff = response_json['main']
+    assert current_tariff['rooms'] == 25
+    assert next_tariff['rooms'] == 44
+    assert now in current_tariff['begin']
+    assert next_begin in next_tariff['begin']
 
 
 def test_client_tariff_update_invalid_by_admin(admin_client):
@@ -132,53 +187,30 @@ def test_client_tariff_update_invalid_by_admin(admin_client):
         'message'] == 'failed update. Error: connection service not found'
 
 
-def test_client_tariff_update_by_admin(admin_client):
+def test_client_tariff_update_by_admin(admin_client, service):
     format = '%d.%m.%Y %H:%I'
-    service = Service.objects.create(
-        title='Temp service',
-        type='rooms',
-        period=3,
-        category_id=1,
-        period_units='month',
-    )
-    Price.objects.create(service=service, price=Money(1233, EUR))
     client = Client.objects.get(login='user-four')
 
-    def _update(rooms, period):
-        data = json.dumps({'rooms': rooms, 'period': period})
-        response = admin_client.post(
-            reverse('client-tariff-update', args=['user-four']),
-            content_type="application/json",
-            data=data,
-        )
-        response_json = response.json()
-        assert response.status_code == 200
-        assert response_json['status'] is True
-        assert response_json[
-            'message'] == 'client services successfully updated'
-
-        return response
-
-    _update(34, 3)
+    _update_tariff(34, 3, admin_client)
     client.refresh_from_db()
     assert client.services.count() == 2
     assert client.services.get(service__type='rooms').quantity == 24
 
     client.services.update(status='active')
-    _update(44, 3)
-    assert client.services.count() == 3
-    assert client.services.filter(status='next').count() == 1
+    _update_tariff(44, 3, admin_client)
+    assert client.services.count() == 4
+    assert client.services.filter(status='next').count() == 2
     assert client.services.get(
         status='next', service__type='rooms').quantity == 34
 
     next_rooms = client.services.get(status='next', service__type='rooms')
-    prev_rooms = client.services.get(status='archive', service__type='rooms')
+    prev_rooms = client.services.get(status='active', service__type='rooms')
     begin = next_rooms.begin
     assert begin.strftime(format) == prev_rooms.end.strftime(format)
 
-    _update(12, 3)
-    assert client.services.count() == 4
-    assert client.services.filter(status='next', is_enabled=True).count() == 1
+    _update_tariff(12, 3, admin_client)
+    assert client.services.count() == 6
+    assert client.services.filter(status='next', is_enabled=True).count() == 2
     next_rooms = client.services.get(
         status='next',
         service__type='rooms',
@@ -187,14 +219,14 @@ def test_client_tariff_update_by_admin(admin_client):
     assert begin.strftime(format) == next_rooms.begin.strftime(format)
     assert next_rooms.quantity == 2
 
-    _update(5, 3)
-    assert client.services.count() == 4
-    assert client.services.filter(status='next', is_enabled=True).count() == 0
+    _update_tariff(5, 3, admin_client)
+    assert client.services.count() == 7
+    assert client.services.filter(status='next', is_enabled=True).count() == 1
     assert client.services.filter(is_enabled=True).count() == 1
 
-    _update(12, 3)
-    assert client.services.count() == 5
-    assert client.services.filter(status='next', is_enabled=True).count() == 1
+    _update_tariff(12, 3, admin_client)
+    assert client.services.count() == 9
+    assert client.services.filter(status='next', is_enabled=True).count() == 2
     next_rooms = client.services.get(
         status='next',
         service__type='rooms',
@@ -221,8 +253,9 @@ def test_client_tariff_update_by_admin(admin_client):
     Price.objects.create(
         service=service_connection_year, price=Money(1500, EUR))
 
-    _update(22, 12)
-    assert client.services.filter(status='next', is_enabled=True).count() == 2
+    _update_tariff(22, 12, admin_client)
+    next_services = client.services.filter(status='next', is_enabled=True)
+    assert next_services.count() == 2
     next_rooms = client.services.get(
         status='next',
         service__type='rooms',
@@ -230,6 +263,25 @@ def test_client_tariff_update_by_admin(admin_client):
     )
     assert next_rooms.quantity == 22
     assert begin.strftime(format) == next_rooms.begin.strftime(format)
+    client.restrictions_update()
+    assert client.restrictions.rooms_limit == 34
+
+    next_services.update(begin=arrow.utcnow().shift(days=-3).datetime)
+    order = Order()
+    order.price = Money(123, EUR)
+    order.status = 'new'
+    order.client = client
+    order.expired_date = arrow.utcnow().shift(months=4).datetime
+    order.save()
+    order.client_services.add(*next_services.all())
+    order.refresh_from_db()
+    order.status = 'paid'
+    order.save()
+
+    client.refresh_from_db()
+
+    assert client.services.filter(status='active').count() == 2
+    assert client.restrictions.rooms_limit == 22
 
 
 def test_client_confirm_by_user(client):

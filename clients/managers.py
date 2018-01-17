@@ -50,11 +50,11 @@ class ServiceCategoryGroup(object):
 
     @property
     def begin(self):
-        return self.client_services[0].begin
+        return list(self.client_services)[0].begin
 
     @property
     def end(self):
-        return self.client_services[0].end
+        return list(self.client_services)[0].end
 
 
 class ClientManager(LookupMixin):
@@ -80,12 +80,12 @@ class ClientManager(LookupMixin):
         """
         now = arrow.utcnow().datetime
         rooms = client.services.filter(
-            service__type='rooms', begin__lte=now, is_enabled=True).aggregate(
+            service__type='rooms', begin__lte=now, status='active').aggregate(
                 Sum('quantity'))['quantity__sum']
 
         default_rooms = client.services.filter(
             service__type='connection',
-            begin__lte=now, is_enabled=True).aggregate(
+            begin__lte=now, status='active').aggregate(
                 Sum('service__default_rooms'))['service__default_rooms__sum']
 
         return int(rooms or 0) + int(default_rooms or 0)
@@ -111,28 +111,25 @@ class ClientServiceManager(LookupMixin):
         if not rooms:
             raise BaseException('rooms service not found')
 
-        self._get_or_create_service(connection, client, 1, 'next')
+        client.services.filter(status='next').update(
+            status='archive',
+            is_enabled=False,
+        )
+        self._create_service(connection, client, 1, 'next')
         default_rooms = connection.default_rooms
 
         rooms_count = rooms - default_rooms
         if rooms_count > 0:
-            self._get_or_create_service(rooms_service, client, rooms_count,
-                                        'next', True)
-        else:
-            client.services.filter(
-                status='next',
-                service__type='rooms',
-            ).update(
-                status='archive',
-                is_enabled=False,
-            )
+            self._create_service(rooms_service, client, rooms_count, 'next',
+                                 True)
 
     def get_prev(self, client_service, service_type=None):
         if not service_type:
             service_type = client_service.service.type
         try:
             return self.get(
-                is_enabled=True,
+                # is_enabled=True,
+                status='active',
                 client=client_service.client,
                 service__type=service_type)
         except apps.get_model('clients', 'ClientService').DoesNotExist:
@@ -151,11 +148,19 @@ class ClientServiceManager(LookupMixin):
             group.add_client_services(e)
         return list(grouped_services.values())
 
-    def get_client_services_by_category(self, client):
+    def get_client_services_by_category(self, client, next=False):
         """
         Get client services grouped by category
         """
-        pass
+        statuses = ('active', 'processing')
+        if next:
+            statuses = ('next', )
+        entries = client.services.filter(
+            # is_enabled=True,
+            status__in=statuses,
+            service__type__in=('rooms', 'connection')).select_related(
+                'service', 'client', 'service__category')
+        return self.get_services_by_category(entries)
 
     def get_order_services_by_category(self, order):
         """
@@ -177,7 +182,19 @@ class ClientServiceManager(LookupMixin):
             query = query.filter(service__type=service_type)
         if exclude_pk:
             query = query.exclude(pk=exclude_pk)
-        return query.update(is_enabled=False, status='archive')
+        return query.update(is_enabled=False)
+
+    def deactivate(self, client, service_type=None, exclude_pk=None):
+        """
+        Deactivate client services by params
+        """
+        query = self.filter(client=client)
+
+        if service_type:
+            query = query.filter(service__type=service_type)
+        if exclude_pk:
+            query = query.exclude(pk=exclude_pk)
+        return query.update(status='archive')
 
     def total(self, query=None):
         """
@@ -221,16 +238,16 @@ class ClientServiceManager(LookupMixin):
         if not rooms:
             raise BaseException('default rooms service not found')
 
-        self._get_or_create_service(connection, client, 1)
+        self._create_service(connection, client, 1)
         default_rooms = connection.default_rooms
         rooms_max = Room.objects.count_rooms(client)
 
         rooms_count = rooms_max - default_rooms
 
         if rooms_count > 0:
-            self._get_or_create_service(rooms, client, rooms_count)
+            self._create_service(rooms, client, rooms_count)
 
-    def _get_or_create_service(
+    def _create_service(
             self,
             service,
             client,
@@ -243,25 +260,16 @@ class ClientServiceManager(LookupMixin):
         """
         client_service_model = apps.get_model('clients', 'ClientService')
 
-        old = client_service_model.objects.filter(
-            service=service,
-            client=client,
-            quantity=quantity,
-            is_enabled=True,
-        ).count()
-
-        if not old:
-            client_service = client_service_model()
-            client_service.service = service
-            client_service.client = client
-            client_service.quantity = quantity
-            client_service.status = status
-            if connection:
-                client_service.begin = client_service.get_default_begin(True)
-            try:
-                client_service.full_clean()
-                client_service.save()
-            except ValidationError as e:
-                raise BaseException(
-                    'invalid default service: {}. Error: {}'.format(
-                        service, e))
+        client_service = client_service_model()
+        client_service.service = service
+        client_service.client = client
+        client_service.quantity = quantity
+        client_service.status = status
+        if connection:
+            client_service.begin = client_service.get_default_begin(True)
+        try:
+            client_service.full_clean()
+            client_service.save()
+        except ValidationError as e:
+            raise BaseException(
+                'invalid default service: {}. Error: {}'.format(service, e))
