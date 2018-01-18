@@ -63,6 +63,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                 'currency': str(group.price.currency),
                 'begin': group.begin,
                 'end': group.end,
+                'period': list(group.client_services)[0].service.period,
             }
 
         if len(tariff):

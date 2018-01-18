@@ -286,8 +286,10 @@ def test_client_tariff_update_by_admin(admin_client, service):
     client.services.filter(service__type='rooms').delete()
     _update_tariff(22, 3, admin_client)
 
-    import ipdb
-    ipdb.set_trace()
+    prev_service = client.services.filter(status='active').first()
+    next_services = client.services.filter(status='next', is_enabled=True)
+    for next_service in next_services:
+        assert prev_service.end == next_service.begin
 
 
 def test_client_confirm_by_user(client):
