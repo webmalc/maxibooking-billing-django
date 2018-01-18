@@ -1,11 +1,10 @@
 import arrow
+from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
-
-from billing.exceptions import BaseException
-from billing.managers import LookupMixin
 from hotels.models import Room
 
 
@@ -126,6 +125,11 @@ class ClientServiceManager(LookupMixin):
     def get_prev(self, client_service, service_type=None):
         if not service_type:
             service_type = client_service.service.type
+        if client_service.status == 'next':
+            return self.filter(
+                status='active',
+                client=client_service.client,
+                service__type='connection').first()
         try:
             return self.get(
                 # is_enabled=True,

@@ -2,13 +2,12 @@ import json
 
 import arrow
 import pytest
-from django.core.urlresolvers import reverse
-from moneyed import EUR, Money
-
 from billing.lib import mb
 from billing.lib.test import json_contains
+from django.core.urlresolvers import reverse
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
+from moneyed import EUR, Money
 
 from ..models import Client
 from ..tasks import client_archivation
@@ -282,6 +281,13 @@ def test_client_tariff_update_by_admin(admin_client, service):
 
     assert client.services.filter(status='active').count() == 2
     assert client.restrictions.rooms_limit == 22
+
+    client.services.exclude(status='active').delete()
+    client.services.filter(service__type='rooms').delete()
+    _update_tariff(22, 3, admin_client)
+
+    import ipdb
+    ipdb.set_trace()
 
 
 def test_client_confirm_by_user(client):

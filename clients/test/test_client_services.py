@@ -2,14 +2,13 @@ import json
 
 import arrow
 import pytest
-from django.core.urlresolvers import reverse
-from moneyed import EUR, Money
-
 from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_update
+from django.core.urlresolvers import reverse
 from finances.models import Order, Service, ServiceCategory
+from moneyed import EUR, Money
 
 pytestmark = pytest.mark.django_db
 
@@ -202,4 +201,5 @@ def test_client_services_default_dates(admin_client):
     prev_client_service.refresh_from_db()
     assert prev_client_service.is_enabled is False
     next_client_service = ClientService.objects.get(service__pk=4)
+
     assert next_client_service.begin == prev_client_service.end
