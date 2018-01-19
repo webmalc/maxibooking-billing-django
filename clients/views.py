@@ -1,11 +1,12 @@
 import logging
 
-from billing.exceptions import BaseException
-from billing.lib import mb
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+
+from billing.exceptions import BaseException
+from billing.lib import mb
 
 from .models import Client, ClientService, Company
 from .serializers import (ClientSerializer, ClientServiceSerializer,
@@ -133,6 +134,9 @@ class ClientViewSet(viewsets.ModelViewSet):
         Activate user trial
         """
         client = self.get_object()
+        logging.getLogger('billing').info(
+            'Begin client trial installation. Id: {}; login: {}'.format(
+                client.id, client.login))
         try:
             ClientService.objects.make_trial(client)
             return Response({
@@ -141,7 +145,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             })
         except BaseException as e:
             logging.getLogger('billing').error(
-                'Failed client installation. Id: {}; login: {}'.format(
+                'Failed client trial installation. Id: {}; login: {}'.format(
                     client.id, client.login))
             return Response({
                 'status': False,

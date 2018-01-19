@@ -2,12 +2,13 @@ import json
 
 import arrow
 import pytest
+from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
+
 from billing.lib import mb
 from billing.lib.test import json_contains
-from django.core.urlresolvers import reverse
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
-from moneyed import EUR, Money
 
 from ..models import Client
 from ..tasks import client_archivation
@@ -485,7 +486,7 @@ def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
 
     mail = mailoutbox[0]
 
-    assert 'Failed client installation' in mail.subject
+    assert 'Failed client trial installation' in mail.subject
     assert 'user-three' in mail.body
 
     response = admin_client.post(
