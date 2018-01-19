@@ -3,7 +3,6 @@ import logging
 import time
 
 import requests
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -22,7 +21,11 @@ def _request(url, data, error_callback):
             if response.status_code == 200:
                 content = response.content
                 try:
-                    return json.loads(content)
+                    json_response = json.loads(content)
+
+                    logging.getLogger('billing').info(
+                        'Mb service json response: {}'.format(json_response))
+                    return json_response
                 except json.decoder.JSONDecodeError:
                     return response
         except requests.exceptions.RequestException:
