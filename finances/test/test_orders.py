@@ -189,9 +189,18 @@ def test_orders_clients_disable(make_orders, mailoutbox):
     client.check_status()
     client.refresh_from_db()
     assert client.status == 'disabled'
+
     Order.objects.get(pk=3).set_paid('bill')
     client.refresh_from_db()
     assert client.status == 'active'
+
+
+def test_orders_services_activation(make_orders):
+    order = Order.objects.get(pk=1)
+    order.client_services.add(1, 2)
+    assert order.client_services.first().is_paid is False
+    order.set_paid('bill')
+    assert order.client_services.first().is_paid is True
 
 
 def test_order_with_invalid_currencies():

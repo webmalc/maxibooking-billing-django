@@ -52,7 +52,9 @@ def order_post_save(sender, **kwargs):
 
         order.client.check_status()
         for service in order.client_services.all():
-            service.status = 'active'
+            if service.begin <= arrow.utcnow().datetime:
+                service.status = 'active'
+            service.is_paid = True
             service.save()
         order.client.restrictions_update()
 

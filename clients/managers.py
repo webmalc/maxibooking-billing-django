@@ -1,10 +1,11 @@
 import arrow
-from billing.exceptions import BaseException
-from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
+
+from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from hotels.models import Room
 
 
@@ -222,6 +223,17 @@ class ClientServiceManager(LookupMixin):
         ).exclude(
             service__period=0,
             client__status='archived',
+        ).select_related('client').order_by('client', '-created')
+
+    def find_for_activation(self):
+        """
+        Find client sevices for activation
+        """
+        return self.filter(
+            begin__lte=arrow.utcnow().datetime,
+            status='next',
+            is_paid=True,
+            is_enabled=True,
         ).select_related('client').order_by('client', '-created')
 
     def make_trial(self, client):

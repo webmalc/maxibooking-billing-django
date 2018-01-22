@@ -49,6 +49,20 @@ def mail_client_task(subject, template, data, client_id=None, email=None):
 
 
 @app.task
+def client_services_activation():
+    """
+    Client services periodical activation
+    """
+    client_services = ClientService.objects.find_for_activation()
+    for client_service in client_services:
+        logging.getLogger('billing').info(
+            'Activation client service {}'.format(client_service))
+        client_service.status = 'active'
+        client_service.save()
+        client_service.client.restrictions_update()
+
+
+@app.task
 def client_services_update():
     """
     Client services periodical update
@@ -68,7 +82,8 @@ def client_services_update():
                     client_service))
             client_service.end = client_service.service.get_default_end(
                 client_service.end)
-            client_service.status = 'processing'
+            # client_service.status = 'processing'
+            client_service.is_paid = False
             client_service.price = None
             client_service.save()
             order.client_services.add(client_service)

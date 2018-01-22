@@ -445,6 +445,8 @@ class ClientService(CommonInfo, TimeStampedModel):
         choices=STATUSES,
         verbose_name=_('status'),
         db_index=True)
+    is_paid = models.BooleanField(
+        default=False, db_index=True, verbose_name=_('is paid'))
     price = MoneyField(
         max_digits=20,
         decimal_places=2,

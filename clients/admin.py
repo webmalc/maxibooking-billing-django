@@ -20,7 +20,7 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
     ClientService admin interface
     """
     list_display = ('id', 'service', 'client', 'quantity', 'price', 'begin',
-                    'end', 'status', 'is_enabled')
+                    'end', 'status', 'is_enabled', 'is_paid')
     list_display_links = (
         'id',
         'service',
@@ -38,8 +38,9 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
                        'end', 'orders')
         }),
         ('Options', {
-            'fields': ('status', 'is_enabled', 'country', 'start_at',
-                       'created', 'modified', 'created_by', 'modified_by')
+            'fields':
+            ('status', 'is_enabled', 'is_paid', 'country', 'start_at',
+             'created', 'modified', 'created_by', 'modified_by')
         }),
     )
     list_select_related = ('service', 'client')

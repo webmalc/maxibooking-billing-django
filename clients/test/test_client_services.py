@@ -2,13 +2,14 @@ import json
 
 import arrow
 import pytest
+from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
+
 from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
-from clients.tasks import client_services_update
-from django.core.urlresolvers import reverse
+from clients.tasks import client_services_activation, client_services_update
 from finances.models import Order, Service, ServiceCategory
-from moneyed import EUR, Money
 
 pytestmark = pytest.mark.django_db
 
@@ -167,6 +168,7 @@ def test_client_services_update_task(admin_client):
     client_service.end = end.datetime
     client_service.service = service
     client_service.client_id = 4
+    client_service.is_paid = True
     client_service.save()
     assert client_service.price == service.get_price(client=4) * 2
     price = service.prices.get(pk=8)
@@ -176,7 +178,8 @@ def test_client_services_update_task(admin_client):
     client_services_update.delay()
     client_service.refresh_from_db()
 
-    assert client_service.status == 'processing'
+    # assert client_service.status == 'processing'
+    assert client_service.is_paid is False
     assert client_service.end == end.shift(months=+3).datetime
     assert client_service.price == Money(5000, EUR)
 
@@ -203,3 +206,37 @@ def test_client_services_default_dates(admin_client):
     next_client_service = ClientService.objects.get(service__pk=4)
 
     assert next_client_service.begin == prev_client_service.end
+
+
+def test_client_services_activation_task(admin_client, make_orders):
+    order = Order.objects.get(pk=1)
+    client_service = ClientService.objects.get(pk=2)
+    client = client_service.client
+    client.services.all().delete()
+    client.services.add(client_service)
+    client_service.begin = arrow.utcnow().shift(days=2).datetime
+    client_service.status = 'next'
+    client_service.save()
+    order.client_services.add(1, 2, client_service)
+    order.set_paid('bill')
+    client_service.refresh_from_db()
+
+    assert client_service.is_paid is True
+    assert client_service.status == 'next'
+
+    client_services_activation.delay()
+    client_service.refresh_from_db()
+
+    assert client_service.is_paid is True
+    assert client_service.status == 'next'
+    assert client.restrictions.rooms_limit == 0
+
+    client_service.begin = arrow.utcnow().shift(days=-2).datetime
+    client_service.save()
+    client_services_activation.delay()
+    client_service.refresh_from_db()
+    client.restrictions.refresh_from_db()
+
+    assert client_service.is_paid is True
+    assert client_service.status == 'active'
+    assert client.restrictions.rooms_limit == 5

@@ -257,6 +257,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'clients.tasks.client_services_update',
         'schedule': 60 * 10
     },
+    'client_services_activation_task': {
+        'task': 'clients.tasks.client_services_activation',
+        'schedule': 60 * 10
+    },
     'orders_payment_notify_task': {
         'task': 'finances.tasks.orders_payment_notify',
         'schedule': 60 * 60 * 24
