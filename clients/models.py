@@ -218,14 +218,26 @@ class CompanyRu(CountryBase):
         verbose_name=_('boss operation base'))
     proxy_number = models.CharField(
         max_length=50,
+        null=True,
+        blank=True,
         validators=[
             MinLengthValidator(2),
             integer_validator,
         ],
         verbose_name=_('proxy number'))
-    proxy_date = models.DateTimeField(verbose_name=_('proxy date'), )
+    proxy_date = models.DateTimeField(
+        verbose_name=_('proxy date'),
+        null=True,
+        blank=True,
+    )
     company = models.OneToOneField(
         Company, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+
+    def clean(self):
+        if self.boss_operation_base == 'proxy' and\
+           not all([self.proxy_number, self.proxy_date]):
+            raise ValidationError(
+                _('Please fill proxy date and proxy number.'))
 
     class Meta:
         verbose_name_plural = _('ru')
