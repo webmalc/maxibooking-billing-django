@@ -188,7 +188,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             })
 
         response = mb.client_fixtures(client)
-        if response and response['status']:
+        if response and response.get('status', True):
             return Response({
                 'status': True,
                 'message': 'client fixtures installed',
