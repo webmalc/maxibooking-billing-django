@@ -76,7 +76,7 @@
 ** DONE client uninstall
    CLOSED: [2017-09-26 Tue 16:36]
 ** DONE client tariff restrictions rest
-   CLOSED: [2018-01-22 Mon 13:22]
+   CLOSED: [2018-01-23 Tue 12:23]
 ** DONE client status rest
    CLOSED: [2017-09-27 Wed 11:51]
 ** DONE client account rest
@@ -144,9 +144,11 @@
    CLOSED: [2018-01-15 Mon 16:17]
 ** DONE update endpoint tests (client services status, disable, orders)
    CLOSED: [2018-01-15 Mon 16:17]
-** TODO proxy date 
+** DONE proxy date 
+   CLOSED: [2018-01-23 Tue 12:23]
 ** TODO fixtures action and status
-** TODO client tariff endpoint
+** DONE client tariff endpoint
+   CLOSED: [2018-01-23 Tue 12:24]
 ** TODO calc endpoint
 ** TODO manual order
 ** TODO fix trial test
