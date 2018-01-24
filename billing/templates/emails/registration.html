@@ -7,7 +7,21 @@
 {% endblock %}
 
 {% block content %}
-    <p><strong>{% trans "Login" %}</strong>: {{ login }}</p>
-    <p><strong>{% trans "URL" %}</strong>: {{ url }}</p>
-    <p><strong>{% trans "Password" %}</strong>: {{ password }}</p>
+{% blocktrans %}
+    <p>Hello!</p>
+    <p>Thank you for registering in 'Maxibooking'!</p>
+    <p>To enter the program, please follow the link: {{ url }}
+        and use the user's credentials:</p>
+    <ul>
+        <li>username: {{ login }}</li>
+        <li>password: {{ password }}</li>
+    </ul>
+
+    <p>Knowledge base for work in the program: https://support.maxi-booking.com</p>
+    <p>You can get support by contacting: support@maxi-booking.com</p>
+
+{% endblocktrans %}
+
+{% include "emails/sign.html" %}
+
 {% endblock %}

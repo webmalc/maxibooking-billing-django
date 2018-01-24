@@ -388,6 +388,10 @@ lowercase letters, numbers, and "-" character.'))
         self.restrictions.rooms_limit = rooms
         self.restrictions.save()
 
+    @property
+    def language(self):
+        return 'ru' if self.country.tld == 'ru' else 'en'
+
     def __str__(self):
         return '{} - {}'.format(self.login, self.name)
 

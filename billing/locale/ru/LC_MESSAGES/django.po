@@ -8,22 +8,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-07 09:32+0000\n"
-"PO-Revision-Date: 2017-12-07 09:32+0000\n"
+"POT-Creation-Date: 2018-01-24 14:18+0000\n"
+"PO-Revision-Date: 2018-01-24 14:37+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
-"%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.7.13\n"
 
-#: billing/lib/mb.py:65 billing/lib/mb.py:100 clients/views.py:174
+#: billing/lib/mb.py:69 billing/lib/mb.py:100
+#: billing/templates/emails/registration_fail.html:6 clients/views.py:240
 msgid "Registation failed"
-msgstr ""
+msgstr "Ошибка при регистрации"
 
 #: billing/models.py:17
 msgid "created by"
@@ -33,7 +32,101 @@ msgstr ""
 msgid "modified by"
 msgstr ""
 
-#: clients/admin.py:164
+#: billing/templates/admin/filter.html:3
+#: billing/templates/filters/text_field.html:2
+#, python-format
+msgid "%(filter_title)s"
+msgstr ""
+
+#: billing/templates/billing/processing.html:13 clients/models.py:449
+#: finances/models.py:207
+msgid "processing"
+msgstr ""
+
+#: billing/templates/emails/base_manager.html:6
+msgid "Message from billing"
+msgstr ""
+
+#: billing/templates/emails/new_order.html:6
+msgid "New order #"
+msgstr ""
+
+#: billing/templates/emails/order_client_disabled.html:6 finances/tasks.py:61
+msgid "Your account is disabled"
+msgstr ""
+
+#: billing/templates/emails/order_paid.html:6 finances/signals.py:44
+msgid "Your payment was successful"
+msgstr ""
+
+#: billing/templates/emails/order_payment_notification.html:6
+msgid "Order will expire soon"
+msgstr ""
+
+#: billing/templates/emails/registration.html:6 clients/views.py:229
+msgid "Registation successefull"
+msgstr "Успешная регистрация"
+
+#: billing/templates/emails/registration.html:10
+#, python-format
+msgid ""
+"\n"
+"    <p>Hello!</p>\n"
+"    <p>Thank you for registering in 'Maxibooking'!</p>\n"
+"    <p>To enter the program, please follow the link: %(url)s\n"
+"        and use the user's credentials:</p>\n"
+"    <ul>\n"
+"        <li>username: %(login)s</li>\n"
+"        <li>password: %(password)s</li>\n"
+"    </ul>\n"
+"\n"
+"    <p>Knowledge base for work in the program: https://support.maxi-booking.com</p>\n"
+"    <p>You can get support by contacting: support@maxi-booking.com</p>\n"
+"\n"
+msgstr ""
+"\n"
+"    <p>Здравствуйте!</p>\n"
+"    <p>Спасибо за регистрацию в системе «Максибукинг»!</p>\n"
+"    <p>Для входа в программу перейдите по ссылке: %(url)s\n"
+"       и используйте учетные данные пользователя:</p>\n"
+"    <ul>\n"
+"        <li>имя пользователя: %(login)s</li>\n"
+"        <li>пароль: %(password)s</li>\n"
+"    </ul>\n"
+"\n"
+"    <p>База знаний по работе в программе: https://support.maxi-booking.com</p>\n"
+"    <p>Поддержку можно получить обратившись по email: support@maxi-booking.com</p>\n"
+"\n"
+
+#: billing/templates/emails/registration_fail.html:10
+msgid ""
+"\n"
+"    <p>Hello!</p>\n"
+"    <p>When installing the program \"Maxibooking\" an error occurred.</p>\n"
+"    <p>To resolve this error, please contact support at: support@maxi-booking.com</p> \n"
+msgstr ""
+"\n"
+"<p>Здравствуйте!</p>\n"
+"<p>При установке программы «Максибукинг» произошла ошибка.</p>\n"
+"<p>Для устранения ошибки обратитесь, пожалуйста, в службу поддержки по адресу: support@maxi-booking.com</p> \n"
+
+#: billing/templates/emails/sign.html:2
+msgid ""
+"\n"
+"    <p>Yours faithfully,<br>\n"
+"        Technical support 'Maxibooking'</p>\n"
+"\n"
+"    <p>E-mail: support@maxi-booking.com<br>\n"
+"       Knowledge base: https://support.maxi-booking.com</p>\n"
+msgstr ""
+"\n"
+"    <p>С уважением,<br>\n"
+"        Служба технической поддержки «Максибукинг»</p>\n"
+"\n"
+"    <p>E-mail: support@maxi-booking.com<br>\n"
+"       База знаний: https://support.maxi-booking.com</p>\n"
+
+#: clients/admin.py:165
 msgid "Installation successfully started."
 msgstr ""
 
@@ -45,418 +138,432 @@ msgstr ""
 msgid "restrictions"
 msgstr ""
 
-#: clients/models.py:50 fms/models.py:12 hotels/models.py:92
+#: clients/models.py:59 fms/models.py:12 hotels/models.py:92
 #: hotels/models.py:141
 msgid "name"
 msgstr ""
 
-#: clients/models.py:54 clients/models.py:436 finances/models.py:222
+#: clients/models.py:63 clients/models.py:500 finances/models.py:239
 #: hotels/models.py:120
 msgid "client"
 msgstr ""
 
-#: clients/models.py:62 clients/models.py:266 hotels/models.py:108
+#: clients/models.py:71 clients/models.py:301 hotels/models.py:108
 msgid "city"
 msgstr ""
 
-#: clients/models.py:67 clients/models.py:273
+#: clients/models.py:76 clients/models.py:308
 msgid "region"
 msgstr ""
 
-#: clients/models.py:73 clients/models.py:281 hotels/models.py:104
+#: clients/models.py:82 clients/models.py:316 hotels/models.py:104
 msgid "address"
 msgstr ""
 
-#: clients/models.py:81
+#: clients/models.py:90
 msgid "bank"
 msgstr ""
 
-#: clients/models.py:86
+#: clients/models.py:109
 msgid "companies"
 msgstr ""
 
-#: clients/models.py:103
+#: clients/models.py:126
 msgid "swift"
 msgstr ""
 
-#: clients/models.py:111 clients/models.py:112
+#: clients/models.py:134 clients/models.py:135
 msgid "world"
 msgstr ""
 
-#: clients/models.py:123
+#: clients/models.py:146
 msgid "ooo"
 msgstr "ООО"
 
-#: clients/models.py:124
+#: clients/models.py:147
 msgid "oao"
 msgstr "ОАО"
 
-#: clients/models.py:125
+#: clients/models.py:148
 msgid "ip"
 msgstr "ИП"
 
-#: clients/models.py:126
+#: clients/models.py:149
 msgid "zao"
 msgstr "ЗАО"
 
-#: clients/models.py:129
+#: clients/models.py:152
 msgid "charter"
 msgstr ""
 
-#: clients/models.py:130
+#: clients/models.py:153
 msgid "proxy"
 msgstr ""
 
-#: clients/models.py:134
+#: clients/models.py:157
 msgid "form"
 msgstr ""
 
-#: clients/models.py:143
+#: clients/models.py:166
 msgid "ogrn"
 msgstr ""
 
-#: clients/models.py:152 clients/models.py:381
+#: clients/models.py:175 clients/models.py:438
 msgid "inn"
 msgstr ""
 
-#: clients/models.py:161 fms/models.py:39
+#: clients/models.py:184 fms/models.py:39
 msgid "kpp"
 msgstr ""
 
-#: clients/models.py:170
+#: clients/models.py:193
 msgid "bik"
 msgstr ""
 
-#: clients/models.py:178
+#: clients/models.py:201
 msgid "correspondent account"
 msgstr ""
 
-#: clients/models.py:182
+#: clients/models.py:205
 msgid "boss firstname"
 msgstr ""
 
-#: clients/models.py:187
+#: clients/models.py:210
 msgid "boss lastname"
 msgstr ""
 
-#: clients/models.py:191
+#: clients/models.py:214
 msgid "boss patronymic"
 msgstr ""
 
-#: clients/models.py:195
+#: clients/models.py:218
 msgid "boss operation base"
 msgstr ""
 
-#: clients/models.py:202
+#: clients/models.py:227
 msgid "proxy number"
 msgstr ""
 
-#: clients/models.py:203
+#: clients/models.py:229
 msgid "proxy date"
 msgstr ""
 
-#: clients/models.py:208 clients/models.py:209
+#: clients/models.py:240
+msgid "Please fill proxy date and proxy number."
+msgstr ""
+
+#: clients/models.py:243 clients/models.py:244
 msgid "ru"
 msgstr ""
 
-#: clients/models.py:216
+#: clients/models.py:251
 msgid "not confirmed"
 msgstr ""
 
-#: clients/models.py:216 clients/models.py:390
+#: clients/models.py:251 clients/models.py:450
 msgid "active"
 msgstr ""
 
-#: clients/models.py:217
+#: clients/models.py:252
 msgid "disabled"
 msgstr ""
 
-#: clients/models.py:217
+#: clients/models.py:252
 msgid "archived"
 msgstr ""
 
-#: clients/models.py:219
+#: clients/models.py:254
 msgid "not installed"
 msgstr ""
 
-#: clients/models.py:220
+#: clients/models.py:255
 msgid "process"
 msgstr ""
 
-#: clients/models.py:220
+#: clients/models.py:255
 msgid "installed"
 msgstr ""
 
-#: clients/models.py:228
+#: clients/models.py:263
 msgid "login"
 msgstr ""
 
-#: clients/models.py:234
+#: clients/models.py:269
 msgid ""
-"Enter a valid login. This value may contain only lowercase letters, numbers, "
-"and \"-\" character."
+"Enter a valid login. This value may contain only lowercase letters, numbers,"
+" and \"-\" character."
 msgstr ""
 
-#: clients/models.py:238
+#: clients/models.py:273
 msgid "e-mail"
 msgstr ""
 
-#: clients/models.py:244
+#: clients/models.py:279
 msgid "phone"
 msgstr ""
 
-#: clients/models.py:249
+#: clients/models.py:284
 msgid "full name"
 msgstr ""
 
-#: clients/models.py:254 hotels/models.py:98 hotels/models.py:147
+#: clients/models.py:289 hotels/models.py:98 hotels/models.py:147
 msgid "description"
 msgstr ""
 
-#: clients/models.py:259 clients/models.py:413 finances/models.py:153
+#: clients/models.py:294 clients/models.py:477 finances/models.py:170
 msgid "country"
 msgstr ""
 
-#: clients/models.py:292 clients/models.py:400 finances/models.py:202
+#: clients/models.py:327 clients/models.py:462 finances/models.py:219
 msgid "status"
 msgstr ""
 
-#: clients/models.py:297
+#: clients/models.py:332
 msgid "installation status"
 msgstr ""
 
-#: clients/models.py:301
+#: clients/models.py:336
 msgid "disabled at"
 msgstr ""
 
-#: clients/models.py:306 hotels/models.py:116
+#: clients/models.py:341 hotels/models.py:116
 msgid "url"
 msgstr ""
 
-#: clients/models.py:307
+#: clients/models.py:342
 msgid "maxibooking url"
 msgstr ""
 
-#: clients/models.py:357
+#: clients/models.py:414
 msgid "passport serial"
 msgstr ""
 
-#: clients/models.py:366
+#: clients/models.py:423
 msgid "passport number"
 msgstr ""
 
-#: clients/models.py:367
+#: clients/models.py:424
 msgid "passport date"
 msgstr ""
 
-#: clients/models.py:372
+#: clients/models.py:429
 msgid "passport issued by"
 msgstr ""
 
-#: clients/models.py:390 finances/models.py:190
-msgid "processing"
+#: clients/models.py:448
+msgid "archive"
 msgstr ""
 
-#: clients/models.py:395 finances/models.py:37 finances/models.py:158
+#: clients/models.py:451
+msgid "next"
+msgstr ""
+
+#: clients/models.py:457 finances/models.py:47 finances/models.py:175
 msgid "is enabled"
 msgstr ""
 
-#: clients/models.py:406 clients/models.py:449 finances/models.py:147
-#: finances/models.py:214
+#: clients/models.py:465
+msgid "is paid"
+msgstr ""
+
+#: clients/models.py:470 clients/models.py:525 finances/models.py:164
+#: finances/models.py:231
 msgid "price"
 msgstr ""
 
-#: clients/models.py:417
+#: clients/models.py:481
 msgid "quantity"
 msgstr ""
 
-#: clients/models.py:421
+#: clients/models.py:485
 msgid "start date"
 msgstr ""
 
-#: clients/models.py:423
+#: clients/models.py:487
 msgid "begin date"
 msgstr ""
 
-#: clients/models.py:425 fms/models.py:24
+#: clients/models.py:489 fms/models.py:24
 msgid "end date"
 msgstr ""
 
-#: clients/models.py:430 finances/models.py:162
+#: clients/models.py:494 finances/models.py:179
 msgid "service"
 msgstr ""
 
-#: clients/models.py:439
+#: clients/models.py:503
 msgid "orders"
 msgstr ""
 
-#: clients/models.py:483
-msgid "Please correct begin date."
-msgstr ""
-
-#: clients/models.py:485
+#: clients/models.py:569
 msgid "Please correct dates."
 msgstr ""
 
-#: clients/models.py:490
+#: clients/models.py:574
 msgid "Empty service prices."
 msgstr ""
 
-#: clients/models.py:507
+#: clients/models.py:593
 msgid "Client service with this type already exists."
 msgstr ""
 
-#: clients/views.py:163
-msgid "Registation successefull"
-msgstr ""
+#: finances/models.py:31
+#, fuzzy
+#| msgid "services"
+msgid "service categories"
+msgstr "услуги"
 
-#: finances/models.py:28
+#: finances/models.py:38
 msgid "day"
 msgstr ""
 
-#: finances/models.py:28
+#: finances/models.py:38
 msgid "month"
 msgstr ""
 
-#: finances/models.py:29
+#: finances/models.py:39
 msgid "year"
 msgstr ""
 
-#: finances/models.py:31
+#: finances/models.py:41
 msgid "connection"
 msgstr ""
 
-#: finances/models.py:31 hotels/models.py:151
+#: finances/models.py:41 hotels/models.py:151
 msgid "rooms"
 msgstr ""
 
-#: finances/models.py:32
+#: finances/models.py:42
 msgid "other"
 msgstr ""
 
-#: finances/models.py:39
+#: finances/models.py:49
 msgid "is default"
 msgstr ""
 
-#: finances/models.py:41
+#: finances/models.py:51
 msgid "period"
 msgstr ""
 
-#: finances/models.py:43
+#: finances/models.py:53
 msgid "units of period"
 msgstr ""
 
-#: finances/models.py:49
+#: finances/models.py:59
 msgid "default rooms"
 msgstr ""
 
-#: finances/models.py:51 hotels/models.py:113
+#: finances/models.py:61 hotels/models.py:113
 msgid "type"
 msgstr ""
 
-#: finances/models.py:132
+#: finances/models.py:69
+msgid "category"
+msgstr ""
+
+#: finances/models.py:149
 msgid "Default service with this type already exists."
 msgstr ""
 
-#: finances/models.py:189
+#: finances/models.py:206
 msgid "new"
 msgstr ""
 
-#: finances/models.py:191
+#: finances/models.py:208
 msgid "paid"
 msgstr ""
 
-#: finances/models.py:192
+#: finances/models.py:209
 msgid "canceled"
 msgstr ""
 
-#: finances/models.py:193
+#: finances/models.py:210
 msgid "corrupted"
 msgstr ""
 
-#: finances/models.py:208
+#: finances/models.py:225
 msgid "note"
 msgstr ""
 
-#: finances/models.py:209
+#: finances/models.py:226
 msgid "Clear to regenerate note"
 msgstr ""
 
-#: finances/models.py:217
+#: finances/models.py:234
 msgid "Set zero to recalculate price"
 msgstr ""
 
-#: finances/models.py:225
+#: finances/models.py:242
 msgid "expired date"
 msgstr ""
 
-#: finances/models.py:227
+#: finances/models.py:244
 msgid "paid date"
 msgstr ""
 
-#: finances/models.py:233
+#: finances/models.py:250
 msgid "payment system"
 msgstr ""
 
-#: finances/models.py:238
+#: finances/models.py:255
 msgid "client services"
 msgstr ""
 
-#: finances/models.py:299
+#: finances/models.py:326
 msgid "Can`t set \"paid\" status with empty payment system and paid date"
 msgstr ""
 
-#: finances/models.py:323 finances/systems/types.py:110
+#: finances/models.py:350 finances/systems/types.py:119
 msgid "order"
 msgstr ""
 
-#: finances/models.py:328
+#: finances/models.py:355
 msgid "transaction"
 msgstr ""
 
-#: finances/signals.py:42
-msgid "Your payment was successful"
-msgstr ""
-
-#: finances/systems/types.py:130
+#: finances/systems/types.py:139
 msgid "bill"
 msgstr ""
 
-#: finances/systems/types.py:131
+#: finances/systems/types.py:140
 msgid "bill description"
 msgstr ""
 
-#: finances/systems/types.py:164
+#: finances/systems/types.py:173
 msgid "rbk"
 msgstr ""
 
-#: finances/systems/types.py:165
+#: finances/systems/types.py:174
 msgid "rbk description"
 msgstr ""
 
-#: finances/systems/types.py:255
+#: finances/systems/types.py:266
 msgid "stripe"
 msgstr ""
 
-#: finances/systems/types.py:256
+#: finances/systems/types.py:267
 msgid "stripe description"
 msgstr ""
 
-#: finances/tasks.py:21
+#: finances/tasks.py:22
 msgid "New order created #"
 msgstr ""
 
-#: finances/tasks.py:39
+#: finances/tasks.py:40
 msgid "Order #{} will expire soon"
 msgstr ""
 
-#: finances/tasks.py:59
-msgid "Your account is disabled"
+#: finances/templates/finances/bill.html:114
+msgid "piece"
 msgstr ""
 
 #: finances/templates/finances/order_note.md:1
 msgid "services"
 msgstr "услуги"
+
+#: finances/templates/finances/rbk.html:17
+msgid "pay"
+msgstr ""
 
 #: fms/models.py:10
 msgid "internal_id"

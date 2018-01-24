@@ -620,3 +620,8 @@ def test_client_ru_fields_update(admin_client):
         content_type="application/json")
 
     assert getattr(Client.objects.get(login='user-two'), 'ru', None) is None
+
+
+def test_client_language():
+    assert Client.objects.get(login='user-rus').language == 'ru'
+    assert Client.objects.get(login='user-one').language == 'en'
