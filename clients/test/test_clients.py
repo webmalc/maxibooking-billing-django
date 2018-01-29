@@ -448,7 +448,8 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     assert 'successefull' in mail.subject
     assert '123456' in html
     assert 'http://example.com' in html
-    assert client.login in html
+    # assert client.login in html
+    assert 'admin' in html
 
 
 def test_client_install_fail_results_by_admin(admin_client, mailoutbox):

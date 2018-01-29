@@ -1,8 +1,6 @@
 import logging
 from itertools import groupby
 
-from django.utils import translation
-
 from billing.celery import app
 from billing.lib import mb
 from billing.lib.messengers.mailer import mail_client
@@ -43,17 +41,19 @@ def mail_client_task(
     """
     Mail to site client or email
     """
-    if lang:
-        translation.activate(lang)
-
     if email:
-        mail_client(subject=subject, template=template, data=data, email=email)
+        mail_client(
+            subject=subject,
+            template=template,
+            data=data,
+            email=email,
+            lang=lang,
+        )
         return True
 
     if client_id:
         try:
             client = Client.objects.get(pk=client_id)
-            translation.activate(client.language)
             mail_client(
                 subject=subject, template=template, data=data, client=client)
             return True

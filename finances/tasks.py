@@ -19,7 +19,7 @@ def order_notify_task(order_id):
         order = order_model.objects.get(pk=order_id)
         if order.status == 'new':
             mail_client(
-                subject=_('New order created #') + str(order.id),
+                subject='New order created',
                 template='emails/new_order.html',
                 data={'order': order},
                 client=order.client)

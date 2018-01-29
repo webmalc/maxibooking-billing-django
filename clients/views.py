@@ -47,6 +47,18 @@ class ClientViewSet(viewsets.ModelViewSet):
     lookup_field = 'login'
 
     @detail_route(methods=['get'])
+    def test_mail(self, request, login=None):
+        client = self.get_object()
+        order = client.orders.first()
+        from billing.lib.messengers.mailer import mail_client
+        mail_client(
+            subject=_('New order created'),
+            template='emails/new_order.html',
+            data={'order': order},
+            client=order.client)
+        return Response([])
+
+    @detail_route(methods=['get'])
     def tariff_detail(self, request, login=None):
         """
         Show client tariff
