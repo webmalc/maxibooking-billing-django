@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-29 11:25+0000\n"
+"POT-Creation-Date: 2018-01-29 12:19+0000\n"
 "PO-Revision-Date: 2017-11-16 13:42+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Translated-Using: django-rosetta 0.7.13\n"
 
 #: billing/lib/mb.py:69 billing/lib/mb.py:100
-#: billing/templates/emails/registration_fail.html:6 clients/views.py:252
+#: billing/templates/emails/registration_fail.html:6 clients/views.py:249
 msgid "Registation failed"
 msgstr ""
 
@@ -68,8 +68,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: billing/templates/emails/order_client_disabled.html:6 clients/views.py:55
-#: finances/tasks.py:61
+#: billing/templates/emails/order_client_disabled.html:6 finances/tasks.py:61
 msgid "Your account is disabled"
 msgstr ""
 
@@ -117,7 +116,8 @@ msgid ""
 "\n"
 msgstr ""
 
-#: billing/templates/emails/registration.html:6 clients/views.py:241
+#: billing/templates/emails/registration.html:6 clients/views.py:213
+#: clients/views.py:238
 msgid "Registation successefull"
 msgstr ""
 
