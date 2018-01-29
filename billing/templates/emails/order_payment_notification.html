@@ -3,9 +3,19 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Order will expire soon" %}{{ order.id }}
+    {% trans "Order will expire soon" %}
 {% endblock %}
 
 {% block content %}
-    <p><strong>#</strong>: {{ order.id }}</p>
+{% blocktrans with id=order.id created=order.created|date:'d.m.Y' expired=order.expired_date|date:'d.m.Y H:i' url=order.client.url %}
+    <p>Hello!</p>
+
+    <p>You need to pay order #{{ id }} from {{ created }} for using the "Maxbooking".</p>
+    <p>Payment must be made before {{ expired }}</p>
+    <p>You can view the order and make a payment in the personal cabinet of the  'Maxibooking' system by clicking on the link: {{ url }} </p>
+
+{% endblocktrans %}
+
+{% include "emails/sign.html" %}
+
 {% endblock %}

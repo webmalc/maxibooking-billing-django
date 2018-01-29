@@ -19,7 +19,7 @@ def order_notify_task(order_id):
         order = order_model.objects.get(pk=order_id)
         if order.status == 'new':
             mail_client(
-                subject='New order created',
+                subject=_('New order created'),
                 template='emails/new_order.html',
                 data={'order': order},
                 client=order.client)
@@ -37,7 +37,7 @@ def orders_payment_notify():
                             'Order').objects.get_for_payment_notification()
     for order in orders:
         mail_client(
-            subject=_('Order #{} will expire soon').format(order.pk),
+            subject=_('Order will expire soon').format(order.pk),
             template='emails/order_payment_notification.html',
             data={'order': order},
             client=order.client)

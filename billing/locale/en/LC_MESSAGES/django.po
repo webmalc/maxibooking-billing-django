@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-29 08:40+0000\n"
+"POT-Creation-Date: 2018-01-29 09:22+0000\n"
 "PO-Revision-Date: 2017-11-16 13:42+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,7 +77,22 @@ msgid "Your payment was successful"
 msgstr ""
 
 #: billing/templates/emails/order_payment_notification.html:6
+#: clients/views.py:55 finances/tasks.py:40
 msgid "Order will expire soon"
+msgstr ""
+
+#: billing/templates/emails/order_payment_notification.html:10
+#, python-format
+msgid ""
+"\n"
+"    <p>Hello!</p>\n"
+"\n"
+"    <p>You need to pay order #%(id)s from %(created)s for using the "
+"\"Maxbooking\".</p>\n"
+"    <p>Payment must be made before %(expired)s</p>\n"
+"    <p>You can view the order and make a payment in the personal cabinet of "
+"the  'Maxibooking' system by clicking on the link: %(url)s </p>\n"
+"\n"
 msgstr ""
 
 #: billing/templates/emails/registration.html:6 clients/views.py:241
@@ -403,10 +418,6 @@ msgstr ""
 msgid "Client service with this type already exists."
 msgstr ""
 
-#: clients/views.py:55
-msgid "New order created"
-msgstr ""
-
 #: finances/models.py:31
 #, fuzzy
 #| msgid "services"
@@ -545,8 +556,8 @@ msgstr ""
 msgid "stripe description"
 msgstr ""
 
-#: finances/tasks.py:40
-msgid "Order #{} will expire soon"
+#: finances/tasks.py:22
+msgid "New order created"
 msgstr ""
 
 #: finances/templates/finances/bill.html:114
