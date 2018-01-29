@@ -7,5 +7,11 @@
 {% endblock %}
 
 {% block content %}
-    <p><strong>#</strong>: {{ order_id }}</p>
+{% blocktrans with id=order_id created=created %}
+    <p>Hello!</p>
+    <p>Thank you for payment!</p>
+    <p>Order #{{ id }} from {{ created }} was paid.</p>
+{% endblocktrans %}
+
+{% include "emails/sign.html" %}
 {% endblock %}

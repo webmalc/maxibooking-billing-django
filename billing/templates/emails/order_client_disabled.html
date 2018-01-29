@@ -7,5 +7,11 @@
 {% endblock %}
 
 {% block content %}
-    <p><strong>#</strong>: {{ order.id }}</p>
+    {% blocktrans with url=url %}
+        <p>Hello!</p>
+        <p>Due to payment arrears, your account in the 'Maxibooking' system is blocked.</p>
+        <p>To unlock your account, go to your personal account and pay for the orders {{ url }}</p> 
+    {% endblocktrans %}
+
+    {% include "emails/sign.html" %}
 {% endblock %}

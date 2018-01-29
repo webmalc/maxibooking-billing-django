@@ -43,7 +43,10 @@ def order_post_save(sender, **kwargs):
         mail_client_task.delay(
             subject=_('Your payment was successful'),
             template='emails/order_paid.html',
-            data={'order_id': order.pk},
+            data={
+                'order_id': order.pk,
+                'created': order.created.strftime('%d.%m.%Y')
+            },
             client_id=order.client.id)
 
         logger = logging.getLogger('billing')

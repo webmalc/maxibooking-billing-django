@@ -60,5 +60,5 @@ def orders_clients_disable():
         mail_client(
             subject=_('Your account is disabled'),
             template='emails/order_client_disabled.html',
-            data={'order': order},
+            data={'url': order.client.url},
             client=order.client)

@@ -123,7 +123,7 @@ c1d3c0dc88bfb22d2d5ed68c2f4128e726d7ad1ed12c2b50159440358e06371368d739'
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Your payment was successful' in mail.subject
+    assert 'Успешная оплата' in mail.subject
 
 
 def test_stripe_display_by_admin(admin_client, make_orders):

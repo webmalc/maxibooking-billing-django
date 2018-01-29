@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-29 09:22+0000\n"
-"PO-Revision-Date: 2018-01-29 09:25+0000\n"
+"POT-Creation-Date: 2018-01-29 11:25+0000\n"
+"PO-Revision-Date: 2018-01-29 11:26+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -71,30 +71,49 @@ msgstr ""
 "<p>Просмотреть заказ и произвести оплату Вы можете в личном кабинете системы «Максибукинг» перейдя по ссылке: %(url)s </p>\n"
 "<p>Если у Вас возникли вопросы, Вы можете найти на них отвтет в базе знаний системы «Максибукинг» по адресу: https://support.maxi-booking.com или отправив запрос на email службы поддержки: support@maxi-booking.com</p>\n"
 
-#: billing/templates/emails/order_client_disabled.html:6 finances/tasks.py:61
+#: billing/templates/emails/order_client_disabled.html:6 clients/views.py:55
+#: finances/tasks.py:61
 msgid "Your account is disabled"
+msgstr "Ваш аккаунт заблокирован"
+
+#: billing/templates/emails/order_client_disabled.html:10
+#, python-format
+msgid ""
+"\n"
+"        <p>Hello!</p>\n"
+"        <p>Due to payment arrears, your account in the 'Maxibooking' system is blocked.</p>\n"
+"        <p>To unlock your account, go to your personal account and pay for the orders %(url)s</p> \n"
+"    "
 msgstr ""
+"\n"
+"<p>Здравствуйте!</p>\n"
+"<p>Из-за задолженности по оплате Ваш аккаунт в системе «Максибукинг» заблокирован.</p>\n"
+"<p>Для разблокировки аккаунта перейдите в свой личный кабинет и оплатите заказы  %(url)s</p> "
 
 #: billing/templates/emails/order_paid.html:6 finances/signals.py:44
 msgid "Your payment was successful"
+msgstr "Успешная оплата"
+
+#: billing/templates/emails/order_paid.html:10
+#, python-format
+msgid ""
+"\n"
+"    <p>Hello!</p>\n"
+"    <p>Thank you for payment!</p>\n"
+"    <p>Order #%(id)s from %(created)s was paid.</p>\n"
 msgstr ""
+"\n"
+"<p>Здравствуйте!</p>\n"
+"<p>Спасибо за оплату!</p>\n"
+"<p>Заказ №%(id)s \tот %(created)s за использование программы «Максибукинг» оплачен.</p>\n"
 
 #: billing/templates/emails/order_payment_notification.html:6
-#: clients/views.py:55 finances/tasks.py:40
+#: finances/tasks.py:40
 msgid "Order will expire soon"
 msgstr "Необходимо оплатить заказ"
 
 #: billing/templates/emails/order_payment_notification.html:10
 #, python-format
-#| msgid ""
-#| "\n"
-#| "    <p>Hello!</p>\n"
-#| "\n"
-#| "    <p>Order #%(id)s from %(created)s was generated to pay for 'Maxibooking'.</p>\n"
-#| "    <p>It must be paid before %(expired)s</p>\n"
-#| "    <p>You can view the order and make a payment in the personal cabinet of the  'Maxibooking' system by clicking on the link: %(url)s </p>\n"
-#| "    <p>If you have any questions, you can find on them an answer in the knowledge base of the 'Maxibooking' system at the address: https://support.maxi-booking.com or by sending an email to the support service: support@maxi-booking.com.</p>\n"
-#| "\n"
 msgid ""
 "\n"
 "    <p>Hello!</p>\n"

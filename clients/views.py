@@ -46,18 +46,6 @@ class ClientViewSet(viewsets.ModelViewSet):
     filter_fields = ('status', 'installation', 'country')
     lookup_field = 'login'
 
-    # @detail_route(methods=['get'])
-    # def test_mail(self, request, login=None):
-    #     client = self.get_object()
-    #     order = client.orders.first()
-    #     from billing.lib.messengers.mailer import mail_client
-    #     mail_client(
-    #         subject=_('Order will expire soon').format(order.pk),
-    #         template='emails/order_payment_notification.html',
-    #         data={'order': order},
-    #         client=order.client)
-    #     return Response([])
-
     @detail_route(methods=['get'])
     def tariff_detail(self, request, login=None):
         """
