@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-01-31 09:45+0000\n"
-"PO-Revision-Date: 2018-01-31 09:46+0000\n"
+"PO-Revision-Date: 2018-01-31 09:49+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -475,7 +475,7 @@ msgstr ""
 
 #: clients/validators.py:10
 msgid "invalid client login: "
-msgstr "Недопустимый домен"
+msgstr "Недопустимый домен: "
 
 #: finances/models.py:31
 #, fuzzy
