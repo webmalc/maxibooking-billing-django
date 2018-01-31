@@ -14,6 +14,7 @@ from billing.models import CommonInfo, CountryBase
 from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
+from .validators import validate_client_login_restrictions
 
 
 class Restrictions(CommonInfo, TimeStampedModel):
@@ -267,7 +268,9 @@ class Client(CommonInfo, TimeStampedModel, Payer):
                 regex='^[a-z0-9\-]*$',
                 code='invalid_login',
                 message=_('Enter a valid login. This value may contain only \
-lowercase letters, numbers, and "-" character.'))
+lowercase letters, numbers, and "-" character.'),
+            ),
+            validate_client_login_restrictions,
         ])
     email = models.EmailField(
         db_index=True, unique=True, verbose_name=_('e-mail'))

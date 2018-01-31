@@ -150,8 +150,11 @@
    CLOSED: [2018-01-24 Wed 16:39]
 ** DONE client tariff endpoint
    CLOSED: [2018-01-23 Tue 12:24]
+** DONE test RBK endpoint
+   CLOSED: [2018-01-31 Wed 11:49]
+** DONE test for client lang and mail task lang
+   CLOSED: [2018-01-31 Wed 11:49]
 ** TODO calc endpoint
-** TODO test for client lang and mail task lang
 ** TODO manual order
 ** TODO fix trial test
 ** TODO trans custom json response

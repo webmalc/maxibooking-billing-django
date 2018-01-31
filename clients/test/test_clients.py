@@ -2,6 +2,7 @@ import json
 
 import arrow
 import pytest
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from moneyed import EUR, Money
 
@@ -54,14 +55,16 @@ def test_client_display_by_admin(admin_client):
 
 
 def test_client_create_invalid_by_admin(admin_client):
-    data = json.dumps({'login': 'invalid login', 'email': 'user@one.com'})
+    data = json.dumps({'login': '_amazonses', 'email': 'user@one.com'})
     response = admin_client.post(
         reverse('client-list'), data=data, content_type="application/json")
     response_json = response.json()
 
     assert response_json['login'] == [
         'Enter a valid login. This value may \
-contain only lowercase letters, numbers, and "-" character.'
+contain only lowercase letters, numbers, and "-" character.',
+        'invalid client login: ' +
+        ', '.join(settings.MB_CLIENT_LOGIN_RESTRICTIONS)
     ]
     assert response_json['email'] == [
         'client with this e-mail already exists.'
