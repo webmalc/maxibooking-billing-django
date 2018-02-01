@@ -57,6 +57,7 @@ class CityAdminMixin(admin.ModelAdmin):
     """
 
     list_display_links = ('id', 'name')
+    raw_id_fields = ('request_client', )
 
     def get_list_display(self, request):
         return ['id'] + list(

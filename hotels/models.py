@@ -24,6 +24,14 @@ class CityMixin(models.Model, CheckedModel):
     is_checked = models.BooleanField(
         default=True, db_index=True, verbose_name=_('is checked'))
 
+    request_client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.SET_NULL,
+        related_name="%(app_label)s_%(class)s_request_client_by",
+        null=True,
+        blank=True,
+    )
+
     def get_first_cyrilic_alternate_name(self):
         """
         Returns first cyrilic alternate name
