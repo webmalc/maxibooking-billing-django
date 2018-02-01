@@ -53,6 +53,13 @@ class CachedModel(models.Model):
         abstract = True
 
 
+class CheckedModel(object):
+    """
+    Pre moderated models
+    """
+    pass
+
+
 class CountryBase(ABCModel):
     """
     Base country class

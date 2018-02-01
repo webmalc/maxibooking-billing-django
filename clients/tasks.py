@@ -3,7 +3,7 @@ from itertools import groupby
 
 from billing.celery import app
 from billing.lib import mb
-from billing.lib.messengers.mailer import mail_client
+from billing.lib.messengers.mailer import mail_client, mail_managers
 from finances.models import Order
 
 from .models import Client, ClientService
@@ -27,6 +27,14 @@ def install_client_task(client_id):
         return True
 
     return False
+
+
+@app.task
+def mail_managers_task(subject, data, template=None):
+    if template:
+        mail_managers(subject, data, template)
+    else:
+        mail_managers(subject, data)
 
 
 @app.task

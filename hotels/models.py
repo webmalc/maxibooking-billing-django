@@ -8,15 +8,21 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
-from billing.models import CachedModel, CommonInfo
+from billing.models import CachedModel, CheckedModel, CommonInfo
 
 from .managers import PropertyManager, RoomManager
 
 
-class CityMixin:
+class CityMixin(models.Model, CheckedModel):
     """
     City, Region, County name mixin
     """
+
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
+
+    is_checked = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is checked'))
 
     def get_first_cyrilic_alternate_name(self):
         """
@@ -33,6 +39,9 @@ class CityMixin:
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        abstract = True
 
 
 class Country(CachedModel, CityMixin, AbstractCountry):

@@ -58,6 +58,6 @@ class CityViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     City viewset
     """
     queryset = City.objects.all().select_related('country', 'region')
-    filter_fields = ('country', 'region')
+    filter_fields = ('country', 'region', 'is_checked', 'is_enabled')
     search_fields = ('name', 'alternate_names')
     serializer_class = CitySerializer

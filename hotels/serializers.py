@@ -53,7 +53,7 @@ class CountrySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Country
         fields = ('id', 'name', 'code2', 'code3', 'continent', 'tld', 'phone',
-                  'alternate_names')
+                  'alternate_names', 'is_enabled', 'is_checked')
         lookup_field = 'tld'
 
 
@@ -69,7 +69,8 @@ class RegionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Region
-        fields = ('id', 'name', 'alternate_names', 'country')
+        fields = ('id', 'name', 'alternate_names', 'country', 'is_enabled',
+                  'is_checked')
 
 
 class CitySerializer(serializers.HyperlinkedModelSerializer):
@@ -88,4 +89,5 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = City
         fields = ('id', 'name', 'display_name', 'alternate_names', 'latitude',
-                  'longitude', 'population', 'region', 'country')
+                  'longitude', 'population', 'region', 'country', 'is_enabled',
+                  'is_checked')

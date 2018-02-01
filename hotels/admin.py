@@ -51,15 +51,29 @@ class PropertyAdmin(VersionAdmin):
 admin.site.unregister(Country)
 
 
+class CityAdminMixin(admin.ModelAdmin):
+    """
+    Base Country, Region, City admin
+    """
+
+    list_display_links = ('id', 'name')
+
+    def get_list_display(self, request):
+        return ['id'] + list(
+            super().get_list_display(request)) + ['is_enabled', 'is_checked']
+
+    def get_list_filter(self, request):
+        return list(
+            super().get_list_filter(request)) + ['is_enabled', 'is_checked']
+
+
 @admin.register(Country)
 class CountryAdmin(BaseCountryAdmin, VersionAdmin,
-                   TabbedExternalJqueryTranslationAdmin):
+                   TabbedExternalJqueryTranslationAdmin, CityAdminMixin):
     """
     Country admin interface
     """
-
-    list_display = ['id'] + list(BaseCountryAdmin.list_display)
-    list_display_links = ('id', 'name')
+    pass
 
 
 admin.site.unregister(Region)
@@ -67,13 +81,11 @@ admin.site.unregister(Region)
 
 @admin.register(Region)
 class RegionAdmin(BaseRegionAdmin, VersionAdmin,
-                  TabbedExternalJqueryTranslationAdmin):
+                  TabbedExternalJqueryTranslationAdmin, CityAdminMixin):
     """
     Region admin interface
     """
-
-    list_display = ['id'] + list(BaseRegionAdmin.list_display)
-    list_display_links = ('id', 'name')
+    pass
 
 
 admin.site.unregister(City)
@@ -81,10 +93,8 @@ admin.site.unregister(City)
 
 @admin.register(City)
 class CityAdmin(BaseCityAdmin, VersionAdmin,
-                TabbedExternalJqueryTranslationAdmin):
+                TabbedExternalJqueryTranslationAdmin, CityAdminMixin):
     """
     City admin interface
     """
-
-    list_display = ['id'] + list(BaseRegionAdmin.list_display)
-    list_display_links = ('id', 'name')
+    list_select_related = ('region', 'country')
