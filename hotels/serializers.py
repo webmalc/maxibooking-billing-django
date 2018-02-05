@@ -85,8 +85,9 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
 
     region = serializers.PrimaryKeyRelatedField(
         many=False, read_only=False, queryset=Region.objects.all())
-    request_client = serializers.PrimaryKeyRelatedField(
-        many=False, read_only=False, queryset=Client.objects.all())
+
+    # request_client = serializers.PrimaryKeyRelatedField(
+    #     many=False, read_only=False, queryset=Client.objects.all())
 
     class Meta:
         model = City

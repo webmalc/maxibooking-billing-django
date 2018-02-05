@@ -44,3 +44,15 @@ MB_ORDER_EXPIRED_DAYS = 21
 MB_ORDER_BEFORE_DAYS = 14
 MB_ORDER_PAYMENT_NOTIFY_DAYS = 3
 MB_CLIENT_ARCHIVE_MONTHS = 6
+MB_BILL_RECIPIENT_COMPANY = {
+    'bank': 'bank title',
+    'bank_bik': '1111111111111111111',
+    'bank_account': '1111111111111111111',
+    'inn': '1111111111111111111',
+    'kpp': '1111111111111111111',
+    'company_account': '1111111111111111111',
+    'company_name': 'company name',
+    'company_text': 'recipient text',
+    'boss': 'Boss F.A.',
+    'bookkeeper': 'Bookkeeper F.A.',
+}

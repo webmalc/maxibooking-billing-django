@@ -34,7 +34,8 @@ def test_city_create_by_admin(admin_client, mailoutbox):
         'display_name': 'new test city',
         'country': 'ad',
         'region': 1,
-        'is_checked': False
+        'is_checked': False,
+        'request_client': 1
     })
     response = admin_client.post(
         reverse('city-list'), data=data, content_type="application/json")
