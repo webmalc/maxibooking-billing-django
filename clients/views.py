@@ -164,7 +164,8 @@ class ClientViewSet(viewsets.ModelViewSet):
                 'message': 'client already installed'
             })
 
-        install_client_task.delay(client_id=client.id)
+        install_client_task.apply_async(
+            kwargs={'client_id': client.id}, queue='priority_high')
         return Response({
             'status': True,
             'message': 'client installation begin'

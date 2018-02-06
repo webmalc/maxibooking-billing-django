@@ -25,6 +25,8 @@ ALLOWED_HOSTS = ['127.0.0.1']
 DEBUG = True
 
 CELERY_LOGLEVEL = 'debug'
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 # Django-cors
 CORS_ORIGIN_WHITELIST = (

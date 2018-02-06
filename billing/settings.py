@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 import raven
+from kombu import Queue
 
 # Local settings
 try:
@@ -177,6 +178,7 @@ LOCALE_PATHS = (
 )
 
 EMAIL_SUBJECT_PREFIX = '[maxi-booking.com]: '
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 # Logs
 LOGGING = {
@@ -245,8 +247,6 @@ LOGOUT_URL = "admin:logout"
 LOGIN_REDIRECT_URL = 'admin:index'
 
 # Celery
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_SEND_TASK_ERROR_EMAILS = True
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -254,6 +254,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Dublin'
 CELERY_ALWAYS_EAGER = False
 CELERY_APP = 'billing'
+CELERY_QUEUES = (
+    Queue('default'),
+    Queue('priority_high'),
+)
+CELERY_DEFAULT_QUEUE = 'default'
 CELERYBEAT_SCHEDULE = {
     'client_services_update_task': {
         'task': 'clients.tasks.client_services_update',
