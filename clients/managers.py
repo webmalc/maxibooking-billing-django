@@ -218,12 +218,17 @@ class ClientServiceManager(LookupMixin):
         end = arrow.utcnow().shift(
             days=+settings.MB_ORDER_BEFORE_DAYS).datetime
         return self.filter(
-            Q(end__lt=end, status='active') | Q(begin__lt=end, status='next'),
+            Q(end__lt=end, status='active') | Q(
+                begin__lt=end,
+                status='next',
+                is_paid=False,
+            ),
             is_enabled=True,
         ).exclude(
             service__period=0,
             client__status='archived',
-        ).select_related('client').order_by('client', '-created')
+        ).select_related('client').prefetch_related('orders').order_by(
+            'client', '-created')
 
     def find_for_activation(self):
         """

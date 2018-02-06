@@ -13,30 +13,10 @@ from billing.models import CachedModel, CheckedModel, CommonInfo
 from .managers import PropertyManager, RoomManager
 
 
-class CityMixin(models.Model, CheckedModel):
+class CityMixin(CheckedModel):
     """
     City, Region, County name mixin
     """
-
-    is_enabled = models.BooleanField(
-        default=True, db_index=True, verbose_name=_('is enabled'))
-
-    is_checked = models.BooleanField(
-        default=True, db_index=True, verbose_name=_('is checked'))
-
-    request_client = models.TextField(
-        null=True,
-        blank=True,
-        db_index=True,
-    )
-
-    # request_client = models.ForeignKey(
-    #     'clients.Client',
-    #     on_delete=models.SET_NULL,
-    #     related_name="%(app_label)s_%(class)s_request_client_by",
-    #     null=True,
-    #     blank=True,
-    # )
 
     def get_first_cyrilic_alternate_name(self):
         """
@@ -54,12 +34,23 @@ class CityMixin(models.Model, CheckedModel):
     def __str__(self):
         return self.name
 
-    class Meta:
-        abstract = True
-
 
 class Country(CachedModel, CityMixin, AbstractCountry):
     """ HH country model."""
+
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
+
+    is_checked = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is checked'))
+
+    request_client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.SET_NULL,
+        related_name="%(app_label)s_%(class)s_request_client_by",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = ['name']
@@ -71,6 +62,20 @@ connect_default_signals(Country)
 
 class Region(CachedModel, CityMixin, AbstractRegion):
     """ HH region model."""
+
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
+
+    is_checked = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is checked'))
+
+    request_client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.SET_NULL,
+        related_name="%(app_label)s_%(class)s_request_client_by",
+        null=True,
+        blank=True,
+    )
 
     def get_display_name(self):
         return '%s, %s' % (self, self)
@@ -84,6 +89,20 @@ connect_default_signals(Region)
 
 class City(CachedModel, CityMixin, AbstractCity):
     """ HH city model."""
+
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
+
+    is_checked = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is checked'))
+
+    request_client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.SET_NULL,
+        related_name="%(app_label)s_%(class)s_request_client_by",
+        null=True,
+        blank=True,
+    )
 
     def get_display_name(self):
         if self.region_id:

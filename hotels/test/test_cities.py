@@ -35,13 +35,14 @@ def test_city_create_by_admin(admin_client, mailoutbox):
         'country': 'ad',
         'region': 1,
         'is_checked': False,
-        'request_client': 1
+        'request_client': 'user-one'
     })
     response = admin_client.post(
         reverse('city-list'), data=data, content_type="application/json")
     response_json = response.json()
 
     assert response_json['name'] == 'new test city'
+    assert response_json['request_client'] == 'user-one'
 
     response = admin_client.get(reverse('city-list'))
     assert len(response.json()['results']) == 6

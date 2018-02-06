@@ -159,7 +159,7 @@ def test_client_service_create_by_admin(admin_client):
     assert client.restrictions.rooms_limit == 12
 
 
-def test_client_services_update_task(admin_client):
+def test_client_services_update_active_task(admin_client):
     end = arrow.utcnow().shift(days=+5)
     service = Service.objects.get(pk=1)
     client_service = ClientService()
@@ -187,6 +187,49 @@ def test_client_services_update_task(admin_client):
         client__pk=4, client_services__pk=client_service.pk)
     assert order.price == Money(5000, EUR)
     assert order.status == 'new'
+
+    client_services_update.delay()
+    orders = Order.objects.filter(
+        client__pk=4, client_services__pk=client_service.pk)
+
+    assert orders.count() == 1
+
+
+def test_client_services_update_next_task(admin_client):
+    end = arrow.utcnow().shift(months=2)
+    service = Service.objects.get(pk=1)
+    client_service = ClientService()
+    client_service.quantity = 2
+    client_service.begin = arrow.utcnow().shift(days=10).datetime
+    client_service.end = end.datetime
+    client_service.service = service
+    client_service.client_id = 4
+    client_service.status = 'next'
+    client_service.is_paid = False
+    client_service.save()
+
+    assert client_service.price == service.get_price(client=4) * 2
+    price = service.prices.get(pk=8)
+    price.price = Money(2500, EUR)
+    price.save()
+
+    client_services_update.delay()
+    client_service.refresh_from_db()
+
+    assert client_service.is_paid is False
+    assert client_service.end == end
+    assert client_service.price == Money(5000, EUR)
+
+    order = Order.objects.get(
+        client__pk=4, client_services__pk=client_service.pk)
+    assert order.price == Money(5000, EUR)
+    assert order.status == 'new'
+
+    client_services_update.delay()
+    orders = Order.objects.filter(
+        client__pk=4, client_services__pk=client_service.pk)
+
+    assert orders.count() == 1
 
 
 def test_client_services_default_dates(admin_client):

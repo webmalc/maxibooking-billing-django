@@ -88,8 +88,10 @@ def client_services_update():
     """
     Client services periodical update
     """
-    client_services = list(ClientService.objects.find_ended())
-
+    client_services = [
+        s for s in ClientService.objects.find_ended()
+        if not s.orders.filter(status__in=('new', 'processing')).count()
+    ]
     grouped_services = [
         list(r) for k, r in groupby(client_services, lambda i: i.client.id)
     ]
@@ -101,8 +103,9 @@ def client_services_update():
             logging.getLogger('billing').info(
                 'Generating order for client service {}'.format(
                     client_service))
-            client_service.end = client_service.service.get_default_end(
-                client_service.end)
+            if client_service.status != 'next':
+                client_service.end = client_service.service.get_default_end(
+                    client_service.end)
             # client_service.status = 'processing'
             client_service.is_paid = False
             client_service.price = None
