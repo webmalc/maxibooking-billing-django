@@ -93,6 +93,6 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = City
-        fields = ('id', 'name', 'display_name', 'full_name', 'alternate_names',
-                  'latitude', 'longitude', 'population', 'region', 'country',
-                  'is_enabled', 'is_checked', 'request_client')
+        fields = ('id', 'name', 'full_name', 'alternate_names', 'latitude',
+                  'longitude', 'population', 'region', 'country', 'is_enabled',
+                  'is_checked', 'request_client')
