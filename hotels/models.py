@@ -104,6 +104,10 @@ class City(CachedModel, CityMixin, AbstractCity):
         blank=True,
     )
 
+    @property
+    def full_name(self):
+        return self.get_display_name()
+
     def get_display_name(self):
         if self.region_id:
             return '%s, %s, %s' % (self.name, self.region, self.country)
