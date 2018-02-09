@@ -19,6 +19,7 @@ def deploy():
             run('./manage.py migrate --no-input')
             run('./manage.py compilemessages')
     sudo('sudo supervisorctl restart billing')
-    sudo('sudo supervisorctl restart billing_celery')
+    sudo('sudo supervisorctl restart billing_celery_high')
+    sudo('sudo supervisorctl restart billing_celery_default')
     sudo('sudo supervisorctl restart billing_celery_beat')
     sudo('sudo service nginx restart')
