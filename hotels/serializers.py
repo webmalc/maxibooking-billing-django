@@ -10,7 +10,11 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
     Property serializer
     """
     city = serializers.PrimaryKeyRelatedField(
-        many=False, read_only=False, queryset=City.objects.all())
+        many=False,
+        read_only=False,
+        queryset=City.objects.all(),
+        allow_null=True,
+    )
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
     client = serializers.SlugRelatedField(
