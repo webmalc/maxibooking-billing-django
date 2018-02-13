@@ -151,7 +151,13 @@ class Property(CommonInfo, TimeStampedModel):
         db_index=True,
         validators=[MinLengthValidator(2)])
     city = models.ForeignKey(
-        City, on_delete=models.PROTECT, verbose_name=_('city'), db_index=True)
+        City,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('city'),
+        db_index=True,
+    )
     type = models.CharField(
         max_length=20,
         default='hotel',
