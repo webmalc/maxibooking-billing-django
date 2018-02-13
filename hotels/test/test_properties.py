@@ -37,7 +37,6 @@ def test_property_create_invalid_by_admin(admin_client):
     assert response_json['name'] == [
         'Ensure this field has at least 2 characters.'
     ]
-    assert response_json['city'] == ['This field is required.']
     assert response_json['client'] == ['This field is required.']
 
 
