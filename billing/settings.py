@@ -354,5 +354,6 @@ PAYMENT_SYSTEMS = ('stripe', 'rbk', 'bill')
 MB_SITE_URL = 'https://maxi-booking.com'
 MB_CLIENT_LOGIN_RESTRICTIONS = [
     'support', 'demo', 'mail', 'mx', 'payment', 'www', 'new', 'info', 'cdn',
-    'mb', 'help', 'redmine', 'deploy', 'trial', '_amazonses', 'billing'
+    'mb', 'help', 'redmine', 'deploy', 'trial', '_amazonses', 'billing',
+    'maxibooking'
 ]
