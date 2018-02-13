@@ -8,19 +8,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-31 09:45+0000\n"
-"PO-Revision-Date: 2018-01-31 09:49+0000\n"
+"POT-Creation-Date: 2018-02-13 09:16+0000\n"
+"PO-Revision-Date: 2018-02-13 09:16+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.7.13\n"
 
 #: billing/lib/mb.py:69 billing/lib/mb.py:100
-#: billing/templates/emails/registration_fail.html:6 clients/views.py:240
+#: billing/templates/emails/registration_fail.html:6 clients/views.py:241
 msgid "Registation failed"
 msgstr "Ошибка при регистрации"
 
@@ -38,7 +40,7 @@ msgstr ""
 msgid "%(filter_title)s"
 msgstr ""
 
-#: billing/templates/billing/processing.html:13 clients/models.py:452
+#: billing/templates/billing/processing.html:13 clients/models.py:453
 #: finances/models.py:207
 msgid "processing"
 msgstr ""
@@ -57,19 +59,28 @@ msgid ""
 "\n"
 "    <p>Hello!</p>\n"
 "\n"
-"    <p>Order #%(id)s from %(created)s was generated to pay for 'Maxibooking'.</p>\n"
+"    <p>Order #%(id)s from %(created)s was generated to pay for 'Maxibooking'."
+"</p>\n"
 "    <p>It must be paid before %(expired)s</p>\n"
-"    <p>You can view the order and make a payment in the personal cabinet of the  'Maxibooking' system by clicking on the link: %(url)s </p>\n"
-"    <p>If you have any questions, you can find on them an answer in the knowledge base of the 'Maxibooking' system at the address: https://support.maxi-booking.com or by sending an email to the support service: support@maxi-booking.com.</p>\n"
+"    <p>You can view the order and make a payment in the personal cabinet of "
+"the  'Maxibooking' system by clicking on the link: %(url)s </p>\n"
+"    <p>If you have any questions, you can find on them an answer in the "
+"knowledge base of the 'Maxibooking' system at the address: https://support."
+"maxi-booking.com or by sending an email to the support service: support@maxi-"
+"booking.com.</p>\n"
 "\n"
 msgstr ""
 "\n"
 "<p>Здравствуйте!</p>\n"
 "\n"
-"<p>Сформирован заказ №%(id)s от %(created)s для оплаты использования программы «Максибукинг».</p>\n"
+"<p>Сформирован заказ №%(id)s от %(created)s для оплаты использования "
+"программы «Максибукинг».</p>\n"
 "<p>Его необходимо оплатить до %(expired)s</p>\n"
-"<p>Просмотреть заказ и произвести оплату Вы можете в личном кабинете системы «Максибукинг» перейдя по ссылке: %(url)s </p>\n"
-"<p>Если у Вас возникли вопросы, Вы можете найти на них отвтет в базе знаний системы «Максибукинг» по адресу: https://support.maxi-booking.com или отправив запрос на email службы поддержки: support@maxi-booking.com</p>\n"
+"<p>Просмотреть заказ и произвести оплату Вы можете в личном кабинете системы "
+"«Максибукинг» перейдя по ссылке: %(url)s </p>\n"
+"<p>Если у Вас возникли вопросы, Вы можете найти на них отвтет в базе знаний "
+"системы «Максибукинг» по адресу: https://support.maxi-booking.com или "
+"отправив запрос на email службы поддержки: support@maxi-booking.ru</p>\n"
 
 #: billing/templates/emails/order_client_disabled.html:6 finances/tasks.py:61
 msgid "Your account is disabled"
@@ -80,14 +91,18 @@ msgstr "Ваш аккаунт заблокирован"
 msgid ""
 "\n"
 "        <p>Hello!</p>\n"
-"        <p>Due to payment arrears, your account in the 'Maxibooking' system is blocked.</p>\n"
-"        <p>To unlock your account, go to your personal account and pay for the orders %(url)s</p> \n"
+"        <p>Due to payment arrears, your account in the 'Maxibooking' system "
+"is blocked.</p>\n"
+"        <p>To unlock your account, go to your personal account and pay for "
+"the orders %(url)s</p> \n"
 "    "
 msgstr ""
 "\n"
 "<p>Здравствуйте!</p>\n"
-"<p>Из-за задолженности по оплате Ваш аккаунт в системе «Максибукинг» заблокирован.</p>\n"
-"<p>Для разблокировки аккаунта перейдите в свой личный кабинет и оплатите заказы  %(url)s</p> "
+"<p>Из-за задолженности по оплате Ваш аккаунт в системе «Максибукинг» "
+"заблокирован.</p>\n"
+"<p>Для разблокировки аккаунта перейдите в свой личный кабинет и оплатите "
+"заказы  %(url)s</p> "
 
 #: billing/templates/emails/order_paid.html:6 finances/signals.py:44
 msgid "Your payment was successful"
@@ -104,7 +119,8 @@ msgstr ""
 "\n"
 "<p>Здравствуйте!</p>\n"
 "<p>Спасибо за оплату!</p>\n"
-"<p>Заказ №%(id)s \tот %(created)s за использование программы «Максибукинг» оплачен.</p>\n"
+"<p>Заказ №%(id)s \tот %(created)s за использование программы «Максибукинг» "
+"оплачен.</p>\n"
 
 #: billing/templates/emails/order_payment_notification.html:6
 #: finances/tasks.py:40
@@ -117,20 +133,26 @@ msgid ""
 "\n"
 "    <p>Hello!</p>\n"
 "\n"
-"    <p>You need to pay order #%(id)s from %(created)s for using the \"Maxbooking\".</p>\n"
+"    <p>You need to pay order #%(id)s from %(created)s for using the "
+"\"Maxbooking\".</p>\n"
 "    <p>Payment must be made before %(expired)s</p>\n"
-"    <p>You can view the order and make a payment in the personal cabinet of the  'Maxibooking' system by clicking on the link: %(url)s </p>\n"
+"    <p>You can view the order and make a payment in the personal cabinet of "
+"the  'Maxibooking' system by clicking on the link: %(url)s </p>\n"
 "\n"
 msgstr ""
 "\n"
 "<p>Здравствуйте!</p>\n"
 "\n"
-"<p>Вам необходимо оплатить заказ № %(id)s от %(created)s за использование программы «Максибукинг».</p>\n"
+"<p>Вам необходимо оплатить заказ № %(id)s от %(created)s за использование "
+"программы «Максибукинг».</p>\n"
 "<p>Его необходимо оплатить до %(expired)s</p>\n"
-"<p>Просмотреть заказ и произвести оплату Вы можете в личном кабинете системы «Максибукинг» перейдя по ссылке: %(url)s </p>\n"
-"<p>Если у Вас возникли вопросы, Вы можете найти на них отвтет в базе знаний системы «Максибукинг» по адресу: https://support.maxi-booking.com или отправив запрос на email службы поддержки: support@maxi-booking.com</p>\n"
+"<p>Просмотреть заказ и произвести оплату Вы можете в личном кабинете системы "
+"«Максибукинг» перейдя по ссылке: %(url)s </p>\n"
+"<p>Если у Вас возникли вопросы, Вы можете найти на них отвтет в базе знаний "
+"системы «Максибукинг» по адресу: https://support.maxi-booking.ru или "
+"отправив запрос на email службы поддержки: support@maxi-booking.ru</p>\n"
 
-#: billing/templates/emails/registration.html:6 clients/views.py:229
+#: billing/templates/emails/registration.html:6 clients/views.py:230
 msgid "Registation successefull"
 msgstr "Успешная регистрация"
 
@@ -147,7 +169,8 @@ msgid ""
 "        <li>password: %(password)s</li>\n"
 "    </ul>\n"
 "\n"
-"    <p>Knowledge base for work in the program: https://support.maxi-booking.com</p>\n"
+"    <p>Knowledge base for work in the program: https://support.maxi-booking."
+"com</p>\n"
 "    <p>You can get support by contacting: support@maxi-booking.com</p>\n"
 "\n"
 msgstr ""
@@ -161,20 +184,23 @@ msgstr ""
 "<li>пароль: %(password)s</li>\n"
 "</ul>\n"
 "\n"
-"<p>База знаний по работе в программе:  https://support.maxi-booking.com</p>\n"
-"<p>Поддержку можно получить обратившись по email: support@maxi-booking.com</p>\n"
+"<p>База знаний по работе в программе:  https://support.maxi-booking.ru</p>\n"
+"<p>Поддержку можно получить обратившись по email: support@maxi-booking.ru</"
+"p>\n"
 
 #: billing/templates/emails/registration_fail.html:10
 msgid ""
 "\n"
 "    <p>Hello!</p>\n"
 "    <p>When installing the program \"Maxibooking\" an error occurred.</p>\n"
-"    <p>To resolve this error, please contact support at: support@maxi-booking.com</p> \n"
+"    <p>To resolve this error, please contact support at: support@maxi-"
+"booking.com</p> \n"
 msgstr ""
 "\n"
 "<p>Здравствуйте!</p>\n"
 "<p>При установке программы «Максибукинг» произошла ошибка.</p>\n"
-"<p>Для устранения ошибки обратитесь, пожалуйста, в службу поддержки по адресу: support@maxi-booking.com</p> \n"
+"<p>Для устранения ошибки обратитесь, пожалуйста, в службу поддержки по "
+"адресу: support@maxi-booking.ru</p> \n"
 
 #: billing/templates/emails/sign.html:2
 msgid ""
@@ -189,8 +215,8 @@ msgstr ""
 "    <p>С уважением,<br>\n"
 "        Служба технической поддержки «Максибукинг»</p>\n"
 "\n"
-"    <p>E-mail: support@maxi-booking.com<br>\n"
-"       База знаний: https://support.maxi-booking.com</p>\n"
+"    <p>E-mail: support@maxi-booking.ru<br>\n"
+"       База знаний: https://support.maxi-booking.ru</p>\n"
 
 #: clients/admin.py:165
 msgid "Installation successfully started."
@@ -204,25 +230,25 @@ msgstr ""
 msgid "restrictions"
 msgstr ""
 
-#: clients/models.py:60 fms/models.py:12 hotels/models.py:92
-#: hotels/models.py:141
+#: clients/models.py:60 fms/models.py:12 hotels/models.py:138
+#: hotels/models.py:193
 msgid "name"
 msgstr ""
 
-#: clients/models.py:64 clients/models.py:503 finances/models.py:239
-#: hotels/models.py:120
+#: clients/models.py:64 clients/models.py:504 finances/models.py:239
+#: hotels/models.py:172
 msgid "client"
 msgstr ""
 
-#: clients/models.py:72 clients/models.py:304 hotels/models.py:108
+#: clients/models.py:72 clients/models.py:305 hotels/models.py:158
 msgid "city"
 msgstr ""
 
-#: clients/models.py:77 clients/models.py:311
+#: clients/models.py:77 clients/models.py:312
 msgid "region"
 msgstr ""
 
-#: clients/models.py:83 clients/models.py:319 hotels/models.py:104
+#: clients/models.py:83 clients/models.py:320 hotels/models.py:150
 msgid "address"
 msgstr ""
 
@@ -274,7 +300,7 @@ msgstr ""
 msgid "ogrn"
 msgstr ""
 
-#: clients/models.py:176 clients/models.py:441
+#: clients/models.py:176 clients/models.py:442
 msgid "inn"
 msgstr ""
 
@@ -326,7 +352,7 @@ msgstr ""
 msgid "not confirmed"
 msgstr ""
 
-#: clients/models.py:252 clients/models.py:453
+#: clients/models.py:252 clients/models.py:454
 msgid "active"
 msgstr ""
 
@@ -351,125 +377,132 @@ msgid "installed"
 msgstr ""
 
 #: clients/models.py:264
+msgid "Client with this domain already exist."
+msgstr "Клиент с таким доменом уже существует."
+
+#: clients/models.py:265
 msgid "login"
 msgstr ""
 
-#: clients/models.py:270
+#: clients/models.py:271
 msgid ""
-"Enter a valid login. This value may contain only lowercase letters, numbers,"
-" and \"-\" character."
+"Enter a valid domain. This value may contain only lowercase letters, "
+"numbers, and \"-\" character."
 msgstr ""
+"Введенный Вами адрес содержит недопустимые символы. Адрес может содержать "
+"только латинские буквы, цифры и символ -(тире)"
 
-#: clients/models.py:276
+#: clients/models.py:277
 msgid "e-mail"
 msgstr ""
 
-#: clients/models.py:282
+#: clients/models.py:283
 msgid "phone"
 msgstr ""
 
-#: clients/models.py:287
+#: clients/models.py:288
 msgid "full name"
 msgstr ""
 
-#: clients/models.py:292 hotels/models.py:98 hotels/models.py:147
+#: clients/models.py:293 hotels/models.py:144 hotels/models.py:199
 msgid "description"
 msgstr ""
 
-#: clients/models.py:297 clients/models.py:480 finances/models.py:170
+#: clients/models.py:298 clients/models.py:481 finances/models.py:170
 msgid "country"
 msgstr ""
 
-#: clients/models.py:330 clients/models.py:465 finances/models.py:219
+#: clients/models.py:331 clients/models.py:466 finances/models.py:219
 msgid "status"
 msgstr ""
 
-#: clients/models.py:335
+#: clients/models.py:336
 msgid "installation status"
 msgstr ""
 
-#: clients/models.py:339
+#: clients/models.py:340
 msgid "disabled at"
 msgstr ""
 
-#: clients/models.py:344 hotels/models.py:116
+#: clients/models.py:345 hotels/models.py:168
 msgid "url"
 msgstr ""
 
-#: clients/models.py:345
+#: clients/models.py:346
 msgid "maxibooking url"
 msgstr ""
 
-#: clients/models.py:417
+#: clients/models.py:418
 msgid "passport serial"
 msgstr ""
 
-#: clients/models.py:426
+#: clients/models.py:427
 msgid "passport number"
 msgstr ""
 
-#: clients/models.py:427
+#: clients/models.py:428
 msgid "passport date"
 msgstr ""
 
-#: clients/models.py:432
+#: clients/models.py:433
 msgid "passport issued by"
 msgstr ""
 
-#: clients/models.py:451
+#: clients/models.py:452
 msgid "archive"
 msgstr ""
 
-#: clients/models.py:454
+#: clients/models.py:455
 msgid "next"
 msgstr ""
 
-#: clients/models.py:460 finances/models.py:47 finances/models.py:175
+#: clients/models.py:461 finances/models.py:47 finances/models.py:175
+#: hotels/models.py:42 hotels/models.py:67 hotels/models.py:94
 msgid "is enabled"
 msgstr ""
 
-#: clients/models.py:468
+#: clients/models.py:469
 msgid "is paid"
 msgstr ""
 
-#: clients/models.py:473 clients/models.py:528 finances/models.py:164
+#: clients/models.py:474 clients/models.py:529 finances/models.py:164
 #: finances/models.py:231
 msgid "price"
 msgstr ""
 
-#: clients/models.py:484
+#: clients/models.py:485
 msgid "quantity"
 msgstr ""
 
-#: clients/models.py:488
+#: clients/models.py:489
 msgid "start date"
 msgstr ""
 
-#: clients/models.py:490
+#: clients/models.py:491
 msgid "begin date"
 msgstr ""
 
-#: clients/models.py:492 fms/models.py:24
+#: clients/models.py:493 fms/models.py:24
 msgid "end date"
 msgstr ""
 
-#: clients/models.py:497 finances/models.py:179
+#: clients/models.py:498 finances/models.py:179
 msgid "service"
 msgstr ""
 
-#: clients/models.py:506
+#: clients/models.py:507
 msgid "orders"
 msgstr ""
 
-#: clients/models.py:572
+#: clients/models.py:573
 msgid "Please correct dates."
 msgstr ""
 
-#: clients/models.py:577
+#: clients/models.py:578
 msgid "Empty service prices."
 msgstr ""
 
-#: clients/models.py:596
+#: clients/models.py:597
 msgid "Client service with this type already exists."
 msgstr ""
 
@@ -499,7 +532,7 @@ msgstr ""
 msgid "connection"
 msgstr ""
 
-#: finances/models.py:41 hotels/models.py:151
+#: finances/models.py:41 hotels/models.py:203
 msgid "rooms"
 msgstr ""
 
@@ -523,7 +556,7 @@ msgstr ""
 msgid "default rooms"
 msgstr ""
 
-#: finances/models.py:61 hotels/models.py:113
+#: finances/models.py:61 hotels/models.py:165
 msgid "type"
 msgstr ""
 
@@ -643,38 +676,42 @@ msgstr ""
 msgid "fms"
 msgstr ""
 
-#: hotels/models.py:43
+#: hotels/models.py:45 hotels/models.py:70 hotels/models.py:97
+msgid "is checked"
+msgstr ""
+
+#: hotels/models.py:57
 msgid "countries"
 msgstr ""
 
-#: hotels/models.py:74
+#: hotels/models.py:120
 msgid "cities"
 msgstr ""
 
-#: hotels/models.py:84
+#: hotels/models.py:130
 msgid "Hotel"
 msgstr ""
 
-#: hotels/models.py:84
+#: hotels/models.py:130
 msgid "Hostel"
 msgstr ""
 
-#: hotels/models.py:85
+#: hotels/models.py:131
 msgid "Flat"
 msgstr ""
 
-#: hotels/models.py:85
+#: hotels/models.py:131
 msgid "B&B"
 msgstr ""
 
-#: hotels/models.py:86
+#: hotels/models.py:132
 msgid "Vacation rental"
 msgstr ""
 
-#: hotels/models.py:154
+#: hotels/models.py:206
 msgid "max rooms"
 msgstr ""
 
-#: hotels/models.py:158
+#: hotels/models.py:210
 msgid "property"
 msgstr ""

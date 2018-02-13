@@ -261,13 +261,14 @@ class Client(CommonInfo, TimeStampedModel, Payer):
         max_length=50,
         unique=True,
         db_index=True,
+        error_messages={'unique': _('Client with this domain already exist.')},
         verbose_name=_('login'),
         validators=[
             MinLengthValidator(4),
             RegexValidator(
                 regex='^[a-z0-9\-]*$',
                 code='invalid_login',
-                message=_('Enter a valid login. This value may contain only \
+                message=_('Enter a valid domain. This value may contain only \
 lowercase letters, numbers, and "-" character.'),
             ),
             validate_client_login_restrictions,

@@ -61,7 +61,7 @@ def test_client_create_invalid_by_admin(admin_client):
     response_json = response.json()
 
     assert response_json['login'] == [
-        'Enter a valid login. This value may \
+        'Enter a valid domain. This value may \
 contain only lowercase letters, numbers, and "-" character.',
         'invalid client login: ' +
         ', '.join(settings.MB_CLIENT_LOGIN_RESTRICTIONS)
