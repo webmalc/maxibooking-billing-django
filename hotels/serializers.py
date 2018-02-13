@@ -14,6 +14,7 @@ class PropertySerializer(serializers.HyperlinkedModelSerializer):
         read_only=False,
         queryset=City.objects.all(),
         allow_null=True,
+        required=False,
     )
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
