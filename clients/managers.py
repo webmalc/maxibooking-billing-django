@@ -245,8 +245,6 @@ class ClientServiceManager(LookupMixin):
         """
         Create client trial services
         """
-        if client.status != 'not_confirmed':
-            raise BaseException('client confirmed')
         if client.services.count():
             raise BaseException('client already has services')
         service_manager = apps.get_model('finances', 'Service').objects
@@ -267,6 +265,8 @@ class ClientServiceManager(LookupMixin):
 
         if rooms_count > 0:
             self._create_service(rooms, client, rooms_count)
+            client.trial_activated = True
+            client.save()
 
     def _create_service(
             self,

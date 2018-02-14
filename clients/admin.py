@@ -130,9 +130,9 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     Client admin interface
     """
     list_display = ('id', 'login', 'email', 'phone', 'name', 'status',
-                    'created')
+                    'trial_activated', 'created')
     list_display_links = ('id', 'login')
-    list_filter = ('status', 'installation', 'country')
+    list_filter = ('status', 'installation', 'trial_activated', 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
@@ -146,8 +146,9 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
             'fields': ('country', 'region', 'city', 'address', 'postal_code')
         }),
         ('Options', {
-            'fields': ('status', 'installation', 'url', 'disabled_at', 'ip',
-                       'created', 'modified', 'created_by', 'modified_by')
+            'fields':
+            ('status', 'installation', 'trial_activated', 'url', 'disabled_at',
+             'ip', 'created', 'modified', 'created_by', 'modified_by')
         }),
     )
     inlines = (

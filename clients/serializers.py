@@ -111,9 +111,9 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'region', 'city',
-                  'address', 'postal_code', 'installation', 'url',
-                  'properties', 'restrictions', 'ru', 'disabled_at', 'ip',
-                  'created', 'modified', 'created_by', 'modified_by')
+                  'address', 'postal_code', 'installation', 'trial_activated',
+                  'url', 'properties', 'restrictions', 'ru', 'disabled_at',
+                  'ip', 'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
         references = {
             'ru': 'clients.ClientRu',

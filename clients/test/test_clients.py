@@ -494,14 +494,6 @@ def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
     assert 'user-three' in mail.body
 
     response = admin_client.post(
-        reverse('client-trial', args=['user-four']),
-        content_type="application/json")
-    response_json = response.json()
-    assert response_json['status'] is False
-    assert response_json[
-        'message'] == 'trial activation failed: client confirmed'
-
-    response = admin_client.post(
         reverse('client-trial', args=['user-five']),
         content_type="application/json")
 
@@ -537,6 +529,8 @@ def test_admin_trial_by_admin(admin_client):
         client_id=5,
         city_id=2)
     Room.objects.create(name='Test room two', property_id=5, rooms=12)
+    client = Client.objects.get(pk=5)
+    assert client.trial_activated is False
     response = admin_client.post(
         reverse('client-trial', args=['user-five']),
         content_type="application/json")
@@ -545,7 +539,6 @@ def test_admin_trial_by_admin(admin_client):
     assert response_json['status'] is True
     assert response_json['message'] == 'trial successfully activated'
 
-    client = Client.objects.get(pk=5)
     connection_service = client.services.get(
         service__type='connection',
         status='active',
@@ -557,7 +550,9 @@ def test_admin_trial_by_admin(admin_client):
         is_enabled=True,
     )
 
+    client.refresh_from_db()
     assert client.services.count() == 2
+    assert client.trial_activated is True
 
     assert client.restrictions.rooms_limit == 25
     assert rooms_service.price == Money(52500.0, EUR)

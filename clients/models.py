@@ -336,6 +336,8 @@ lowercase letters, numbers, and "-" character.'),
         verbose_name=_('installation status'),
         choices=INSTALLATION,
         db_index=True)
+    trial_activated = models.BooleanField(
+        default=False, db_index=True, verbose_name=_('trial activated'))
     disabled_at = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('disabled at'))
     url = models.URLField(
