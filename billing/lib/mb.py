@@ -3,6 +3,7 @@ import logging
 import time
 
 import requests
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -24,12 +25,15 @@ def _request(url, data, error_callback):
                     json_response = json.loads(content)
 
                     logging.getLogger('billing').info(
-                        'Mb service json response: {}'.format(json_response))
+                        'Mb service json response: {}. url: {}, data: {}'.
+                        format(json_response, url, data))
                     return json_response
                 except json.decoder.JSONDecodeError:
                     return response
-        except requests.exceptions.RequestException:
-            pass
+        except requests.exceptions.RequestException as e:
+            logging.getLogger('billing').info(
+                'Mb service requests exception: {}. url: {}, data: {}'.format(
+                    e, url, data))
 
         if not getattr(settings, 'TESTS', False):  # pragma: no cover
             time.sleep(settings.MB_TIMEOUT)
