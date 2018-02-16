@@ -17,6 +17,9 @@ def _request(url, data, error_callback):
     """
     for i in range(0, 10):
         try:
+            logging.getLogger('billing').info(
+                'Mb service begin request: url: {}, data: {}'.format(
+                    url, data))
             response = requests.post(
                 url, timeout=settings.MB_TIMEOUT, json=data)
             if response.status_code == 200:
