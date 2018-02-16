@@ -1,11 +1,10 @@
 import arrow
+from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
-
-from billing.exceptions import BaseException
-from billing.managers import LookupMixin
 from hotels.models import Room
 
 
@@ -257,6 +256,9 @@ class ClientServiceManager(LookupMixin):
         if not rooms:
             raise BaseException('default rooms service not found')
 
+        client.trial_activated = True
+        client.save()
+
         self._create_service(connection, client, 1)
         default_rooms = connection.default_rooms
         rooms_max = Room.objects.count_rooms(client)
@@ -265,8 +267,6 @@ class ClientServiceManager(LookupMixin):
 
         if rooms_count > 0:
             self._create_service(rooms, client, rooms_count)
-            client.trial_activated = True
-            client.save()
 
     def _create_service(
             self,
