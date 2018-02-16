@@ -258,7 +258,6 @@ class ClientServiceManager(LookupMixin):
 
         client.trial_activated = True
         client.save()
-
         self._create_service(connection, client, 1)
         default_rooms = connection.default_rooms
         rooms_max = Room.objects.count_rooms(client)

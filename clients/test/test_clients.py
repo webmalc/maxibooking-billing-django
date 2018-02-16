@@ -2,14 +2,13 @@ import json
 
 import arrow
 import pytest
-from django.conf import settings
-from django.core.urlresolvers import reverse
-from moneyed import EUR, Money
-
 from billing.lib import mb
 from billing.lib.test import json_contains
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
+from moneyed import EUR, Money
 
 from ..models import Client
 from ..tasks import client_archivation

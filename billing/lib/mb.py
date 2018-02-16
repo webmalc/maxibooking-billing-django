@@ -84,6 +84,7 @@ def client_fixtures(client):
               'token': urls['token']},
         error_callback=_error_callback)
     if response:
+        client.refresh_from_db()
         client.url = response.get('url', None)
         client.save()
     return response
