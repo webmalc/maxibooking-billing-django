@@ -129,15 +129,16 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     """
     Client admin interface
     """
-    list_display = ('id', 'login', 'email', 'phone', 'name', 'status',
+    list_display = ('id', 'login', 'email', 'phone', 'name', 'country', 'city',
+                    'status', 'installation', 'url', 'rooms',
                     'trial_activated', 'created')
+    list_select_related = ('country', 'restrictions', 'city')
     list_display_links = ('id', 'login')
     list_filter = ('status', 'installation', 'trial_activated', 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
                        'modified_by')
-    list_select_related = ('country', )
     fieldsets = (
         ('General', {
             'fields': ('login', 'email', 'phone', 'name', 'description')
@@ -165,6 +166,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
         """
         self.message_user(request, _('Installation successfully started.'))
         install_client_task.delay(client_id=obj.id)
+
+    def rooms(self, obj):
+        """
+        Client rooms
+        """
+        return obj.restrictions.rooms_limit
 
     def get_row_actions(self, obj):
         row_actions = [
