@@ -134,7 +134,8 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
                     'trial_activated', 'created')
     list_select_related = ('country', 'restrictions', 'city')
     list_display_links = ('id', 'login')
-    list_filter = ('status', 'installation', 'trial_activated', 'country')
+    list_filter = ('status', 'installation', 'created', 'trial_activated',
+                   'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
