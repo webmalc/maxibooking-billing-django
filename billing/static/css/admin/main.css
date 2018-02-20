@@ -73,10 +73,23 @@ input[type="tel"]:focus {
 .ui-tabs html .ui-button.ui-state-disabled:hover,
 .ui-tabs html .ui-button.ui-state-disabled:active {
   border: 0px;
+  background-image: none;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
   background-color: #79aec8 !important;
+}
+.ui-tabs .ui-corner-all,
+.ui-tabs .ui-corner-top,
+.ui-tabs .ui-corner-right,
+.ui-tabs .ui-corner-tr {
+  border-radius: 0px;
+}
+.ui-tabs .ui-corner-all,
+.ui-tabs .ui-corner-top,
+.ui-tabs .ui-corner-left,
+.ui-tabs .ui-corner-tr {
+  border-radius: 0px;
 }
 .ui-tabs .ui-tabs-nav li a {
   border-radius: 0px !important;

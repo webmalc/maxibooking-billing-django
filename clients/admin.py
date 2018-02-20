@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
+from tabbed_admin import TabbedModelAdmin
 
 from billing.admin import TextFieldListFilter
 from hotels.models import Property
@@ -125,7 +126,7 @@ class ClientRuAdmin(admin.StackedInline):
 
 
 @admin.register(Client)
-class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
+class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     """
     Client admin interface
     """
@@ -140,7 +141,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
                        'modified_by')
-    fieldsets = (
+    tab_client = (
         ('General', {
             'fields': ('login', 'email', 'phone', 'name', 'description')
         }),
@@ -153,12 +154,20 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin):
              'ip', 'created', 'modified', 'created_by', 'modified_by')
         }),
     )
-    inlines = (
-        ClientRuAdmin,
+    tab_properties = (
         RestrictionsInlineAdmin,
         PropertyInlineAdmin,
-        ClientServiceInlineAdmin,
+    )
+    tab_payer = (
+        ClientRuAdmin,
         CompanyInlineAdmin,
+    )
+    tab_tariff = (ClientServiceInlineAdmin, )
+    tabs = (
+        ('Client', tab_client),
+        ('Properties', tab_properties),
+        ('Payer', tab_payer),
+        ('Tariff', tab_tariff),
     )
 
     def install(self, request, obj):

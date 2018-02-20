@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_admin_row_actions',
     'prettyjson',
     'annoying',
+    'tabbed_admin',
 
     # mb apps
     'finances',
