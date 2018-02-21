@@ -275,14 +275,14 @@ class ClientServiceManager(LookupMixin):
 
         client.trial_activated = True
         client.save()
-        self._create_service(connection, client, 1)
+        self._create_service(connection, client, 1, trial=True)
         default_rooms = connection.default_rooms
         rooms_max = Room.objects.count_rooms(client)
 
         rooms_count = rooms_max - default_rooms
 
         if rooms_count > 0:
-            self._create_service(rooms, client, rooms_count)
+            self._create_service(rooms, client, rooms_count, trial=True)
 
     def _create_service(
             self,
@@ -291,6 +291,7 @@ class ClientServiceManager(LookupMixin):
             quantity,
             status='active',
             connection=False,
+            trial=False,
     ):
         """
         Create client service
@@ -304,6 +305,9 @@ class ClientServiceManager(LookupMixin):
         client_service.status = status
         if connection:
             client_service.begin = client_service.get_default_begin(True)
+        if trial:
+            client_service.end = arrow.get(client_service.begin).shift(
+                days=settings.MB_TRIAL_DAYS).datetime
         try:
             client_service.full_clean()
             client_service.save()

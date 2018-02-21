@@ -560,6 +560,19 @@ def test_admin_trial_by_admin(admin_client):
     assert connection_service.status == 'active'
     assert connection_service.service.default_rooms == 10
 
+    format = '%d.%m.%Y %H:%I'
+    now = arrow.now()
+
+    assert connection_service.begin.strftime(format) == now.datetime.strftime(
+        format)
+    assert connection_service.end.strftime(format) == now.shift(
+        days=settings.MB_TRIAL_DAYS).datetime.strftime(format)
+
+    assert rooms_service.begin.strftime(format) == now.datetime.strftime(
+        format)
+    assert rooms_service.end.strftime(format) == now.shift(
+        days=settings.MB_TRIAL_DAYS).datetime.strftime(format)
+
 
 def test_clients_archivation(admin_client):
     client_archivation.delay()
