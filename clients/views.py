@@ -1,11 +1,12 @@
 import logging
 
-from billing.exceptions import BaseException
-from billing.lib import mb
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+
+from billing.exceptions import BaseException
+from billing.lib import mb
 
 from .models import Client, ClientService, Company
 from .serializers import (ClientSerializer, ClientServiceSerializer,
@@ -163,6 +164,10 @@ class ClientViewSet(viewsets.ModelViewSet):
                 'message': 'client already installed'
             })
 
+        logging.getLogger('billing').info(
+            'Get client installation request. Id: {}; login: {}'.format(
+                client.id, client.login))
+
         install_client_task.apply_async(
             kwargs={'client_id': client.id}, queue='priority_high')
         return Response({
@@ -187,6 +192,9 @@ class ClientViewSet(viewsets.ModelViewSet):
                 'message': 'client installation in process'
             })
 
+        logging.getLogger('billing').info(
+            'Get client fixtures request. Id: {}; login: {}'.format(
+                client.id, client.login))
         response = mb.client_fixtures(client)
         if response and response.get('status', True):
             return Response({

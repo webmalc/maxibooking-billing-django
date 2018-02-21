@@ -3,7 +3,6 @@ import logging
 import time
 
 import requests
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -80,8 +79,10 @@ def client_fixtures(client):
 
     response = _request(
         url=urls['fixtures'].format(client.login),
-        data={'client_login': client.login,
-              'token': urls['token']},
+        data={
+            'client_login': client.login,
+            'token': urls['token']
+        },
         error_callback=_error_callback)
     if response:
         client.refresh_from_db()
@@ -95,7 +96,7 @@ def client_install(client):
     Client installation
     """
     logging.getLogger('billing').info(
-        'Begin client installation. Id: {}; login: {}'.format(
+        'Begin client installation task. Id: {}; login: {}'.format(
             client.id, client.login))
 
     urls = mb_settings(client)
@@ -138,8 +139,10 @@ def client_archive(client):
 
     result = _request(
         url=urls['archive'],
-        data={'client_login': client.login,
-              'token': urls['token']},
+        data={
+            'client_login': client.login,
+            'token': urls['token']
+        },
         error_callback=_error_callback)
     if result:
         client.status = 'archived'
