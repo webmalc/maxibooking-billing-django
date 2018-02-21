@@ -1,10 +1,11 @@
 import arrow
-from billing.exceptions import BaseException
-from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.models import Q, Sum
+from django.db.models import Case, Count, IntegerField, Q, Sum, When
+
+from billing.exceptions import BaseException
+from billing.managers import LookupMixin
 from hotels.models import Room
 
 
@@ -88,6 +89,22 @@ class ClientManager(LookupMixin):
                 Sum('service__default_rooms'))['service__default_rooms__sum']
 
         return int(rooms or 0) + int(default_rooms or 0)
+
+    def get_by_orders(self, paid, query=None):
+        """
+        Get clients by orders
+        """
+        query = query if query else self.all()
+        query = query.annotate(
+            orders_count=Count(
+                Case(
+                    When(orders__status='paid', then=1),
+                    output_field=IntegerField())))
+        if paid:
+            query = query.filter(orders_count__gte=1)
+        else:
+            query = query.filter(orders_count=0)
+        return query
 
 
 class ClientServiceManager(LookupMixin):

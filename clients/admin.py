@@ -10,6 +10,7 @@ from tabbed_admin import TabbedModelAdmin
 from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
+from .admin_filters import ClientIsPaidListFilter
 from .models import (Client, ClientRu, ClientService, Company, CompanyRu,
                      CompanyWorld, Restrictions)
 from .tasks import install_client_task
@@ -136,7 +137,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     list_select_related = ('country', 'restrictions', 'city')
     list_display_links = ('id', 'login')
     list_filter = ('status', 'installation', 'created', 'trial_activated',
-                   'country')
+                   ClientIsPaidListFilter, 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',

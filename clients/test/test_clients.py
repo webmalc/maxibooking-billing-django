@@ -2,13 +2,14 @@ import json
 
 import arrow
 import pytest
-from billing.lib import mb
-from billing.lib.test import json_contains
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
+
+from billing.lib import mb
+from billing.lib.test import json_contains
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
-from moneyed import EUR, Money
 
 from ..models import Client
 from ..tasks import client_archivation
@@ -623,3 +624,13 @@ def test_client_ru_fields_update(admin_client):
 def test_client_language():
     assert Client.objects.get(login='user-rus').language == 'ru'
     assert Client.objects.get(login='user-one').language == 'en'
+
+
+def test_client_by_logins(make_orders):
+    assert Client.objects.get_by_orders(True).count() == 1
+    assert Client.objects.get_by_orders(False).count() == 6
+
+    Order.objects.update(status='new')
+
+    assert Client.objects.get_by_orders(True).count() == 0
+    assert Client.objects.get_by_orders(False).count() == 7
