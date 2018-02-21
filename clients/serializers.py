@@ -5,8 +5,8 @@ from billing.serializers import NestedUpdateSerializerMixin
 from finances.models import Service
 from hotels.models import City, Country, Region
 
-from .models import (Client, ClientRu, ClientService, Company, CompanyRu,
-                     CompanyWorld)
+from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
+                     CompanyRu, CompanyWorld)
 
 
 class CompanyWorldSerializer(serializers.ModelSerializer):
@@ -29,6 +29,24 @@ class CompanyRuSerializer(serializers.ModelSerializer):
         fields = ('form', 'ogrn', 'inn', 'kpp', 'bik', 'corr_account',
                   'boss_firstname', 'boss_lastname', 'boss_patronymic',
                   'boss_operation_base', 'proxy_number', 'proxy_date')
+
+
+class ClientAuthSerializer(serializers.ModelSerializer):
+    """
+    Company serializer
+    """
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    client = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='login',
+        queryset=Client.objects.all())
+
+    class Meta:
+        model = ClientAuth
+        fields = ('id', 'client', 'auth_date', 'ip', 'user_agent', 'created',
+                  'modified', 'created_by', 'modified_by')
 
 
 class CompanySerializer(NestedUpdateSerializerMixin,
@@ -140,7 +158,8 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate(self, attrs):
         ClientService.validate_dates(
-            attrs.get('begin'), attrs.get('end'), attrs.get('pk') is None)
+            attrs.get('begin'), attrs.get('end'),
+            attrs.get('pk') is None)
         ClientService.validate_service(
             attrs.get('service'), attrs.get('client'))
         return attrs

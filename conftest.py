@@ -12,7 +12,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
         call_command(
             'loaddata', 'tests/users', 'tests/countries', 'tests/regions',
             'tests/cities', 'tests/clients', 'tests/properties', 'tests/rooms',
-            'tests/service_categories', 'tests/services',
+            'tests/service_categories', 'tests/services', 'tests/auth',
             'tests/client_services', 'tests/transactions', 'tests/companies')
 
 

@@ -561,7 +561,7 @@ def test_admin_trial_by_admin(admin_client):
     assert connection_service.service.default_rooms == 10
 
     format = '%d.%m.%Y %H:%I'
-    now = arrow.now()
+    now = arrow.utcnow()
 
     assert connection_service.begin.strftime(format) == now.datetime.strftime(
         format)

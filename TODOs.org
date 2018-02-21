@@ -154,6 +154,7 @@
    CLOSED: [2018-01-31 Wed 11:49]
 ** DONE test for client lang and mail task lang
    CLOSED: [2018-01-31 Wed 11:49]
+** TODO client last login in list
 ** TODO cities display name trans
 ** TODO calc endpoint
 ** TODO manual order

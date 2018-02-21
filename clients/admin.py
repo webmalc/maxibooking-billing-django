@@ -1,3 +1,4 @@
+import arrow
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
@@ -11,9 +12,38 @@ from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
-from .models import (Client, ClientRu, ClientService, Company, CompanyRu,
-                     CompanyWorld, Restrictions)
+from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
+                     CompanyRu, CompanyWorld, Restrictions)
 from .tasks import install_client_task
+
+
+@admin.register(ClientAuth)
+class ClientAuthAdmin(VersionAdmin, AjaxSelectAdmin):
+    """
+    ClientAuth admin interface
+    """
+    list_display = ('id', 'client', 'auth_date', 'ip', 'user_agent')
+    list_display_links = (
+        'id',
+        'client',
+    )
+    list_filter = ('auth_date', ('client', TextFieldListFilter))
+    search_fields = ('=pk', 'ip', 'client__name', 'client__email',
+                     'client__login', 'user_agent')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    raw_id_fields = ('client', )
+    fieldsets = (
+        ('General', {
+            'fields': ('client', 'auth_date', 'ip', 'user_agent')
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
+    list_select_related = ('client', )
+    form = make_ajax_form(ClientService, {
+        'client': 'clients',
+    })
 
 
 @admin.register(ClientService)
@@ -110,6 +140,30 @@ class CompanyInlineAdmin(admin.TabularInline):
         return False
 
 
+class ClientAuthInlineAdmin(admin.TabularInline):
+    """
+    ClientAuthInline admin interface
+    """
+    model = ClientAuth
+    fields = (
+        'auth_date',
+        'ip',
+        'user_agent',
+    )
+    readonly_fields = fields
+    show_change_link = True
+    can_delete = False
+    max_num = 20
+
+    def has_add_permission(self, *args, **kwargs):
+        return False
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        date_limit = arrow.utcnow().shift(days=-7).datetime
+        return query.filter(auth_date__gte=date_limit)
+
+
 class ClientRuAdmin(admin.StackedInline):
     """
     ClientRu admin interface
@@ -164,11 +218,13 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         CompanyInlineAdmin,
     )
     tab_tariff = (ClientServiceInlineAdmin, )
+    tab_auth = (ClientAuthInlineAdmin, )
     tabs = (
         ('Client', tab_client),
         ('Properties', tab_properties),
         ('Payer', tab_payer),
         ('Tariff', tab_tariff),
+        ('Last logins', tab_auth),
     )
 
     def install(self, request, obj):

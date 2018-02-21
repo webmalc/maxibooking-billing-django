@@ -1,5 +1,4 @@
 from annoying.fields import AutoOneToOneField
-from billing.models import CommonInfo, CountryBase
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -9,8 +8,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from hotels.models import Country
 from phonenumber_field.modelfields import PhoneNumberField
+
+from billing.models import CommonInfo, CountryBase
+from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -251,8 +252,9 @@ class Client(CommonInfo, TimeStampedModel, Payer):
     STATUSES = (('not_confirmed', _('not confirmed')), ('active', _('active')),
                 ('disabled', _('disabled')), ('archived', _('archived')))
 
-    INSTALLATION = (('not_installed', _('not installed')),
-                    ('process', _('process')), ('installed', _('installed')))
+    INSTALLATION = (('not_installed', _('not installed')), ('process',
+                                                            _('process')),
+                    ('installed', _('installed')))
 
     objects = ClientManager()
 
@@ -443,6 +445,34 @@ class ClientRu(CountryBase):
         verbose_name=_('inn'))
     client = models.OneToOneField(
         Client, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+
+
+class ClientAuth(CommonInfo, TimeStampedModel):
+    """
+    Client authentication class
+    """
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        db_index=True,
+        verbose_name=_('client'),
+        related_name='authentications',
+    )
+    auth_date = models.DateTimeField(
+        db_index=True,
+        verbose_name=_('authentication date'),
+    )
+    ip = models.GenericIPAddressField(db_index=True)
+    user_agent = models.TextField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('user agent'),
+        validators=[MinLengthValidator(2)])
+
+    class Meta:
+        ordering = ['auth_date']
+        verbose_name_plural = _('Client authentications')
 
 
 class ClientService(CommonInfo, TimeStampedModel):

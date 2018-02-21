@@ -8,10 +8,23 @@ from rest_framework.response import Response
 from billing.exceptions import BaseException
 from billing.lib import mb
 
-from .models import Client, ClientService, Company
-from .serializers import (ClientSerializer, ClientServiceSerializer,
-                          CompanySerializer)
+from .models import Client, ClientAuth, ClientService, Company
+from .serializers import (ClientAuthSerializer, ClientSerializer,
+                          ClientServiceSerializer, CompanySerializer)
 from .tasks import install_client_task, mail_client_task
+
+
+class ClientAuthViewSet(viewsets.ModelViewSet):
+    queryset = ClientAuth.objects.all().select_related(
+        'created_by',
+        'modified_by',
+        'client',
+    )
+    search_fields = ('=pk', 'ip', 'client__name', 'client__email',
+                     'client__login', 'user_agent')
+
+    serializer_class = ClientAuthSerializer
+    filter_fields = ('client', )
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
