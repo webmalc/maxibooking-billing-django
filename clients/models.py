@@ -1,4 +1,5 @@
 from annoying.fields import AutoOneToOneField
+from billing.models import CommonInfo, CountryBase
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -8,10 +9,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from phonenumber_field.modelfields import PhoneNumberField
-
-from billing.models import CommonInfo, CountryBase
 from hotels.models import Country
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -471,7 +470,7 @@ class ClientAuth(CommonInfo, TimeStampedModel):
         validators=[MinLengthValidator(2)])
 
     class Meta:
-        ordering = ['auth_date']
+        ordering = ['-auth_date']
         verbose_name_plural = _('Client authentications')
 
 
