@@ -2,6 +2,7 @@ import arrow
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from django.db.models import Count
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
@@ -27,7 +28,7 @@ class ClientAuthAdmin(VersionAdmin, AjaxSelectAdmin):
         'id',
         'client',
     )
-    list_filter = ('auth_date', ('client', TextFieldListFilter))
+    list_filter = ('auth_date', ('client__login', TextFieldListFilter))
     search_fields = ('=pk', 'ip', 'client__name', 'client__email',
                      'client__login', 'user_agent')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
@@ -145,22 +146,31 @@ class ClientAuthInlineAdmin(admin.TabularInline):
     ClientAuthInline admin interface
     """
     model = ClientAuth
-    fields = (
-        'auth_date',
-        'ip',
-        'user_agent',
-    )
+    fields = ('auth_date', 'ip', 'user_agent', 'all')
     readonly_fields = fields
     show_change_link = True
     can_delete = False
     max_num = 20
+    extra = 1
+    verbose_name_plural = "Last logins (3 days)"
 
-    def has_add_permission(self, *args, **kwargs):
-        return False
+    def get_formset(self, request, obj=None, **kwargs):
+        self.parent_obj = obj
+        return super().get_formset(request, obj, **kwargs)
+
+    def all(self, request):
+        template = """
+        <a href="{}?client__login__exact={}" target="_blank">Show all</a>
+        """
+        return template.format(
+            reverse('admin:clients_clientauth_changelist'),
+            self.parent_obj.login)
+
+    all.allow_tags = True
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
-        date_limit = arrow.utcnow().shift(days=-7).datetime
+        date_limit = arrow.utcnow().shift(days=-1).datetime
         return query.filter(auth_date__gte=date_limit)
 
 
@@ -187,7 +197,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     """
     list_display = ('id', 'login', 'email', 'phone', 'name', 'country', 'city',
                     'status', 'installation', 'url', 'rooms',
-                    'trial_activated', 'created')
+                    'trial_activated', 'logins', 'created')
     list_select_related = ('country', 'restrictions', 'city')
     list_display_links = ('id', 'login')
     list_filter = ('status', 'installation', 'created', 'trial_activated',
@@ -249,6 +259,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         ]
         row_actions += super(ClientAdmin, self).get_row_actions(obj)
         return row_actions
+
+    def logins(self, obj):
+        return obj.auth_count
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        query = query.annotate(auth_count=Count('authentications'))
+        return query
 
     class Media:
         js = ('js/admin/clients.js', )
