@@ -247,7 +247,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                 client.url = request_json['url']
                 client.save()
                 mail_client_task.delay(
-                    subject=_('Registation successefull'),
+                    subject=_('Registration successefull'),
                     template='emails/registration.html',
                     data={
                         'login': client.login,

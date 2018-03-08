@@ -448,10 +448,34 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
 
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
-    assert 'successefull' in mail.subject
+    assert 'Registration successefull' in mail.subject
+    assert 'Registration successefull' in html
     assert '123456' in html
     assert 'http://example.com' in html
-    # assert client.login in html
+    assert 'admin' in html
+
+
+def test_client_install_results_ru_by_admin(admin_client, mailoutbox):
+    data = json.dumps({
+        'status': True,
+        'password': '123456',
+        'url': 'http://example.com'
+    })
+    Client.objects.filter(login='user-rus').update(
+        installation='not_installed')
+    response = admin_client.post(
+        reverse('client-install-result', args=['user-rus']),
+        data=data,
+        content_type="application/json")
+
+    assert response.json()['status'] is True
+
+    mail = mailoutbox[0]
+    html = mail.alternatives[0][0]
+    assert 'Успешная регистрация' in mail.subject
+    assert 'Успешная регистрация' in html
+    assert '123456' in html
+    assert 'http://example.com' in html
     assert 'admin' in html
 
 
