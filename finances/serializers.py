@@ -101,5 +101,5 @@ class PriceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Price
         fields = ('id', 'price', 'price_currency', 'country', 'service',
-                  'is_enabled', 'created', 'modified', 'created_by',
-                  'modified_by')
+                  'for_unit', 'period_from', 'period_to', 'is_enabled',
+                  'created', 'modified', 'created_by', 'modified_by')

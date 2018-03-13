@@ -19,6 +19,7 @@ from clients.models import Client, ClientService
 from hotels.models import Country
 
 from .managers import OrderManager, ServiceManager
+from .validators import validate_price_periods
 
 
 class ServiceCategory(CommonInfo, TimeStampedModel, TitleDescriptionModel):
@@ -75,7 +76,11 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     def price_money(self):
         try:
             return self.prices.filter(
-                country__isnull=True, is_enabled=True)[0].price
+                country__isnull=True,
+                is_enabled=True,
+                period_from__isnull=True,
+                period_to__isnull=True,
+            )[0].price
         except IndexError:
             return None
 
@@ -179,23 +184,38 @@ class Price(CommonInfo, TimeStampedModel):
         verbose_name=_('service'),
         db_index=True,
         related_name='prices')
+    period_from = models.PositiveIntegerField(
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('from'),
+    )
+    period_to = models.PositiveIntegerField(
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('to'),
+    )
+    for_unit = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('for unit'))
 
     def __str__(self):
-        return '{}: {}'.format(self.country
-                               if self.country else 'Base', self.price)
+        return '{}: {} {}-{}'.format(
+            self.country if self.country else 'Base',
+            self.price,
+            self.period_from or '∞',
+            self.period_to or '∞',
+        )
 
     def clean(self):
         """
         Price validation
         """
-        if not self.country and Price.objects.filter(
-                service=self.service, country__isnull=True,
-                is_enabled=True).exclude(id=self.id).exists():
-            raise ValidationError('Base price already exists')
+        validate_price_periods(self)
 
     class Meta:
-        ordering = ['price']
-        unique_together = ('service', 'country')
+        ordering = ['country', 'period_from', 'period_to', 'price']
+        unique_together = ('service', 'country', 'period_from', 'period_to')
 
 
 class Order(CommonInfo, TimeStampedModel):

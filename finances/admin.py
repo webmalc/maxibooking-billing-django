@@ -104,10 +104,11 @@ class PriceInlineAdmin(admin.TabularInline):
     Price admin interface
     """
     model = Price
-    fields = ('price', 'country', 'is_enabled', 'created', 'modified',
-              'created_by', 'modified_by')
+    fields = ('price', 'country', 'period_from', 'period_to', 'for_unit',
+              'is_enabled', 'created', 'modified', 'created_by', 'modified_by')
     raw_id_fields = ('country', )
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    extra = 0
 
 
 class ServiceInlineAdmin(admin.TabularInline):
