@@ -1,8 +1,8 @@
 
 - name: Billing - copy settings
   copy:
-    src: "{{billing.path}}billing/settings.local.py.dist"
-    dest: "{{billing.path}}billing/settings.local.py"
+    src: "{{billing.path}}billing/settings_local.py.dist"
+    dest: "{{billing.path}}billing/settings_local.py"
     force: no
   tags: billing  
 
