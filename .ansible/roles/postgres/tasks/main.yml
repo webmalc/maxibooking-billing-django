@@ -1,0 +1,40 @@
+---
+- name: Install Postgresql
+  apt: >
+    name={{ item }}
+    state=latest
+  with_items:
+    - language-pack-en
+    - postgresql
+    - libpq-dev
+    - python-psycopg2
+  tags: postgres  
+
+- name: Start PostgreSQL and enable at boot
+  service: name=postgresql enabled=yes state=started
+
+- block:
+
+  - name: Ensure database is created
+    postgresql_db: name={{postgres.name}}
+
+  - name: Ensure test database is created
+    postgresql_db: name={{postgres.name_test}}
+
+  - name: Ensure user has access to database
+    postgresql_user: db={{postgres.name}} name={{postgres.user}} password={{postgres.password}} priv=ALL
+
+  - name: Ensure user has access to test database
+    postgresql_user: db={{postgres.name_test}} name={{postgres.user}} password={{postgres.password}} priv=ALL
+
+  - name: Ensure user does not have unnecessary privilege
+    postgresql_user: name={{postgres.user}} role_attr_flags=SUPERUSER
+  
+  # - name: Ensure no other user can access the database
+  #   postgresql_privs: db={{postgres.name}} role=PUBLIC type=database priv=ALL state=absent
+
+  # - name: Ensure no other user can access the test database
+  #   postgresql_privs: db={{postgres.name_test}} role=PUBLIC type=database priv=ALL state=absent
+
+  become_user: postgres
+  become: yes

@@ -1,0 +1,6 @@
+---
+postgres:
+  name: billing
+  name_test: billing_test
+  user: billing
+  password: billing

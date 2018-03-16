@@ -13,6 +13,7 @@ Maxibooking billing django rest backend
 
 ## after installation
 * local_settings.py.dist -> local_settings.py
+* ./manage.py makemigrations
 * ./manage.py migrate
 * ./manage.py createsuperuser
 * ./manage.py cities_light

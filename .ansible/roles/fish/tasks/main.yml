@@ -1,0 +1,55 @@
+---
+
+- name: package | fish
+  package: name="{{ fish_name }}" state="{{ install_state }}"
+  tags:
+    - bootstrap
+    - bootstrap_fish
+    - install
+    - install_fish
+
+- name: setup | determine shell executable location
+  command: which fish
+  register: fish
+
+- name: configure | change default shell
+  user: name="{{ user_name }}" shell="{{ fish.stdout }}"
+  become: yes
+  tags:
+    - bootstrap
+    - bootstrap_fish
+    - configure
+    - configure_fish
+
+- name: Make python alias
+  shell: alias python "python3.6"; funcsave python
+  args:
+    executable: /usr/bin/fish
+
+- name: Make pip alias
+  shell: alias pip "python3.6 -m pip"; funcsave pip
+  args:
+    executable: /usr/bin/fish
+
+- name: Make manage alias
+  shell: alias manage "python3.6 ./manage.py"; funcsave manage
+  args:
+    executable: /usr/bin/fish
+
+- name: Make pytest alias
+  shell: alias pytest "python3.6 -m pytest --pep8 --flakes"; funcsave pytest
+  args:
+    executable: /usr/bin/fish
+
+- name: Make server alias
+  shell: alias server "python3.6 manage.py runserver_plus"; funcsave server
+  args:
+    executable: /usr/bin/fish
+
+- name: Configuring Redis
+  template:
+    src: config.fish.j2
+    dest: /root/.config/fish/config.fish
+    owner: root
+    group: root
+    mode: 0644

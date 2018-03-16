@@ -1,0 +1,16 @@
+---
+
+- name: Setup environment to run the billing
+  hosts: all
+  remote_user: root
+  become:      yes
+
+  roles:
+    - role: postgres
+    - role: fish
+    - role: redis
+    - role: git
+    - role: nodejs
+    - role: python
+    - role: sqlite
+    - role: memcached

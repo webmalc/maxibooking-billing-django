@@ -1,0 +1,76 @@
+---
+- apt_repository:
+    repo: ppa:deadsnakes/ppa
+    state: present
+
+- name: Install Packages | apt | build dependencies
+  apt:
+    state: latest
+    name: "{{ item }}"
+  with_items: '{{ python_build_dependencies }}'
+  when: python_build_dependencies
+  tags:
+    - software-installation
+    - using-apt
+    - python
+
+- name: Install Packages | apt
+  apt:
+    state: latest
+    name: "{{ item }}"
+  with_items:
+    - python-dev
+    - python-setuptools
+    - python-pip
+    - python3.6
+    - python3.6-dev
+    - python3-setuptools
+    - python3-pip
+  tags:
+    - software-installation
+    - using-apt
+    - python
+
+- name: "Upgrade pip"
+  pip:
+    executable: "{{ python_pip_executable }}"
+    state: latest
+    name: "pip"
+    extra_args: --upgrade
+  tags:
+    - software-installation
+    - using-pip
+    - python
+
+- name: "Install Packages | pip | {{ python_packages }}"
+  pip:
+    executable: "{{ python_pip_executable }}"
+    state: latest
+    name: "{{ item }}"
+  with_items: '{{ python_packages }}'
+  when: python_packages
+  tags:
+    - software-installation
+    - using-pip
+    - python
+
+- name: "Install billling Packages"
+  pip:
+    executable: "{{ python_pip_executable }}"
+    state: latest
+    requirements: /var/www/billing/requirements.txt
+  tags:
+    - software-installation
+    - using-pip
+    - python
+
+- name: Install Packages | pip | requirements file
+  pip:
+    executable: "{{ python_pip_executable }}"
+    state: latest
+    requirements: "{{ python_requirements_file }}"
+  when: python_requirements_file != 'omit'
+  tags:
+    - software-installation
+    - using-pip
+    - python

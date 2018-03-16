@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Vagrant
+.vagrant
+.ansible/*.retry
+
 # Distribution / packaging
 .Python
 env/

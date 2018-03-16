@@ -1,0 +1,77 @@
+- name: Add Redis Repo into source list
+  apt_repository:
+    repo: 'ppa:chris-lea/redis-server'
+    state: present
+    update_cache: yes
+
+- name: Install Redis
+  apt: name=redis-server state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  notify: restart redis
+
+- name: Configuring Redis
+  template:
+    src: redis.conf.j2
+    dest: /etc/redis/redis.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart redis
+
+- name: Set Redis ulimit
+  lineinfile:
+    dest: /etc/default/redis-server
+    regexp: '^\s*#?\s*ULIMIT\s*=.*$'
+    insertafter: EOF
+    line: "ULIMIT={{ redis_ulimit }}"
+
+- name: Sysctl vm.swappiness
+  sysctl:
+    name: vm.swappiness
+    value: 0
+    reload: true
+    state: present
+  when: sysctl_vm_swappiness
+
+- name: Sysctl vm.overcommit_memory
+  sysctl:
+    name: vm.overcommit_memory
+    value: 1
+    reload: true
+    state: present
+  when: sysctl_vm_overcommit_memory
+
+- name: Start Redis and enable at boot
+  service: name=redis-server enabled=yes state=started
+
+# - name: Diable transparent_hugepage
+#   shell: "echo never > {{ item }}"
+#   with_items:
+#     - /sys/kernel/mm/transparent_hugepage/enabled
+#     - /sys/kernel/mm/transparent_hugepage/defrag
+
+# - name: Configure rc.local
+#   lineinfile:
+#     dest: /etc/rc.local
+#     regexp: "{{ item | regex_escape() }}"
+#     line: "{{ item }}"
+#     insertbefore: "exit 0"
+#   with_items:
+#     - "sysctl -w net.core.somaxconn=65535"
+#     - "/sys/kernel/mm/transparent_hugepage/enabled"
+#     - "/sys/kernel/mm/transparent_hugepage/defrag"
+#   notify: restart redis
+
+# - name: Configure transparent_hugepage grub
+#   lineinfile:
+#     dest: /etc/default/grub
+#     regexp: "^GRUB_CMDLINE_LINUX_DEFAULT="
+#     line: 'GRUB_CMDLINE_LINUX_DEFAULT="{{ grub_cmdline_linux_default }}"'
+#   register: grub_file
+#   tags: grub
+
+# - name: Update grub
+#   command: sudo update-grub
+#   when: grub_file | changed
+
+# - name: Flush handlers
+#   meta: flush_handlers

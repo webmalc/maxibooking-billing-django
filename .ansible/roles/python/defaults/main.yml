@@ -1,0 +1,7 @@
+---
+python_packages: [virtualfish,jedi,json-rpc,service_factory,autoflake,hy,php,isort,yapf,flake8,pylint,ipdb]
+python_build_dependencies: []
+python_requirements_file: omit
+python_legacy_support: no
+# python_pip_executable: "/usr/bin/pip{{ 2 if python_legacy_support else 3 }}"
+python_pip_executable: "/usr/bin/python3.6 -m pip"
