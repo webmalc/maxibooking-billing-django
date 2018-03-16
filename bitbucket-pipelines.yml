@@ -24,5 +24,5 @@ definitions:
       image: postgres 
       environment: 
         POSTGRES_DB: billing 
-        POSTGRES_USER: postgres 
-        POSTGRES_PASSWORD: postgres
+        POSTGRES_USER: billing 
+        POSTGRES_PASSWORD: billing
