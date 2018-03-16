@@ -3,24 +3,16 @@ Maxibooking billing django rest backend
 
 ## urls
 * two-factor setup url: account/two_factor/setup/
-* admin: admin/
-* all urls: ./manage.py show_urls --format=table
+* admin: admin/ (login: admin password: password)
 
 ## minimum requirements
-* python >= 3.6
-* postgresql >= 9.6
-* redis >= 4.0
+* vagrant docker
 
-## after installation
-* local_settings.py.dist -> local_settings.py
-* ./manage.py makemigrations
-* ./manage.py migrate
-* ./manage.py createsuperuser
-* ./manage.py cities_light
-* ./manage.py citytranslate
+## installation
+* vagrant up
 
-## start project in dev
-* first terminal: ./manage.py runserver_plus
-* second terminal: celery worker -A billing --loglevel=DEBUG 
-* third terminal: celery beat -A billing --loglevel=DEBUG
+## start project
+* vagrant ssh
+* server (url: localhost:8000)
+* optional: pytest
 
