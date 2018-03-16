@@ -3,6 +3,7 @@
   copy:
     src: "{{billing.path}}billing/settings_local.py.dist"
     dest: "{{billing.path}}billing/settings_local.py"
+    remote_src: yes
     force: no
   tags: billing  
 
@@ -20,6 +21,13 @@
 
 - name: Billing - migrate
   shell: python3.6 ./manage.py migrate
+  args:
+    chdir: "{{billing.path}}"
+    executable: /usr/bin/fish
+  tags: billing  
+
+- name: Billing - compilemessages
+  shell: python3.6 ./manage.py compilemessages
   args:
     chdir: "{{billing.path}}"
     executable: /usr/bin/fish

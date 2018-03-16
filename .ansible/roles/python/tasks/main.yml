@@ -26,6 +26,7 @@
     - python3.6-dev
     - python3-setuptools
     - python3-pip
+    - gettext
   tags:
     - software-installation
     - using-apt
