@@ -1,0 +1,17 @@
+---
+billing:
+  path: /var/www/billing/
+  fixtures:
+    - users
+    - countries
+    - regions
+    - cities 
+    - clients
+    - properties
+    - rooms
+    - service_categories
+    - services
+    - auth
+    - client_services
+    - transactions
+    - companies

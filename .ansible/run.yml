@@ -14,3 +14,4 @@
     - role: python
     - role: sqlite
     - role: memcached
+    - role: billing

@@ -2,8 +2,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'billing',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'USER': 'billing',
+        'PASSWORD': 'billing',
         'HOST': '127.0.0.1',
         'PORT': '5432'
     }
@@ -21,7 +21,7 @@ ADMINS = (('maxibooking.group', 'admin@example.com'), )
 MANAGERS = ADMINS
 
 SECRET_KEY = 'my_super_secret_key'
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 DEBUG = True
 
 CELERY_LOGLEVEL = 'debug'

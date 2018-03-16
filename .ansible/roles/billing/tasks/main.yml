@@ -1,0 +1,34 @@
+
+- name: Billing - copy settings
+  copy:
+    src: "{{billing.path}}billing/settings.local.py.dist"
+    dest: "{{billing.path}}billing/settings.local.py"
+    force: no
+  tags: billing  
+
+- name: Billing - install nmp dependencies
+  npm:
+    path: "{{billing.path}}"
+  tags: billing  
+
+- name: Billing - makemigrations
+  shell: python3.6 ./manage.py makemigrations
+  args:
+    chdir: "{{billing.path}}"
+    executable: /usr/bin/fish
+  tags: billing  
+
+- name: Billing - migrate
+  shell: python3.6 ./manage.py migrate
+  args:
+    chdir: "{{billing.path}}"
+    executable: /usr/bin/fish
+  tags: billing  
+
+- name: Billing - load fixtures
+  shell: python3.6 ./manage.py loaddata fixtures/tests/{{item}}.json
+  with_items: "{{ billing.fixtures }}"
+  args:
+    chdir: "{{billing.path}}"
+    executable: /usr/bin/fish
+  tags: billing  

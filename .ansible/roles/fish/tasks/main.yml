@@ -42,7 +42,12 @@
     executable: /usr/bin/fish
 
 - name: Make server alias
-  shell: alias server "python3.6 manage.py runserver_plus"; funcsave server
+  shell: alias server "python3.6 manage.py runserver_plus 0.0.0.0:8000"; funcsave server
+  args:
+    executable: /usr/bin/fish
+
+- name: Make sql alias
+  shell: alias sql "sudo -u postgres psql"; funcsave sql
   args:
     executable: /usr/bin/fish
 
