@@ -1,0 +1,54 @@
+- name: Billing deploy - git pull/clone
+  git:
+    repo: "{{billing.repo}}"
+    dest: "{{billing.path}}"
+  tags: deploy  
+
+- name: Billing deploy - install nmp dependencies
+  npm:
+    path: "{{billing.path}}"
+  tags: deploy  
+
+- name: Billing deploy - upgrade pip
+  pip:
+    state: latest
+    virtualenv: "{{billing.venv}}"
+    name: "pip"
+    extra_args: --upgrade
+  tags: deploy  
+
+- name: Billing deploy - pip requirements
+  pip:
+    state: latest
+    virtualenv: "{{billing.venv}}"
+    requirements: "{{billing.path}}requirements.txt"
+  tags: deploy  
+
+- name: Billing deploy - migrate, static, messages
+  shell: "{{billing.venv}}bin/python manage.py {{item}}"
+  args:
+    chdir: "{{billing.path}}"
+    executable: /bin/bash
+  with_items:
+    - makemigrations --no-input
+    - migrate --no-input
+    - collectstatic --no-input
+    - compilemessages
+  tags: deploy  
+
+- name: Billing deploy - restart supervisor
+  supervisorctl:
+    name: "{{item}}"
+    state: restarted
+  with_items:
+    - billing
+    - billing_celery_high
+    - billing_celery_default
+    - billing_celery_beat
+  become: true
+  tags: deploy  
+
+- name: Billing deploy - restart nginx
+  service: name=nginx state=restarted
+  become: true
+  tags: deploy  

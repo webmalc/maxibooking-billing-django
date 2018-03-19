@@ -1,0 +1,8 @@
+---
+
+- name: Deploy billing
+  hosts: all
+  remote_user: ubuntu
+
+  roles:
+    - role: deploy

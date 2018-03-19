@@ -1,0 +1,19 @@
+---
+billing:
+  path: /home/ubuntu/python/maxibooking-billing/
+  repo: git@bitbucket.org:MaxiBookingTeam/maxibooking-billing.git
+  venv: /home/ubuntu/.virtualenvs/billing/
+  fixtures:
+    - users
+    - countries
+    - regions
+    - cities 
+    - clients
+    - properties
+    - rooms
+    - service_categories
+    - services
+    - auth
+    - client_services
+    - transactions
+    - companies

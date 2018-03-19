@@ -1,5 +1,11 @@
 from fabric.api import cd, env, prefix, run, sudo
 
+"""
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!! DEPRECATED: use ansible (more in README.md) !!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"""
+
 env.hosts = ['billing.maxi-booking.com']
 env.port = 22
 env.key_filename = '~/.ssh/maxibookingltd.pem'
