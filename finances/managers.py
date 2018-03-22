@@ -1,6 +1,7 @@
 import arrow
 from django.apps import apps
 from django.conf import settings
+from django.db import models
 
 from billing.managers import LookupMixin
 
@@ -43,6 +44,18 @@ class OrderManager(LookupMixin):
             status__in=('new',
                         'processing'), expired_date__lte=now.datetime).exclude(
                             client__status__in=exclude_client_statuses)
+
+
+class PriceManager(models.Manager):
+    def filter_by_country(self, country, service):
+        """
+        Get prices for country
+        """
+        base_query = self.filter(service=service, is_enabled=True)
+        query = base_query.filter(country=country)
+        if not query.count():
+            query = base_query.filter(country__isnull=True)
+        return query
 
 
 class ServiceManager(LookupMixin):

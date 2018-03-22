@@ -11,7 +11,11 @@
   tags: postgres  
 
 - name: Start PostgreSQL and enable at boot
-  service: name=postgresql enabled=yes state=started
+  service:
+    name: postgresql
+    enabled: yes
+    state: started
+  tags: postgres  
 
 - block:
 

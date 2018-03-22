@@ -1,5 +1,4 @@
 from annoying.fields import AutoOneToOneField
-from billing.models import CommonInfo, CountryBase
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -9,8 +8,11 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from hotels.models import Country
 from phonenumber_field.modelfields import PhoneNumberField
+
+from billing.models import CommonInfo, CountryBase
+from finances.lib.calc import Calc
+from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -545,12 +547,7 @@ class ClientService(CommonInfo, TimeStampedModel):
         """
         Service quantity for service group
         """
-        service = self.service
-        return {
-            'connection':
-            service.default_rooms * self.quantity
-            if service.default_rooms else 0,
-        }.get(service.type, self.quantity)
+        return self.quantity
 
     def price_repr(self):
         return '{} {}'.format(
@@ -571,7 +568,7 @@ class ClientService(CommonInfo, TimeStampedModel):
         return begin if begin >= default_begin else default_begin
 
     def save(self, *args, **kwargs):
-        self.price = self.service.get_price(client=self.client) * self.quantity
+        self.price = Calc.factory(self).calc()
 
         if self.begin is None:
             self.begin = self.get_default_begin()
@@ -594,6 +591,7 @@ class ClientService(CommonInfo, TimeStampedModel):
                 client=self.client,
                 service_type=self.service.type,
                 exclude_pk=self.pk)
+        self.client.restrictions_update()
 
     @staticmethod
     def validate_dates(begin, end, is_new):
@@ -604,7 +602,8 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     @staticmethod
     def validate_service(service, client):
-        if service and not service.get_price(client=client):
+        if service and not service.prices.filter_by_country(
+                client.country, service).count():
             raise ValidationError(_('Empty service prices.'))
 
     def clean(self):

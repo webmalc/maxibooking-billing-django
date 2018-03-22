@@ -3,7 +3,6 @@ import logging
 from django.http import HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -87,24 +86,6 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ServiceSerializer
     filter_fields = ('is_enabled', 'is_default', 'period_units', 'type',
                      'created')
-
-    @detail_route(methods=['get'])
-    def price(self, request, pk):
-        """
-        Get price by country or client
-        """
-        service = self.get_object()
-        client = request.GET.get('client', None)
-        country = request.GET.get('country', None)
-        price = service.get_price(client=client, country=country)
-        return Response({
-            'status':
-            True,
-            'price':
-            getattr(price, 'amount', None),
-            'price_currency':
-            getattr(getattr(price, 'currency', None), 'code', None)
-        })
 
 
 class PriceViewSet(viewsets.ReadOnlyModelViewSet):

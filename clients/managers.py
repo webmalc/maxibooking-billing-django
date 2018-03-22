@@ -80,15 +80,13 @@ class ClientManager(LookupMixin):
         """
         now = arrow.utcnow().datetime
         rooms = client.services.filter(
-            service__type='rooms', begin__lte=now, status='active').aggregate(
-                Sum('quantity'))['quantity__sum']
+            service__type='rooms',
+            begin__lte=now,
+            status='active',
+            # is_enabled=True,
+        ).aggregate(Sum('quantity'))['quantity__sum']
 
-        default_rooms = client.services.filter(
-            service__type='connection',
-            begin__lte=now, status='active').aggregate(
-                Sum('service__default_rooms'))['service__default_rooms__sum']
-
-        return int(rooms or 0) + int(default_rooms or 0)
+        return int(rooms or 0)
 
     def get_by_orders(self, paid, query=None):
         """
@@ -119,25 +117,17 @@ class ClientServiceManager(LookupMixin):
         Update clients connection and rooms services
         """
         service_manager = apps.get_model('finances', 'Service').objects
-        connection = service_manager.get_by_period('connection', period)
-        if not connection:
-            raise BaseException('connection service not found')
 
         rooms_service = service_manager.get_by_period('rooms', period)
-        if not rooms:
+        if not rooms_service:
             raise BaseException('rooms service not found')
 
         client.services.filter(status='next').update(
             status='archive',
             is_enabled=False,
         )
-        self._create_service(connection, client, 1, 'next')
-        default_rooms = connection.default_rooms
-
-        rooms_count = rooms - default_rooms
-        if rooms_count > 0:
-            self._create_service(rooms_service, client, rooms_count, 'next',
-                                 True)
+        if rooms > 0:
+            self._create_service(rooms_service, client, rooms, 'next', True)
 
     def get_prev(self, client_service, service_type=None):
         if not service_type:
@@ -146,7 +136,7 @@ class ClientServiceManager(LookupMixin):
             return self.filter(
                 status='active',
                 client=client_service.client,
-                service__type='connection').first()
+                service__type='rooms').first()
         try:
             return self.get(
                 # is_enabled=True,
@@ -179,7 +169,7 @@ class ClientServiceManager(LookupMixin):
         entries = client.services.filter(
             # is_enabled=True,
             status__in=statuses,
-            service__type__in=('rooms', 'connection')).select_related(
+            service__type__in=('rooms', )).select_related(
                 'service', 'client', 'service__category')
         return self.get_services_by_category(entries)
 
@@ -265,24 +255,15 @@ class ClientServiceManager(LookupMixin):
             raise BaseException('client already has services')
         service_manager = apps.get_model('finances', 'Service').objects
 
-        connection = service_manager.get_default('connection')
-        if not connection:
-            raise BaseException('default connection service not found')
-
         rooms = service_manager.get_default('rooms')
         if not rooms:
             raise BaseException('default rooms service not found')
 
         client.trial_activated = True
         client.save()
-        self._create_service(connection, client, 1, trial=True)
-        default_rooms = connection.default_rooms
         rooms_max = Room.objects.count_rooms(client)
-
-        rooms_count = rooms_max - default_rooms
-
-        if rooms_count > 0:
-            self._create_service(rooms, client, rooms_count, trial=True)
+        if rooms_max > 0:
+            self._create_service(rooms, client, rooms_max, trial=True)
 
     def _create_service(
             self,

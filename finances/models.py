@@ -18,7 +18,7 @@ from billing.models import CommonInfo
 from clients.models import Client, ClientService
 from hotels.models import Country
 
-from .managers import OrderManager, ServiceManager
+from .managers import OrderManager, PriceManager, ServiceManager
 from .validators import validate_price_periods
 
 
@@ -93,35 +93,6 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         return getattr(
             getattr(self.price_money, 'currency', None), 'code', None)
 
-    def get_price(self, country=None, client=None):
-        """
-        Get price by country or client
-        """
-        if isinstance(client, int) or \
-           (isinstance(client, str) and client.isnumeric()):
-            try:
-                client = Client.objects.get(pk=int(client))
-            except Client.DoesNotExist:
-                pass
-        if isinstance(client, Client):
-            country = client.country
-
-        if country:
-            query = self.prices.filter(is_enabled=True)
-            if isinstance(country, int) or \
-               (isinstance(country, str) and country.isnumeric()):
-                query = query.filter(country__id=int(country))
-            elif isinstance(country, Country):
-                query = query.filter(country=country)
-            else:
-                query = query.filter(country__tld=country)
-            try:
-                return query[0].price
-            except IndexError:
-                pass
-
-        return self.price_money
-
     @property
     def period_days(self):
         return self.period * self.PERIODS_UNITS_TO_DAYS.get(
@@ -163,6 +134,8 @@ class Price(CommonInfo, TimeStampedModel):
     """
     Price class
     """
+    objects = PriceManager()
+
     price = MoneyField(
         max_digits=20,
         decimal_places=2,
@@ -200,11 +173,12 @@ class Price(CommonInfo, TimeStampedModel):
         default=True, db_index=True, verbose_name=_('for unit'))
 
     def __str__(self):
-        return '{}: {} {}-{}'.format(
+        return '{}: {} {}-{} {}'.format(
             self.country if self.country else 'Base',
             self.price,
             self.period_from or '∞',
             self.period_to or '∞',
+            'per unit' if self.for_unit else 'per period',
         )
 
     def clean(self):

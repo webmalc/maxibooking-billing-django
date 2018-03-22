@@ -9,6 +9,7 @@ from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_activation, client_services_update
+from finances.lib.calc import Calc
 from finances.models import Order, Service, ServiceCategory
 
 pytestmark = pytest.mark.django_db
@@ -24,7 +25,7 @@ def test_client_service_category_group_class():
 
     assert len(group.client_services) == 2
     assert group.price == Money(14001.83, EUR)
-    assert group.quantity == 25
+    assert group.quantity == 7
 
     service2.pk = None
     service2.service_id = 3
@@ -121,22 +122,23 @@ def test_client_service_create_invalid_by_admin(admin_client):
 
 def test_client_service_create_by_admin(admin_client):
     client = Client.objects.get(login='user-one')
-    assert client.restrictions.rooms_limit == 10
 
-    data = {'quantity': 2, 'client': client.login, 'service': 2}
+    assert client.restrictions.rooms_limit != 5
+
+    data = {'quantity': 5, 'client': client.login, 'service': 2}
     url = reverse('clientservice-list')
     response = admin_client.post(
         url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
 
-    assert response_json['price'] == '7000.00'
+    assert response_json['price'] == '17500.00'
     assert response_json['client'] == client.login
     assert response_json['is_enabled'] is True
     assert response_json['country'] == 'ad'
     assert response_json['status'] == 'active'
 
-    client.restrictions.refresh_from_db()
-    assert client.restrictions.rooms_limit == 12
+    client = Client.objects.get(login='user-one')
+    assert client.restrictions.rooms_limit == 5
 
     begin = arrow.utcnow()
     end = begin.shift(years=+1)
@@ -145,18 +147,6 @@ def test_client_service_create_by_admin(admin_client):
         format) == begin.datetime.strftime(format)
     assert arrow.get(response_json['end']).datetime.strftime(
         format) == end.datetime.strftime(format)
-
-    client_service = ClientService.objects.get(pk=1)
-    assert client_service.is_enabled is True
-    data['service'] = 4
-    data['quantity'] = 3
-    response = admin_client.post(
-        url, data=json.dumps(data), content_type="application/json")
-    client_service.refresh_from_db()
-    assert client_service.is_enabled is False
-
-    client.restrictions.refresh_from_db()
-    assert client.restrictions.rooms_limit == 12
 
 
 def test_client_services_update_active_task(admin_client):
@@ -170,7 +160,8 @@ def test_client_services_update_active_task(admin_client):
     client_service.client_id = 4
     client_service.is_paid = True
     client_service.save()
-    assert client_service.price == service.get_price(client=4) * 2
+
+    assert client_service.price == Calc.factory(client_service).calc()
     price = service.prices.get(pk=8)
     price.price = Money(2500, EUR)
     price.save()
@@ -208,7 +199,7 @@ def test_client_services_update_next_task(admin_client):
     client_service.is_paid = False
     client_service.save()
 
-    assert client_service.price == service.get_price(client=4) * 2
+    assert client_service.price == Calc.factory(client_service).calc()
     price = service.prices.get(pk=8)
     price.price = Money(2500, EUR)
     price.save()

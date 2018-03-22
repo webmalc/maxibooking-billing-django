@@ -35,7 +35,7 @@ def test_order_client_services_by_category(make_orders):
     assert len(cats[0].client_services) == 1
 
     assert cats[0].price == Money(3750, EUR)
-    assert cats[1].quantity == 25
+    assert cats[1].quantity == 7
 
 
 def test_order_creation_and_modifications(mailoutbox):

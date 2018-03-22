@@ -260,7 +260,7 @@ CELERY_QUEUES = (
     Queue('priority_high'),
 )
 CELERY_DEFAULT_QUEUE = 'default'
-CELERYD_TASK_SOFT_TIME_LIMIT = 60 * 3
+CELERYD_TASK_SOFT_TIME_LIMIT = 60 * 5
 CELERYBEAT_SCHEDULE = {
     'client_services_update_task': {
         'task': 'clients.tasks.client_services_update',

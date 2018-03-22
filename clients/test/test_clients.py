@@ -22,7 +22,7 @@ def service():
     service = Service.objects.create(
         title='Temp service',
         type='rooms',
-        period=3,
+        period=2,
         category_id=1,
         period_units='month',
     )
@@ -136,8 +136,8 @@ def test_client_tariff_detail_by_user(client):
 def test_client_tariff_detail_by_admin(admin_client, service):
     client = Client.objects.get(login='user-four')
     now = arrow.utcnow().format('YYYY-MM-DD')
-    next_begin = arrow.utcnow().shift(months=3).format('YYYY-MM-DD')
-    _update_tariff(25, 3, admin_client)
+    next_begin = arrow.utcnow().shift(months=2).format('YYYY-MM-DD')
+    _update_tariff(25, 2, admin_client)
     response = admin_client.get(
         reverse('client-tariff-detail', args=['user-four']),
         content_type="application/json")
@@ -150,7 +150,7 @@ def test_client_tariff_detail_by_admin(admin_client, service):
     assert now in next_tariff['begin']
 
     client.services.update(status='active')
-    _update_tariff(44, 3, admin_client)
+    _update_tariff(44, 2, admin_client)
     response = admin_client.get(
         reverse('client-tariff-detail', args=['user-four']),
         content_type="application/json")
@@ -187,7 +187,7 @@ def test_client_tariff_update_invalid_by_admin(admin_client):
     )
     assert response.json()['status'] is False
     assert response.json()[
-        'message'] == 'failed update. Error: connection service not found'
+        'message'] == 'failed update. Error: rooms service not found'
 
 
 def test_client_tariff_update_by_admin(admin_client, service):
@@ -196,15 +196,15 @@ def test_client_tariff_update_by_admin(admin_client, service):
 
     _update_tariff(34, 3, admin_client)
     client.refresh_from_db()
-    assert client.services.count() == 2
-    assert client.services.get(service__type='rooms').quantity == 24
+    assert client.services.count() == 1
+    assert client.services.get(service__type='rooms').quantity == 34
 
     client.services.update(status='active')
     _update_tariff(44, 3, admin_client)
-    assert client.services.count() == 4
-    assert client.services.filter(status='next').count() == 2
+    assert client.services.count() == 2
+    assert client.services.filter(status='next').count() == 1
     assert client.services.get(
-        status='next', service__type='rooms').quantity == 34
+        status='next', service__type='rooms').quantity == 44
 
     next_rooms = client.services.get(status='next', service__type='rooms')
     prev_rooms = client.services.get(status='active', service__type='rooms')
@@ -212,31 +212,31 @@ def test_client_tariff_update_by_admin(admin_client, service):
     assert begin.strftime(format) == prev_rooms.end.strftime(format)
 
     _update_tariff(12, 3, admin_client)
-    assert client.services.count() == 6
-    assert client.services.filter(status='next', is_enabled=True).count() == 2
+    assert client.services.count() == 3
+    assert client.services.filter(status='next', is_enabled=True).count() == 1
     next_rooms = client.services.get(
         status='next',
         service__type='rooms',
         is_enabled=True,
     )
     assert begin.strftime(format) == next_rooms.begin.strftime(format)
-    assert next_rooms.quantity == 2
+    assert next_rooms.quantity == 12
 
     _update_tariff(5, 3, admin_client)
-    assert client.services.count() == 7
+    assert client.services.count() == 4
     assert client.services.filter(status='next', is_enabled=True).count() == 1
     assert client.services.filter(is_enabled=True).count() == 1
 
     _update_tariff(12, 3, admin_client)
-    assert client.services.count() == 9
-    assert client.services.filter(status='next', is_enabled=True).count() == 2
+    assert client.services.count() == 5
+    assert client.services.filter(status='next', is_enabled=True).count() == 1
     next_rooms = client.services.get(
         status='next',
         service__type='rooms',
         is_enabled=True,
     )
     assert begin.strftime(format) == next_rooms.begin.strftime(format)
-    assert next_rooms.quantity == 2
+    assert next_rooms.quantity == 12
 
     service_rooms_year = Service.objects.create(
         title='Temp service rooms year',
@@ -245,20 +245,12 @@ def test_client_tariff_update_by_admin(admin_client, service):
         category_id=1,
         period_units='month',
     )
-    service_connection_year = Service.objects.create(
-        title='Temp service connection year',
-        type='connection',
-        period=12,
-        category_id=1,
-        period_units='month',
-    )
     Price.objects.create(service=service_rooms_year, price=Money(233, EUR))
-    Price.objects.create(
-        service=service_connection_year, price=Money(1500, EUR))
 
     _update_tariff(22, 12, admin_client)
+
     next_services = client.services.filter(status='next', is_enabled=True)
-    assert next_services.count() == 2
+    assert next_services.count() == 1
     next_rooms = client.services.get(
         status='next',
         service__type='rooms',
@@ -283,15 +275,15 @@ def test_client_tariff_update_by_admin(admin_client, service):
 
     client.refresh_from_db()
 
-    assert client.services.filter(status='active').count() == 2
+    assert client.services.filter(status='active').count() == 1
     assert client.restrictions.rooms_limit == 22
 
     client.services.exclude(status='active').delete()
-    client.services.filter(service__type='rooms').delete()
     _update_tariff(22, 3, admin_client)
 
     prev_service = client.services.filter(status='active').first()
     next_services = client.services.filter(status='next', is_enabled=True)
+
     for next_service in next_services:
         assert prev_service.end == next_service.begin
 
@@ -563,11 +555,6 @@ def test_admin_trial_by_admin(admin_client):
     assert response_json['status'] is True
     assert response_json['message'] == 'trial successfully activated'
 
-    connection_service = client.services.get(
-        service__type='connection',
-        status='active',
-        is_enabled=True,
-    )
     rooms_service = client.services.get(
         service__type='rooms',
         status='active',
@@ -575,22 +562,15 @@ def test_admin_trial_by_admin(admin_client):
     )
 
     client.refresh_from_db()
-    assert client.services.count() == 2
+    assert client.services.count() == 1
     assert client.trial_activated is True
 
     assert client.restrictions.rooms_limit == 25
-    assert rooms_service.price == Money(52500.0, EUR)
-    assert rooms_service.quantity == 15
-    assert connection_service.status == 'active'
-    assert connection_service.service.default_rooms == 10
+    assert rooms_service.price == Money(87500.0, EUR)
+    assert rooms_service.quantity == 25
 
     format = '%d.%m.%Y %H:%I'
     now = arrow.utcnow()
-
-    assert connection_service.begin.strftime(format) == now.datetime.strftime(
-        format)
-    assert connection_service.end.strftime(format) == now.shift(
-        days=settings.MB_TRIAL_DAYS).datetime.strftime(format)
 
     assert rooms_service.begin.strftime(format) == now.datetime.strftime(
         format)
@@ -619,13 +599,13 @@ def test_client_check_status():
 
 def test_client_restrictions_update():
     client = Client.objects.get(login='user-two')
-    assert client.restrictions.rooms_limit == 15
+    assert client.restrictions.rooms_limit != 125
 
     client.restrictions_update(rooms=125)
     assert client.restrictions.rooms_limit == 125
 
     client.restrictions_update()
-    assert client.restrictions.rooms_limit == 15
+    assert client.restrictions.rooms_limit == 7
 
 
 def test_client_ru_fields_update(admin_client):
