@@ -1,4 +1,6 @@
 import pytest
+from django.core.urlresolvers import reverse
+from django.test import TestCase
 from moneyed import EUR, RUB, Money
 
 from clients.models import ClientService
@@ -73,3 +75,79 @@ def test_calc_price(make_prices):
     service.prices.filter().delete()
     with pytest.raises(CalcException):
         Calc.factory(4).calc(quantity=12, country=1)
+
+
+def test_calc_api_by_user(client):
+    response = client.get(reverse('service-calc'))
+    assert response.status_code == 401
+
+
+def test_calc_api_invalid_by_admin(admin_client):
+    url = reverse('service-calc')
+    response_empty = admin_client.get(url)
+    response_quantity = admin_client.get(url + '?quantity=1sd&country=ff')
+    response_country = admin_client.get(url + '?quantity=1&country=ff')
+    response_service = admin_client.get(
+        url + '?quantity=12&country=ad&period=9')
+
+    assert response_empty.status_code == 200
+    assert response_empty.json() == {
+        'errors': {
+            'quantity': ['This field is required.'],
+            'country': ['This field is required.']
+        }
+    }
+    assert response_quantity.status_code == 200
+    assert response_quantity.json() == {
+        'errors': {
+            'quantity': ['A valid integer is required.'],
+        }
+    }
+    assert response_country.status_code == 200
+    assert response_country.json() == {
+        'errors': {
+            'calc': ['Invalid country or quantity.'],
+        }
+    }
+    assert response_service.status_code == 200
+    assert response_service.json() == {
+        'errors': {
+            'service': ['service not found.'],
+        }
+    }
+
+
+def test_calc_api_by_admin(admin_client, make_prices):
+    url = reverse('service-calc')
+
+    response_1 = admin_client.get(url + '?quantity=12&country=ad&period=3')
+    response_2 = admin_client.get(url + '?quantity=22&country=ad&period=1')
+    response_3 = admin_client.get(url + '?quantity=12&country=ad&period=3')
+    response_data = {'status': True, 'price': 27600.0, 'price_currency': 'EUR'}
+
+    assert response_1.status_code == 200
+    assert response_2.status_code == 200
+    assert response_3.status_code == 200
+    assert response_1.json() == response_data
+    assert response_2.json() == {
+        'status': True,
+        'price': 922.0,
+        'price_currency': 'EUR'
+    }
+
+    assert response_3.json() == response_data
+
+
+@pytest.mark.usefixtures("make_prices")
+class CalcTestCase(TestCase):
+    def test_calc_api_cache(self):
+        admin_client = self.client
+        admin_client.login(username='admin', password='password')
+        url = reverse('service-calc')
+
+        with self.assertNumQueries(7):
+            admin_client.get(url + '?quantity=12&country=ad&period=3')
+        with self.assertNumQueries(7):
+            admin_client.get(url + '?quantity=22&country=ad&period=3')
+        with self.assertNumQueries(2):
+            admin_client.get(url + '?quantity=12&country=ad&period=3')

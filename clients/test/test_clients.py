@@ -138,6 +138,7 @@ def test_client_tariff_detail_by_admin(admin_client, service):
     now = arrow.utcnow().format('YYYY-MM-DD')
     next_begin = arrow.utcnow().shift(months=2).format('YYYY-MM-DD')
     _update_tariff(25, 2, admin_client)
+
     response = admin_client.get(
         reverse('client-tariff-detail', args=['user-four']),
         content_type="application/json")
@@ -159,6 +160,7 @@ def test_client_tariff_detail_by_admin(admin_client, service):
 
     next_tariff = response_json['next']
     current_tariff = response_json['main']
+
     assert current_tariff['rooms'] == 25
     assert next_tariff['rooms'] == 44
     assert now in current_tariff['begin']

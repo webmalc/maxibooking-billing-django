@@ -114,7 +114,7 @@ class ClientServiceManager(LookupMixin):
 
     def client_tariff_update(self, client, rooms, period):
         """
-        Update clients connection and rooms services
+        Update clients rooms services
         """
         service_manager = apps.get_model('finances', 'Service').objects
 
@@ -285,7 +285,7 @@ class ClientServiceManager(LookupMixin):
         client_service.quantity = quantity
         client_service.status = status
         if connection:
-            client_service.begin = client_service.get_default_begin(True)
+            client_service.begin = client_service.get_default_begin()
         if trial:
             client_service.end = arrow.get(client_service.begin).shift(
                 days=settings.MB_TRIAL_DAYS).datetime

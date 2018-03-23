@@ -555,7 +555,7 @@ class ClientService(CommonInfo, TimeStampedModel):
 
     price_repr.short_description = _('price')
 
-    def get_default_begin(self, connection=False):
+    def get_default_begin(self):
         """
         Get default begin for client_service
         """
@@ -574,6 +574,7 @@ class ClientService(CommonInfo, TimeStampedModel):
             self.begin = self.get_default_begin()
         if self.end is None:
             self.end = self.service.get_default_end(self.begin)
+
         if self.country_id is None:
             self.country = self.client.country
         if self.start_at is None:

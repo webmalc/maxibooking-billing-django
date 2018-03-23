@@ -3,6 +3,20 @@ from rest_framework import serializers
 from .models import Order, Price, Service, ServiceCategory, Transaction
 
 
+class CalcQuerySerializer(serializers.Serializer):
+    """
+    CalcQuery model
+    """
+    quantity = serializers.IntegerField(min_value=0)
+    period = serializers.IntegerField(min_value=0, required=False, default=1)
+    period_units = serializers.ChoiceField(
+        choices=['month', 'year', 'day'],
+        required=False,
+        default='month',
+    )
+    country = serializers.CharField(max_length=2, min_length=2)
+
+
 class PaymentSystemSerializer(serializers.Serializer):
     """
     PaymentSystem serializer

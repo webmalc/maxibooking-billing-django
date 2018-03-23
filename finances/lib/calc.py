@@ -51,13 +51,21 @@ class Calc(object):
         """
         if not quantity:
             quantity = getattr(self, 'quantity', None)
-        if country and not isinstance(country, Country):
-            country = Country.objects.get(pk=country)
+        try:
+            if country and str(country).isnumeric() and not isinstance(
+                    country, Country):
+                country = Country.objects.get(pk=country)
+            elif country and not str(country).isnumeric() and not isinstance(
+                    country, Country):
+                country = Country.objects.get(tld=country)
+        except Country.DoesNotExist:
+            country = None
+
         if not country:
             country = getattr(self, 'country', None)
+
         if not quantity or not country:
-            raise Exception('Invalid country - {} or quantity - {}'.format(
-                country, quantity))
+            raise Exception('Invalid country or quantity.')
 
         prices = list(
             apps.get_model('finances.Price').objects.filter_by_country(

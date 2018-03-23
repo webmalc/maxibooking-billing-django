@@ -1,16 +1,22 @@
 import logging
 
 from django.http import HttpResponseNotFound
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
+from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import OrderFilterSet
+from .lib.calc import Calc
+from .lib.calc import Exception as CalcException
 from .models import Order, Price, Service, ServiceCategory, Transaction
-from .serializers import (OrderSerializer, PaymentSystemSerializer,
-                          PriceSerializer, ServiceCategorySerializer,
-                          ServiceSerializer, TransactionSerializer)
+from .serializers import (CalcQuerySerializer, OrderSerializer,
+                          PaymentSystemSerializer, PriceSerializer,
+                          ServiceCategorySerializer, ServiceSerializer,
+                          TransactionSerializer)
 from .systems import manager
 
 
@@ -86,6 +92,42 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ServiceSerializer
     filter_fields = ('is_enabled', 'is_default', 'period_units', 'type',
                      'created')
+
+    @list_route(methods=['get'])
+    @method_decorator(cache_page(60 * 60 * 24))
+    def calc(self, request):
+        """
+        Calc serivice price
+        quantity - client service quantity
+        period - service period
+        period_units - month, year, day
+        country - user country
+        """
+        query = CalcQuerySerializer(data=request.GET)
+
+        if not query.is_valid():
+            return Response({'errors': query.errors})
+
+        data = query.data
+        service = Service.objects.get_by_period(
+            service_type='rooms',
+            period=data.get('period'),
+            period_units=data.get('period_units'),
+        )
+        if not service:
+            return Response({'errors': {'service': ['service not found.']}})
+
+        try:
+            price = Calc.factory(service).calc(
+                quantity=data.get('quantity'), country=data.get('country'))
+        except CalcException as e:
+            return Response({'errors': {'calc': [str(e)]}})
+
+        return Response({
+            'status': True,
+            'price': price.amount,
+            'price_currency': price.currency.code
+        })
 
 
 class PriceViewSet(viewsets.ReadOnlyModelViewSet):

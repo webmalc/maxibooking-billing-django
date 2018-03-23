@@ -1,4 +1,19 @@
 * ISSUES
+** TODO prices migration
+** TODO not confirmed client
+** TODO manual order
+** TODO fix trial test
+** TODO trans custom json response
+** TODO client users and acl
+** TODO todos
+** TODO django 2.0
+** TODO coverage 100%
+** TODO not periodical order
+** TODO registration refactor
+** TODO order prolongation interface
+** TODO maxibooking client actions
+** TODO multiprocessing
+* COMPLETED
 ** DONE tests for client installation
    CLOSED: [2017-07-21 Fri 13:58]
 ** DONE log mails and responses
@@ -99,7 +114,6 @@
 ** DONE fab deploy
    CLOSED: [2017-10-30 Mon 13:50]
 
-
 ** DONE payment type
    CLOSED: [2017-10-31 Tue 14:44]
 ** DONE rbk
@@ -110,10 +124,8 @@
 ** DONE validate order - payment_date, payment_system, status
    CLOSED: [2017-11-02 Thu 13:53]
 
-
 ** DONE cache pages
    CLOSED: [2017-11-02 Thu 17:12]
-
 
 ** DONE stripe
    CLOSED: [2017-11-08 Wed 12:31]
@@ -154,20 +166,12 @@
    CLOSED: [2018-01-31 Wed 11:49]
 ** DONE test for client lang and mail task lang
    CLOSED: [2018-01-31 Wed 11:49]
-** TODO client last login in list
-** TODO cities display name trans
-** TODO calc endpoint
-** TODO manual order
-** TODO fix trial test
-** TODO trans custom json response
-** TODO client users and acl
-** TODO todos
-** TODO django 2.0
-** TODO coverage 100%
-** TODO not periodical order
-** TODO registration refactor
-** TODO order prolongation interface
-** TODO maxibooking client actions
-** TODO multiprocessing
+** DONE client last login in list
+   CLOSED: [2018-03-22 Thu 16:59]
+** DONE cities display name trans
+   CLOSED: [2018-03-22 Thu 16:59]
+** DONE calc endpoint
+   CLOSED: [2018-03-23 Fri 15:34]
 
 
+   

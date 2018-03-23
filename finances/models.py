@@ -14,7 +14,7 @@ from moneyed import EUR, Money
 
 from billing.exceptions import BaseException
 from billing.lib.lang import get_lang
-from billing.models import CommonInfo
+from billing.models import CachedModel, CommonInfo
 from clients.models import Client, ClientService
 from hotels.models import Country
 
@@ -32,15 +32,15 @@ class ServiceCategory(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         verbose_name_plural = _('service categories')
 
 
-class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
+class Service(CachedModel, CommonInfo, TimeStampedModel,
+              TitleDescriptionModel):
     """
     Service class
     """
     PERIODS_UNITS = (('day', _('day')), ('month', _('month')), ('year',
                                                                 _('year')))
     PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
-    TYPES = (('connection', _('connection')), ('rooms', _('rooms')),
-             ('other', _('other')))
+    TYPES = (('rooms', _('rooms')), ('other', _('other')))
 
     objects = ServiceManager()
 
@@ -130,7 +130,7 @@ class Service(CommonInfo, TimeStampedModel, TitleDescriptionModel):
                            ('type', 'period', 'period_units', 'is_enabled'))
 
 
-class Price(CommonInfo, TimeStampedModel):
+class Price(CachedModel, CommonInfo, TimeStampedModel):
     """
     Price class
     """
