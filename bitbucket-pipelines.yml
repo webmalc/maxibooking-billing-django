@@ -20,6 +20,8 @@ definitions:
   services: 
     redis: 
       image: redis
+    memcached: 
+      image: memcached
     postgres: 
       image: postgres 
       environment: 

@@ -6,7 +6,7 @@
 ** TODO trans custom json response
 ** TODO client users and acl
 ** TODO todos
-** TODO django 2.0
+** TODO !!!! django 2.0
 ** TODO coverage 100%
 ** TODO not periodical order
 ** TODO registration refactor
