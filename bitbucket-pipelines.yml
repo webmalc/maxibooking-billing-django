@@ -14,6 +14,7 @@ pipelines:
           - python -m pytest --pep8 --flakes --create-db
         services: 
           - redis
+          - memcached
           - postgres
         
 definitions: 
