@@ -40,7 +40,9 @@ class Service(CachedModel, CommonInfo, TimeStampedModel,
     PERIODS_UNITS = (('day', _('day')), ('month', _('month')), ('year',
                                                                 _('year')))
     PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
-    TYPES = (('rooms', _('rooms')), ('other', _('other')))
+    # TYPES = (('rooms', _('rooms')), ('other', _('other')))
+    TYPES = (('rooms', _('rooms')), ('other', _('other')), ('connection',
+                                                            _('connection')))
 
     objects = ServiceManager()
 

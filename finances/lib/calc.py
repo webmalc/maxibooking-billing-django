@@ -121,3 +121,10 @@ class Other(Calc):
     Calc other service
     """
     pass
+
+
+class Connection(Calc):
+    """
+    TODO: DELETE
+    """
+    pass
