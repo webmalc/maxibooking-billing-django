@@ -111,6 +111,7 @@ def client_services_update():
             client_service.price = None
             client_service.save()
             order.client_services.add(client_service)
+        order.price = None
         order.save()
 
 

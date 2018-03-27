@@ -10,7 +10,7 @@ from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_activation, client_services_update
 from finances.lib.calc import Calc
-from finances.models import Order, Service, ServiceCategory
+from finances.models import Order, Price, Service, ServiceCategory
 
 pytestmark = pytest.mark.django_db
 
@@ -151,18 +151,32 @@ def test_client_service_create_by_admin(admin_client):
 
 def test_client_services_update_active_task(admin_client):
     end = arrow.utcnow().shift(days=+5)
-    service = Service.objects.get(pk=1)
+    service_rooms = Service.objects.get(pk=1)
+    service_other = Service.objects.get(pk=3)
+    service_other.period = 1
+    service_other.save()
+
     client_service = ClientService()
     client_service.quantity = 2
     client_service.begin = arrow.utcnow().shift(months=-1).datetime
     client_service.end = end.datetime
-    client_service.service = service
+    client_service.service = service_rooms
     client_service.client_id = 4
     client_service.is_paid = True
     client_service.save()
 
+    Price.objects.create(price=Money(1000, EUR), service=service_other)
+    client_service_other = ClientService()
+    client_service_other.quantity = 2
+    client_service_other.begin = client_service.begin
+    client_service_other.end = client_service.end
+    client_service_other.service = service_other
+    client_service_other.client_id = 4
+    client_service_other.is_paid = True
+    client_service_other.save()
+
     assert client_service.price == Calc.factory(client_service).calc()
-    price = service.prices.get(pk=8)
+    price = service_rooms.prices.get(pk=8)
     price.price = Money(2500, EUR)
     price.save()
 
@@ -176,13 +190,13 @@ def test_client_services_update_active_task(admin_client):
 
     order = Order.objects.get(
         client__pk=4, client_services__pk=client_service.pk)
-    assert order.price == Money(5000, EUR)
+    assert order.price == Money(7000, EUR)
     assert order.status == 'new'
+    assert order.client_services.count() == 2
 
     client_services_update.delay()
     orders = Order.objects.filter(
         client__pk=4, client_services__pk=client_service.pk)
-
     assert orders.count() == 1
 
 
