@@ -21,6 +21,10 @@ class Command(BaseCommand):
 
         for client in clients:
             rooms = Room.objects.count_rooms(client)
+            if rooms < 1:
+                rooms = client.restrictions.rooms_limit
+            if rooms < 10:
+                rooms = 10
             self.stdout.write(
                 self.style.SUCCESS('Process client: {}. Rooms: {}'.format(
                     client, rooms)))
@@ -57,4 +61,4 @@ class Command(BaseCommand):
             except ValidationError as e:
                 self.stdout.write(
                     self.style.ERROR(
-                        'Cant save client_service. e: '.format(e)))
+                        'Cant save client_service. e: {}'.format(e)))
