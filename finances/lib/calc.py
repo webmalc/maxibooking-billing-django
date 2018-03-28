@@ -1,8 +1,7 @@
 import logging
 
-from django.apps import apps
-
 from billing.lib.utils import clsfstr
+from django.apps import apps
 from hotels.models import Country
 
 
@@ -119,12 +118,5 @@ class Rooms(Calc):
 class Other(Calc):
     """
     Calc other service
-    """
-    pass
-
-
-class Connection(Calc):
-    """
-    TODO: DELETE
     """
     pass
