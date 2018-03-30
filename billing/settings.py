@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'tabbed_admin',
 
     # mb apps
+    'firewall',
     'finances',
     'billing',
     'clients',
