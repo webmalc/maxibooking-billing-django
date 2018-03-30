@@ -16,7 +16,7 @@ class EntriesField(models.TextField):
 
     def __init__(self, *args, **kwargs):
         kwargs['verbose_name'] = _('ip/domain list')
-        kwargs['help_text'] = ('one ip, ip address range or domain per line. \
+        kwargs['help_text'] = ('One ip, ip address range or domain per line. \
 Example: 127.0.0.0/24')
         super(EntriesField, self).__init__(*args, **kwargs)
 
@@ -102,7 +102,7 @@ class Rule(CommonMixin, OrderedModel):
         max_length=255,
         db_index=True,
         verbose_name=_('url'),
-        help_text=_('url regex pattern. Example: /admin/.*'),
+        help_text=_('Url regex pattern. Example: /admin/.*'),
     )
     entries = EntriesField(db_index=True, null=True, blank=True)
     groups = models.ManyToManyField(
