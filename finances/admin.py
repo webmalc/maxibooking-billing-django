@@ -130,7 +130,7 @@ class ServiceCategoryAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
     list_display = ('id', 'title', 'created')
     list_display_links = ('id', 'title')
     list_filter = ('created', )
-    search_fields = ('pk', 'title', 'description', 'services_title')
+    search_fields = ('pk', 'title', 'description', 'services__title')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     inlines = (ServiceInlineAdmin, )
     fieldsets = (
