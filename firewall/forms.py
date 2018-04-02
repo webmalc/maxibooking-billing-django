@@ -8,7 +8,7 @@ from .models import Rule
 class RuleForm(forms.ModelForm):
     class Meta:
         model = Rule
-        fields = '__all__'
+        exclude = ['created', 'modified', 'created_by', 'modified_by']
 
     def clean(self):
         """

@@ -4,6 +4,7 @@ Django firewall admin classes
 """
 from django.contrib import admin
 from django.core.urlresolvers import reverse
+from ordered_model.admin import OrderedModelAdmin
 
 from .forms import RuleForm
 from .models import Group, Rule
@@ -82,7 +83,7 @@ class GroupAdmin(CommonAdminMixin):
 
 
 @admin.register(Rule)
-class RuleAdmin(CommonAdminMixin):
+class RuleAdmin(CommonAdminMixin, OrderedModelAdmin):
     """
     Rule admin interface
     """
@@ -92,6 +93,7 @@ class RuleAdmin(CommonAdminMixin):
         list_display = super().get_list_display(request)
         list_display[2:2] = ['url', 'get_groups']
         list_display.insert(-2, 'is_allow')
+        list_display.append('move_up_down_links')
         return list_display
 
     def get_list_filter(self, request):

@@ -7,6 +7,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from ordered_model.models import OrderedModel
 
+from .managers import RuleManager
+
 
 class EntriesField(models.TextField):
     """
@@ -117,6 +119,8 @@ class Rule(CommonMixin, OrderedModel):
         verbose_name=_('is allow'),
         help_text=_('Allow or deny?'),
     )
+
+    objects = RuleManager()
 
     class Meta(OrderedModel.Meta):
         pass
