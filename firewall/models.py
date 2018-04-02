@@ -111,6 +111,12 @@ class Rule(CommonMixin, OrderedModel):
         verbose_name=_('ip/domain groups'),
         through=Group.rules.through,
     )
+    is_allow = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name=_('is allow'),
+        help_text=_('Allow or deny?'),
+    )
 
     class Meta(OrderedModel.Meta):
         pass

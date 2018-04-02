@@ -1,3 +1,7 @@
 textarea#id_description {
     max-height: 5em;
 }
+td.field-is_allow, td.field-is_enabled,
+th.column-is_allow, th.column-is_enabled {
+   text-align: center; 
+}
