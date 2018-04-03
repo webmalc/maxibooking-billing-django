@@ -205,7 +205,10 @@ LOGGING = {
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse',
-        }
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
     },
     'handlers': {
         'file': {
@@ -213,6 +216,12 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': 'logs/billing.log',
             'formatter': 'verbose'
+        },
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -240,6 +249,14 @@ LOGGING = {
         'billing': {
             'handlers': ['file', 'mail_admins', 'sentry'],
             'level': 'DEBUG',
+        },
+        'firewall': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'django': {
+            'handlers': ['console'],
+            'propagate': True,
         },
     }
 }

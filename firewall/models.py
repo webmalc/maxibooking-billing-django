@@ -14,13 +14,13 @@ from .settings import FIREWALL_CACHE_KEY
 
 class EntriesField(models.TextField):
     """
-    Ip/domain list field
+    Ip list field
     """
-    description = 'Ip/domain list'
+    description = 'Ip list'
 
     def __init__(self, *args, **kwargs):
-        kwargs['verbose_name'] = _('ip/domain list')
-        kwargs['help_text'] = ('One ip, ip address range or domain per line. \
+        kwargs['verbose_name'] = _('ip list')
+        kwargs['help_text'] = ('One ip/ip range  per line. \
 Example: 127.0.0.0/24')
         super(EntriesField, self).__init__(*args, **kwargs)
 
@@ -92,7 +92,7 @@ class CommonMixin(models.Model):
 
 class Group(CommonMixin):
     """
-    Ip/domain group
+    Ip group
     """
     entries = EntriesField(db_index=True)
     rules = models.ManyToManyField(
@@ -116,7 +116,7 @@ class Rule(CommonMixin, OrderedModel):
     groups = models.ManyToManyField(
         'firewall.Group',
         blank=True,
-        verbose_name=_('ip/domain groups'),
+        verbose_name=_('ip groups'),
         through=Group.rules.through,
     )
     is_allow = models.BooleanField(

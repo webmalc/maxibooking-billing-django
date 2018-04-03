@@ -27,8 +27,8 @@ class RuleFormTestCase(TestCase):
                 'name': ['This field is required.'],
                 'url': ['This field is required.'],
                 '__all__': [
-                    'At least one of the "ip/domain entries" or \
-"ip/domain groups" fields is required'
+                    'At least one of the "ip list" or \
+"ip groups" fields is required'
                 ]
             })
 

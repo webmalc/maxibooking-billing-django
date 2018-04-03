@@ -20,5 +20,5 @@ class RuleForm(forms.ModelForm):
         groups_count = groups.count() if groups else 0
         if not entries and not groups_count:
             raise ValidationError(
-                _('At least one of the "ip/domain entries" or \
-"ip/domain groups" fields is required'))
+                _('At least one of the "ip list" or \
+"ip groups" fields is required'))

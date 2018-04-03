@@ -1,6 +1,8 @@
+from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 
 from ..models import Group, Rule
+from .test_admin import admin_client
 
 
 @override_settings(
@@ -37,3 +39,15 @@ class RuleTestCase(TestCase):
 
         self.assertNumQueries(2, fetch)
         self.assertNumQueries(0, fetch)
+
+
+class FirewallTestCase(TestCase):
+    """
+    Firewall core class tests
+    """
+
+    def test_check(self):
+        client = admin_client()
+        url = reverse('admin:index')
+        client.get(url)
+        self.assertTrue(True)

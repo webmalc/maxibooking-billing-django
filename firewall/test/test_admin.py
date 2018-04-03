@@ -7,6 +7,18 @@ from ..admin import RuleAdmin
 from ..models import Group, Rule
 
 
+def admin_client():
+    username = 'test_admin'
+    password = 'password'
+    email = 'test@example.com'
+    get_user_model().objects.create_superuser(
+        username=username, password=password, email=email)
+    client = Client()
+    client.login(username=username, password=password)
+
+    return client
+
+
 @override_settings(MIDDLEWARE=[
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -22,13 +34,6 @@ class RuleAdminTestCase(TestCase):
     """
 
     def test_rules_list(self):
-        username = 'test_admin'
-        password = 'password'
-        email = 'test@example.com'
-        get_user_model().objects.create_superuser(
-            username=username, password=password, email=email)
-        client = Client()
-        client.login(username=username, password=password)
         for i in range(1, 100):
             Rule.objects.create(
                 name='test rule {}'.format(i),
@@ -36,6 +41,7 @@ class RuleAdminTestCase(TestCase):
                 entries='127.0.0.{}'.format(i),
             )
         url = reverse('admin:firewall_rule_changelist')
+        client = admin_client()
 
         self.assertNumQueries(9, lambda: client.get(url))
         response = client.get(url)
