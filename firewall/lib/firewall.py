@@ -16,6 +16,6 @@ class Firewall():
         Check request ip/host against rules
         """
 
-        for rule in Rule.objects.fetch():
-            print(rule)
+        for rule in self.rules:
+            pass
         return FIREWALL_ALLOW_BY_DEFAULT

@@ -3,11 +3,13 @@
 Django firewall model classes
 """
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from ordered_model.models import OrderedModel
 
 from .managers import RuleManager
+from .settings import FIREWALL_CACHE_KEY
 
 
 class EntriesField(models.TextField):
@@ -79,6 +81,10 @@ class CommonMixin(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(FIREWALL_CACHE_KEY)
 
     class Meta:
         abstract = True
