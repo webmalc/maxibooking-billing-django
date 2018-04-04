@@ -21,7 +21,6 @@ class CommonAdminMixin(admin.ModelAdmin):
         return [
             'id',
             'name',
-            'entries',
             'is_enabled',
             'modified',
         ]
@@ -34,7 +33,6 @@ class CommonAdminMixin(admin.ModelAdmin):
             '=pk',
             'name',
             'description',
-            'entries',
             'created_by__username',
             'created_by__email',
             'created_by__last_name',
@@ -48,7 +46,6 @@ class CommonAdminMixin(admin.ModelAdmin):
                 'fields': [
                     'name',
                     'description',
-                    'entries',
                 ]
             }],
             [
@@ -100,9 +97,7 @@ class RuleAdmin(CommonAdminMixin, OrderedModelAdmin):
         return super().get_list_filter(request) + ['groups']
 
     def get_search_fields(self, request):
-        return super().get_search_fields(request) + [
-            'group__name', 'group__entries'
-        ]
+        return super().get_search_fields(request) + ['group__name']
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)

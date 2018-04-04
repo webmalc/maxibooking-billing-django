@@ -12,35 +12,10 @@ from .managers import RuleManager
 from .settings import FIREWALL_CACHE_KEY
 
 
-class EntriesField(models.TextField):
-    """
-    Ip list field
-    """
-    description = 'Ip list'
-
-    def __init__(self, *args, **kwargs):
-        kwargs['verbose_name'] = _('ip list')
-        kwargs['help_text'] = ('One ip/ip range  per line. \
-Example: 127.0.0.0/24')
-        super(EntriesField, self).__init__(*args, **kwargs)
-
-
 class CommonMixin(models.Model):
     """
     Base model
     """
-    name = models.CharField(
-        max_length=255,
-        db_index=True,
-        unique=True,
-        verbose_name=_('name'),
-    )
-    description = models.TextField(
-        null=True,
-        blank=True,
-        db_index=True,
-        verbose_name=_('description'),
-    )
     is_enabled = models.BooleanField(
         default=True,
         db_index=True,
@@ -79,9 +54,6 @@ class CommonMixin(models.Model):
         related_name='%(app_label)s_%(class)s_modified_by',
     )
 
-    def __str__(self):
-        return self.name
-
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         cache.delete(FIREWALL_CACHE_KEY)
@@ -90,11 +62,87 @@ class CommonMixin(models.Model):
         abstract = True
 
 
-class Group(CommonMixin):
+class TitleDescriptionMixin(models.Model):
+    """
+    Title and description mixin
+    """
+    name = models.CharField(
+        max_length=255,
+        db_index=True,
+        unique=True,
+        verbose_name=_('name'),
+    )
+    description = models.TextField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('description'),
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class Ip(CommonMixin):
+    """
+    Ip model
+    """
+    start_ip = models.GenericIPAddressField(
+        db_index=True,
+        unique=True,
+        verbose_name=_('start ip'),
+    )
+    end_ip = models.GenericIPAddressField(
+        db_index=True,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name=_('end ip'),
+    )
+    start_date = models.DateTimeField(
+        db_index=True,
+        blank=True,
+        null=True,
+        verbose_name=_('start date'),
+    )
+    end_date = models.DateTimeField(
+        db_index=True,
+        blank=True,
+        null=True,
+        verbose_name=_('end date'),
+    )
+    rules = models.ManyToManyField(
+        'firewall.Rule',
+        verbose_name=_('rules'),
+        blank=True,
+    )
+    groups = models.ManyToManyField(
+        'firewall.Group',
+        verbose_name=_('groups'),
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.ip
+
+    class Meta:
+        verbose_name_plural = _('IPs')
+        unique_together = (('start_ip', 'end_ip'))
+        ordering = ['start_ip', 'end_ip']
+
+
+class Group(CommonMixin, TitleDescriptionMixin):
     """
     Ip group
     """
-    entries = EntriesField(db_index=True)
+    ips = models.ManyToManyField(
+        'firewall.Group',
+        verbose_name=_('IPs'),
+        related_name='group_ips',
+    )
     rules = models.ManyToManyField(
         'firewall.Rule', verbose_name=_('rules'), blank=True)
 
@@ -102,7 +150,7 @@ class Group(CommonMixin):
         ordering = ('name', )
 
 
-class Rule(CommonMixin, OrderedModel):
+class Rule(CommonMixin, TitleDescriptionMixin, OrderedModel):
     """
     Firewall rules
     """
@@ -112,12 +160,16 @@ class Rule(CommonMixin, OrderedModel):
         verbose_name=_('url'),
         help_text=_('Url regex pattern. Example: /admin/.*'),
     )
-    entries = EntriesField(db_index=True, null=True, blank=True)
     groups = models.ManyToManyField(
         'firewall.Group',
         blank=True,
         verbose_name=_('ip groups'),
         through=Group.rules.through,
+    )
+    ips = models.ManyToManyField(
+        'firewall.Group',
+        verbose_name=_('IPs'),
+        related_name='rules_ips',
     )
     is_allow = models.BooleanField(
         default=True,

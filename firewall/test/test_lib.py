@@ -21,7 +21,6 @@ class RuleTestCase(TestCase):
         rule = Rule.objects.create(
             name='test rule',
             url='/page/.*/',
-            entries='127.0.0.1',
         )
         group_one = Group.objects.create(name='group one')
         group_two = Group.objects.create(name='group two')

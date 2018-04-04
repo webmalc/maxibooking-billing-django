@@ -13,7 +13,6 @@ class RuleFormTestCase(TestCase):
         self.rule = Rule.objects.create(
             name='test rule',
             url='/admin/.*',
-            entries='127.0.0.1',
         )
 
     def test_form_invalid_request(self):
@@ -39,10 +38,8 @@ class RuleFormTestCase(TestCase):
         form = RuleForm({
             'name': 'new name',
             'url': '/test/',
-            'entries': '0.0.0.0',
         }, self.rule)
         self.assertTrue(form.is_valid())
         rule = form.save()
         self.assertEqual(rule.name, 'new name')
         self.assertEqual(rule.url, '/test/')
-        self.assertEqual(rule.entries, '0.0.0.0')
