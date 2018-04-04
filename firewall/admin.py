@@ -6,8 +6,30 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from ordered_model.admin import OrderedModelAdmin
 
-from .forms import RuleForm
-from .models import Group, Rule
+from .forms import IpRangeFormSet, RuleForm
+from .models import Group, IpRange, Rule
+
+
+class IpRangeInlineAdmin(admin.TabularInline):
+    """
+    Ip admin
+    """
+    model = IpRange
+    formset = IpRangeFormSet
+    extra = 2
+    readonly_fields = ['options']
+    fields = ('start_ip', 'end_ip', 'start_date', 'end_date', 'is_enabled',
+              'options')
+
+    def options(self, obj):
+        """
+        Get rule groups as string
+        """
+        return '<br>'.join([
+            obj.modified.strftime('%d.%m.%Y %H:%M'), obj.modified_by.username
+        ])
+
+    options.allow_tags = True
 
 
 class CommonAdminMixin(admin.ModelAdmin):
@@ -16,6 +38,7 @@ class CommonAdminMixin(admin.ModelAdmin):
     """
     list_display_links = ['id', 'name']
     readonly_fields = ['created', 'modified', 'created_by', 'modified_by']
+    inlines = [IpRangeInlineAdmin]
 
     def get_list_display(self, request):
         return [

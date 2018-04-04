@@ -14,7 +14,7 @@ def cache_result(key, timeout=None):
         @wraps(func)
         def func_wrapper(*args, **kwargs):
             cached_result = cache.get(key)
-            if cached_result:
+            if cached_result is not None:
                 return cached_result
             result = func(*args, **kwargs)
             cache.set(key, result, timeout)

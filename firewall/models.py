@@ -2,8 +2,11 @@
 """
 Django firewall model classes
 """
+from ipaddress import ip_address, ip_network, summarize_address_range
+
 from django.conf import settings
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from ordered_model.models import OrderedModel
@@ -86,18 +89,16 @@ class TitleDescriptionMixin(models.Model):
         abstract = True
 
 
-class Ip(CommonMixin):
+class IpRange(CommonMixin):
     """
     Ip model
     """
     start_ip = models.GenericIPAddressField(
         db_index=True,
-        unique=True,
         verbose_name=_('start ip'),
     )
     end_ip = models.GenericIPAddressField(
         db_index=True,
-        unique=True,
         blank=True,
         null=True,
         verbose_name=_('end ip'),
@@ -114,35 +115,61 @@ class Ip(CommonMixin):
         null=True,
         verbose_name=_('end date'),
     )
-    rules = models.ManyToManyField(
+    rule = models.ForeignKey(
         'firewall.Rule',
-        verbose_name=_('rules'),
-        blank=True,
+        null=True,
+        db_index=True,
+        on_delete=models.CASCADE,
+        verbose_name=_('rule'),
+        related_name='ip_ranges',
     )
-    groups = models.ManyToManyField(
+    group = models.ForeignKey(
         'firewall.Group',
-        verbose_name=_('groups'),
-        blank=True,
+        null=True,
+        db_index=True,
+        on_delete=models.CASCADE,
+        verbose_name=_('group'),
+        related_name='ip_ranges',
     )
+
+    def get_networks(self):
+        """
+        Get networks
+        """
+        start_ip = ip_address(self.start_ip)
+        if self.end_ip:
+            end_ip = ip_address(self.end_ip)
+            return [ip for ip in summarize_address_range(start_ip, end_ip)]
+        return [ip_network(start_ip)]
 
     def __str__(self):
-        return self.ip
+        networks = self.get_networks()
+        title = ', '.join(map(str, networks[:5]))
+        return title if len(networks) <= 6 else title + '...'
+
+    def clean(self):
+        """
+        Additional validation
+        """
+        start = self.start_date
+        end = self.end_date
+        if start and end and start > end:
+            raise ValidationError(
+                _('End date should be greater than start date'))
+        try:
+            self.get_networks()
+        except ValueError as e:
+            raise ValidationError(str(e))
 
     class Meta:
-        verbose_name_plural = _('IPs')
-        unique_together = (('start_ip', 'end_ip'))
-        ordering = ['start_ip', 'end_ip']
+        verbose_name_plural = _('Ip ranges')
+        ordering = ['-modified', '-created']
 
 
 class Group(CommonMixin, TitleDescriptionMixin):
     """
     Ip group
     """
-    ips = models.ManyToManyField(
-        'firewall.Group',
-        verbose_name=_('IPs'),
-        related_name='group_ips',
-    )
     rules = models.ManyToManyField(
         'firewall.Rule', verbose_name=_('rules'), blank=True)
 
@@ -165,11 +192,6 @@ class Rule(CommonMixin, TitleDescriptionMixin, OrderedModel):
         blank=True,
         verbose_name=_('ip groups'),
         through=Group.rules.through,
-    )
-    ips = models.ManyToManyField(
-        'firewall.Group',
-        verbose_name=_('IPs'),
-        related_name='rules_ips',
     )
     is_allow = models.BooleanField(
         default=True,

@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 from .models import Rule
@@ -22,3 +23,9 @@ class RuleForm(forms.ModelForm):
             raise ValidationError(
                 _('At least one of the "ip list" or \
 "ip groups" fields is required'))
+
+
+class IpRangeFormSet(BaseInlineFormSet):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs[:100]
