@@ -13,7 +13,7 @@ class CommonInfo(models.Model):
         null=True,
         blank=True,
         db_index=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         verbose_name=_('created by'),
         related_name="%(app_label)s_%(class)s_created_by")
     modified_by = models.ForeignKey(
@@ -21,7 +21,7 @@ class CommonInfo(models.Model):
         null=True,
         blank=True,
         db_index=True,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         editable=False,
         verbose_name=_('modified by'),
         related_name="%(app_label)s_%(class)s_modified_by")

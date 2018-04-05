@@ -1,4 +1,5 @@
 from annoying.fields import AutoOneToOneField
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -250,12 +251,23 @@ class Client(CommonInfo, TimeStampedModel, Payer):
     """
     Client class
     """
-    STATUSES = (('not_confirmed', _('not confirmed')), ('active', _('active')),
-                ('disabled', _('disabled')), ('archived', _('archived')))
-
-    INSTALLATION = (('not_installed', _('not installed')), ('process',
-                                                            _('process')),
-                    ('installed', _('installed')))
+    STATUSES = (
+        ('not_confirmed', _('not confirmed')),
+        ('active', _('active')),
+        ('disabled', _('disabled')),
+        ('archived', _('archived')),
+    )
+    INSTALLATION = (
+        ('not_installed', _('not installed')),
+        ('process', _('process')),
+        ('installed', _('installed')),
+    )
+    SOURCES = (
+        ('chat', _('chat')),
+        ('phone', _('phone')),
+        ('email', _('email')),
+        ('registration', _('registration')),
+    )
 
     objects = ClientManager()
 
@@ -349,6 +361,20 @@ lowercase letters, numbers, and "-" character.'),
         verbose_name=_('url'),
         help_text=_('maxibooking url'))
     ip = models.GenericIPAddressField(null=True, blank=True)
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('manager'),
+        related_name="%(app_label)s_%(class)s_manager")
+    source = models.CharField(
+        max_length=20,
+        default='registration',
+        choices=SOURCES,
+        verbose_name=_('source'),
+        db_index=True)
 
     @property
     def text(self):

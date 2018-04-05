@@ -197,12 +197,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     """
     list_display = ('id', 'login', 'email', 'phone', 'name', 'country', 'city',
                     'status', 'installation', 'url', 'rooms',
-                    'trial_activated', 'logins', 'created')
-    list_select_related = ('country', 'restrictions', 'city')
+                    'trial_activated', 'logins', 'manager', 'created')
+    list_select_related = ('country', 'restrictions', 'city', 'manager')
     list_display_links = ('id', 'login')
-    list_filter = ('status', 'installation', 'created', 'trial_activated',
-                   ClientIsPaidListFilter, 'country')
-    search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
+    list_filter = ('status', 'source', 'installation', 'manager', 'created',
+                   'trial_activated', ClientIsPaidListFilter, 'country')
+    search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name',
+                     'manager__username', 'manager__email',
+                     'manager__last_name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
                        'modified_by')
@@ -227,6 +229,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         ClientRuAdmin,
         CompanyInlineAdmin,
     )
+    tab_sales = (('General', {'fields': ('source', 'manager')}), )
     tab_tariff = (ClientServiceInlineAdmin, )
     tab_auth = (ClientAuthInlineAdmin, )
     tabs = (
@@ -235,7 +238,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         ('Payer', tab_payer),
         ('Tariff', tab_tariff),
         ('Last logins', tab_auth),
+        ('Sales', tab_sales),
     )
+
+    form = make_ajax_form(Client, {
+        'manager': 'users',
+    })
 
     def install(self, request, obj):
         """
@@ -243,6 +251,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         """
         self.message_user(request, _('Installation successfully started.'))
         install_client_task.delay(client_id=obj.id)
+
+    def set_manager(self, request, obj):
+        """
+        Set manager from request
+        """
+        obj.manager = request.user
+        obj.save()
+        self.message_user(request, _('Client manger successfully saved.'))
 
     def rooms(self, obj):
         """
@@ -255,6 +271,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
             {
                 'label': 'Install',
                 'action': 'install',
+                'enabled': obj.installation != 'installed',
+            },
+            {
+                'label': 'Manager',
+                'action': 'set_manager',
+                'enabled': obj.manager is None,
             },
         ]
         row_actions += super(ClientAdmin, self).get_row_actions(obj)
