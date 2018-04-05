@@ -22,6 +22,8 @@ class UserLookup(BaseLookup):
     model = get_user_model()
 
     def get_query(self, q, request):
-        return self.model.objects.filter(
-            Q(username__icontains=q) | Q(last_name__icontains=q)
-            | Q(email__icontains=q)).order_by('username')
+        query = Q(username__icontains=q)
+        query.add(Q(last_name__icontains=q), Q.OR)
+        query.add(Q(email__icontains=q), Q.OR)
+
+        return self.model.objects.filter(query).order_by('username')

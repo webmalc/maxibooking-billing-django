@@ -13,8 +13,8 @@ from billing.admin import TextFieldListFilter
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
-from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
-                     CompanyRu, CompanyWorld, Restrictions)
+from .models import (Client, ClientAuth, ClientRu, ClientService, Comment,
+                     Company, CompanyRu, CompanyWorld, Restrictions)
 from .tasks import install_client_task
 
 
@@ -190,6 +190,35 @@ class ClientRuAdmin(admin.StackedInline):
     )
 
 
+class CommentInlineAdmin(admin.TabularInline):
+    """
+    ClientAuthInline admin interface
+    """
+    model = Comment
+    extra = 1
+    readonly_fields = ['modified', 'modified_by']
+    fields = ('text', )
+
+    def get_form(self):
+        return None
+
+    def has_change_permission(self, request, obj=None):
+        parent = super().has_change_permission(request, obj)
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        parent = super().has_delete_permission(request, obj)
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+
 @admin.register(Client)
 class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     """
@@ -229,7 +258,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         ClientRuAdmin,
         CompanyInlineAdmin,
     )
-    tab_sales = (('General', {'fields': ('source', 'manager')}), )
+    tab_sales = (
+        ('General', {
+            'fields': ('source', 'manager')
+        }),
+        CommentInlineAdmin,
+    )
     tab_tariff = (ClientServiceInlineAdmin, )
     tab_auth = (ClientAuthInlineAdmin, )
     tabs = (
@@ -244,6 +278,22 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def save_formset(self, request, form, formset, change):
+        def _check(o):
+            user = request.user
+            if o.pk and isinstance(o, Comment) and o.created_by != user:
+                return False
+            return True
+
+        instances = formset.save(commit=False)
+        for obj in formset.deleted_objects:
+            if _check(obj):
+                obj.delete()
+        for instance in instances:
+            if _check(instance):
+                instance.save()
+        formset.save_m2m()
 
     def install(self, request, obj):
         """

@@ -19,6 +19,32 @@ from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
 
 
+class Comment(CommonInfo, TimeStampedModel):
+    """
+    Client comment class
+    """
+    text = models.TextField(
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('text'))
+    client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.CASCADE,
+        verbose_name=_('client'),
+        related_name='comments',
+        db_index=True)
+
+    def __str__(self):
+        date = self.modified if self.modified else self.created
+        return '{} {}'.format(
+            self.modified_by,
+            date.strftime('%d.%m.%Y %H:%M'),
+        )
+
+    class Meta:
+        ordering = ['-created']
+
+
 class Restrictions(CommonInfo, TimeStampedModel):
     """
     Client restrictions class

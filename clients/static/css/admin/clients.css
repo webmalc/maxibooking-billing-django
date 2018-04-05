@@ -9,3 +9,6 @@ span#login-generate {
   margin: 0px 4px;
   color: #666;
 }
+td.field-text textarea {
+  height: 6em;
+}

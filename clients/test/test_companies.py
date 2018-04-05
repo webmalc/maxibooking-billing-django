@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 
 from billing.lib.test import json_contains
 
-# from clients.models import Client, ClientService
-
 
 def test_companies_list_by_user(client):
     response = client.get(reverse('company-list'))
