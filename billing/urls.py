@@ -18,12 +18,12 @@ router = DefaultRouter()
 router.extend(hotels_router, clients_router, finances_router, fms_router)
 
 urlpatterns = [
+    url(r'^admin/', admin.site.urls),
     url(r'^rosetta/', include('rosetta.urls')),
 ]
 
 urlpatterns += i18n_patterns(
     url(r'^ajax_select/', include(ajax_select_urls)),
-    url(r'^admin/', admin.site.urls),
     url(r'', include('two_factor.urls', 'two_factor')),
     url(r'^adminactions/', include('adminactions.urls')),
     url(r'^finances/', include('finances.urls', namespace='finances')),
