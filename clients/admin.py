@@ -14,8 +14,52 @@ from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
 from .models import (Client, ClientAuth, ClientRu, ClientService, Comment,
-                     Company, CompanyRu, CompanyWorld, Restrictions)
+                     Company, CompanyRu, CompanyWorld, Restrictions,
+                     SalesStatus)
 from .tasks import install_client_task
+
+
+@admin.register(SalesStatus)
+class SalesStatusAdmin(VersionAdmin):
+    """
+    SalesStatus admin interface
+    """
+    list_display = ('id', 'title', 'color_html', 'code', 'is_enabled',
+                    'modified', 'modified_by')
+    list_display_links = ('id', 'title')
+    list_select_related = ('modified_by', )
+    search_fields = ('=pk', 'title', 'description')
+    readonly_fields = ('code', 'created', 'modified', 'created_by',
+                       'modified_by')
+    actions = None
+
+    fieldsets = (
+        ('General', {
+            'fields': ('title', 'description', 'color')
+        }),
+        ('Options', {
+            'fields': ('is_enabled', 'code', 'created', 'modified',
+                       'created_by', 'modified_by')
+        }),
+    )
+
+    def has_delete_permission(self, request, obj=None):
+        parent = super().has_delete_permission(request, obj)
+        if parent and obj and obj.code:
+            return False
+        return parent
+
+    def color_html(self, obj):
+        template = """
+        <span style='background-color: {};' class='color'>&nbsp;</span>
+        """
+        return template.format(obj.color)
+
+    color_html.allow_tags = True
+    color_html.short_description = _('color')
+
+    class Media:
+        css = {'all': ('css/admin/clients.css', )}
 
 
 @admin.register(ClientAuth)
@@ -224,13 +268,15 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     """
     Client admin interface
     """
-    list_display = ('id', 'login', 'email', 'phone', 'name', 'country', 'city',
-                    'status', 'installation', 'url', 'rooms',
-                    'trial_activated', 'logins', 'manager', 'created')
-    list_select_related = ('country', 'restrictions', 'city', 'manager')
+    list_display = ('id', 'login', 'sales_status_html', 'email', 'phone',
+                    'name', 'country', 'city', 'status', 'installation', 'url',
+                    'rooms', 'trial_activated', 'logins', 'manager', 'created')
+    list_select_related = ('country', 'restrictions', 'city', 'manager',
+                           'sales_status')
     list_display_links = ('id', 'login')
-    list_filter = ('status', 'source', 'installation', 'manager', 'created',
-                   'trial_activated', ClientIsPaidListFilter, 'country')
+    list_filter = ('status', 'sales_status', 'source', 'installation',
+                   'manager', 'created', 'trial_activated',
+                   ClientIsPaidListFilter, 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name',
                      'manager__username', 'manager__email',
                      'manager__last_name')
@@ -260,7 +306,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     )
     tab_sales = (
         ('General', {
-            'fields': ('source', 'manager')
+            'fields': ('source', 'manager', 'sales_status')
         }),
         CommentInlineAdmin,
     )
@@ -278,6 +324,19 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def sales_status_html(self, obj):
+        sales_status = obj.sales_status
+        if not sales_status:
+            return '-'
+        template = """
+        <span style='background-color: {}; margin-right: 2px;' \
+class='color'>&nbsp;</span><br> {}
+        """
+        return template.format(sales_status.color, sales_status)
+
+    sales_status_html.allow_tags = True
+    sales_status_html.short_description = _('sales')
 
     def save_formset(self, request, form, formset, change):
         def _check(o):

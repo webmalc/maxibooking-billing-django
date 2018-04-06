@@ -12,3 +12,12 @@ span#login-generate {
 td.field-text textarea {
   height: 6em;
 }
+span.color {
+  min-width: 100%;
+  max-height: 8px;
+  display: inline-block;
+}
+td.field-color_html,
+th.column-color_html {
+  text-align: center;
+}

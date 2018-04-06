@@ -1,0 +1,14 @@
+[
+{
+    "model": "clients.salesstatus",
+    "pk": 1,
+    "fields": {
+        "created": "2018-04-06T07:50:20.308Z",
+        "modified": "2018-04-06T07:50:20.308Z",
+        "title": "\u041e\u0442\u043a\u0430\u0437",
+        "code": "refusal",
+        "is_enabled": true,
+        "color": "#2B547E"
+    }
+}
+]

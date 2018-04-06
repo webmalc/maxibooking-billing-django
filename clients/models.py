@@ -1,4 +1,5 @@
 from annoying.fields import AutoOneToOneField
+from colorful.fields import RGBColorField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
@@ -7,7 +8,7 @@ from django.core.validators import (MaxLengthValidator, MinLengthValidator,
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django_extensions.db.models import TimeStampedModel
+from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -17,6 +18,33 @@ from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
+
+
+class SalesStatus(CommonInfo, TimeStampedModel, TitleDescriptionModel):
+    """
+    Sales  status class
+    """
+    CODES = (('refusal', _('refusal')), )
+    code = models.CharField(
+        verbose_name=_('code'),
+        max_length=20,
+        null=True,
+        blank=True,
+        choices=CODES,
+        editable=False,
+        db_index=True,
+        unique=True,
+    )
+    is_enabled = models.BooleanField(
+        default=True,
+        db_index=True,
+        verbose_name=_('is enabled'),
+    )
+    color = RGBColorField()
+
+    class Meta:
+        ordering = ['title']
+        verbose_name_plural = _('sales statuses')
 
 
 class Comment(CommonInfo, TimeStampedModel):
@@ -401,6 +429,14 @@ lowercase letters, numbers, and "-" character.'),
         choices=SOURCES,
         verbose_name=_('source'),
         db_index=True)
+    sales_status = models.ForeignKey(
+        SalesStatus,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('sales status'),
+        related_name='clients')
 
     @property
     def text(self):
