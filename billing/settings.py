@@ -87,6 +87,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'billing.middleware.WhodidMiddleware',
+    'billing.middleware.DisableAdminI18nMiddleware',
 ]
 
 ROOT_URLCONF = 'billing.urls'

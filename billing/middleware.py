@@ -1,6 +1,15 @@
+from django.core.urlresolvers import resolve
 from django.db.models import signals
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import curry
+from django.utils.translation import activate
+
+
+class DisableAdminI18nMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        resolver_match = resolve(request.path)
+        if resolver_match.app_name == 'admin':
+            activate('en')
 
 
 class WhodidMiddleware(MiddlewareMixin):
@@ -18,11 +27,17 @@ class WhodidMiddleware(MiddlewareMixin):
             mark_whodid = curry(self.mark_whodid, user)
             signals.pre_save.connect(
                 mark_whodid,
-                dispatch_uid=(self.__class__, request, ),
+                dispatch_uid=(
+                    self.__class__,
+                    request,
+                ),
                 weak=False)
 
     def process_response(self, request, response):
-        signals.pre_save.disconnect(dispatch_uid=(self.__class__, request, ))
+        signals.pre_save.disconnect(dispatch_uid=(
+            self.__class__,
+            request,
+        ))
         return response
 
     def mark_whodid(self, user, sender, instance, **kwargs):
