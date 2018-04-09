@@ -8,11 +8,11 @@ from django.core.validators import (MaxLengthValidator, MinLengthValidator,
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
+from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import CommonInfo, CountryBase
+from billing.models import CommonInfo, CountryBase, DictMixin
 from finances.lib.calc import Calc
 from hotels.models import Country
 
@@ -20,30 +20,22 @@ from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
 
 
-class SalesStatus(CommonInfo, TimeStampedModel, TitleDescriptionModel):
+class RefusalReason(DictMixin):
+    """
+    Refusal reason class
+    """
+
+    class Meta:
+        verbose_name_plural = _('refusal reasons')
+
+
+class SalesStatus(DictMixin):
     """
     Sales  status class
     """
-    CODES = (('refusal', _('refusal')), )
-    code = models.CharField(
-        verbose_name=_('code'),
-        max_length=20,
-        null=True,
-        blank=True,
-        choices=CODES,
-        editable=False,
-        db_index=True,
-        unique=True,
-    )
-    is_enabled = models.BooleanField(
-        default=True,
-        db_index=True,
-        verbose_name=_('is enabled'),
-    )
     color = RGBColorField()
 
     class Meta:
-        ordering = ['title']
         verbose_name_plural = _('sales statuses')
 
 
@@ -437,6 +429,14 @@ lowercase letters, numbers, and "-" character.'),
         on_delete=models.SET_NULL,
         verbose_name=_('sales status'),
         related_name='clients')
+    refusal_reason = models.ForeignKey(
+        RefusalReason,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('refusal reason'),
+        related_name='clients')
 
     @property
     def text(self):
@@ -487,6 +487,11 @@ lowercase letters, numbers, and "-" character.'),
     @property
     def language(self):
         return 'ru' if self.country.tld == 'ru' else 'en'
+
+    def clean(self):
+        code = getattr(self.sales_status, 'code', None)
+        if code == 'refusal' and not self.refusal_reason:
+            raise ValidationError(_('Empty refusal reason.'))
 
     def __str__(self):
         return '{} - {}'.format(self.login, self.name)

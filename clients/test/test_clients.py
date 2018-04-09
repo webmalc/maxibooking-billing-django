@@ -4,6 +4,7 @@ import arrow
 import pytest
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.validators import ValidationError
 from moneyed import EUR, Money
 
 from billing.lib import mb
@@ -11,7 +12,7 @@ from billing.lib.test import json_contains
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
 
-from ..models import Client
+from ..models import Client, RefusalReason, SalesStatus
 from ..tasks import client_archivation
 
 pytestmark = pytest.mark.django_db
@@ -653,3 +654,25 @@ def test_client_by_logins(make_orders):
 
     assert Client.objects.get_by_orders(True).count() == 0
     assert Client.objects.get_by_orders(False).count() == 7
+
+
+def test_client_refusal_reason():
+    refusal_status = SalesStatus.objects.get(code='refusal')
+    another_status = SalesStatus.objects.get(pk=2)
+    refusal_reason = RefusalReason.objects.get(pk=1)
+    client = Client.objects.get(login='user-one')
+
+    client.sales_status = refusal_status
+    with pytest.raises(ValidationError) as e:
+        client.full_clean()
+        client.save()
+    assert 'Empty refusal reason.' in e.value.messages
+
+    client.refusal_reason = refusal_reason
+    client.full_clean()
+    client.save()
+
+    client.refusal_reason = None
+    client.sales_status = another_status
+    client.full_clean()
+    client.save()

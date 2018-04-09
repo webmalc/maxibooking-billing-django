@@ -1,0 +1,38 @@
+[
+{
+    "model": "clients.salesstatus",
+    "pk": 1,
+    "fields": {
+        "created": "2018-04-06T07:50:20.308Z",
+        "modified": "2018-04-06T07:50:20.308Z",
+        "title": "Refusal",
+        "code": "refusal",
+        "is_enabled": true,
+        "color": "#2B547E"
+    }
+},
+{
+    "model": "clients.salesstatus",
+    "pk": 2,
+    "fields": {
+        "created": "2018-04-06T07:50:20.308Z",
+        "modified": "2018-04-06T07:50:20.308Z",
+        "title": "Complete",
+        "code": "complete",
+        "is_enabled": true,
+        "color": "#00000"
+    }
+},
+{
+    "model": "clients.salesstatus",
+    "pk": 3,
+    "fields": {
+        "created": "2018-04-06T07:50:20.308Z",
+        "modified": "2018-04-06T07:50:20.308Z",
+        "title": "Education",
+        "code": "education",
+        "is_enabled": false,
+        "color": "#ffffff"
+    }
+}
+]

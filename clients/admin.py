@@ -9,44 +9,35 @@ from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import TextFieldListFilter
+from billing.admin import DictAdminMixin, TextFieldListFilter
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
 from .models import (Client, ClientAuth, ClientRu, ClientService, Comment,
-                     Company, CompanyRu, CompanyWorld, Restrictions,
-                     SalesStatus)
+                     Company, CompanyRu, CompanyWorld, RefusalReason,
+                     Restrictions, SalesStatus)
 from .tasks import install_client_task
 
 
+@admin.register(RefusalReason)
+class RefusalReasonAdmin(DictAdminMixin, VersionAdmin):
+    pass
+
+
 @admin.register(SalesStatus)
-class SalesStatusAdmin(VersionAdmin):
+class SalesStatusAdmin(DictAdminMixin, VersionAdmin):
     """
     SalesStatus admin interface
     """
-    list_display = ('id', 'title', 'color_html', 'code', 'is_enabled',
-                    'modified', 'modified_by')
-    list_display_links = ('id', 'title')
-    list_select_related = ('modified_by', )
-    search_fields = ('=pk', 'title', 'description')
-    readonly_fields = ('code', 'created', 'modified', 'created_by',
-                       'modified_by')
-    actions = None
 
-    fieldsets = (
-        ('General', {
-            'fields': ('title', 'description', 'color')
-        }),
-        ('Options', {
-            'fields': ('is_enabled', 'code', 'created', 'modified',
-                       'created_by', 'modified_by')
-        }),
-    )
+    def get_list_display(self, request):
+        parent = super().get_list_display(request)
+        parent.insert(2, 'color_html')
+        return parent
 
-    def has_delete_permission(self, request, obj=None):
-        parent = super().has_delete_permission(request, obj)
-        if parent and obj and obj.code:
-            return False
+    def get_fieldsets(self, request, obj=None):
+        parent = super().get_fieldsets(request, obj)
+        parent[0][1]['fields'].append('color')
         return parent
 
     def color_html(self, obj):
@@ -306,7 +297,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
     )
     tab_sales = (
         ('General', {
-            'fields': ('source', 'manager', 'sales_status')
+            'fields': ('source', 'manager', 'sales_status', 'refusal_reason')
         }),
         CommentInlineAdmin,
     )
@@ -398,6 +389,11 @@ class='color'>&nbsp;</span><br> {}
         query = super().get_queryset(request)
         query = query.annotate(auth_count=Count('authentications'))
         return query
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        query = SalesStatus.objects.filter_is_enabled()
+        context['adminform'].form.fields['sales_status'].queryset = query
+        return super().render_change_form(request, context, *args, **kwargs)
 
     class Media:
         js = ('js/admin/clients.js', )

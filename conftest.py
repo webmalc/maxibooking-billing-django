@@ -15,7 +15,8 @@ def django_db_setup(django_db_setup, django_db_blocker):
             'loaddata', 'tests/users', 'tests/countries', 'tests/regions',
             'tests/cities', 'tests/clients', 'tests/properties', 'tests/rooms',
             'tests/service_categories', 'tests/services', 'tests/auth',
-            'tests/client_services', 'tests/transactions', 'tests/companies')
+            'tests/client_services', 'tests/transactions', 'tests/companies',
+            'tests/sales_statuses', 'tests/refusal_reasons')
 
 
 @pytest.fixture()
