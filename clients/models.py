@@ -43,6 +43,10 @@ class Comment(CommonInfo, TimeStampedModel):
     """
     Client comment class
     """
+    TYPES = (
+        ('message', _('message')),
+        ('refusal', _('refusal')),
+    )
     text = models.TextField(
         db_index=True,
         validators=[MinLengthValidator(2)],
@@ -53,6 +57,13 @@ class Comment(CommonInfo, TimeStampedModel):
         verbose_name=_('client'),
         related_name='comments',
         db_index=True)
+    type = models.CharField(
+        verbose_name=_('type'),
+        max_length=20,
+        choices=TYPES,
+        default='message',
+        db_index=True,
+    )
 
     def __str__(self):
         date = self.modified if self.modified else self.created

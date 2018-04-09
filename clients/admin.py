@@ -232,7 +232,7 @@ class CommentInlineAdmin(admin.TabularInline):
     model = Comment
     extra = 1
     readonly_fields = ['modified', 'modified_by']
-    fields = ('text', )
+    fields = ('text', 'type')
 
     def get_form(self):
         return None
