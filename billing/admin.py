@@ -2,6 +2,7 @@ import adminactions.actions as actions
 from django.contrib import admin
 from django.contrib.admin import site
 from django.contrib.postgres.fields import JSONField
+from django.shortcuts import redirect
 from prettyjson import PrettyJSONWidget
 
 actions.add_to_site(site)
@@ -31,6 +32,24 @@ class JsonAdmin(admin.ModelAdmin):
             'widget': PrettyJSONWidget(attrs={'initial': 'parsed'})
         }
     }
+
+
+class ArchorAdminMixin(admin.ModelAdmin):
+    """
+    Admin with list archors
+    """
+
+    def num(self, obj):
+        return '<a name="el_{0}"/>{0}'.format(obj.pk)
+
+    num.allow_tags = True
+
+    def response_post_save_change(self, request, obj):
+        parent = super().response_post_save_change(request, obj)
+        return redirect('{}#el_{}'.format(parent.url, obj.pk))
+
+    def response_post_save_add(self, request, obj):
+        return self.response_post_save_change(request, obj)
 
 
 class DictAdminMixin():

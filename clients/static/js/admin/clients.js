@@ -12,7 +12,6 @@ $(document).ready(function() {
     // Generate login link
     (function() {
         var input = $('input#id_login');
-        console.log(input);
         if (!input.length) {
             return;
         }

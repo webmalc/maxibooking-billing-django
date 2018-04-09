@@ -9,7 +9,7 @@ from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import DictAdminMixin, TextFieldListFilter
+from billing.admin import ArchorAdminMixin, DictAdminMixin, TextFieldListFilter
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
@@ -255,11 +255,12 @@ class CommentInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Client)
-class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
+class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
+                  ArchorAdminMixin):
     """
     Client admin interface
     """
-    list_display = ('id', 'login', 'sales_status_html', 'email', 'phone',
+    list_display = ('num', 'login', 'sales_status_html', 'email', 'phone',
                     'name', 'country', 'city', 'status', 'installation', 'url',
                     'rooms', 'trial_activated', 'logins', 'manager', 'created')
     list_select_related = ('country', 'restrictions', 'city', 'manager',
