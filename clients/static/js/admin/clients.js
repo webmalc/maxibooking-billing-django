@@ -8,4 +8,22 @@ $(document).ready(function() {
         'disabled': mbbAdmin.color.orange,
         'archived': mbbAdmin.color.red,
     }, 'status');
+
+    // Generate login link
+    (function() {
+        var input = $('input#id_login');
+        if (!input.length) {
+            return;
+        }
+        var link = $('<span/>', {
+            id: 'login-generate',
+            title: 'Generate login',
+            text: 'generate',
+        }).click(function() {
+            if (!input.val()) {
+                input.val('temp-' + new Date().getTime());
+            }
+        });
+        input.after(link);
+    }());
 });

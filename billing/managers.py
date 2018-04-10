@@ -22,3 +22,12 @@ class LookupMixin(models.Manager, metaclass=ABCMeta):
         return self.filter(
             reduce(lambda x, f: x | Q(**{'%s__icontains' % f: q}),
                    self.lookup_search_fields, Q()))[:100]
+
+
+class DictManager(models.Manager):
+    """
+    Default manager for DictMixin
+    """
+
+    def filter_is_enabled(self):
+        return self.filter(is_enabled=True)

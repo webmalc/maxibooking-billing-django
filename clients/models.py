@@ -1,4 +1,6 @@
 from annoying.fields import AutoOneToOneField
+from colorful.fields import RGBColorField
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -10,12 +12,68 @@ from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import CommonInfo, CountryBase
+from billing.models import CommonInfo, CountryBase, DictMixin
 from finances.lib.calc import Calc
 from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
+
+
+class RefusalReason(DictMixin):
+    """
+    Refusal reason class
+    """
+
+    class Meta:
+        verbose_name_plural = _('refusal reasons')
+
+
+class SalesStatus(DictMixin):
+    """
+    Sales  status class
+    """
+    color = RGBColorField()
+
+    class Meta:
+        verbose_name_plural = _('sales statuses')
+
+
+class Comment(CommonInfo, TimeStampedModel):
+    """
+    Client comment class
+    """
+    TYPES = (
+        ('message', _('message')),
+        ('refusal', _('refusal')),
+    )
+    text = models.TextField(
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('text'))
+    client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.CASCADE,
+        verbose_name=_('client'),
+        related_name='comments',
+        db_index=True)
+    type = models.CharField(
+        verbose_name=_('type'),
+        max_length=20,
+        choices=TYPES,
+        default='message',
+        db_index=True,
+    )
+
+    def __str__(self):
+        date = self.modified if self.modified else self.created
+        return '{} {}'.format(
+            self.modified_by,
+            date.strftime('%d.%m.%Y %H:%M'),
+        )
+
+    class Meta:
+        ordering = ['-created']
 
 
 class Restrictions(CommonInfo, TimeStampedModel):
@@ -250,12 +308,23 @@ class Client(CommonInfo, TimeStampedModel, Payer):
     """
     Client class
     """
-    STATUSES = (('not_confirmed', _('not confirmed')), ('active', _('active')),
-                ('disabled', _('disabled')), ('archived', _('archived')))
-
-    INSTALLATION = (('not_installed', _('not installed')), ('process',
-                                                            _('process')),
-                    ('installed', _('installed')))
+    STATUSES = (
+        ('not_confirmed', _('not confirmed')),
+        ('active', _('active')),
+        ('disabled', _('disabled')),
+        ('archived', _('archived')),
+    )
+    INSTALLATION = (
+        ('not_installed', _('not installed')),
+        ('process', _('process')),
+        ('installed', _('installed')),
+    )
+    SOURCES = (
+        ('chat', _('chat')),
+        ('phone', _('phone')),
+        ('email', _('email')),
+        ('registration', _('registration')),
+    )
 
     objects = ClientManager()
 
@@ -349,6 +418,36 @@ lowercase letters, numbers, and "-" character.'),
         verbose_name=_('url'),
         help_text=_('maxibooking url'))
     ip = models.GenericIPAddressField(null=True, blank=True)
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('manager'),
+        related_name="%(app_label)s_%(class)s_manager")
+    source = models.CharField(
+        max_length=20,
+        default='registration',
+        choices=SOURCES,
+        verbose_name=_('source'),
+        db_index=True)
+    sales_status = models.ForeignKey(
+        SalesStatus,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('sales status'),
+        related_name='clients')
+    refusal_reason = models.ForeignKey(
+        RefusalReason,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('refusal reason'),
+        related_name='clients')
 
     @property
     def text(self):
@@ -399,6 +498,11 @@ lowercase letters, numbers, and "-" character.'),
     @property
     def language(self):
         return 'ru' if self.country.tld == 'ru' else 'en'
+
+    def clean(self):
+        code = getattr(self.sales_status, 'code', None)
+        if code == 'refusal' and not self.refusal_reason:
+            raise ValidationError(_('Empty refusal reason.'))
 
     def __str__(self):
         return '{} - {}'.format(self.login, self.name)

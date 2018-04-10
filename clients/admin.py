@@ -9,13 +9,48 @@ from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import TextFieldListFilter
+from billing.admin import ArchorAdminMixin, DictAdminMixin, TextFieldListFilter
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
-from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
-                     CompanyRu, CompanyWorld, Restrictions)
+from .models import (Client, ClientAuth, ClientRu, ClientService, Comment,
+                     Company, CompanyRu, CompanyWorld, RefusalReason,
+                     Restrictions, SalesStatus)
 from .tasks import install_client_task
+
+
+@admin.register(RefusalReason)
+class RefusalReasonAdmin(DictAdminMixin, VersionAdmin):
+    pass
+
+
+@admin.register(SalesStatus)
+class SalesStatusAdmin(DictAdminMixin, VersionAdmin):
+    """
+    SalesStatus admin interface
+    """
+
+    def get_list_display(self, request):
+        parent = super().get_list_display(request)
+        parent.insert(2, 'color_html')
+        return parent
+
+    def get_fieldsets(self, request, obj=None):
+        parent = super().get_fieldsets(request, obj)
+        parent[0][1]['fields'].append('color')
+        return parent
+
+    def color_html(self, obj):
+        template = """
+        <span style='background-color: {};' class='color'>&nbsp;</span>
+        """
+        return template.format(obj.color)
+
+    color_html.allow_tags = True
+    color_html.short_description = _('color')
+
+    class Media:
+        css = {'all': ('css/admin/clients.css', )}
 
 
 @admin.register(ClientAuth)
@@ -190,19 +225,53 @@ class ClientRuAdmin(admin.StackedInline):
     )
 
 
+class CommentInlineAdmin(admin.TabularInline):
+    """
+    ClientAuthInline admin interface
+    """
+    model = Comment
+    extra = 1
+    readonly_fields = ['modified', 'modified_by']
+    fields = ('text', 'type')
+
+    def get_form(self):
+        return None
+
+    def has_change_permission(self, request, obj=None):
+        parent = super().has_change_permission(request, obj)
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        parent = super().has_delete_permission(request, obj)
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+
 @admin.register(Client)
-class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
+class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
+                  ArchorAdminMixin):
     """
     Client admin interface
     """
-    list_display = ('id', 'login', 'email', 'phone', 'name', 'country', 'city',
-                    'status', 'installation', 'url', 'rooms',
-                    'trial_activated', 'logins', 'created')
-    list_select_related = ('country', 'restrictions', 'city')
+    list_display = ('num', 'login', 'sales_status_html', 'email', 'phone',
+                    'name', 'country', 'city', 'status', 'installation', 'url',
+                    'rooms', 'trial_activated', 'logins', 'manager', 'created')
+    list_select_related = ('country', 'restrictions', 'city', 'manager',
+                           'sales_status')
     list_display_links = ('id', 'login')
-    list_filter = ('status', 'installation', 'created', 'trial_activated',
+    list_filter = ('status', 'sales_status', 'source', 'installation',
+                   'manager', 'created', 'trial_activated',
                    ClientIsPaidListFilter, 'country')
-    search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name')
+    search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name',
+                     'manager__username', 'manager__email',
+                     'manager__last_name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
                        'modified_by')
@@ -227,6 +296,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         ClientRuAdmin,
         CompanyInlineAdmin,
     )
+    tab_sales = (
+        ('General', {
+            'fields': ('source', 'manager', 'sales_status', 'refusal_reason')
+        }),
+        CommentInlineAdmin,
+    )
     tab_tariff = (ClientServiceInlineAdmin, )
     tab_auth = (ClientAuthInlineAdmin, )
     tabs = (
@@ -235,7 +310,41 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         ('Payer', tab_payer),
         ('Tariff', tab_tariff),
         ('Last logins', tab_auth),
+        ('Sales', tab_sales),
     )
+
+    form = make_ajax_form(Client, {
+        'manager': 'users',
+    })
+
+    def sales_status_html(self, obj):
+        sales_status = obj.sales_status
+        if not sales_status:
+            return '-'
+        template = """
+        <span style='background-color: {}; margin-right: 2px;' \
+class='color'>&nbsp;</span><br> {}
+        """
+        return template.format(sales_status.color, sales_status)
+
+    sales_status_html.allow_tags = True
+    sales_status_html.short_description = _('sales')
+
+    def save_formset(self, request, form, formset, change):
+        def _check(o):
+            user = request.user
+            if o.pk and isinstance(o, Comment) and o.created_by != user:
+                return False
+            return True
+
+        instances = formset.save(commit=False)
+        for obj in formset.deleted_objects:
+            if _check(obj):
+                obj.delete()
+        for instance in instances:
+            if _check(instance):
+                instance.save()
+        formset.save_m2m()
 
     def install(self, request, obj):
         """
@@ -243,6 +352,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         """
         self.message_user(request, _('Installation successfully started.'))
         install_client_task.delay(client_id=obj.id)
+
+    def set_manager(self, request, obj):
+        """
+        Set manager from request
+        """
+        obj.manager = request.user
+        obj.save()
+        self.message_user(request, _('Client manger successfully saved.'))
 
     def rooms(self, obj):
         """
@@ -255,6 +372,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
             {
                 'label': 'Install',
                 'action': 'install',
+                'enabled': obj.installation != 'installed',
+            },
+            {
+                'label': 'Manager',
+                'action': 'set_manager',
+                'enabled': obj.manager is None,
             },
         ]
         row_actions += super(ClientAdmin, self).get_row_actions(obj)
@@ -267,6 +390,11 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin):
         query = super().get_queryset(request)
         query = query.annotate(auth_count=Count('authentications'))
         return query
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        query = SalesStatus.objects.filter_is_enabled()
+        context['adminform'].form.fields['sales_status'].queryset = query
+        return super().render_change_form(request, context, *args, **kwargs)
 
     class Media:
         js = ('js/admin/clients.js', )

@@ -29,15 +29,6 @@ $(document).ready(function($) {
         mask: '9999-99-99',
     });
 
-    // list min-height
-    (function() {
-        var h = $(window).height() - 400;
-        $('body.change-list div.results').css(
-            'max-height',
-            h > 200 ? h + 'px' : '200px'
-        );
-    }());
-
     /** datarange filter **/
     (function() {
         $('#changelist-filter input[type="reset"]').click(function(event) {
