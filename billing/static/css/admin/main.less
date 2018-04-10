@@ -130,7 +130,17 @@ td.field-is_enabled, td.field-is_checked,
 th.column-is_enabled, th.column-is_checked {
     text-align: center;
 }
-body.change-list div.results {
-    min-height: 200px;
-    height: calc(100vh - 330px);
+body.change-list {
+    div.results {
+        min-height: 200px;
+        height: calc(100vh - 330px);
+    }
+    table#result_list {
+        thead {
+            th {
+                position: sticky;
+                top: 0;
+            }
+        }
+    }
 }

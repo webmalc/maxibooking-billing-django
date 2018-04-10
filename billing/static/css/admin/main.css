@@ -123,3 +123,7 @@ body.change-list div.results {
   min-height: 200px;
   height: calc(100vh - 330px);
 }
+body.change-list table#result_list thead th {
+  position: sticky;
+  top: 0;
+}
