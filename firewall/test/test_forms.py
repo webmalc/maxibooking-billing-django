@@ -25,10 +25,6 @@ class RuleFormTestCase(TestCase):
             form.errors, {
                 'name': ['This field is required.'],
                 'url': ['This field is required.'],
-                '__all__': [
-                    'At least one of the "ip list" or \
-"ip groups" fields is required'
-                ]
             })
 
     def test_form_valid_request(self):

@@ -4,10 +4,12 @@ Django firewall admin classes
 """
 from django.contrib import admin
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 from ordered_model.admin import OrderedModelAdmin
 
 from .forms import IpRangeFormSet, RuleForm
 from .models import Group, IpRange, Rule
+from .settings import FIREWALL_IPRANGES_ADMIN_MAX
 
 
 class IpRangeInlineAdmin(admin.TabularInline):
@@ -18,8 +20,12 @@ class IpRangeInlineAdmin(admin.TabularInline):
     formset = IpRangeFormSet
     extra = 2
     readonly_fields = ['options']
-    fields = ('start_ip', 'end_ip', 'start_date', 'end_date', 'is_enabled',
-              'options')
+    fields = [
+        'start_ip', 'end_ip', 'start_date', 'end_date', 'is_enabled', 'options'
+    ]
+    verbose_name_plural = _('Last %(max)d ip ranges') % {
+        'max': FIREWALL_IPRANGES_ADMIN_MAX
+    }
 
     def options(self, obj):
         """
@@ -92,6 +98,51 @@ class CommonAdminMixin(admin.ModelAdmin):
 
     class Media:
         css = {'all': ('css/admin/firewall.css', )}
+
+
+@admin.register(IpRange)
+class IpRangeAdmin(admin.ModelAdmin):
+    """
+    Group admin interface
+    """
+    list_display = [
+        'id', 'start_ip', 'end_ip', 'start_date', 'end_date', 'group', 'rule',
+        'is_enabled', 'modified', 'modified_by'
+    ]
+    list_display_links = ['id', 'start_ip', 'end_ip']
+    readonly_fields = ['created', 'modified', 'created_by', 'modified_by']
+    list_filter = ['is_enabled', 'group', 'rule', 'modified']
+    list_select_related = ['modified_by', 'rule', 'group']
+    search_fields = [
+        'start_ip', 'end_ip', 'group__name', 'rule__name', 'rule__description',
+        'group__description'
+    ]
+
+    fieldsets = [
+        [
+            'General', {
+                'fields': [
+                    'start_ip',
+                    'end_ip',
+                    'start_date',
+                    'end_date',
+                    'group',
+                    'rule',
+                ]
+            }
+        ],
+        [
+            'Options', {
+                'fields': [
+                    'is_enabled',
+                    'created',
+                    'modified',
+                    'created_by',
+                    'modified_by',
+                ]
+            }
+        ],
+    ]
 
 
 @admin.register(Group)

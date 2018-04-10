@@ -1,10 +1,14 @@
+from datetime import timedelta
+
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase, override_settings
+from django.utils import timezone
 
 from ..admin import RuleAdmin
-from ..models import Group, Rule
+from ..models import Group, IpRange, Rule
 
 
 @override_settings(MIDDLEWARE=[
@@ -20,6 +24,43 @@ class RuleAdminTestCase(TestCase):
     """
     RuleForm tests
     """
+
+    def test_iprange_validation(self):
+        group = Group.objects.create(name='group one')
+        ip_range = IpRange()
+        ip_range.start_ip = '12.22.33.44'
+        ip_range.end_ip = '12.22.33.44'
+        ip_range.group = group
+        ip_range.full_clean()
+        ip_range.save()
+        with self.assertRaises(ValidationError):
+            ip_range.start_date = timezone.now()
+            ip_range.end_date = timezone.now() - timedelta(days=1)
+            ip_range.full_clean()
+        ip_range.end_date = timezone.now() + timedelta(days=1)
+        ip_range.full_clean()
+        ip_range.save()
+
+        with self.assertRaises(ValidationError):
+            ip_range.group = None
+            ip_range.full_clean()
+
+        with self.assertRaises(ValidationError):
+            ip_range.pk = None
+            ip_range.group = group
+            ip_range.full_clean()
+
+        ip_range.start_ip = '11.11.11.11'
+        ip_range.full_clean()
+        ip_range.save()
+
+        self.assertEquals(2, group.ip_ranges.all().count())
+
+        ip_range.pk = None
+        ip_range.group = None
+        ip_range.rule = Rule.objects.create(name='rule one')
+        ip_range.full_clean()
+        ip_range.save()
 
     def test_rules_list(self):
         username = 'test_admin'

@@ -11,7 +11,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from ordered_model.models import OrderedModel
 
-from .managers import RuleManager
+from .managers import IpRangeManager, RuleManager
 from .settings import FIREWALL_CACHE_KEY
 
 
@@ -19,6 +19,8 @@ class CommonMixin(models.Model):
     """
     Base model
     """
+    objects = IpRangeManager()
+
     is_enabled = models.BooleanField(
         default=True,
         db_index=True,
@@ -118,6 +120,7 @@ class IpRange(CommonMixin):
     rule = models.ForeignKey(
         'firewall.Rule',
         null=True,
+        blank=True,
         db_index=True,
         on_delete=models.CASCADE,
         verbose_name=_('rule'),
@@ -126,6 +129,7 @@ class IpRange(CommonMixin):
     group = models.ForeignKey(
         'firewall.Group',
         null=True,
+        blank=True,
         db_index=True,
         on_delete=models.CASCADE,
         verbose_name=_('group'),
@@ -144,7 +148,8 @@ class IpRange(CommonMixin):
 
     def __str__(self):
         networks = self.get_networks()
-        title = ', '.join(map(str, networks[:5]))
+        title = '#{} - '.format(self.pk)
+        title += ', '.join(map(str, networks[:5]))
         return title if len(networks) <= 6 else title + '...'
 
     def clean(self):
@@ -156,10 +161,27 @@ class IpRange(CommonMixin):
         if start and end and start > end:
             raise ValidationError(
                 _('End date should be greater than start date'))
+        if not self.group and not self.rule:
+            raise ValidationError(_('Empty rule and group'))
         try:
             self.get_networks()
         except ValueError as e:
             raise ValidationError(str(e))
+
+    def validate_unique(self, exclude=None):
+        """
+        Additional unique validation
+        """
+        super().validate_unique(exclude)
+        for s in ['group', 'rule']:
+            val = getattr(self, s, None)
+            if val:
+                ip_count = val.ip_ranges.find_by_ip(
+                    self.start_ip, self.end_ip, exclude_pk=self.pk).count()
+                if ip_count:
+                    raise ValidationError(
+                        _('Ip range with this start ip, end ip, %(model)s \
+                        already exist') % {'model': s})
 
     class Meta:
         verbose_name_plural = _('Ip ranges')

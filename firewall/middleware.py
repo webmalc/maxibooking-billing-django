@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Django firewall middleware classes
+"""
 from django.core.exceptions import PermissionDenied
 
 from .lib.firewall import Firewall
