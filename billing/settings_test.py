@@ -17,15 +17,24 @@ CORS_ORIGIN_ALLOW_ALL = True
 DEBUG = False
 TEMPLATE_DEBUG = False
 
+# MB setting by country
+MB_SETTINGS_BY_COUNTRY = {}
+
 # Rbk
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
 
 # Stripe
-STRIPE_PUBLISHABLE_KEY = 'stripe_publishable_key'
-STRIPE_SECRET_KEY = 'stripe_secret_key'
+MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {
+    '__all__': 'stripe_publishable_key_all',
+    'ae': 'stripe_publishable_key_ae'
+}
+MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'] = {
+    '__all__': 'stripe_secret_key_all',
+    'ae': 'stripe_secret_key_ae'
+}
 
-MB_URLS = {
+MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
     'ru': {
         'install': 'https://www.example.com',
         'archive': 'https://www.example.com',
@@ -56,3 +65,8 @@ MB_BILL_RECIPIENT_COMPANY = {
     'boss': 'Boss F.A.',
     'bookkeeper': 'Bookkeeper F.A.',
 }
+MB_CLIENT_LOGIN_RESTRICTIONS = [
+    'support', 'demo', 'mail', 'mx', 'payment', 'www', 'new', 'info', 'cdn',
+    'mb', 'help', 'redmine', 'deploy', 'trial', '_amazonses', 'billing',
+    'maxibooking'
+]

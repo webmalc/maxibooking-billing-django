@@ -1,4 +1,5 @@
 from annoying.fields import AutoOneToOneField
+from billing.models import CommonInfo, CountryBase, DictMixin
 from colorful.fields import RGBColorField
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -10,11 +11,9 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from phonenumber_field.modelfields import PhoneNumberField
-
-from billing.models import CommonInfo, CountryBase, DictMixin
 from finances.lib.calc import Calc
 from hotels.models import Country
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -148,6 +147,10 @@ class Company(CommonInfo, TimeStampedModel, Payer):
         db_index=True,
         validators=[MinLengthValidator(2)],
         verbose_name=_('bank'))
+
+    @property
+    def country(self):
+        return self.client.country
 
     @property
     def text(self):

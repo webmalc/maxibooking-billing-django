@@ -37,6 +37,9 @@ CORS_ORIGIN_WHITELIST = (
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_REGEX_WHITELIST = (r'^(https?://)?(\w+\.)?google\.com$', )
 
+# MB setting by country
+MB_SETTINGS_BY_COUNTRY = {}
+
 # Client login restrictions
 MB_CLIENT_LOGIN_RESTRICTIONS = [
     'support', 'demo', 'mail', 'mx', 'payment', 'www', 'new', 'info', 'cdn',
@@ -49,14 +52,18 @@ RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
 
 # Stripe
-STRIPE_PUBLISHABLE_KEY = 'stripe_publishable_key'
-STRIPE_SECRET_KEY = 'stripe_secret_key'
+MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {
+    '__all__': 'stripe_publishable_key',
+}
+MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'] = {
+    '__all__': 'stripe_secret_key',
+}
 
 # Maxibooking urls
-MB_URLS = {
+MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
     'ru': {
-        'install': 'https://example.com',
-        'archive': 'https://example.com',
+        'install': 'https://www.example.com',
+        'archive': 'https://www.example.com',
         'fixtures': 'https://{}.example.com',
         'token': 'token_ru'
     },

@@ -28,7 +28,7 @@ class PaymentSystemViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
 
     def list(self, request):
-        entries = manager.list(
+        entries = manager.systems_list(
             request.query_params.get('order', None), request=request)
         serializer = PaymentSystemSerializer(
             instance=entries.values(), many=True)
@@ -151,7 +151,7 @@ def payment_system_response(request, system_id):
         'Payment system response; System_id: {}; GET: {}; POST: {}'.format(
             system_id, dict(request.GET), dict(request.POST)))
 
-    system = manager.get(system_id)
+    system = manager.get(system_id, request=request)
     if not system or not hasattr(system, 'response'):
         return HttpResponseNotFound('Payment system not found.')
     return system.response(request)

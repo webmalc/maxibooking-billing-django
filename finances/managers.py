@@ -1,9 +1,8 @@
 import arrow
+from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-
-from billing.managers import LookupMixin
 
 
 class OrderManager(LookupMixin):

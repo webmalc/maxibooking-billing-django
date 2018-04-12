@@ -4,10 +4,8 @@ from django.conf import settings
 
 from ..models import Order
 
-# from .types import Bill, Rbk, Stripe
 
-
-def list(order=None, request=None):
+def systems_list(order=None, request=None):
     """
     Get payment systems list
     """
@@ -15,7 +13,7 @@ def list(order=None, request=None):
         order = Order.objects.get_for_payment_system(order)
     types = {}
     for s in settings.PAYMENT_SYSTEMS:
-        s_class = getattr(import_module('finances.systems.types'), s.title())
+        s_class = getattr(import_module('finances.systems.models'), s.title())
         types[s] = s_class(order, request=request)
     if order:
         country = order.client.country.tld
@@ -36,6 +34,6 @@ def get(id, order=None, request=None):
     Get payment system by name
     """
     try:
-        return list(order, request=request)[id]
+        return systems_list(order, request=request)[id]
     except KeyError:
         return None

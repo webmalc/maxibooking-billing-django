@@ -2,15 +2,14 @@ import json
 
 import arrow
 import pytest
+from billing.lib import mb
+from billing.lib.test import json_contains
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import ValidationError
-from moneyed import EUR, Money
-
-from billing.lib import mb
-from billing.lib.test import json_contains
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
+from moneyed import EUR, Money
 
 from ..models import Client, RefusalReason, SalesStatus
 from ..tasks import client_archivation
@@ -332,7 +331,7 @@ def test_client_process_fixtures_by_admin(admin_client):
 
 
 def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_URLS['__all__'][
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
         'fixtures'] = 'http://{}.invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-fixtures', args=['user-two']),
@@ -382,7 +381,8 @@ def test_client_install_by_admin(admin_client):
 
 
 def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_URLS['__all__']['install'] = 'http://invalid-domain-name.com'
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
+        'install'] = 'http://invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-install', args=['user-one']),
         content_type="application/json")
@@ -588,7 +588,8 @@ def test_clients_archivation(admin_client):
 
 
 def test_clients_archivation_invalid(admin_client, settings):
-    settings.MB_URLS['__all__']['archive'] = 'http://invalid-domain-name.com'
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
+        'archive'] = 'http://invalid-domain-name.com'
     client_archivation.delay()
     client = Client.objects.get(login='user-six')
     assert client.status == 'disabled'

@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
+from billing.lib.conf import get_settings
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -13,6 +14,13 @@ from num2words import num2words
 from ..models import Order, Transaction
 
 
+class TypeException(Exception):
+    """
+    Type exception
+    """
+    pass
+
+
 class BaseType(ABC):
     """
     Base payment system
@@ -20,12 +28,14 @@ class BaseType(ABC):
     invalid_template = 'finances/invalid_type.html'
 
     def __init__(self, order=None, request=None):
-        self.order = order
         self.request = request
+        self.order = order
         self.payer = self.order.get_payer(
             self.client_filter_fields) if self.order else None
         if self.order and not isinstance(self.order, Order):
             self.order = Order.objects.get_for_payment_system(order)
+        self.country = self.payer.country if self.payer else None
+        self._conf(self.order, self.request)
 
     @property
     @abstractmethod
@@ -130,6 +140,12 @@ class BaseType(ABC):
         transaction.order = self.order
         transaction.save()
 
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        pass
+
 
 class Bill(BaseType):
     """
@@ -181,8 +197,13 @@ class Rbk(BaseType):
 
     # Rbk config
     action = 'https://rbkmoney.ru/acceptpurchase.aspx'
-    shop_id = settings.RBK_SHOP_ID
-    secret_key = settings.RBK_SECRET_KEY
+
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        self.shop_id = settings.RBK_SHOP_ID
+        self.secret_key = settings.RBK_SECRET_KEY
 
     def _calc_signature(self, data):
         return sha512('::'.join(map(str, data)).encode('utf-8')).hexdigest()
@@ -271,9 +292,14 @@ class Stripe(BaseType):
     currencies = ['EUR']
     client_filter_fields = ('phone', )
 
-    # Stripe config
-    publishable_key = settings.STRIPE_PUBLISHABLE_KEY
-    secret_key = settings.STRIPE_SECRET_KEY
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        self.publishable_key = get_settings(
+            'STRIPE_PUBLISHABLE_KEY', country=self.country)
+        self.secret_key = get_settings(
+            'STRIPE_SECRET_KEY', country=self.country)
 
     @property
     def price_in_cents(self):
@@ -281,25 +307,34 @@ class Stripe(BaseType):
             return None
         return int(self.order.price.amount * 100)
 
+    def _process_request(self, request):
+        order_id = request.POST.get('order_id')
+        token = request.POST.get('stripeToken')
+        email = request.POST.get('stripeEmail')
+
+        if not all([order_id, token, email]):
+            raise TypeException('Bad request.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
+        if not self.order:
+            raise TypeException('Order #{} not found.'.format(order_id))
+
+        if self.order.client.email != email:
+            raise TypeException('Invalid client email.')
+
+        self._conf(order=self.order)
+
+        return token
+
     def response(self, request):
         """
         Check payment system calback response
         """
-        order_id = request.POST.get('order_id')
-        token = request.POST.get('stripeToken')
-        email = request.POST.get('stripeEmail')
         logger = logging.getLogger('billing')
-
-        if not all([order_id, token, email]):
-            return HttpResponseBadRequest('Bad request.')
-
-        self.order = Order.objects.get_for_payment_system(order_id)
-        if not self.order:
-            return HttpResponseBadRequest(
-                'Order #{} not found.'.format(order_id))
-        client = self.order.client
-        if client.email != email:
-            return HttpResponseBadRequest('Invalid client email.')
+        try:
+            token = self._process_request(request)
+        except TypeException as e:
+            return HttpResponseBadRequest(e)
 
         stripe.api_key = self.secret_key
         try:
@@ -317,8 +352,8 @@ class Stripe(BaseType):
 
         self._process_order(charge)
 
-        return HttpResponseRedirect(client.url
-                                    if client.url else settings.MB_SITE_URL)
+        url = self.order.client.url or settings.MB_SITE_URL
+        return HttpResponseRedirect(url)
 
     @property
     def html(self):

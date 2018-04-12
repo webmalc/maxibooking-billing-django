@@ -1,7 +1,6 @@
 import pytest
-from django.utils import translation
-
 from billing.lib import lang, trans
+from django.utils import translation
 from finances.models import Order
 
 pytestmark = pytest.mark.django_db

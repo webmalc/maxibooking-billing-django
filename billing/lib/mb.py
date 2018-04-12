@@ -3,10 +3,12 @@ import logging
 import time
 
 import requests
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from .conf import get_settings
 from .messengers.mailer import mail_client
 
 
@@ -50,11 +52,7 @@ def mb_settings(client=None, country=None):
     """
     Get MB_URLS by country code
     """
-    if not client and not country:
-        raise AttributeError('client is None and country is None.')
-    if not country and client:
-        country = client.country.tld
-    return settings.MB_URLS.get(country, settings.MB_URLS['__all__'])
+    return get_settings('MB_URLS', country=country, client=client)
 
 
 def client_fixtures(client):

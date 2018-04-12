@@ -1,11 +1,13 @@
 import arrow
 import pytest
 import stripe
+from billing.lib.test import json_contains
+from clients.models import Client
 from django.conf import settings
 from django.core.urlresolvers import reverse
-
-from billing.lib.test import json_contains
 from finances.models import Order
+from finances.systems import manager
+from finances.systems.models import Stripe
 
 pytestmark = pytest.mark.django_db
 
@@ -126,15 +128,31 @@ c1d3c0dc88bfb22d2d5ed68c2f4128e726d7ad1ed12c2b50159440358e06371368d739'
     assert 'Успешная оплата' in mail.subject
 
 
-def test_stripe_display_by_admin(admin_client, make_orders):
+def test_manager_get_stripe(make_orders):
+    Client.objects.filter(pk=1).update(country_id=2)
+    stripe = manager.get('stripe', Order.objects.get(pk=4))
+    assert isinstance(stripe, Stripe)
+    assert stripe.secret_key == 'stripe_secret_key_ae'
+
+
+def _test_stripe_display_by_admin(admin_client, key):
     response = admin_client.get(
         reverse('payment-systems-detail', args=('stripe', )) + '?order=4')
     assert response.status_code == 200
     html = response.json()['html']
-    assert settings.STRIPE_PUBLISHABLE_KEY in html
+    assert key in html
     assert 'order #4' in html
     assert '12500' in html
     assert 'eur' in html
+
+
+def test_stripe_display_by_admin(admin_client, make_orders):
+    _test_stripe_display_by_admin(admin_client, 'stripe_publishable_key_all')
+
+
+def test_stripe_display_ae_by_admin(admin_client, make_orders):
+    Client.objects.filter(pk=1).update(country_id=2)
+    _test_stripe_display_by_admin(admin_client, 'stripe_publishable_key_ae')
 
 
 def test_stripe_response(client, make_orders, mailoutbox, mocker):
