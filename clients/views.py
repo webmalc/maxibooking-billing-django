@@ -20,7 +20,7 @@ class ClientAuthViewSet(viewsets.ModelViewSet):
         'modified_by',
         'client',
     )
-    search_fields = ('=pk', 'ip', 'client__name', 'client__email',
+    search_fields = ('=id', 'ip', 'client__name', 'client__email',
                      'client__login', 'user_agent')
 
     serializer_class = ClientAuthSerializer
