@@ -106,7 +106,7 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         query = CalcQuerySerializer(data=request.GET)
 
         if not query.is_valid():
-            return Response({'errors': query.errors})
+            return Response({'errors': query.errors, 'status': False})
 
         data = query.data
         service = Service.objects.get_by_period(
@@ -115,13 +115,18 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
             period_units=data.get('period_units'),
         )
         if not service:
-            return Response({'errors': {'service': ['service not found.']}})
+            return Response({
+                'errors': {
+                    'service': ['service not found.']
+                },
+                'status': False
+            })
 
         try:
             price = Calc.factory(service).calc(
                 quantity=data.get('quantity'), country=data.get('country'))
         except CalcException as e:
-            return Response({'errors': {'calc': [str(e)]}})
+            return Response({'errors': {'calc': [str(e)]}, 'status': False})
 
         return Response({
             'status': True,

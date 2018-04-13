@@ -95,25 +95,29 @@ def test_calc_api_invalid_by_admin(admin_client):
         'errors': {
             'quantity': ['This field is required.'],
             'country': ['This field is required.']
-        }
+        },
+        'status': False
     }
     assert response_quantity.status_code == 200
     assert response_quantity.json() == {
         'errors': {
             'quantity': ['A valid integer is required.'],
-        }
+        },
+        'status': False
     }
     assert response_country.status_code == 200
     assert response_country.json() == {
         'errors': {
             'calc': ['Invalid country or quantity.'],
-        }
+        },
+        'status': False
     }
     assert response_service.status_code == 200
     assert response_service.json() == {
         'errors': {
             'service': ['service not found.'],
-        }
+        },
+        'status': False
     }
 
 
