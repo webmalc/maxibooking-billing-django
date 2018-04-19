@@ -1,13 +1,12 @@
 import pytest
+from clients.models import ClientService
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from moneyed import EUR, RUB, Money
-
-from clients.models import ClientService
 from finances.lib.calc import Calc
 from finances.lib.calc import Exception as CalcException
 from finances.lib.calc import Other, Rooms
 from finances.models import Service
+from moneyed import EUR, RUB, Money
 
 pytestmark = pytest.mark.django_db
 
@@ -85,8 +84,10 @@ def test_calc_api_by_user(client):
 def test_calc_api_invalid_by_admin(admin_client):
     url = reverse('service-calc')
     response_empty = admin_client.get(url)
-    response_quantity = admin_client.get(url + '?quantity=1sd&country=ff')
-    response_country = admin_client.get(url + '?quantity=1&country=ff')
+    response_quantity = admin_client.get(
+        url + '?quantity=1sd&country=ff&period=1')
+    response_country = admin_client.get(
+        url + '?quantity=1&country=ff&period=1')
     response_service = admin_client.get(
         url + '?quantity=12&country=ad&period=9')
 
@@ -125,21 +126,30 @@ def test_calc_api_by_admin(admin_client, make_prices):
     url = reverse('service-calc')
 
     response_1 = admin_client.get(url + '?quantity=12&country=ad&period=3')
-    response_2 = admin_client.get(url + '?quantity=22&country=ad&period=1')
+    response_2 = admin_client.get(url + '?quantity=12&country=ad&period=1')
     response_3 = admin_client.get(url + '?quantity=12&country=ad&period=3')
-    response_data = {'status': True, 'price': 27600.0, 'price_currency': 'EUR'}
+    response_4 = admin_client.get(url + '?quantity=12&country=ad')
+    response_data_1 = {
+        'status': True,
+        'price': 27600.0,
+        'price_currency': 'EUR',
+        'period': 3
+    }
+    response_data_2 = {
+        'status': True,
+        'price': 492.0,
+        'price_currency': 'EUR',
+        'period': 1
+    }
 
     assert response_1.status_code == 200
     assert response_2.status_code == 200
     assert response_3.status_code == 200
-    assert response_1.json() == response_data
-    assert response_2.json() == {
-        'status': True,
-        'price': 922.0,
-        'price_currency': 'EUR'
-    }
-
-    assert response_3.json() == response_data
+    assert response_4.status_code == 200
+    assert response_1.json() == response_data_1
+    assert response_2.json() == response_data_2
+    assert response_3.json() == response_data_1
+    assert response_4.json() == [response_data_2, response_data_1]
 
 
 @pytest.mark.usefixtures("make_prices")

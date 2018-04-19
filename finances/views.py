@@ -109,30 +109,49 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({'errors': query.errors, 'status': False})
 
         data = query.data
-        service = Service.objects.get_by_period(
-            service_type='rooms',
-            period=data.get('period'),
-            period_units=data.get('period_units'),
-        )
-        if not service:
-            return Response({
-                'errors': {
-                    'service': ['service not found.']
-                },
-                'status': False
-            })
+        period = data.get('period')
+        prices = []
 
-        try:
-            price = Calc.factory(service).calc(
-                quantity=data.get('quantity'), country=data.get('country'))
-        except CalcException as e:
-            return Response({'errors': {'calc': [str(e)]}, 'status': False})
+        if period:
+            service = Service.objects.get_by_period(
+                service_type='rooms',
+                period=data.get('period'),
+                period_units=data.get('period_units'),
+            )
+            if not service:
+                return Response({
+                    'errors': {
+                        'service': ['service not found.']
+                    },
+                    'status': False
+                })
+            services = [service]
+        else:
+            services = Service.objects.get_all_periods(
+                service_type='rooms',
+                period_units=data.get('period_units'),
+            )
 
-        return Response({
-            'status': True,
-            'price': price.amount,
-            'price_currency': price.currency.code
-        })
+        for service in services:
+            try:
+                price = Calc.factory(service).calc(
+                    quantity=data.get('quantity'), country=data.get('country'))
+                prices.append({
+                    'status': True,
+                    'price': price.amount,
+                    'price_currency': price.currency.code,
+                    'period': service.period
+                })
+            except CalcException as e:
+                return Response({
+                    'errors': {
+                        'calc': [str(e)]
+                    },
+                    'status': False
+                })
+
+        response = prices[0] if len(prices) == 1 else prices
+        return Response(response)
 
 
 class PriceViewSet(viewsets.ReadOnlyModelViewSet):

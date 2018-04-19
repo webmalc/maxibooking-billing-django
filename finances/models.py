@@ -55,8 +55,6 @@ class Service(CachedModel, CommonInfo, TimeStampedModel,
         default='month',
         choices=PERIODS_UNITS,
         db_index=True)
-    default_rooms = models.PositiveIntegerField(
-        verbose_name=_('default rooms'), db_index=True, default=0)
     type = models.CharField(
         verbose_name=_('type'),
         max_length=20,

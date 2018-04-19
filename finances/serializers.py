@@ -8,7 +8,7 @@ class CalcQuerySerializer(serializers.Serializer):
     CalcQuery model
     """
     quantity = serializers.IntegerField(min_value=0)
-    period = serializers.IntegerField(min_value=0, required=False, default=1)
+    period = serializers.IntegerField(min_value=0, required=False)
     period_units = serializers.ChoiceField(
         choices=['month', 'year', 'day'],
         required=False,
@@ -96,8 +96,8 @@ class ServiceSerializer(serializers.HyperlinkedModelSerializer):
         model = Service
         fields = ('id', 'category', 'title', 'description', 'price',
                   'price_currency', 'prices', 'period', 'period_units',
-                  'period_days', 'default_rooms', 'is_enabled', 'is_default',
-                  'created', 'modified', 'created_by', 'modified_by')
+                  'period_days', 'is_enabled', 'is_default', 'created',
+                  'modified', 'created_by', 'modified_by')
 
 
 class PriceSerializer(serializers.HyperlinkedModelSerializer):

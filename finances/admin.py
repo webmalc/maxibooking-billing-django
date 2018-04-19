@@ -1,10 +1,9 @@
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
+from billing.admin import JsonAdmin, TextFieldListFilter
 from django.contrib import admin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
-
-from billing.admin import JsonAdmin, TextFieldListFilter
 
 from .models import Order, Price, Service, ServiceCategory, Transaction
 
@@ -166,8 +165,8 @@ class ServiceAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
             'fields': ('category', 'title', 'description', 'price')
         }),
         ('Options', {
-            'fields': ('period', 'period_units', 'type', 'is_default',
-                       'period_days', 'default_rooms', 'is_enabled', 'created',
-                       'modified', 'created_by', 'modified_by')
+            'fields':
+            ('period', 'period_units', 'type', 'is_default', 'period_days',
+             'is_enabled', 'created', 'modified', 'created_by', 'modified_by')
         }),
     )
