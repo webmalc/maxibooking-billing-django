@@ -150,7 +150,16 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
                     'status': False
                 })
 
-        response = prices[0] if len(prices) == 1 else prices
+        prices_count = len(prices)
+        if not prices_count:
+            return Response({
+                'errors': {
+                    'calc': 'Empty prices'
+                },
+                'status': False
+            })
+
+        response = prices[0] if prices_count == 1 else prices
         return Response(response)
 
 
