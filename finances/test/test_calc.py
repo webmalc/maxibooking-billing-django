@@ -141,6 +141,10 @@ def test_calc_api_by_admin(admin_client, make_prices):
         'price_currency': 'EUR',
         'period': 1
     }
+    response_data_3 = {
+        'status': True,
+        'prices': [response_data_2, response_data_1]
+    }
 
     assert response_1.status_code == 200
     assert response_2.status_code == 200
@@ -149,7 +153,7 @@ def test_calc_api_by_admin(admin_client, make_prices):
     assert response_1.json() == response_data_1
     assert response_2.json() == response_data_2
     assert response_3.json() == response_data_1
-    assert response_4.json() == [response_data_2, response_data_1]
+    assert response_4.json() == response_data_3
 
 
 @pytest.mark.usefixtures("make_prices")

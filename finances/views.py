@@ -159,7 +159,10 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
                 'status': False
             })
 
-        response = prices[0] if prices_count == 1 else prices
+        response = prices[0] if prices_count == 1 else {
+            'status': True,
+            'prices': prices
+        }
         return Response(response)
 
 
