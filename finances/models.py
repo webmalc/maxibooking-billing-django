@@ -1,10 +1,6 @@
 import logging
 
 import arrow
-from billing.exceptions import BaseException
-from billing.lib.lang import get_lang
-from billing.models import CachedModel, CommonInfo
-from clients.models import Client, ClientService
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.core.validators import MinValueValidator, ValidationError
@@ -13,9 +9,14 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from djmoney.models.fields import MoneyField
-from hotels.models import Country
 from model_utils import FieldTracker
 from moneyed import EUR, Money
+
+from billing.exceptions import BaseException
+from billing.lib.lang import get_lang
+from billing.models import CachedModel, CommonInfo
+from clients.models import Client, ClientService
+from hotels.models import Country
 
 from .managers import OrderManager, PriceManager, ServiceManager
 from .validators import validate_price_periods
@@ -329,6 +330,7 @@ and paid date')
             '-modified',
             '-created',
         )
+        permissions = (('list_manager', _('Can see assigned entries')), )
 
 
 class Transaction(CommonInfo, TimeStampedModel):

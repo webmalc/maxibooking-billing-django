@@ -1,9 +1,10 @@
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
-from billing.admin import JsonAdmin, TextFieldListFilter
 from django.contrib import admin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
+
+from billing.admin import JsonAdmin, ManagerListMixin, TextFieldListFilter
 
 from .models import Order, Price, Service, ServiceCategory, Transaction
 
@@ -52,7 +53,7 @@ class TransactionInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Order)
-class OrderAdmin(VersionAdmin, AjaxSelectAdmin,
+class OrderAdmin(VersionAdmin, AjaxSelectAdmin, ManagerListMixin,
                  TabbedExternalJqueryTranslationAdmin):
     """
     Order admin interface

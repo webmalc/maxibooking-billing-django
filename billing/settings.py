@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'raven.contrib.django.raven_compat',
     'adminactions',
     'modeltranslation',
+    'admin_view_permission',
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.auth',
@@ -348,6 +349,11 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_CACHE_ERRORS': False,
     'DEFAULT_USE_CACHE': 'default'
 }
+
+# View permission
+ADMIN_VIEW_PERMISSION_MODELS = [
+    'finances.Order',
+]
 
 # Billing
 PAYMENT_SYSTEMS = ('stripe', 'rbk', 'bill')

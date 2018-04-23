@@ -34,6 +34,24 @@ class JsonAdmin(admin.ModelAdmin):
     }
 
 
+class ManagerListMixin(admin.ModelAdmin):
+    """
+    Change list with list_manager perm
+    """
+
+    def has_view_permission(self, request, obj=None):
+        opts = self.opts
+        if request.user.has_perm('{}.list_manager'.format(opts.app_label)):
+            return True
+        return super().has_view_permission(request, obj)
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        if not super().has_view_permission(request):
+            query = query.filter(client__manager=request.user)
+        return query
+
+
 class ArchorAdminMixin(admin.ModelAdmin):
     """
     Admin with list archors
