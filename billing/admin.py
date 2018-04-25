@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.admin import site
 from django.contrib.postgres.fields import JSONField
 from django.shortcuts import redirect
+from django.urls import reverse
 from prettyjson import PrettyJSONWidget
 
 actions.add_to_site(site)
@@ -32,6 +33,20 @@ class JsonAdmin(admin.ModelAdmin):
             'widget': PrettyJSONWidget(attrs={'initial': 'parsed'})
         }
     }
+
+
+class ShowAllInlineAdminMixin(admin.TabularInline):
+    def get_formset(self, request, obj=None, **kwargs):
+        self.parent_obj = obj
+        return super().get_formset(request, obj, **kwargs)
+
+    def all(self, request):
+        template = """
+        <a href="{}?client__login__exact={}" target="_blank">Show all</a>
+        """
+        return template.format(reverse(self.all_url), self.parent_obj.login)
+
+    all.allow_tags = True
 
 
 class ManagerListMixin(admin.ModelAdmin):

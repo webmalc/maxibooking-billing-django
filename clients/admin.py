@@ -9,7 +9,9 @@ from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import ArchorAdminMixin, DictAdminMixin, TextFieldListFilter
+from billing.admin import (ArchorAdminMixin, DictAdminMixin,
+                           ShowAllInlineAdminMixin, TextFieldListFilter)
+from finances.models import Order
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
@@ -176,7 +178,7 @@ class CompanyInlineAdmin(admin.TabularInline):
         return False
 
 
-class ClientAuthInlineAdmin(admin.TabularInline):
+class ClientAuthInlineAdmin(ShowAllInlineAdminMixin):
     """
     ClientAuthInline admin interface
     """
@@ -188,25 +190,33 @@ class ClientAuthInlineAdmin(admin.TabularInline):
     max_num = 20
     extra = 1
     verbose_name_plural = "Last logins (3 days)"
-
-    def get_formset(self, request, obj=None, **kwargs):
-        self.parent_obj = obj
-        return super().get_formset(request, obj, **kwargs)
-
-    def all(self, request):
-        template = """
-        <a href="{}?client__login__exact={}" target="_blank">Show all</a>
-        """
-        return template.format(
-            reverse('admin:clients_clientauth_changelist'),
-            self.parent_obj.login)
-
-    all.allow_tags = True
+    all_url = 'admin:clients_clientauth_changelist'
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
         date_limit = arrow.utcnow().shift(days=-1).datetime
         return query.filter(auth_date__gte=date_limit)
+
+
+class OrderInlineAdmin(ShowAllInlineAdminMixin):
+    """
+    OrderInline admin interface
+    """
+    model = Order
+    fields = ('price', 'status', 'expired_date', 'paid_date', 'modified',
+              'all')
+    readonly_fields = fields
+    show_change_link = True
+    can_delete = False
+    max_num = 20
+    extra = 1
+    verbose_name_plural = "Last orders (3 months)"
+    all_url = 'admin:finances_order_changelist'
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        date_limit = arrow.utcnow().shift(months=-3).datetime
+        return query.filter(created__gte=date_limit)
 
 
 class ClientRuAdmin(admin.StackedInline):
@@ -304,6 +314,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     )
     tab_tariff = (ClientServiceInlineAdmin, )
     tab_auth = (ClientAuthInlineAdmin, )
+    tab_orders = (OrderInlineAdmin, )
     tabs = (
         ('Client', tab_client),
         ('Properties', tab_properties),
@@ -311,6 +322,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
         ('Tariff', tab_tariff),
         ('Last logins', tab_auth),
         ('Sales', tab_sales),
+        ('Orders', tab_orders),
     )
 
     form = make_ajax_form(Client, {
