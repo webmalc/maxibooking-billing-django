@@ -301,8 +301,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
     'billing.pagination.StandardPagination',
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissions',
-        'rest_framework.permissions.IsAuthenticated'
+        'billing.permissions.DjangoModelPermissionsGet',
     ],
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',

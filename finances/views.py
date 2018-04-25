@@ -93,7 +93,7 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('is_enabled', 'is_default', 'period_units', 'type',
                      'created')
 
-    @list_route(methods=['get'])
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated])
     @method_decorator(cache_page(60 * 60 * 24))
     def calc(self, request):
         """
