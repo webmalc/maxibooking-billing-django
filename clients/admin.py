@@ -203,7 +203,7 @@ class OrderInlineAdmin(ShowAllInlineAdminMixin):
     OrderInline admin interface
     """
     model = Order
-    fields = ('price', 'status', 'expired_date', 'paid_date', 'modified',
+    fields = ('price_str', 'status', 'expired_date', 'paid_date', 'modified',
               'all')
     readonly_fields = fields
     show_change_link = True

@@ -302,6 +302,10 @@ class Order(CommonInfo, TimeStampedModel):
         self.full_clean()
         self.save()
 
+    @property
+    def price_str(self):
+        return '{} {}'.format(self.price.amount, self.price.currency)
+
     def generate_note(self):
         """
         Generate and return default order note
