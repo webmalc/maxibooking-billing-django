@@ -141,7 +141,14 @@ UserAttributeSimilarityValidator',
 
 LANGUAGE_CODE = 'en'
 
-LANGUAGES = (('en', 'English'), ('ru', 'Russian'))
+LANGUAGES = (
+    ('en', 'English'),
+    ('ru', 'Russian'),
+    ('de', 'German'),
+    ('fr', 'French'),
+    ('tr', 'Turkish'),
+)
+MODELTRANSLATION_LANGUAGES = ('en', 'ru')
 
 TIME_ZONE = 'UTC'
 
@@ -302,6 +309,7 @@ REST_FRAMEWORK = {
     'billing.pagination.StandardPagination',
     'DEFAULT_PERMISSION_CLASSES': [
         'billing.permissions.DjangoModelPermissionsGet',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',

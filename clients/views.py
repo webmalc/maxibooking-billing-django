@@ -1,11 +1,12 @@
 import logging
 
-from billing.exceptions import BaseException
-from billing.lib import mb
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+
+from billing.exceptions import BaseException
+from billing.lib import mb
 
 from .models import Client, ClientAuth, ClientService, Company
 from .serializers import (ClientAuthSerializer, ClientSerializer,

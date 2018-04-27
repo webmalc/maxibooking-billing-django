@@ -3,7 +3,6 @@ import logging
 import time
 
 import requests
-
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -118,6 +117,32 @@ def client_install(client):
                 'client-install-result', args=[client.login])
         },
         error_callback=_error_callback)
+
+
+def client_cache_invalidate(client):
+    """
+    Client cache invalidate
+    """
+    logging.getLogger('billing').info(
+        'Begin client cache invalidation task. Id: {}; login: {}'.format(
+            client.id, client.login))
+
+    urls = mb_settings(client)
+    url = urls.get('client_invalidation')
+
+    if not url:
+        return True
+
+    def _error_callback():
+        logging.getLogger('billing').error(
+            'Failed client cache invalidation. Id: {}; login: {}'.format(
+                client.id, client.login))
+
+    return _request(
+        url=url.format(client.login),
+        data={'token': urls['token']},
+        error_callback=_error_callback,
+    )
 
 
 def client_archive(client):

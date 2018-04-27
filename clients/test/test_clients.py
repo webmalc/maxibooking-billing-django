@@ -2,14 +2,15 @@ import json
 
 import arrow
 import pytest
-from billing.lib import mb
-from billing.lib.test import json_contains
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import ValidationError
+from moneyed import EUR, Money
+
+from billing.lib import mb
+from billing.lib.test import json_contains
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
-from moneyed import EUR, Money
 
 from ..models import Client, RefusalReason, SalesStatus
 from ..tasks import client_archivation
@@ -440,7 +441,6 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     client = Client.objects.get(login='user-one')
     assert client.installation == 'installed'
     assert client.url == 'http://example.com'
-
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
     assert 'Registration successefull' in mail.subject
@@ -677,3 +677,18 @@ def test_client_refusal_reason():
     client.sales_status = another_status
     client.full_clean()
     client.save()
+
+
+def test_client_cache_invalidation(caplog, settings):
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
+        'client_invalidation'] = 'http://{}.example.com'
+    client = Client.objects.get(login='user-one')
+    client.login = 'user-one-test'
+    client.save()
+    first_msg = caplog.records[0].msg
+    last_msg = caplog.records[-1].msg
+    assert first_msg == 'Begin client cache invalidation task. \
+Id: 1; login: user-one-test'
+
+    assert last_msg == 'Failed client cache invalidation. \
+Id: 1; login: user-one-test'
