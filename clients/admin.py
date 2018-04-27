@@ -3,6 +3,7 @@ from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from django.db.models import Count
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
@@ -372,6 +373,8 @@ class='color'>&nbsp;</span><br> {}
         obj.manager = request.user
         obj.save()
         self.message_user(request, _('Client manger successfully saved.'))
+        return redirect(
+            reverse('admin:clients_client_change', args=[obj.id]) + '#tabs-6')
 
     def rooms(self, obj):
         """
