@@ -1,19 +1,13 @@
 * ISSUES
-** TODO prices migration
-** TODO not confirmed client
-** TODO manual order
-** TODO fix trial test
-** TODO trans custom json response
-** TODO client users and acl
-** TODO todos
 ** TODO !!!! django 2.0
 ** TODO coverage 100%
 ** TODO not periodical order
-** TODO registration refactor
-** TODO order prolongation interface
-** TODO maxibooking client actions
 ** TODO multiprocessing
+** TODO user activity stream
+
 * COMPLETED
+** DONE prices migration
+   CLOSED: [2018-04-28 Sat 16:18]
 ** DONE tests for client installation
    CLOSED: [2017-07-21 Fri 13:58]
 ** DONE log mails and responses

@@ -65,14 +65,14 @@ MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
         'install': 'https://www.example.com',
         'archive': 'https://www.example.com',
         'fixtures': 'https://{}.example.com',
-        'client_invalidate': 'https://{}.example.com',
+        'client_invalidation': 'https://{}.example.com',
         'token': 'token_ru'
     },
     '__all__': {
         'install': 'https://example.com',
         'archive': 'https://example.com',
         'fixtures': 'https://{}.example.com',
-        'client_invalidate': 'https://{}.example.com',
+        'client_invalidation': 'https://{}.example.com',
         'token': 'token_all'
     }
 }
