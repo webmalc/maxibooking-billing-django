@@ -1,7 +1,7 @@
 from annoying.fields import AutoOneToOneField
-from billing.models import CommonInfo, CountryBase, DictMixin
 from colorful.fields import RGBColorField
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -11,9 +11,11 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
+from phonenumber_field.modelfields import PhoneNumberField
+
+from billing.models import Comment, CommonInfo, CountryBase, DictMixin
 from finances.lib.calc import Calc
 from hotels.models import Country
-from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -36,43 +38,6 @@ class SalesStatus(DictMixin):
 
     class Meta:
         verbose_name_plural = _('sales statuses')
-
-
-class Comment(CommonInfo, TimeStampedModel):
-    """
-    Client comment class
-    """
-    TYPES = (
-        ('message', _('message')),
-        ('refusal', _('refusal')),
-    )
-    text = models.TextField(
-        db_index=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('text'))
-    client = models.ForeignKey(
-        'clients.Client',
-        on_delete=models.CASCADE,
-        verbose_name=_('client'),
-        related_name='comments',
-        db_index=True)
-    type = models.CharField(
-        verbose_name=_('type'),
-        max_length=20,
-        choices=TYPES,
-        default='message',
-        db_index=True,
-    )
-
-    def __str__(self):
-        date = self.modified if self.modified else self.created
-        return '{} {}'.format(
-            self.modified_by,
-            date.strftime('%d.%m.%Y %H:%M'),
-        )
-
-    class Meta:
-        ordering = ['-created']
 
 
 class Restrictions(CommonInfo, TimeStampedModel):
@@ -451,6 +416,7 @@ lowercase letters, numbers, and "-" character.'),
         on_delete=models.SET_NULL,
         verbose_name=_('refusal reason'),
         related_name='clients')
+    comments = GenericRelation(Comment)
 
     @property
     def text(self):

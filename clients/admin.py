@@ -2,6 +2,7 @@ import arrow
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -12,13 +13,14 @@ from tabbed_admin import TabbedModelAdmin
 
 from billing.admin import (ArchorAdminMixin, DictAdminMixin,
                            ShowAllInlineAdminMixin, TextFieldListFilter)
+from billing.models import Comment
 from finances.models import Order
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
-from .models import (Client, ClientAuth, ClientRu, ClientService, Comment,
-                     Company, CompanyRu, CompanyWorld, RefusalReason,
-                     Restrictions, SalesStatus)
+from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
+                     CompanyRu, CompanyWorld, RefusalReason, Restrictions,
+                     SalesStatus)
 from .tasks import install_client_task
 
 
@@ -236,7 +238,7 @@ class ClientRuAdmin(admin.StackedInline):
     )
 
 
-class CommentInlineAdmin(admin.TabularInline):
+class CommentInlineAdmin(GenericTabularInline):
     """
     ClientAuthInline admin interface
     """
