@@ -4,7 +4,12 @@ from django.contrib.admin import site
 from django.contrib.postgres.fields import JSONField
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
+from django_admin_row_actions import AdminRowActionsMixin
 from prettyjson import PrettyJSONWidget
+from reversion.admin import VersionAdmin
+
+from .models import Comment
 
 actions.add_to_site(site)
 
@@ -85,6 +90,28 @@ class ArchorAdminMixin(admin.ModelAdmin):
         return self.response_post_save_change(request, obj)
 
 
+class ChangeOwnMixin():
+    """
+    Change created by user object only
+    """
+
+    def has_change_permission(self, request, obj=None):
+        parent = super().has_change_permission(request, obj)
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+    def has_delete_permission(self, request, obj=None):
+        parent = super().has_delete_permission(request, obj)
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+
 class DictAdminMixin():
     """
     DictAdminMixin admin interface
@@ -123,3 +150,90 @@ class DictAdminMixin():
         if parent and obj and obj.code:
             return False
         return parent
+
+
+class CommentActionsListFilter(admin.SimpleListFilter):
+    title = _('my actions')
+
+    parameter_name = 'my_actions'
+
+    def lookups(self, request, model_admin):
+        return (('open', _('Open')), ('all', _('All')))
+
+    def queryset(self, request, queryset):
+        filtered_queryset = queryset.filter(
+            type='action', created_by=request.user)
+        if self.value() == 'all':
+            return filtered_queryset
+        elif self.value() == 'open':
+            return filtered_queryset.filter(status__isnull=True)
+        return queryset
+
+
+@admin.register(Comment)
+class CommentAdmin(ChangeOwnMixin, AdminRowActionsMixin, VersionAdmin):
+    """
+    Comments admin interface
+    """
+    list_display = ('id', 'text', 'date', 'status', 'type', 'client',
+                    'created', 'created_by')
+    list_display_links = ('id', )
+    actions = None
+    list_filter = (CommentActionsListFilter, 'type', 'status', 'date',
+                   'created', 'created_by')
+    search_fields = ('=pk', 'text')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    fieldsets = (
+        ('General', {
+            'fields': ('text', 'date', 'type', 'status')
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
+        }),
+    )
+    list_select_related = ('created_by', )
+
+    def set_completed(self, request, obj):
+        obj.status = 'completed'
+        obj.save()
+        self.message_user(request, _('Action is marked as completed.'))
+
+    def set_canceled(self, request, obj):
+        obj.status = 'canceled'
+        obj.save()
+        self.message_user(request, _('Action is marked as canceled.'))
+
+    def get_row_actions(self, obj):
+        def enabled():
+            return obj.type == 'action' and not obj.status
+
+        row_actions = [
+            {
+                'label': 'complete',
+                'action': 'set_completed',
+                'enabled': enabled()
+            },
+            {
+                'label': 'cancel',
+                'action': 'set_canceled',
+                'enabled': enabled()
+            },
+        ]
+
+        row_actions += super().get_row_actions(obj)
+        return row_actions
+
+    def client(self, obj):
+        client_id = obj.object_id
+        template = """
+        <a href="{}" target="_blank">{}</a>
+        """
+        return template.format(
+            reverse('admin:clients_client_change', args=[client_id]),
+            client_id,
+        )
+
+    client.allow_tags = True
+
+    class Media:
+        js = ('js/admin/comments.js', )

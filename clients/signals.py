@@ -11,4 +11,6 @@ def order_post_save(sender, **kwargs):
     Client post save
     """
     client = kwargs['instance']
-    invalidate_client_cache_task.delay(client_id=client.id)
+
+    if client.installation == 'installed':
+        invalidate_client_cache_task.delay(client_id=client.id)

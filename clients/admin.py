@@ -11,7 +11,7 @@ from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import (ArchorAdminMixin, DictAdminMixin,
+from billing.admin import (ArchorAdminMixin, ChangeOwnMixin, DictAdminMixin,
                            ShowAllInlineAdminMixin, TextFieldListFilter)
 from billing.models import Comment
 from finances.models import Order
@@ -238,33 +238,17 @@ class ClientRuAdmin(admin.StackedInline):
     )
 
 
-class CommentInlineAdmin(GenericTabularInline):
+class CommentInlineAdmin(ChangeOwnMixin, GenericTabularInline):
     """
     ClientAuthInline admin interface
     """
     model = Comment
     extra = 1
     readonly_fields = ['modified', 'modified_by']
-    fields = ('text', 'type')
+    fields = ('text', 'type', 'date', 'status')
 
     def get_form(self):
         return None
-
-    def has_change_permission(self, request, obj=None):
-        parent = super().has_change_permission(request, obj)
-        if not parent:
-            return parent
-        if obj is not None and obj.created_by != request.user:
-            return False
-        return True
-
-    def has_delete_permission(self, request, obj=None):
-        parent = super().has_delete_permission(request, obj)
-        if not parent:
-            return parent
-        if obj is not None and obj.created_by != request.user:
-            return False
-        return True
 
 
 @admin.register(Client)
@@ -286,8 +270,8 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
                      'manager__username', 'manager__email',
                      'manager__last_name')
     raw_id_fields = ('country', 'region', 'city')
-    readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
-                       'modified_by')
+    readonly_fields = ('info', 'disabled_at', 'created', 'modified',
+                       'created_by', 'modified_by')
     tab_client = (
         ('General', {
             'fields': ('login', 'email', 'phone', 'name', 'description')
@@ -311,7 +295,8 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     )
     tab_sales = (
         ('General', {
-            'fields': ('source', 'manager', 'sales_status', 'refusal_reason')
+            'fields': ('info', 'source', 'manager', 'sales_status',
+                       'refusal_reason')
         }),
         CommentInlineAdmin,
     )
@@ -331,6 +316,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def info(self, obj):
+        return '<br>'.join([obj.login, obj.name, obj.phone, obj.email])
+
+    info.allow_tags = True
+    info.short_description = _('client')
 
     def sales_status_html(self, obj):
         sales_status = obj.sales_status

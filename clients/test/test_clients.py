@@ -682,13 +682,13 @@ def test_client_refusal_reason():
 def test_client_cache_invalidation(caplog, settings):
     settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
         'client_invalidation'] = 'http://{}.example.com'
-    client = Client.objects.get(login='user-one')
-    client.login = 'user-one-test'
+    client = Client.objects.get(login='user-two')
+    client.login = 'user-two-test'
     client.save()
     first_msg = caplog.records[0].msg
     last_msg = caplog.records[-1].msg
     assert first_msg == 'Begin client cache invalidation task. \
-Id: 1; login: user-one-test'
+Id: 2; login: user-two-test'
 
     assert last_msg == 'Failed client cache invalidation. \
-Id: 1; login: user-one-test'
+Id: 2; login: user-two-test'

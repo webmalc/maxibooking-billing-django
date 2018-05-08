@@ -47,11 +47,29 @@ class Comment(CommonInfo, TimeStampedModel):
     TYPES = (
         ('message', _('message')),
         ('refusal', _('refusal')),
+        ('action', _('action')),
+    )
+    STATUSES = (
+        ('completed', _('completed')),
+        ('canceled', _('canceled')),
     )
     text = models.TextField(
         db_index=True,
         validators=[MinLengthValidator(2)],
         verbose_name=_('text'))
+    date = models.DateTimeField(
+        verbose_name=_('date'),
+        null=True,
+        blank=True,
+    )
+    status = models.CharField(
+        verbose_name=_('status'),
+        max_length=20,
+        choices=STATUSES,
+        null=True,
+        blank=True,
+        db_index=True,
+    )
     type = models.CharField(
         verbose_name=_('type'),
         max_length=20,
