@@ -318,7 +318,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     })
 
     def info(self, obj):
-        return '<br>'.join([obj.login, obj.name, obj.phone, obj.email])
+        return '<br>'.join([obj.login, obj.name, str(obj.phone), obj.email])
 
     info.allow_tags = True
     info.short_description = _('client')
