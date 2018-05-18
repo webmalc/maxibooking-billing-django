@@ -186,6 +186,8 @@ class CompanyRu(CountryBase):
     ogrn = models.CharField(
         max_length=13,
         db_index=True,
+        null=True,
+        blank=True,
         validators=[
             MinLengthValidator(13),
             MaxLengthValidator(13),
@@ -204,6 +206,8 @@ class CompanyRu(CountryBase):
     kpp = models.CharField(
         max_length=9,
         db_index=True,
+        null=True,
+        blank=True,
         validators=[
             MinLengthValidator(9),
             MaxLengthValidator(9),
