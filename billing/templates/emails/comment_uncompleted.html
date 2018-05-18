@@ -1,0 +1,11 @@
+{% extends 'emails/base.html' %}
+{% load humanize %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Uncompleted action" %}
+{% endblock %}
+
+{% block content %}
+{{ comment.date}} - {{ comment.text }}. Client: {{ comment.content_object }}
+{% endblock %}

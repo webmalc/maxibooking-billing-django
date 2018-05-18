@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 import raven
+from celery.schedules import crontab
 from kombu import Queue
 
 # Local settings
@@ -290,6 +291,10 @@ CELERYBEAT_SCHEDULE = {
     'clients_archivation': {
         'task': 'clients.tasks.clients_archivation',
         'schedule': 60 * 10
+    },
+    'comments_uncompleted': {
+        'task': 'billing.tasks.mail_comments_action_task',
+        'schedule': crontab(minute=0, hour='6, 14, 18')
     },
 }
 

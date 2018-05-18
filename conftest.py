@@ -4,6 +4,7 @@ from django.core.management import call_command
 from django.core.validators import ValidationError
 from moneyed import EUR, RUB, Money
 
+from clients.models import Client
 from finances.models import Order, Price, Service
 from hotels.models import Country
 
@@ -17,6 +18,39 @@ def django_db_setup(django_db_setup, django_db_blocker):
             'tests/service_categories', 'tests/services', 'tests/auth',
             'tests/client_services', 'tests/transactions', 'tests/companies',
             'tests/sales_statuses', 'tests/refusal_reasons')
+
+
+@pytest.fixture()
+def make_comments():
+    client1 = Client.objects.get(pk=1)
+    client2 = Client.objects.get(pk=2)
+
+    client1.comments.create(text='test message comment 1')
+    client2.comments.create(text='test message comment 2')
+    client1.comments.create(text='test action comment 1', type='action')
+    client1.comments.create(text='test refusal comment 1', type='refusal')
+    client1.comments.create(
+        text='test action completed comment 1',
+        type='action',
+        status='completed',
+    )
+    client2.comments.create(
+        text='test action canceled comment 1',
+        type='action',
+        status='canceled',
+    )
+    client1.comments.create(
+        text='test action uncompleted comment 1',
+        type='action',
+        date=arrow.utcnow().shift(days=-1).datetime)
+    client2.comments.create(
+        text='test action uncompleted comment 2',
+        type='action',
+        date=arrow.utcnow().shift(hours=-5).datetime)
+    client2.comments.create(
+        text='test action old uncompleted comment 2',
+        type='action',
+        date=arrow.utcnow().shift(days=-15).datetime)
 
 
 @pytest.fixture()

@@ -8,7 +8,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
-from .managers import DictManager
+from .managers import CommentsManager, DictManager
 
 
 class CommonInfo(models.Model):
@@ -53,6 +53,8 @@ class Comment(CommonInfo, TimeStampedModel):
         ('completed', _('completed')),
         ('canceled', _('canceled')),
     )
+    objects = CommentsManager()
+
     text = models.TextField(
         db_index=True,
         validators=[MinLengthValidator(2)],
