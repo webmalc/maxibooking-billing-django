@@ -119,12 +119,12 @@ class Company(CommonInfo, TimeStampedModel, Payer):
 
     @property
     def text(self):
-        return '{form} {name}, ИНН {inn}, КПП {kpp}, \
+        return '{form} {name}, ИНН {inn}, {kpp}\
         {postal_code}, {region}, {city}, {address}'.format(
             form=self.ru.get_form_display(),
             name=self.name,
             inn=self.ru.inn,
-            kpp=self.ru.kpp,
+            kpp='KПП ' + str(self.ru.kpp) + ', ' if self.ru.kpp else '',
             postal_code=self.postal_code,
             region=self.city.name,
             city=self.region.name,
