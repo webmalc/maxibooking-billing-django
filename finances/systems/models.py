@@ -3,13 +3,15 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
-from billing.lib.conf import get_settings
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
+from weasyprint import HTML
+
+from billing.lib.conf import get_settings
 
 from ..models import Order, Transaction
 
@@ -27,13 +29,19 @@ class BaseType(ABC):
     """
     invalid_template = 'finances/invalid_type.html'
 
-    def __init__(self, order=None, request=None):
+    def __init__(self, order=None, request=None, load=True):
+        pass
         self.request = request
         self.order = order
-        self.payer = self.order.get_payer(
-            self.client_filter_fields) if self.order else None
         if self.order and not isinstance(self.order, Order):
             self.order = Order.objects.get_for_payment_system(order)
+
+        if load:
+            self.load()
+
+    def load(self):
+        self.payer = self.order.get_payer(
+            self.client_filter_fields) if self.order else None
         self.country = self.payer.country if self.payer else None
         self._conf(self.order, self.request)
 
@@ -179,6 +187,10 @@ class Bill(BaseType):
             }
 
         return render_to_string(self.get_template, data)
+
+    @property
+    def pdf(self):
+        return HTML(string=self.html).write_pdf()
 
 
 class Rbk(BaseType):

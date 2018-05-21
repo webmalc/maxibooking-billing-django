@@ -1,12 +1,15 @@
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from django.http import HttpResponse
+from django_admin_row_actions import AdminRowActionsMixin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
 
 from billing.admin import JsonAdmin, ManagerListMixin, TextFieldListFilter
 
 from .models import Order, Price, Service, ServiceCategory, Transaction
+from .systems import manager
 
 
 @admin.register(Transaction)
@@ -53,8 +56,8 @@ class TransactionInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Order)
-class OrderAdmin(VersionAdmin, AjaxSelectAdmin, ManagerListMixin,
-                 TabbedExternalJqueryTranslationAdmin):
+class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
+                 ManagerListMixin, TabbedExternalJqueryTranslationAdmin):
     """
     Order admin interface
     """
@@ -94,7 +97,28 @@ class OrderAdmin(VersionAdmin, AjaxSelectAdmin, ManagerListMixin,
         'client_services': 'order_client_services',
         'client': 'clients',
     })
-    list_select_related = ('client', )
+    list_select_related = ('client', 'client__country')
+
+    def bill(self, obj, request=None, load=False):
+        return manager.get('bill', obj, request=request, load=load)
+
+    def bill_pdf(self, request, obj):
+        bill = self.bill(obj, request, load=True)
+        response = HttpResponse(bill.pdf, content_type='application/pdf')
+        content = 'inline; filename=bill_{}.pdf'.format(obj.pk)
+        response['Content-Disposition'] = content
+        return response
+
+    def get_row_actions(self, obj):
+        row_actions = [
+            {
+                'label': 'Bill',
+                'action': 'bill_pdf',
+                'enabled': obj.status == 'new' and self.bill(obj)
+            },
+        ]
+        row_actions += super(OrderAdmin, self).get_row_actions(obj)
+        return row_actions
 
     class Media:
         js = ('js/admin/orders.js', )
