@@ -28,7 +28,7 @@ class PaymentSystemViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
 
     def list(self, request):
-        entries = manager.list(
+        entries = manager.systems_list(
             request.query_params.get('order', None), request=request)
         serializer = PaymentSystemSerializer(
             instance=entries.values(), many=True)
@@ -93,7 +93,7 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('is_enabled', 'is_default', 'period_units', 'type',
                      'created')
 
-    @list_route(methods=['get'])
+    @list_route(methods=['get'], permission_classes=[IsAuthenticated])
     @method_decorator(cache_page(60 * 60 * 24))
     def calc(self, request):
         """
@@ -106,28 +106,64 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         query = CalcQuerySerializer(data=request.GET)
 
         if not query.is_valid():
-            return Response({'errors': query.errors})
+            return Response({'errors': query.errors, 'status': False})
 
         data = query.data
-        service = Service.objects.get_by_period(
-            service_type='rooms',
-            period=data.get('period'),
-            period_units=data.get('period_units'),
-        )
-        if not service:
-            return Response({'errors': {'service': ['service not found.']}})
+        period = data.get('period')
+        prices = []
 
-        try:
-            price = Calc.factory(service).calc(
-                quantity=data.get('quantity'), country=data.get('country'))
-        except CalcException as e:
-            return Response({'errors': {'calc': [str(e)]}})
+        if period:
+            service = Service.objects.get_by_period(
+                service_type='rooms',
+                period=data.get('period'),
+                period_units=data.get('period_units'),
+            )
+            if not service:
+                return Response({
+                    'errors': {
+                        'service': ['service not found.']
+                    },
+                    'status': False
+                })
+            services = [service]
+        else:
+            services = Service.objects.get_all_periods(
+                service_type='rooms',
+                period_units=data.get('period_units'),
+            )
 
-        return Response({
+        for service in services:
+            try:
+                price = Calc.factory(service).calc(
+                    quantity=data.get('quantity'), country=data.get('country'))
+                prices.append({
+                    'status': True,
+                    'price': price.amount,
+                    'price_currency': price.currency.code,
+                    'period': service.period
+                })
+            except CalcException as e:
+                return Response({
+                    'errors': {
+                        'calc': [str(e)]
+                    },
+                    'status': False
+                })
+
+        prices_count = len(prices)
+        if not prices_count:
+            return Response({
+                'errors': {
+                    'calc': 'Empty prices'
+                },
+                'status': False
+            })
+
+        response = prices[0] if prices_count == 1 else {
             'status': True,
-            'price': price.amount,
-            'price_currency': price.currency.code
-        })
+            'prices': prices
+        }
+        return Response(response)
 
 
 class PriceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -151,7 +187,7 @@ def payment_system_response(request, system_id):
         'Payment system response; System_id: {}; GET: {}; POST: {}'.format(
             system_id, dict(request.GET), dict(request.POST)))
 
-    system = manager.get(system_id)
+    system = manager.get(system_id, request=request)
     if not system or not hasattr(system, 'response'):
         return HttpResponseNotFound('Payment system not found.')
     return system.response(request)

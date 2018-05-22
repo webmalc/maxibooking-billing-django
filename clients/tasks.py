@@ -10,6 +10,20 @@ from .models import Client, ClientService
 
 
 @app.task
+def invalidate_client_cache_task(client_id):
+    """
+    Client invalidation task
+    """
+    try:
+        client = Client.objects.get(pk=client_id)
+    except Client.DoesNotExist:
+        return False
+    mb.client_cache_invalidate(client)
+
+    return True
+
+
+@app.task
 def install_client_task(client_id):
     """
     Client installation task

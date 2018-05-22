@@ -32,6 +32,7 @@
         "name": "User Two",
         "description": "User two description",
         "status": "disabled",
+        "manager": 2,
         "installation": "installed"
     }
 },

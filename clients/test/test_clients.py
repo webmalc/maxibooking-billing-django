@@ -332,7 +332,7 @@ def test_client_process_fixtures_by_admin(admin_client):
 
 
 def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_URLS['__all__'][
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
         'fixtures'] = 'http://{}.invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-fixtures', args=['user-two']),
@@ -382,7 +382,8 @@ def test_client_install_by_admin(admin_client):
 
 
 def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
-    settings.MB_URLS['__all__']['install'] = 'http://invalid-domain-name.com'
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
+        'install'] = 'http://invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-install', args=['user-one']),
         content_type="application/json")
@@ -440,7 +441,6 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     client = Client.objects.get(login='user-one')
     assert client.installation == 'installed'
     assert client.url == 'http://example.com'
-
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
     assert 'Registration successefull' in mail.subject
@@ -588,7 +588,8 @@ def test_clients_archivation(admin_client):
 
 
 def test_clients_archivation_invalid(admin_client, settings):
-    settings.MB_URLS['__all__']['archive'] = 'http://invalid-domain-name.com'
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
+        'archive'] = 'http://invalid-domain-name.com'
     client_archivation.delay()
     client = Client.objects.get(login='user-six')
     assert client.status == 'disabled'
@@ -676,3 +677,18 @@ def test_client_refusal_reason():
     client.sales_status = another_status
     client.full_clean()
     client.save()
+
+
+def test_client_cache_invalidation(caplog, settings):
+    settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
+        'client_invalidation'] = 'http://{}.example.com'
+    client = Client.objects.get(login='user-two')
+    client.login = 'user-two-test'
+    client.save()
+    first_msg = caplog.records[0].msg
+    last_msg = caplog.records[-1].msg
+    assert first_msg == 'Begin client cache invalidation task. \
+Id: 2; login: user-two-test'
+
+    assert last_msg == 'Failed client cache invalidation. \
+Id: 2; login: user-two-test'

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 import raven
+from celery.schedules import crontab
 from kombu import Queue
 
 # Local settings
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'raven.contrib.django.raven_compat',
     'adminactions',
     'modeltranslation',
+    'admin_view_permission',
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.auth',
@@ -142,7 +144,14 @@ UserAttributeSimilarityValidator',
 
 LANGUAGE_CODE = 'en'
 
-LANGUAGES = (('en', 'English'), ('ru', 'Russian'))
+LANGUAGES = (
+    ('en', 'English'),
+    ('ru', 'Russian'),
+    ('de', 'German'),
+    ('fr', 'French'),
+    ('tr', 'Turkish'),
+)
+MODELTRANSLATION_LANGUAGES = ('en', 'ru')
 
 TIME_ZONE = 'UTC'
 
@@ -302,6 +311,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'clients.tasks.clients_archivation',
         'schedule': 60 * 10
     },
+    'comments_uncompleted': {
+        'task': 'billing.tasks.mail_comments_action_task',
+        'schedule': crontab(minute=0, hour='6, 14, 18')
+    },
 }
 
 # Django phonenumber
@@ -319,8 +332,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
     'billing.pagination.StandardPagination',
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissions',
-        'rest_framework.permissions.IsAuthenticated'
+        'billing.permissions.DjangoModelPermissionsGet',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -368,14 +381,14 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_USE_CACHE': 'default'
 }
 
+# View permission
+ADMIN_VIEW_PERMISSION_MODELS = [
+    'finances.Order',
+]
+
 # Billing
 PAYMENT_SYSTEMS = ('stripe', 'rbk', 'bill')
 
 # MB
 MB_SITE_URL = 'https://maxi-booking.com'
 MB_TRIAL_DAYS = 15
-MB_CLIENT_LOGIN_RESTRICTIONS = [
-    'support', 'demo', 'mail', 'mx', 'payment', 'www', 'new', 'info', 'cdn',
-    'mb', 'help', 'redmine', 'deploy', 'trial', '_amazonses', 'billing',
-    'maxibooking'
-]

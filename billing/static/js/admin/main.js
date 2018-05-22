@@ -41,6 +41,32 @@ $(document).ready(function($) {
     }());
 
     /**
+     * remember last tab
+     */
+    (function() {
+        $('#tabs').on('tabsactivate', (event, ui) => {
+            const form = $(event.target).closest('form');
+            if (form.length) {
+                localStorage.setItem(
+                    'tabs_' + form.prop('id'),
+                    ui.newTab.index()
+                );
+            }
+        });
+        $('#tabs').on('tabscreate', (event, ui) => {
+            const div = $(event.target);
+            const form = div.closest('form');
+            const hash = window.location.hash.includes('#tabs');
+            if (form.length && !hash) {
+                let remember = localStorage.getItem('tabs_' + form.prop('id'));
+                if (remember !== null) {
+                    div.tabs('option', 'active', remember);
+                }
+            }
+        });
+    }());
+
+    /**
      * begin & end inputs
      */
     (function() {

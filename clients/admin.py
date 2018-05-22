@@ -2,20 +2,25 @@ import arrow
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import ArchorAdminMixin, DictAdminMixin, TextFieldListFilter
+from billing.admin import (ArchorAdminMixin, ChangeOwnMixin, DictAdminMixin,
+                           ShowAllInlineAdminMixin, TextFieldListFilter)
+from billing.models import Comment
+from finances.models import Order
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
-from .models import (Client, ClientAuth, ClientRu, ClientService, Comment,
-                     Company, CompanyRu, CompanyWorld, RefusalReason,
-                     Restrictions, SalesStatus)
+from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
+                     CompanyRu, CompanyWorld, RefusalReason, Restrictions,
+                     SalesStatus)
 from .tasks import install_client_task
 
 
@@ -176,7 +181,7 @@ class CompanyInlineAdmin(admin.TabularInline):
         return False
 
 
-class ClientAuthInlineAdmin(admin.TabularInline):
+class ClientAuthInlineAdmin(ShowAllInlineAdminMixin):
     """
     ClientAuthInline admin interface
     """
@@ -188,25 +193,33 @@ class ClientAuthInlineAdmin(admin.TabularInline):
     max_num = 20
     extra = 1
     verbose_name_plural = "Last logins (3 days)"
-
-    def get_formset(self, request, obj=None, **kwargs):
-        self.parent_obj = obj
-        return super().get_formset(request, obj, **kwargs)
-
-    def all(self, request):
-        template = """
-        <a href="{}?client__login__exact={}" target="_blank">Show all</a>
-        """
-        return template.format(
-            reverse('admin:clients_clientauth_changelist'),
-            self.parent_obj.login)
-
-    all.allow_tags = True
+    all_url = 'admin:clients_clientauth_changelist'
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
         date_limit = arrow.utcnow().shift(days=-1).datetime
         return query.filter(auth_date__gte=date_limit)
+
+
+class OrderInlineAdmin(ShowAllInlineAdminMixin):
+    """
+    OrderInline admin interface
+    """
+    model = Order
+    fields = ('price_str', 'status', 'expired_date', 'paid_date', 'modified',
+              'all')
+    readonly_fields = fields
+    show_change_link = True
+    can_delete = False
+    max_num = 20
+    extra = 1
+    verbose_name_plural = "Last orders (3 months)"
+    all_url = 'admin:finances_order_changelist'
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        date_limit = arrow.utcnow().shift(months=-3).datetime
+        return query.filter(created__gte=date_limit)
 
 
 class ClientRuAdmin(admin.StackedInline):
@@ -225,33 +238,17 @@ class ClientRuAdmin(admin.StackedInline):
     )
 
 
-class CommentInlineAdmin(admin.TabularInline):
+class CommentInlineAdmin(ChangeOwnMixin, GenericTabularInline):
     """
     ClientAuthInline admin interface
     """
     model = Comment
     extra = 1
     readonly_fields = ['modified', 'modified_by']
-    fields = ('text', 'type')
+    fields = ('text', 'type', 'date', 'status')
 
     def get_form(self):
         return None
-
-    def has_change_permission(self, request, obj=None):
-        parent = super().has_change_permission(request, obj)
-        if not parent:
-            return parent
-        if obj is not None and obj.created_by != request.user:
-            return False
-        return True
-
-    def has_delete_permission(self, request, obj=None):
-        parent = super().has_delete_permission(request, obj)
-        if not parent:
-            return parent
-        if obj is not None and obj.created_by != request.user:
-            return False
-        return True
 
 
 @admin.register(Client)
@@ -273,8 +270,8 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
                      'manager__username', 'manager__email',
                      'manager__last_name')
     raw_id_fields = ('country', 'region', 'city')
-    readonly_fields = ('disabled_at', 'created', 'modified', 'created_by',
-                       'modified_by')
+    readonly_fields = ('info', 'disabled_at', 'created', 'modified',
+                       'created_by', 'modified_by')
     tab_client = (
         ('General', {
             'fields': ('login', 'email', 'phone', 'name', 'description')
@@ -298,12 +295,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     )
     tab_sales = (
         ('General', {
-            'fields': ('source', 'manager', 'sales_status', 'refusal_reason')
+            'fields': ('info', 'source', 'manager', 'sales_status',
+                       'refusal_reason')
         }),
         CommentInlineAdmin,
     )
     tab_tariff = (ClientServiceInlineAdmin, )
     tab_auth = (ClientAuthInlineAdmin, )
+    tab_orders = (OrderInlineAdmin, )
     tabs = (
         ('Client', tab_client),
         ('Properties', tab_properties),
@@ -311,11 +310,18 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
         ('Tariff', tab_tariff),
         ('Last logins', tab_auth),
         ('Sales', tab_sales),
+        ('Orders', tab_orders),
     )
 
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def info(self, obj):
+        return '<br>'.join([obj.login, obj.name, str(obj.phone), obj.email])
+
+    info.allow_tags = True
+    info.short_description = _('client')
 
     def sales_status_html(self, obj):
         sales_status = obj.sales_status
@@ -360,6 +366,8 @@ class='color'>&nbsp;</span><br> {}
         obj.manager = request.user
         obj.save()
         self.message_user(request, _('Client manger successfully saved.'))
+        return redirect(
+            reverse('admin:clients_client_change', args=[obj.id]) + '#tabs-6')
 
     def rooms(self, obj):
         """

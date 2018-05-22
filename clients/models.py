@@ -1,6 +1,7 @@
 from annoying.fields import AutoOneToOneField
 from colorful.fields import RGBColorField
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import (MaxLengthValidator, MinLengthValidator,
                                     MinValueValidator, RegexValidator,
@@ -12,7 +13,7 @@ from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import CommonInfo, CountryBase, DictMixin
+from billing.models import Comment, CommonInfo, CountryBase, DictMixin
 from finances.lib.calc import Calc
 from hotels.models import Country
 
@@ -37,43 +38,6 @@ class SalesStatus(DictMixin):
 
     class Meta:
         verbose_name_plural = _('sales statuses')
-
-
-class Comment(CommonInfo, TimeStampedModel):
-    """
-    Client comment class
-    """
-    TYPES = (
-        ('message', _('message')),
-        ('refusal', _('refusal')),
-    )
-    text = models.TextField(
-        db_index=True,
-        validators=[MinLengthValidator(2)],
-        verbose_name=_('text'))
-    client = models.ForeignKey(
-        'clients.Client',
-        on_delete=models.CASCADE,
-        verbose_name=_('client'),
-        related_name='comments',
-        db_index=True)
-    type = models.CharField(
-        verbose_name=_('type'),
-        max_length=20,
-        choices=TYPES,
-        default='message',
-        db_index=True,
-    )
-
-    def __str__(self):
-        date = self.modified if self.modified else self.created
-        return '{} {}'.format(
-            self.modified_by,
-            date.strftime('%d.%m.%Y %H:%M'),
-        )
-
-    class Meta:
-        ordering = ['-created']
 
 
 class Restrictions(CommonInfo, TimeStampedModel):
@@ -150,13 +114,17 @@ class Company(CommonInfo, TimeStampedModel, Payer):
         verbose_name=_('bank'))
 
     @property
+    def country(self):
+        return self.client.country
+
+    @property
     def text(self):
-        return '{form} {name}, ИНН {inn}, КПП {kpp}, \
+        return '{form} {name}, ИНН {inn}, {kpp}\
         {postal_code}, {region}, {city}, {address}'.format(
             form=self.ru.get_form_display(),
             name=self.name,
             inn=self.ru.inn,
-            kpp=self.ru.kpp,
+            kpp='KПП ' + str(self.ru.kpp) + ', ' if self.ru.kpp else '',
             postal_code=self.postal_code,
             region=self.city.name,
             city=self.region.name,
@@ -218,6 +186,8 @@ class CompanyRu(CountryBase):
     ogrn = models.CharField(
         max_length=13,
         db_index=True,
+        null=True,
+        blank=True,
         validators=[
             MinLengthValidator(13),
             MaxLengthValidator(13),
@@ -236,6 +206,8 @@ class CompanyRu(CountryBase):
     kpp = models.CharField(
         max_length=9,
         db_index=True,
+        null=True,
+        blank=True,
         validators=[
             MinLengthValidator(9),
             MaxLengthValidator(9),
@@ -448,6 +420,7 @@ lowercase letters, numbers, and "-" character.'),
         on_delete=models.SET_NULL,
         verbose_name=_('refusal reason'),
         related_name='clients')
+    comments = GenericRelation(Comment)
 
     @property
     def text(self):

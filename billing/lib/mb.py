@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from .conf import get_settings
 from .messengers.mailer import mail_client
 
 
@@ -50,11 +51,7 @@ def mb_settings(client=None, country=None):
     """
     Get MB_URLS by country code
     """
-    if not client and not country:
-        raise AttributeError('client is None and country is None.')
-    if not country and client:
-        country = client.country.tld
-    return settings.MB_URLS.get(country, settings.MB_URLS['__all__'])
+    return get_settings('MB_URLS', country=country, client=client)
 
 
 def client_fixtures(client):
@@ -120,6 +117,32 @@ def client_install(client):
                 'client-install-result', args=[client.login])
         },
         error_callback=_error_callback)
+
+
+def client_cache_invalidate(client):
+    """
+    Client cache invalidate
+    """
+    logging.getLogger('billing').info(
+        'Begin client cache invalidation task. Id: {}; login: {}'.format(
+            client.id, client.login))
+
+    urls = mb_settings(client)
+    url = urls.get('client_invalidation')
+
+    if not url:
+        return True
+
+    def _error_callback():
+        logging.getLogger('billing').error(
+            'Failed client cache invalidation. Id: {}; login: {}'.format(
+                client.id, client.login))
+
+    return _request(
+        url=url.format(client.login),
+        data={'token': urls['token']},
+        error_callback=_error_callback,
+    )
 
 
 def client_archive(client):

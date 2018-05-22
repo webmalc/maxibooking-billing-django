@@ -1,11 +1,14 @@
 from abc import ABCMeta, abstractmethod
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
-from .managers import DictManager
+from .managers import CommentsManager, DictManager
 
 
 class CommonInfo(models.Model):
@@ -35,6 +38,61 @@ class CommonInfo(models.Model):
 
     class Meta:
         abstract = True
+
+
+class Comment(CommonInfo, TimeStampedModel):
+    """
+    Client comment class
+    """
+    TYPES = (
+        ('message', _('message')),
+        ('refusal', _('refusal')),
+        ('action', _('action')),
+    )
+    STATUSES = (
+        ('completed', _('completed')),
+        ('canceled', _('canceled')),
+    )
+    objects = CommentsManager()
+
+    text = models.TextField(
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('text'))
+    date = models.DateTimeField(
+        verbose_name=_('date'),
+        null=True,
+        blank=True,
+    )
+    status = models.CharField(
+        verbose_name=_('status'),
+        max_length=20,
+        choices=STATUSES,
+        null=True,
+        blank=True,
+        db_index=True,
+    )
+    type = models.CharField(
+        verbose_name=_('type'),
+        max_length=20,
+        choices=TYPES,
+        default='message',
+        db_index=True,
+    )
+
+    def __str__(self):
+        date = self.modified if self.modified else self.created
+        return '{} {}'.format(
+            self.modified_by,
+            date.strftime('%d.%m.%Y %H:%M'),
+        )
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+
+    class Meta:
+        ordering = ['-created']
 
 
 class DictMixin(CommonInfo, TimeStampedModel, TitleDescriptionModel):

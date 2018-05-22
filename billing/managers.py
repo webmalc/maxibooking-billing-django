@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractproperty
 from functools import reduce
 
+import arrow
 from django.db import models
 from django.db.models import Q
 
@@ -31,3 +32,21 @@ class DictManager(models.Manager):
 
     def filter_is_enabled(self):
         return self.filter(is_enabled=True)
+
+
+class CommentsManager(models.Manager):
+    """
+    Comments manager
+    """
+
+    def get_uncompleted(self):
+        """
+        Get uncompleted actions
+        """
+        begin = arrow.utcnow().shift(days=-2).datetime
+        end = arrow.utcnow().shift(hours=-2).datetime
+
+        return self.filter(
+            type='action',
+            date__range=(begin, end),
+        ).exclude(status__isnull=False).exclude(date__isnull=True)

@@ -1,9 +1,8 @@
 import arrow
+from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-
-from billing.managers import LookupMixin
 
 
 class OrderManager(LookupMixin):
@@ -78,6 +77,16 @@ class ServiceManager(LookupMixin):
             )
         except apps.get_model('finances', 'Service').DoesNotExist:
             return None
+
+    def get_all_periods(self, service_type, period_units='month'):
+        """
+        Get all services periods
+        """
+        return self.filter(
+            type=service_type,
+            is_enabled=True,
+            period_units=period_units,
+        ).order_by('period')
 
     def get_default(self, service_type):
         """
