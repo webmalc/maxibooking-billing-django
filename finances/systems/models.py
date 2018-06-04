@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
-from billing.lib.conf import get_settings
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -11,6 +10,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
+
+from billing.lib.conf import get_settings
 
 from ..models import Order, Transaction
 
@@ -193,6 +194,7 @@ class Bill(BaseType):
                 'price_text': price_text
             }
 
+        data['required_fields'] = self.client_filter_fields
         return render_to_string(self.get_template, data)
 
     @property
@@ -293,10 +295,12 @@ class Rbk(BaseType):
 
     @property
     def html(self):
-        return render_to_string(self.get_template, {
-            'order': self.order,
-            'rbk': self
-        })
+        return render_to_string(
+            self.get_template, {
+                'order': self.order,
+                'rbk': self,
+                'required_fields': self.client_filter_fields
+            })
 
 
 class Stripe(BaseType):
