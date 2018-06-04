@@ -224,5 +224,15 @@ class Rule(CommonMixin, TitleDescriptionMixin, OrderedModel):
 
     objects = RuleManager()
 
+    def get_ip_ranges(self):
+        ranges = self.ip_ranges.all()
+        return ranges
+
+    def check_ip(self, ip):
+        """
+        Check ip against rule
+        """
+        return True
+
     class Meta(OrderedModel.Meta):
         pass

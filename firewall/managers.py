@@ -33,4 +33,5 @@ class RuleManager(models.Manager):
         """
         Get all enabled rules
         """
-        return self.filter(is_enabled=True).prefetch_related('groups')
+        return self.filter(is_enabled=True).prefetch_related(
+            'groups', 'groups__ip_ranges', 'ip_ranges')

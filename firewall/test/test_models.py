@@ -20,6 +20,33 @@ from ..models import Group, IpRange, Rule
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ])
+class RuleTestCase(TestCase):
+    """
+    Rule tests
+    """
+
+    def test_get_ip_ranges(self):
+        ip_range_all = IpRange.objects.create(start_ip='0.0.0.0')
+        ip_range_localhost = IpRange.objects.create(start_ip='127.0.0.1')
+        ip_range = IpRange.objects.create(
+            start_ip='46.36.198.121',
+            end_ip='46.36.198.125',
+        )
+        group = Group.objects.create(name='group')
+        group.ip_ranges.add(ip_range, ip_range_all)
+        rule = Rule.objects.create(
+            name='test  rule',
+            url='/admin/.*/',
+            is_allow=False,
+        )
+        rule.ip_ranges.add(ip_range_all, ip_range_localhost)
+        rule.groups.add(group)
+
+        ranges = rule.get_ip_ranges()
+        import ipdb
+        ipdb.set_trace()
+
+
 class RuleAdminTestCase(TestCase):
     """
     RuleForm tests
@@ -77,7 +104,7 @@ class RuleAdminTestCase(TestCase):
             )
         url = reverse('admin:firewall_rule_changelist')
 
-        self.assertNumQueries(9, lambda: client.get(url))
+        self.assertNumQueries(12, lambda: client.get(url))
         response = client.get(url)
         self.assertContains(response, 'test rule 88')
         self.assertContains(response, 'page11/.*/')
