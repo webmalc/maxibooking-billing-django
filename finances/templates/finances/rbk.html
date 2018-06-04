@@ -13,7 +13,7 @@
             <input type="hidden" name="failUrl" value="{{ url }}">
         {% endif %}
     {% endwith %}
-    <button class="billing-payment-button">
+    <button class="billing-payment-button btn bnt-success">
        {% trans 'pay' %} {{ order.price }}
     </button>
 </form>
