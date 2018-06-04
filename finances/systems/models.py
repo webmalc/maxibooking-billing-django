@@ -169,7 +169,7 @@ class Bill(BaseType):
     """
     id = 'bill'
     name = _('bill')
-    description = _('bill description')
+    description = _('Create a bill for non-cash transfer through the Bank')
     template = 'finances/bill.html'
     countries_excluded = []
     countries = ['ru']
@@ -208,7 +208,7 @@ class Rbk(BaseType):
     """
     id = 'rbk'
     name = _('rbk')
-    description = _('rbk description')
+    description = _('Payment by card through the "RBK Money" system')
     template = 'finances/rbk.html'
     html = ''
     countries_excluded = []
