@@ -254,7 +254,7 @@ class Order(CommonInfo, TimeStampedModel):
         """
         return self.client_services.get_order_services_by_category(self)
 
-    def get_payer(self, client_filter=None):
+    def get_payer(self, client_filter=None, local=True):
         """
         Return payer
         """
@@ -270,6 +270,8 @@ class Order(CommonInfo, TimeStampedModel):
         if local_company:
             return company
         if local_client:
+            return client
+        if not local:
             return client
 
     def calc_price(self):

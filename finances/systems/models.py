@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
+from billing.lib.conf import get_settings
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -10,8 +11,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
-
-from billing.lib.conf import get_settings
 
 from ..models import Order, Transaction
 
@@ -41,7 +40,8 @@ class BaseType(ABC):
 
     def load(self):
         self.payer = self.order.get_payer(
-            self.client_filter_fields) if self.order else None
+            self.client_filter_fields,
+            local=self.payer_local_required) if self.order else None
         self.country = self.payer.country if self.payer else None
         self._conf(self.order, self.request)
 
@@ -99,6 +99,13 @@ class BaseType(ABC):
         Payment type excluded countries
         """
         pass
+
+    @property
+    def payer_local_required(self):
+        """
+        Is a local payer required for payment system?
+        """
+        return True
 
     @property
     @abstractmethod
@@ -206,6 +213,7 @@ class Rbk(BaseType):
     countries = ['ru']
     currencies = ['RUB', 'EUR']
     client_filter_fields = ('phone', )
+    payer_local_required = False
 
     # Rbk config
     action = 'https://rbkmoney.ru/acceptpurchase.aspx'
