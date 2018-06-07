@@ -88,6 +88,9 @@ def test_client_create_by_admin(admin_client):
             'passport_date': '2017-12-01T10:22:48.995041Z',
             'passport_issued_by': 'issued by',
             'inn': '1' * 10,
+        },
+        'website': {
+            'url': 'http://another-example.com'
         }
     })
     response = admin_client.post(
@@ -100,6 +103,7 @@ def test_client_create_by_admin(admin_client):
     assert response_json['postal_code'] == '123456'
     assert response_json['address'] == 'test address'
     assert response_json['ru']['passport_serial'] == '1111'
+    assert response_json['website']['url'] == 'http://another-example.com'
 
     response = admin_client.get(reverse('client-list'))
     assert len(response.json()['results']) == 8
