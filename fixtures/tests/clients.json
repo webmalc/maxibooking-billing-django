@@ -142,5 +142,15 @@
         "passport_issued_by": "test issued by",
         "inn": "1212222222222"
     }
+},
+{
+    "model": "clients.website",
+    "pk": 6,
+    "fields": {
+        "url": "http://example.com",
+        "is_enabled": true,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z"
+    }
 }
 ]

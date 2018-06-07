@@ -49,14 +49,28 @@ class ClientServiceViewSet(viewsets.ModelViewSet):
 
 class ClientViewSet(viewsets.ModelViewSet):
     """
-    Client viewset
+    This class contains the client's routes.
     """
     queryset = Client.objects.all().select_related(
-        'created_by', 'modified_by', 'country', 'restrictions',
-        'ru').prefetch_related('properties', 'services', 'services__service')
-    search_fields = ('login', 'email', 'description', 'phone', 'status')
+        'created_by', 'modified_by', 'country',
+        'restrictions', 'ru', 'website').prefetch_related(
+            'properties', 'services', 'services__service')
+    search_fields = (
+        'login',
+        'email',
+        'description',
+        'phone',
+        'status',
+        'website__url',
+    )
     serializer_class = ClientSerializer
-    filter_fields = ('status', 'installation', 'country')
+    filter_fields = (
+        'status',
+        'installation',
+        'country',
+        'website__url',
+        'website__is_enabled',
+    )
     lookup_field = 'login'
 
     @detail_route(methods=['get'])

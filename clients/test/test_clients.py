@@ -50,9 +50,10 @@ def test_client_display_by_user(client):
 
 
 def test_client_display_by_admin(admin_client):
-    response = admin_client.get(reverse('client-detail', args=['user-three']))
+    response = admin_client.get(reverse('client-detail', args=['user-six']))
     assert response.status_code == 200
-    json_contains(response, 'user@three.com')
+    json_contains(response, 'user@six.com')
+    json_contains(response, 'http://example.com', response.json()['website'])
 
 
 def test_client_create_invalid_by_admin(admin_client):

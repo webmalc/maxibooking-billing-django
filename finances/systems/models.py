@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 
 import stripe
+from billing.lib.conf import get_settings
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -10,8 +11,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
-
-from billing.lib.conf import get_settings
 
 from ..models import Order, Transaction
 
@@ -30,7 +29,6 @@ class BaseType(ABC):
     invalid_template = 'finances/invalid_type.html'
 
     def __init__(self, order=None, request=None, load=True):
-        pass
         self.request = request
         self.order = order
         if self.order and not isinstance(self.order, Order):

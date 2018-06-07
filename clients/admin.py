@@ -20,7 +20,7 @@ from hotels.models import Property
 from .admin_filters import ClientIsPaidListFilter
 from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
                      CompanyRu, CompanyWorld, RefusalReason, Restrictions,
-                     SalesStatus)
+                     SalesStatus, Website)
 from .tasks import install_client_task
 
 
@@ -251,6 +251,15 @@ class CommentInlineAdmin(ChangeOwnMixin, GenericTabularInline):
         return None
 
 
+class WebsiteInlineAdmin(admin.StackedInline):
+    """
+    This class represents the administration interface
+    for client`s website information.
+    """
+    model = Website
+    fields = ('url', 'is_enabled')
+
+
 @admin.register(Client)
 class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
                   ArchorAdminMixin):
@@ -303,6 +312,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     tab_tariff = (ClientServiceInlineAdmin, )
     tab_auth = (ClientAuthInlineAdmin, )
     tab_orders = (OrderInlineAdmin, )
+    tab_website = (WebsiteInlineAdmin, )
     tabs = (
         ('Client', tab_client),
         ('Properties', tab_properties),
@@ -311,6 +321,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
         ('Last logins', tab_auth),
         ('Sales', tab_sales),
         ('Orders', tab_orders),
+        ('Website', tab_website),
     )
 
     form = make_ajax_form(Client, {

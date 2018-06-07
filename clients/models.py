@@ -484,6 +484,29 @@ lowercase letters, numbers, and "-" character.'),
         ordering = ['-created']
 
 
+class Website(TimeStampedModel):
+    """
+    This class contains information about client`s website.
+    """
+    url = models.URLField(
+        db_index=True,
+        verbose_name=_('url'),
+        help_text=_('The URL of client`s website must be unique \
+among other clients.'),
+        unique=True,
+    )
+    is_enabled = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name=_('is enabled'),
+    )
+    client = models.OneToOneField(
+        Client,
+        on_delete=models.CASCADE,
+        related_name='website',
+        primary_key=True)
+
+
 class ClientRu(CountryBase):
     """
     Client ru fields

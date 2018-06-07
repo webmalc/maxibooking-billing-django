@@ -4,18 +4,18 @@ def __check_dict(data, search):
     :param data: dict
     :param search: search string value
     """
-    return len(
-        [x for x in data.values() if type(x) == str and search in x]) > 0
+    return len([x for x in data.values()
+                if type(x) == str and search in x]) > 0
 
 
-def json_contains(response, search):
+def json_contains(response, search, data=None):
     """
     search json response for value
     :param response: django response
     :param search: search string value
     """
     result = False
-    data = response.json()
+    data = response.json() if not data else data
     if 'results' in data:
         data = data['results']
     if type(data) == list:

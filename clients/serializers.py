@@ -6,7 +6,7 @@ from finances.models import Service
 from hotels.models import City, Country, Region
 
 from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
-                     CompanyRu, CompanyWorld)
+                     CompanyRu, CompanyWorld, Website)
 
 
 class CompanyWorldSerializer(serializers.ModelSerializer):
@@ -81,6 +81,16 @@ class CompanySerializer(NestedUpdateSerializerMixin,
         reference_parent = 'company'
 
 
+class WebsiteSerializer(serializers.ModelSerializer):
+    """
+    This class is serializer for the client's website information.
+    """
+
+    class Meta:
+        model = Website
+        fields = ('url', 'is_enabled')
+
+
 class ClientRuSerializer(serializers.ModelSerializer):
     """
     CLient ru serializer
@@ -121,6 +131,7 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
     ru = ClientRuSerializer(allow_null=True, required=False)
+    website = WebsiteSerializer(allow_null=True, required=False)
 
     def get_restrictions(self, obj):
         return model_to_dict(obj.restrictions)
@@ -130,11 +141,13 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'region', 'city',
                   'address', 'postal_code', 'installation', 'trial_activated',
-                  'url', 'properties', 'restrictions', 'ru', 'disabled_at',
-                  'ip', 'created', 'modified', 'created_by', 'modified_by')
+                  'url', 'properties', 'restrictions', 'ru', 'website',
+                  'disabled_at', 'ip', 'created', 'modified', 'created_by',
+                  'modified_by')
         lookup_field = 'login'
         references = {
             'ru': 'clients.ClientRu',
+            'website': 'clients.Website',
         }
         reference_parent = 'client'
 
