@@ -16,7 +16,6 @@ from phonenumber_field.modelfields import PhoneNumberField
 from billing.models import Comment, CommonInfo, CountryBase, DictMixin
 from finances.lib.calc import Calc
 from hotels.models import Country
-
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
 
@@ -484,7 +483,7 @@ lowercase letters, numbers, and "-" character.'),
         ordering = ['-created']
 
 
-class Website(TimeStampedModel):
+class Website(models.Model):
     """
     This class contains information about client`s website.
     """
