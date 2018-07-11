@@ -85,10 +85,19 @@ class WebsiteSerializer(serializers.ModelSerializer):
     """
     This class is serializer for the client's website information.
     """
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    client = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='login',
+        queryset=Client.objects.all())
 
     class Meta:
         model = Website
-        fields = ('url', 'is_enabled')
+        lookup_field = 'client__login'
+        fields = ('client', 'url', 'is_enabled', 'created', 'modified',
+                  'created_by', 'modified_by')
 
 
 class ClientRuSerializer(serializers.ModelSerializer):
@@ -117,6 +126,8 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         read_only=False,
         slug_field='tld',
         queryset=Country.objects.all())
+    website = serializers.SlugRelatedField(
+        many=False, read_only=True, slug_field='url')
     city = serializers.PrimaryKeyRelatedField(
         many=False,
         read_only=False,
@@ -131,7 +142,6 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
     ru = ClientRuSerializer(allow_null=True, required=False)
-    website = WebsiteSerializer(allow_null=True, required=False)
 
     def get_restrictions(self, obj):
         return model_to_dict(obj.restrictions)
@@ -141,7 +151,7 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'region', 'city',
                   'address', 'postal_code', 'installation', 'trial_activated',
-                  'url', 'properties', 'restrictions', 'ru', 'website',
+                  'url', 'properties', 'restrictions', 'website', 'ru',
                   'disabled_at', 'ip', 'created', 'modified', 'created_by',
                   'modified_by')
         lookup_field = 'login'

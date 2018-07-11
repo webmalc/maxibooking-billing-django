@@ -257,7 +257,15 @@ class WebsiteInlineAdmin(admin.StackedInline):
     for client`s website information.
     """
     model = Website
-    fields = ('url', 'is_enabled')
+    fields = (
+        'url',
+        'is_enabled',
+        'created',
+        'modified',
+        'created_by',
+        'modified_by',
+    )
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
 
 
 @admin.register(Client)

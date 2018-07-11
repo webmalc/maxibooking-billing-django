@@ -53,7 +53,6 @@ def test_client_display_by_admin(admin_client):
     response = admin_client.get(reverse('client-detail', args=['user-six']))
     assert response.status_code == 200
     json_contains(response, 'user@six.com')
-    json_contains(response, 'http://example.com', response.json()['website'])
 
 
 def test_client_create_invalid_by_admin(admin_client):
@@ -88,9 +87,6 @@ def test_client_create_by_admin(admin_client):
             'passport_date': '2017-12-01T10:22:48.995041Z',
             'passport_issued_by': 'issued by',
             'inn': '1' * 10,
-        },
-        'website': {
-            'url': 'http://another-example.com'
         }
     })
     response = admin_client.post(
@@ -103,7 +99,6 @@ def test_client_create_by_admin(admin_client):
     assert response_json['postal_code'] == '123456'
     assert response_json['address'] == 'test address'
     assert response_json['ru']['passport_serial'] == '1111'
-    assert response_json['website']['url'] == 'http://another-example.com'
 
     response = admin_client.get(reverse('client-list'))
     assert len(response.json()['results']) == 8
