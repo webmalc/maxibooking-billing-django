@@ -1,0 +1,28 @@
+[
+{
+    "model": "clients.clientwebsite",
+    "pk": 1,
+    "fields": {
+        "created": "2018-07-11T09:45:58.087Z",
+        "modified": "2018-07-11T09:45:58.087Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "url": "http://example.com",
+        "is_enabled": false,
+        "client": 1
+    }
+},
+{
+    "model": "clients.clientwebsite",
+    "pk": 2,
+    "fields": {
+        "created": "2018-07-11T09:47:28.132Z",
+        "modified": "2018-07-11T09:47:28.132Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "url": "http://hotel.one",
+        "is_enabled": false,
+        "client": 2
+    }
+}
+]

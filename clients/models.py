@@ -511,6 +511,9 @@ among other clients.'),
     def __str__(self):
         return self.url
 
+    class Meta:
+        ordering = ['-created']
+
 
 class ClientRu(CountryBase):
     """
