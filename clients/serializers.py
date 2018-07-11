@@ -126,8 +126,6 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         read_only=False,
         slug_field='tld',
         queryset=Country.objects.all())
-    website = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field='url')
     city = serializers.PrimaryKeyRelatedField(
         many=False,
         read_only=False,
