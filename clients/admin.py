@@ -18,9 +18,9 @@ from finances.models import Order
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
-from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
-                     CompanyRu, CompanyWorld, RefusalReason, Restrictions,
-                     SalesStatus, Website)
+from .models import (Client, ClientAuth, ClientRu, ClientService,
+                     ClientWebsite, Company, CompanyRu, CompanyWorld,
+                     RefusalReason, Restrictions, SalesStatus)
 from .tasks import install_client_task
 
 
@@ -256,7 +256,7 @@ class WebsiteInlineAdmin(admin.StackedInline):
     This class represents the administration interface
     for client`s website information.
     """
-    model = Website
+    model = ClientWebsite
     fields = (
         'url',
         'is_enabled',

@@ -484,7 +484,7 @@ lowercase letters, numbers, and "-" character.'),
         ordering = ['-created']
 
 
-class Website(CommonInfo, TimeStampedModel):
+class ClientWebsite(CommonInfo, TimeStampedModel):
     """
     This class contains information about client`s website.
     """
@@ -500,11 +500,13 @@ among other clients.'),
         db_index=True,
         verbose_name=_('is enabled'),
     )
+
     client = models.OneToOneField(
         Client,
         on_delete=models.CASCADE,
-        related_name='website',
-        primary_key=True)
+        db_index=True,
+        verbose_name=_('client'),
+        related_name='website')
 
     def __str__(self):
         return self.url

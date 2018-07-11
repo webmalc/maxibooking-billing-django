@@ -5,8 +5,8 @@ from billing.serializers import NestedUpdateSerializerMixin
 from finances.models import Service
 from hotels.models import City, Country, Region
 
-from .models import (Client, ClientAuth, ClientRu, ClientService, Company,
-                     CompanyRu, CompanyWorld, Website)
+from .models import (Client, ClientAuth, ClientRu, ClientService,
+                     ClientWebsite, Company, CompanyRu, CompanyWorld)
 
 
 class CompanyWorldSerializer(serializers.ModelSerializer):
@@ -94,9 +94,9 @@ class WebsiteSerializer(serializers.ModelSerializer):
         queryset=Client.objects.all())
 
     class Meta:
-        model = Website
+        model = ClientWebsite
         lookup_field = 'client__login'
-        fields = ('client', 'url', 'is_enabled', 'created', 'modified',
+        fields = ('id', 'client', 'url', 'is_enabled', 'created', 'modified',
                   'created_by', 'modified_by')
 
 
@@ -154,7 +154,6 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         lookup_field = 'login'
         references = {
             'ru': 'clients.ClientRu',
-            'website': 'clients.Website',
         }
         reference_parent = 'client'
 

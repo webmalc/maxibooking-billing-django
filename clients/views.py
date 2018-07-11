@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from billing.exceptions import BaseException
 from billing.lib import mb
 
-from .models import Client, ClientAuth, ClientService, Company, Website
+from .models import Client, ClientAuth, ClientService, ClientWebsite, Company
 from .serializers import (ClientAuthSerializer, ClientSerializer,
                           ClientServiceSerializer, CompanySerializer,
                           WebsiteSerializer)
@@ -29,7 +29,7 @@ class ClientAuthViewSet(viewsets.ModelViewSet):
 
 
 class WebsiteViewSet(viewsets.ModelViewSet):
-    queryset = Website.objects.all().select_related(
+    queryset = ClientWebsite.objects.all().select_related(
         'created_by',
         'modified_by',
         'client',
