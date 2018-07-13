@@ -227,6 +227,7 @@ class ClientRuAdmin(admin.StackedInline):
     ClientRu admin interface
     """
     model = ClientRu
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     fieldsets = (
         ('Passport', {
             'fields': ('passport_serial', 'passport_number', 'passport_date',
@@ -234,6 +235,9 @@ class ClientRuAdmin(admin.StackedInline):
         }),
         ('Finance', {
             'fields': ('inn', )
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
         }),
     )
 
@@ -257,14 +261,8 @@ class WebsiteInlineAdmin(admin.StackedInline):
     for client`s website information.
     """
     model = ClientWebsite
-    fields = (
-        'url',
-        'is_enabled',
-        'created',
-        'modified',
-        'created_by',
-        'modified_by',
-    )
+    fields = ('url', 'is_enabled', 'created', 'modified', 'created_by',
+              'modified_by')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
 
 

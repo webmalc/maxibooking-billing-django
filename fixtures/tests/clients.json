@@ -134,13 +134,34 @@
 },
 {
     "model": "clients.clientru",
-    "pk": 7,
+    "pk": 1,
     "fields": {
         "passport_serial": "1111",
         "passport_number": "123333",
         "passport_date": "2017-12-01T09:36:33Z",
         "passport_issued_by": "test issued by",
-        "inn": "1212222222222"
+        "client": 7,
+        "inn": "1212222222222",
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z"
+    }
+},
+{
+    "model": "clients.clientru",
+    "pk": 2,
+    "fields": {
+        "passport_serial": "1234",
+        "passport_number": "973883",
+        "passport_date": "2017-12-01T09:36:33Z",
+        "passport_issued_by": "issued by yoda",
+        "client": 3,
+        "inn": "1212222323332",
+        "created_by": 1,
+        "modified_by": 1,
+        "created": "2017-07-18T14:06:27.890Z",
+        "modified": "2017-07-19T09:12:27.554Z"
     }
 }
 ]

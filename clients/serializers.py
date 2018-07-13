@@ -102,13 +102,22 @@ class WebsiteSerializer(serializers.ModelSerializer):
 
 class ClientRuSerializer(serializers.ModelSerializer):
     """
-    CLient ru serializer
+    This class is serializer for the client's passport information.
     """
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    client = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='login',
+        queryset=Client.objects.all())
 
     class Meta:
         model = ClientRu
-        fields = ('passport_serial', 'passport_number', 'passport_date',
-                  'passport_issued_by', 'inn')
+        lookup_field = 'client__login'
+        fields = ('id', 'client', 'passport_serial', 'passport_number',
+                  'passport_date', 'passport_issued_by', 'inn', 'created',
+                  'modified', 'created_by', 'modified_by')
 
 
 class ClientSerializer(NestedUpdateSerializerMixin,
@@ -119,6 +128,7 @@ class ClientSerializer(NestedUpdateSerializerMixin,
 
     properties = serializers.HyperlinkedRelatedField(
         many=True, read_only=True, view_name='property-detail')
+    ru = serializers.StringRelatedField(many=False, read_only=True)
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
     country = serializers.SlugRelatedField(
@@ -139,7 +149,6 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         required=False,
         queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
-    ru = ClientRuSerializer(allow_null=True, required=False)
 
     def get_restrictions(self, obj):
         return model_to_dict(obj.restrictions)
@@ -148,13 +157,12 @@ class ClientSerializer(NestedUpdateSerializerMixin,
         model = Client
         fields = ('id', 'login', 'email', 'phone', 'name', 'description',
                   'get_status_display', 'status', 'country', 'region', 'city',
-                  'address', 'postal_code', 'installation', 'trial_activated',
-                  'url', 'properties', 'restrictions', 'ru', 'disabled_at',
-                  'ip', 'created', 'modified', 'created_by', 'modified_by')
+                  'address', 'postal_code', 'ru', 'installation',
+                  'trial_activated', 'url', 'properties', 'restrictions',
+                  'disabled_at', 'ip', 'created', 'modified', 'created_by',
+                  'modified_by')
         lookup_field = 'login'
-        references = {
-            'ru': 'clients.ClientRu',
-        }
+        references = {}
         reference_parent = 'client'
 
 

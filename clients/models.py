@@ -515,7 +515,7 @@ among other clients.'),
         ordering = ['-created']
 
 
-class ClientRu(CountryBase):
+class ClientRu(CountryBase, CommonInfo, TimeStampedModel):
     """
     Client ru fields
     """
@@ -553,7 +553,19 @@ class ClientRu(CountryBase):
         ],
         verbose_name=_('inn'))
     client = models.OneToOneField(
-        Client, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+        Client, on_delete=models.CASCADE, related_name='ru')
+
+    def __str__(self):
+        return '{} {} от {} выдан {}. инн {}'.format(
+            self.passport_serial,
+            self.passport_number,
+            self.passport_date,
+            self.passport_issued_by,
+            self.inn,
+        )
+
+    class Meta:
+        ordering = ['-created']
 
 
 class ClientAuth(CommonInfo, TimeStampedModel):

@@ -50,9 +50,12 @@ def test_client_display_by_user(client):
 
 
 def test_client_display_by_admin(admin_client):
-    response = admin_client.get(reverse('client-detail', args=['user-six']))
+    response = admin_client.get(reverse('client-detail', args=['user-rus']))
     assert response.status_code == 200
-    json_contains(response, 'user@six.com')
+    json = response.json()
+    assert json['email'] == 'user@rus.com'
+    assert json['ru'] == '1111 123333 от 2017-12-01 09:36:33+00:00 выдан \
+test issued by. инн 1212222222222'
 
 
 def test_client_create_invalid_by_admin(admin_client):
@@ -81,13 +84,6 @@ def test_client_create_by_admin(admin_client):
         'country': 'af',
         'postal_code': '123456',
         'address': 'test address',
-        'ru': {
-            'passport_serial': '1' * 4,
-            'passport_number': '1' * 6,
-            'passport_date': '2017-12-01T10:22:48.995041Z',
-            'passport_issued_by': 'issued by',
-            'inn': '1' * 10,
-        }
     })
     response = admin_client.post(
         reverse('client-list'), data=data, content_type="application/json")
@@ -98,7 +94,6 @@ def test_client_create_by_admin(admin_client):
     assert response_json['created_by'] == 'admin'
     assert response_json['postal_code'] == '123456'
     assert response_json['address'] == 'test address'
-    assert response_json['ru']['passport_serial'] == '1111'
 
     response = admin_client.get(reverse('client-list'))
     assert len(response.json()['results']) == 8
@@ -610,36 +605,6 @@ def test_client_restrictions_update():
 
     client.restrictions_update()
     assert client.restrictions.rooms_limit == 7
-
-
-def test_client_ru_fields_update(admin_client):
-    data = json.dumps({
-        'ru': {
-            'passport_serial': '1' * 4,
-            'passport_number': '1' * 6,
-            'passport_date': '2017-12-01T10:22:48.995041Z',
-            'passport_issued_by': 'issued by',
-            'inn': '1' * 10,
-        }
-    })
-    response = admin_client.patch(
-        reverse('client-detail', args=['user-two']),
-        data=data,
-        content_type="application/json")
-
-    assert response.status_code == 200
-    response_json = response.json()
-
-    assert response_json['ru']['passport_issued_by'] == 'issued by'
-
-    response = admin_client.patch(
-        reverse('client-detail', args=['user-two']),
-        data=json.dumps({
-            'ru': None
-        }),
-        content_type="application/json")
-
-    assert getattr(Client.objects.get(login='user-two'), 'ru', None) is None
 
 
 def test_client_language():

@@ -8,10 +8,11 @@ from rest_framework.response import Response
 from billing.exceptions import BaseException
 from billing.lib import mb
 
-from .models import Client, ClientAuth, ClientService, ClientWebsite, Company
+from .models import (Client, ClientRu, ClientAuth, ClientService,
+                     ClientWebsite, Company)
 from .serializers import (ClientAuthSerializer, ClientSerializer,
                           ClientServiceSerializer, CompanySerializer,
-                          WebsiteSerializer)
+                          WebsiteSerializer, ClientRuSerializer)
 from .tasks import install_client_task, mail_client_task
 
 
@@ -26,6 +27,20 @@ class ClientAuthViewSet(viewsets.ModelViewSet):
 
     serializer_class = ClientAuthSerializer
     filter_fields = ('client', )
+
+
+class ClientRuViewSet(viewsets.ModelViewSet):
+    queryset = ClientRu.objects.all().select_related(
+        'created_by',
+        'modified_by',
+        'client',
+    )
+    search_fields = ('=id', 'client__login', 'client__email', 'client__name',
+                     'passport_number', 'passport_issued_by',
+                     'passport_serial', 'inn')
+    filter_fields = ('client', )
+    serializer_class = ClientRuSerializer
+    lookup_field = 'client__login'
 
 
 class WebsiteViewSet(viewsets.ModelViewSet):
