@@ -159,6 +159,7 @@ class CompanyWorld(CountryBase, CommonInfo, TimeStampedModel):
         return self.swift
 
     class Meta:
+        ordering = ['-created']
         verbose_name_plural = _('world')
         verbose_name = _('world')
 

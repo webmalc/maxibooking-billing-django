@@ -74,7 +74,6 @@ def test_clientsru_create_by_admin(admin_client):
     response = admin_client.post(
         url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
-    response_json = response.json()
     assert response.status_code == 201
     assert response_json['client'] == 'user-four'
     assert response_json['passport_serial'] == '1234'
