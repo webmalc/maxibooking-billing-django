@@ -17,7 +17,7 @@ def test_companies_list_by_admin(admin_client):
     json_contains(response, 'company en')
 
 
-def test_client_service_display_by_admin(admin_client):
+def test_companies_display_by_admin(admin_client):
     response = admin_client.get(reverse('company-detail', args=[2]))
     assert response.status_code == 200
     response_json = response.json()
@@ -28,7 +28,7 @@ def test_client_service_display_by_admin(admin_client):
     assert response.status_code == 200
     response_json = response.json()
     assert response_json['name'] == 'company en'
-    assert response_json['world']['swift'] == '1221212331_swift'
+    assert response_json['world'] == '1221212331_swift'
 
 
 def test_company_display_by_user(client):
@@ -36,7 +36,7 @@ def test_company_display_by_user(client):
     assert response.status_code == 401
 
 
-def test_company_create_world_by_admin(admin_client):
+def test_company_create_by_admin(admin_client):
     data = {
         'name': 'test',
         'client': 'invalid-user',
@@ -45,10 +45,7 @@ def test_company_create_world_by_admin(admin_client):
         'address': '1212',
         'postal_code': '12121212121212',
         'account_number': '123322323232323',
-        'bank': 'bank',
-        'world': {
-            'swift': '111'
-        },
+        'bank': 'bank'
     }
     url = reverse('company-list')
     response = admin_client.post(
@@ -58,17 +55,14 @@ def test_company_create_world_by_admin(admin_client):
     assert response_json['client'] == [
         'Object with login=invalid-user does not exist.'
     ]
-    assert response_json['world']['swift'] == [
-        'Ensure this field has at least 8 characters.'
-    ]
     data['client'] = 'user-one'
-    data['world']['swift'] = '1' * 8
     response = admin_client.post(
         url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
     assert response.status_code == 201
     assert response_json['name'] == 'test'
-    assert response_json['world']['swift'] == '1' * 8
+    assert response_json['bank'] == 'bank'
+    assert response_json['account_number'] == '123322323232323'
 
 
 def test_company_create_ru_by_admin(admin_client):
@@ -135,12 +129,9 @@ def test_company_create_ru_by_admin(admin_client):
     assert response_json['ru']['boss_firstname'] == '123123'
 
 
-def test_company_update_world_by_admin(admin_client):
+def test_company_update_by_admin(admin_client):
     data = {
         'name': 'updated',
-        'world': {
-            'swift': '56565656'
-        },
     }
     url = reverse('company-detail', args=[3])
     response = admin_client.patch(
@@ -149,4 +140,3 @@ def test_company_update_world_by_admin(admin_client):
 
     assert response.status_code == 200
     assert response_json['name'] == 'updated'
-    assert response_json['world']['swift'] == '56565656'

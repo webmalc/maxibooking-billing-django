@@ -81,7 +81,6 @@ class CompanySerializer(NestedUpdateSerializerMixin,
                   'modified', 'created_by', 'modified_by', 'world', 'ru')
         references = {
             'ru': 'clients.CompanyRu',
-            'world': 'clients.CompanyWorld'
         }
         reference_parent = 'company'
 

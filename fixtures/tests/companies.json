@@ -55,9 +55,26 @@
 },
 {
     "model": "clients.companyworld",
-    "pk": 3,
+    "pk": 1,
     "fields": {
-        "swift": "1221212331_swift"
+        "swift": "1221212331_swift",
+        "company": "3",
+        "created": "2017-11-28T10:57:09.603Z",
+        "modified": "2017-11-28T10:57:09.603Z",
+        "created_by": 1,
+        "modified_by": 1
+    }
+},
+{
+    "model": "clients.companyworld",
+    "pk": 2,
+    "fields": {
+        "swift": "1111111111_swift",
+        "company": "1",
+        "created": "2017-11-28T10:57:09.603Z",
+        "modified": "2017-11-28T10:57:09.603Z",
+        "created_by": 1,
+        "modified_by": 1
     }
 },
 {
