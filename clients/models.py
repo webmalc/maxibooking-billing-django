@@ -137,7 +137,7 @@ class Company(CommonInfo, TimeStampedModel, Payer):
         verbose_name_plural = _('companies')
 
 
-class CompanyWorld(CountryBase):
+class CompanyWorld(CountryBase, CommonInfo, TimeStampedModel):
     """
     Company world class
     """
@@ -153,10 +153,10 @@ class CompanyWorld(CountryBase):
         ],
         verbose_name=_('swift'))
     company = models.OneToOneField(
-        Company,
-        on_delete=models.CASCADE,
-        related_name='world',
-        primary_key=True)
+        Company, on_delete=models.CASCADE, related_name='world')
+
+    def __str__(self):
+        return self.swift
 
     class Meta:
         verbose_name_plural = _('world')

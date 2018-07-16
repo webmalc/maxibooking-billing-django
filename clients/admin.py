@@ -431,7 +431,8 @@ class CompanyWorldAdmin(admin.StackedInline):
     CompanyWorld admin interface
     """
     model = CompanyWorld
-    fields = ('swift', )
+    fields = ('swift', 'created', 'modified', 'created_by', 'modified_by')
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
 
 
 class CompanyRuAdmin(admin.StackedInline):

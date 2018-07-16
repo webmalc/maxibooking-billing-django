@@ -13,10 +13,16 @@ class CompanyWorldSerializer(serializers.ModelSerializer):
     """
     Company world serializer
     """
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    company = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=Company.objects.all())
 
     class Meta:
         model = CompanyWorld
-        fields = ('swift', )
+        lookup_field = 'company__pk'
+        fields = ('id', 'company', 'swift', 'created', 'modified',
+                  'created_by', 'modified_by')
 
 
 class CompanyRuSerializer(serializers.ModelSerializer):
@@ -65,9 +71,8 @@ class CompanySerializer(NestedUpdateSerializerMixin,
         read_only=False,
         slug_field='login',
         queryset=Client.objects.all())
-
-    world = CompanyWorldSerializer(allow_null=True, required=False)
     ru = CompanyRuSerializer(allow_null=True, required=False)
+    world = serializers.StringRelatedField(many=False, read_only=True)
 
     class Meta:
         model = Company
