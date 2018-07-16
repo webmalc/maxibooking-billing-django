@@ -8,8 +8,9 @@ from django.db import migrations, models
 def set_id(apps, schema_editor):
     ClientRu = apps.get_model('clients', 'ClientRu')
     for i, ru in enumerate(ClientRu.objects.all()):
-        ru.id = i + 1
-        ru.save()
+        if not ru.id:
+            ru.id = i + 1
+            ru.save()
 
 
 class Migration(migrations.Migration):

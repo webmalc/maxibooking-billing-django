@@ -134,7 +134,7 @@
 },
 {
     "model": "clients.clientru",
-    "pk": 1,
+    "pk": 1220,
     "fields": {
         "passport_serial": "1111",
         "passport_number": "123333",
@@ -150,7 +150,7 @@
 },
 {
     "model": "clients.clientru",
-    "pk": 2,
+    "pk": 1221,
     "fields": {
         "passport_serial": "1234",
         "passport_number": "973883",

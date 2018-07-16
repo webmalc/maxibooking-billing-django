@@ -55,7 +55,7 @@
 },
 {
     "model": "clients.companyworld",
-    "pk": 1,
+    "pk": 9998,
     "fields": {
         "swift": "1221212331_swift",
         "company": "3",
@@ -67,7 +67,7 @@
 },
 {
     "model": "clients.companyworld",
-    "pk": 2,
+    "pk": 9999,
     "fields": {
         "swift": "1111111111_swift",
         "company": "1",

@@ -7,9 +7,10 @@ from django.db import migrations, models
 
 def set_id(apps, schema_editor):
     CompanyWorld = apps.get_model('clients', 'CompanyWorld')
-    for i, ru in enumerate(CompanyWorld.objects.all()):
-        ru.id = i + 1
-        ru.save()
+    for i, entry in enumerate(CompanyWorld.objects.all()):
+        if not entry.id:
+            entry.id = i + 1
+            entry.save()
 
 
 class Migration(migrations.Migration):
