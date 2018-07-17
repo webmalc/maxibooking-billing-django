@@ -440,6 +440,7 @@ class CompanyRuAdmin(admin.StackedInline):
     CompanyRu admin interface
     """
     model = CompanyRu
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     fieldsets = (
         ('General', {
             'fields': ('form', 'ogrn', 'inn', 'kpp')
@@ -450,6 +451,9 @@ class CompanyRuAdmin(admin.StackedInline):
         ('Boss', {
             'fields': ('boss_firstname', 'boss_lastname', 'boss_patronymic',
                        'boss_operation_base', 'proxy_number', 'proxy_date')
+        }),
+        ('Options', {
+            'fields': ('created', 'modified', 'created_by', 'modified_by')
         }),
     )
 

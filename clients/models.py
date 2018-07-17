@@ -155,8 +155,9 @@ class CompanyWorld(CountryBase, CommonInfo, TimeStampedModel):
     company = models.OneToOneField(
         Company, on_delete=models.CASCADE, related_name='world')
 
-    def __str__(self):
-        return self.swift
+    @property
+    def company__pk(self):
+        return self.company.pk
 
     class Meta:
         ordering = ['-created']
@@ -164,7 +165,7 @@ class CompanyWorld(CountryBase, CommonInfo, TimeStampedModel):
         verbose_name = _('world')
 
 
-class CompanyRu(CountryBase):
+class CompanyRu(CountryBase, CommonInfo, TimeStampedModel):
     """
     Company ru class
     """
@@ -264,7 +265,11 @@ class CompanyRu(CountryBase):
         blank=True,
     )
     company = models.OneToOneField(
-        Company, on_delete=models.CASCADE, related_name='ru', primary_key=True)
+        Company, on_delete=models.CASCADE, related_name='ru')
+
+    @property
+    def company__pk(self):
+        return self.company.pk
 
     def clean(self):
         if self.boss_operation_base == 'proxy' and\

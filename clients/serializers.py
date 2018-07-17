@@ -30,11 +30,19 @@ class CompanyRuSerializer(serializers.ModelSerializer):
     Company ru serializer
     """
 
+    created_by = serializers.StringRelatedField(many=False, read_only=True)
+    modified_by = serializers.StringRelatedField(many=False, read_only=True)
+    company = serializers.PrimaryKeyRelatedField(
+        many=False, read_only=False, queryset=Company.objects.all())
+
     class Meta:
         model = CompanyRu
-        fields = ('form', 'ogrn', 'inn', 'kpp', 'bik', 'corr_account',
-                  'boss_firstname', 'boss_lastname', 'boss_patronymic',
-                  'boss_operation_base', 'proxy_number', 'proxy_date')
+        lookup_field = 'company__pk'
+        fields = ('id', 'company', 'form', 'ogrn', 'inn', 'kpp', 'bik',
+                  'corr_account', 'boss_firstname', 'boss_lastname',
+                  'boss_patronymic', 'boss_operation_base', 'proxy_number',
+                  'proxy_date', 'created', 'modified', 'created_by',
+                  'modified_by')
 
 
 class ClientAuthSerializer(serializers.ModelSerializer):
@@ -71,17 +79,23 @@ class CompanySerializer(NestedUpdateSerializerMixin,
         read_only=False,
         slug_field='login',
         queryset=Client.objects.all())
-    ru = CompanyRuSerializer(allow_null=True, required=False)
-    world = serializers.StringRelatedField(many=False, read_only=True)
+    ru = serializers.HyperlinkedRelatedField(
+        many=False,
+        read_only=True,
+        view_name='companyru-detail',
+        lookup_field='company__pk')
+    world = serializers.HyperlinkedRelatedField(
+        many=False,
+        read_only=True,
+        view_name='companyworld-detail',
+        lookup_field='company__pk')
 
     class Meta:
         model = Company
         fields = ('id', 'name', 'client', 'city', 'region', 'address',
                   'postal_code', 'account_number', 'bank', 'created',
                   'modified', 'created_by', 'modified_by', 'world', 'ru')
-        references = {
-            'ru': 'clients.CompanyRu',
-        }
+        references = {}
         reference_parent = 'company'
 
 

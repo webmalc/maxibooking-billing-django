@@ -9,11 +9,11 @@ from billing.exceptions import BaseException
 from billing.lib import mb
 
 from .models import (Client, ClientRu, ClientAuth, ClientService,
-                     ClientWebsite, Company, CompanyWorld)
+                     ClientWebsite, Company, CompanyWorld, CompanyRu)
 from .serializers import (ClientAuthSerializer, ClientSerializer,
                           ClientServiceSerializer, CompanySerializer,
                           WebsiteSerializer, ClientRuSerializer,
-                          CompanyWorldSerializer)
+                          CompanyWorldSerializer, CompanyRuSerializer)
 from .tasks import install_client_task, mail_client_task
 
 
@@ -67,6 +67,20 @@ class CompanyWorldViewSet(viewsets.ModelViewSet):
                      'swift')
     filter_fields = ('company', )
     serializer_class = CompanyWorldSerializer
+    lookup_field = 'company__pk'
+
+
+class CompanyRuViewSet(viewsets.ModelViewSet):
+    queryset = CompanyRu.objects.all().select_related(
+        'created_by',
+        'modified_by',
+        'company',
+    )
+    search_fields = ('=id', 'company__name', 'company__account_number', 'form',
+                     'ogrn', 'inn', 'kpp', 'bik', 'corr_account',
+                     'boss_lastname', 'proxy_number')
+    filter_fields = ('company', 'form')
+    serializer_class = CompanyRuSerializer
     lookup_field = 'company__pk'
 
 
