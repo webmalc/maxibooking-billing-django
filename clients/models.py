@@ -271,13 +271,20 @@ class CompanyRu(CountryBase, CommonInfo, TimeStampedModel):
     def company__pk(self):
         return self.company.pk
 
-    def clean(self):
-        if self.boss_operation_base == 'proxy' and\
-           not all([self.proxy_number, self.proxy_date]):
+    def validate_proxy(base, number, date):
+        if base == 'proxy' and not all([number, date]):
             raise ValidationError(
-                _('Please fill proxy date and proxy number.'))
+                _('Please fill a proxy date and a proxy number.'))
+
+    def clean(self):
+        CompanyRu.validate_proxy(
+            self.boss_operation_base,
+            self.proxy_number,
+            self.proxy_date,
+        )
 
     class Meta:
+        ordering = ['-created']
         verbose_name_plural = _('ru')
         verbose_name = _('ru')
 

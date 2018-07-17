@@ -35,6 +35,14 @@ class CompanyRuSerializer(serializers.ModelSerializer):
     company = serializers.PrimaryKeyRelatedField(
         many=False, read_only=False, queryset=Company.objects.all())
 
+    def validate(self, attrs):
+        CompanyRu.validate_proxy(
+            attrs.get('boss_operation_base'),
+            attrs.get('proxy_number'),
+            attrs.get('proxy_date'),
+        )
+        return attrs
+
     class Meta:
         model = CompanyRu
         lookup_field = 'company__pk'
