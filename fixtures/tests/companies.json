@@ -8,7 +8,7 @@
         "created_by": 1,
         "modified_by": 1,
         "name": "test company",
-        "client": 1,
+        "client": 2,
         "city": 2,
         "region": 2,
         "address": "test company address",
@@ -79,8 +79,9 @@
 },
 {
     "model": "clients.companyru",
-    "pk": 2,
+    "pk": 9998,
     "fields": {
+        "company": "2",
         "form": "ooo",
         "ogrn": "1222222222221",
         "inn": "222222222222",
@@ -92,7 +93,10 @@
         "boss_patronymic": "boss patronymic",
         "boss_operation_base": "charter",
         "proxy_number": "123123",
-        "proxy_date": "2017-11-28T13:28:08Z"
+        "proxy_date": "2017-11-28T13:28:08Z",
+        "created": "2017-11-28T10:57:09.603Z",
+        "modified": "2017-11-28T10:57:09.603Z",
+        "created_by": 1,
+        "modified_by": 1
     }
-}
-]
+}]
