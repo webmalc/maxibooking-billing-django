@@ -1,4 +1,6 @@
 import logging
+import braintree
+
 from abc import ABC, abstractmethod
 from hashlib import sha512
 
@@ -154,9 +156,21 @@ class BaseType(ABC):
         transaction.order = self.order
         transaction.save()
 
+    def _get_url(self, order, path):
+        client_url = self.order.client.url
+        if not client_url:
+            return settings.MB_SITE_URL
+        return '{}{}'.format(client_url, path)
+
+    def _get_success_url(self, order):
+        return self._get_url(order, '/management/online/api/payment/success')
+
+    def _get_fail_url(self, order):
+        return self._get_url(order, '/management/online/api/payment/fail')
+
     def _conf(self, order=None, request=None):
         """
-        Load config
+        Load the config
         """
         pass
 
@@ -384,3 +398,104 @@ class Stripe(BaseType):
             'request': self.request,
             'stripe': self
         })
+
+
+class Braintree(BaseType):
+    """
+    Braintree payment system
+    """
+    id = 'braintree'
+    name = _('braintree')
+    description = _('braintree description')
+    template = 'finances/braintree.html'
+    countries_excluded = ['ru']
+    countries = []
+    currencies = ['EUR']
+    client_filter_fields = ('phone', )
+    codes = [
+        braintree.Transaction.Status.Authorized,
+        braintree.Transaction.Status.Authorizing,
+        braintree.Transaction.Status.Settled,
+        braintree.Transaction.Status.SettlementConfirmed,
+        braintree.Transaction.Status.SettlementPending,
+        braintree.Transaction.Status.Settling,
+        braintree.Transaction.Status.SubmittedForSettlement
+    ]
+
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        self.merchant_id = get_settings(
+            'BRAINTREE_MERCHANT_ID', country=self.country)
+        self.public_key = get_settings(
+            'BRAINTREE_PUBLIC_KEY', country=self.country)
+        self.private_key = get_settings(
+            'BRAINTREE_PRIVATE_KEY', country=self.country)
+        self.gateway = braintree.BraintreeGateway(
+            braintree.Configuration(
+                environment=braintree.Environment.Sandbox,
+                merchant_id=self.merchant_id,
+                public_key=self.public_key,
+                private_key=self.private_key,
+            ))
+
+    def _process_request(self, request):
+        order_id = request.POST.get('order_id')
+        amount = request.POST.get('amount')
+        token = request.POST.get('payment_method_nonce')
+
+        if not all([order_id, amount, token]):
+            raise TypeException('Bad request.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
+        if not self.order:
+            raise TypeException('Order #{} not found.'.format(order_id))
+
+        if str(self.order.price.amount) != amount:
+            raise TypeException('Invalid price.')
+
+        return token
+
+    def response(self, request):
+        """
+        Check the payment system calback response
+        """
+        logger = logging.getLogger('billing')
+        try:
+            token = self._process_request(request)
+        except TypeException as e:
+            return HttpResponseBadRequest(e)
+
+        result = self.gateway.transaction.sale({
+            'amount':
+            self.order.price.amount,
+            'payment_method_nonce':
+            token,
+            'options': {
+                "submit_for_settlement": True
+            }
+        })
+
+        logger.info('Braintree response {}'.format(result))
+
+        tr = result.transaction
+        if result.is_success and (tr and tr.status in self.codes):
+            self._process_order(result.transaction)
+            return HttpResponseRedirect(self._get_success_url(self.order))
+        else:
+            return HttpResponseRedirect(self._get_fail_url(self.order))
+
+    @property
+    def html(self):
+        try:
+            self.client_token = self.gateway.client_token.generate()
+        except braintree.exceptions.braintree_error.BraintreeError:
+            self.client_token = 'invalid_braintree_token'
+        return render_to_string(
+            self.get_template, {
+                'order': self.order,
+                'client_token': self.client_token,
+                'request': self.request,
+                'braintree': self
+            })

@@ -354,7 +354,8 @@ class Transaction(CommonInfo, TimeStampedModel):
     data = JSONField(verbose_name=_('transaction'))
 
     def set_data(self, data):
-        self.data = data if isinstance(data, dict) else vars(data)
+        vals = data if isinstance(data, dict) else vars(data)
+        self.data = {k: str(v) for k, v in vals.items()}
 
     class Meta:
         ordering = (

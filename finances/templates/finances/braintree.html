@@ -1,0 +1,54 @@
+{% load i18n %} {% with host=request.scheme|add:'://'|add:request.get_host %}
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Braintree</title>
+</head>
+
+<body>
+    <div>
+        <form id="payment-form" method="post" action="{{ host }}{% url 'finances:payment-system-response' 'braintree' %}">
+            <input type="hidden" name="amount" id="amount" value="{{ order.price.amount }}">
+            <input type="hidden" name="order_id" value="{{ order.pk }}">
+            <input type="hidden" name="payment_method_nonce" id="nonce">
+            <div class="bt-drop-in-wrapper">
+                <div id="bt-dropin"></div>
+            </div>
+            <button type="submit" id="submit-button" class="btn btn-primary">Pay {{ order.price }}</button>
+        </form>
+    </div>
+
+    <script src="https://js.braintreegateway.com/web/dropin/1.11.0/js/dropin.min.js"></script>
+    <script>
+        var form = document.querySelector('#payment-form');
+        var client_token = '{{ client_token }}';
+        braintree.dropin.create({
+            authorization: client_token,
+            container: '#bt-dropin',
+            paypal: {
+                flow: 'vault'
+            }
+        }, function(createErr, instance) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                instance.requestPaymentMethod(function(err, payload) {
+                    if (err) {
+                        /* console.log('Error', err); */
+                        return;
+                    }
+                    // Add the nonce to the form and submit
+                    document.querySelector('#nonce').value = payload.nonce;
+                    form.submit();
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+{% endwith %}

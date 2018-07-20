@@ -59,6 +59,17 @@ MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'] = {
     '__all__': 'stripe_secret_key',
 }
 
+# Braintree
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_MERCHANT_ID'] = {
+    '__all__': 'braintree_merchant_id',
+}
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_PUBLIC_KEY'] = {
+    '__all__': 'braintree_public_key',
+}
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_PRIVATE_KEY'] = {
+    '__all__': 'braintree_private_key',
+}
+
 # Maxibooking urls
 MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
     'ru': {

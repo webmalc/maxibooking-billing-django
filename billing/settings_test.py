@@ -17,6 +17,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 DEBUG = False
 TEMPLATE_DEBUG = False
 
+PAYMENT_SYSTEMS = (
+    'braintree',
+    'stripe',
+    'rbk',
+    'bill',
+)
+
 # MB setting by country
 MB_SETTINGS_BY_COUNTRY = {}
 
@@ -32,6 +39,17 @@ MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {
 MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'] = {
     '__all__': 'stripe_secret_key_all',
     'ae': 'stripe_secret_key_ae'
+}
+
+# Braintree
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_MERCHANT_ID'] = {
+    '__all__': 'braintree_merchant_id',
+}
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_PUBLIC_KEY'] = {
+    '__all__': 'braintree_public_key',
+}
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_PRIVATE_KEY'] = {
+    '__all__': 'braintree_private_key',
 }
 
 MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {

@@ -1,6 +1,7 @@
 import arrow
 import pytest
 import stripe
+import braintree
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -8,7 +9,7 @@ from billing.lib.test import json_contains
 from clients.models import Client
 from finances.models import Order
 from finances.systems import manager
-from finances.systems.models import Stripe
+from finances.systems.models import Stripe, Braintree
 
 pytestmark = pytest.mark.django_db
 
@@ -21,17 +22,19 @@ def test_payment_system_list_by_user(client):
 def test_payment_system_list_by_admin(admin_client):
     response = admin_client.get(reverse('payment-systems-list'))
     assert response.status_code == 200
-    assert len(response.json()) == 3
+    assert len(response.json()) == 4
     json_contains(response, 'bill')
     json_contains(response, 'rbk')
     json_contains(response, 'stripe')
+    json_contains(response, 'braintree')
 
 
 def test_payment_system_list_filtered_by_admin(admin_client, make_orders):
     response = admin_client.get(reverse('payment-systems-list') + '?order=1')
     assert response.status_code == 200
-    assert len(response.json()) == 1
+    assert len(response.json()) == 2
     json_contains(response, 'stripe')
+    json_contains(response, 'braintree')
 
 
 def test_payment_system_without_order_display_by_admin(admin_client,
@@ -46,11 +49,11 @@ def test_payment_system_without_order_display_by_admin(admin_client,
 
 def test_payment_system_display_by_admin(admin_client, make_orders):
     response = admin_client.get(
-        reverse('payment-systems-detail', args=('stripe', )) + '?order=1')
+        reverse('payment-systems-detail', args=('braintree', )) + '?order=1')
     assert response.status_code == 200
     response_json = response.json()
     assert 'html' in response_json
-    response_json['id'] = 'stripe'
+    response_json['id'] = 'braintree'
 
 
 def test_rbk_display_by_admin(admin_client, make_orders):
@@ -129,11 +132,92 @@ c1d3c0dc88bfb22d2d5ed68c2f4128e726d7ad1ed12c2b50159440358e06371368d739'
     assert 'Успешная оплата' in mail.subject
 
 
+def test_manager_get_braintree(make_orders):
+    Client.objects.filter(pk=1).update(country_id=2)
+    braintree = manager.get('braintree', Order.objects.get(pk=4))
+    assert isinstance(braintree, Braintree)
+    assert braintree.merchant_id == 'braintree_merchant_id'
+    assert braintree.public_key == 'braintree_public_key'
+    assert braintree.private_key == 'braintree_private_key'
+
+
 def test_manager_get_stripe(make_orders):
     Client.objects.filter(pk=1).update(country_id=2)
     stripe = manager.get('stripe', Order.objects.get(pk=4))
     assert isinstance(stripe, Stripe)
     assert stripe.secret_key == 'stripe_secret_key_ae'
+
+
+def test_braintree_display_by_admin(admin_client, make_orders):
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('braintree', )) + '?order=4')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert 'invalid_braintree_token' in html
+    assert 'name="order_id" value="4"' in html
+    assert '12500.00' in html
+
+
+def test_braintree_response(client, make_orders, mailoutbox, mocker):
+    Client.objects.filter(pk=1).update(url='http://example.com')
+    url = reverse('finances:payment-system-response', args=('braintree', ))
+    response = client.post(url)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data = {
+        'order_id': 1111,
+        'amount': '1212.00',
+        'payment_method_nonce': 'invalid token',
+    }
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Order #1111 not found.'
+
+    data['order_id'] = 4
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid price.'
+
+    data['amount'] = '12500.00'
+
+    class ResultMock(object):
+        def __init__(self):
+            self.is_success = True
+            self.transaction = TransactionMock()
+
+    class TransactionMock(object):
+        def __init__(self):
+            self.status = braintree.Transaction.Status.SubmittedForSettlement
+
+        def sale(self, params):
+            return ResultMock()
+
+    class GatewayMock(object):
+        def __init__(self):
+            self.transaction = TransactionMock()
+
+    braintree.BraintreeGateway = mocker.MagicMock(return_value=GatewayMock())
+
+    response = client.post(url, data)
+
+    assert response.status_code == 302
+    assert response.url == 'http://example.com/management/online/\
+api/payment/success'
+
+    order = Order.objects.get(pk=4)
+    now = arrow.now().datetime
+    format = '%d.%m.%Y %H:%I'
+    assert order.status == 'paid'
+    assert order.payment_system == 'braintree'
+    assert order.paid_date.strftime(format) == now.strftime(format)
+    assert order.transactions.first().data == {
+        'status': 'submitted_for_settlement'
+    }
+
+    mail = mailoutbox[-1]
+    assert mail.recipients() == [order.client.email]
+    assert 'Your payment was successful' in mail.subject
 
 
 def _test_stripe_display_by_admin(admin_client, key):

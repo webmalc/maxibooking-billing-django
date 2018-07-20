@@ -46,8 +46,6 @@ def test_companyru_create_by_admin(admin_client):
         'boss_lastname': 'sdfsdfsdfsdf',
         'boss_patronymic': '123123',
         'boss_operation_base': 'proxy',
-        # 'proxy_number': '123123',
-        # 'proxy_date': '2017-11-28T13:28:08Z'
     }
     url = reverse('companyru-list')
     response = admin_client.post(
