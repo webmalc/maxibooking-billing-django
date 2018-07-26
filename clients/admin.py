@@ -12,7 +12,8 @@ from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
 from billing.admin import (ArchorAdminMixin, ChangeOwnMixin, DictAdminMixin,
-                           ShowAllInlineAdminMixin, TextFieldListFilter)
+                           ManagerInlineListMixin, ShowAllInlineAdminMixin,
+                           TextFieldListFilter)
 from billing.models import Comment
 from finances.models import Order
 from hotels.models import Property
@@ -201,7 +202,7 @@ class ClientAuthInlineAdmin(ShowAllInlineAdminMixin):
         return query.filter(auth_date__gte=date_limit)
 
 
-class OrderInlineAdmin(ShowAllInlineAdminMixin):
+class OrderInlineAdmin(ShowAllInlineAdminMixin, ManagerInlineListMixin):
     """
     OrderInline admin interface
     """

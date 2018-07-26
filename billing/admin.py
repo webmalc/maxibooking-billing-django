@@ -72,6 +72,24 @@ class ManagerListMixin(admin.ModelAdmin):
         return query
 
 
+class ManagerInlineListMixin(admin.TabularInline):
+    """
+    Change list with list_manager perm
+    """
+
+    def has_change_permission(self, request, obj=None):
+        opts = self.opts
+        if request.user.has_perm('{}.list_manager'.format(opts.app_label)):
+            return True
+        return super().has_change_permission(request, obj)
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        if not super().has_change_permission(request):
+            query = query.filter(client__manager=request.user)
+        return query
+
+
 class ArchorAdminMixin(admin.ModelAdmin):
     """
     Admin with list archors
