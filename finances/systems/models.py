@@ -1,11 +1,9 @@
 import logging
-import braintree
-
 from abc import ABC, abstractmethod
 from hashlib import sha512
 
+import braintree
 import stripe
-from billing.lib.conf import get_settings
 from django.conf import settings
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -13,6 +11,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
+
+from billing.lib.conf import get_settings
 
 from ..models import Order, Transaction
 
@@ -434,18 +434,14 @@ class BraintreeSubscription(BaseType):
 
     def _process_request(self, request):
         order_id = request.POST.get('order_id')
-        amount = request.POST.get('amount')
         token = request.POST.get('payment_method_nonce')
 
-        if not all([order_id, amount, token]):
+        if not all([order_id, token]):
             raise TypeException('Bad request.')
 
         self.order = Order.objects.get_for_payment_system(order_id)
         if not self.order:
             raise TypeException('Order #{} not found.'.format(order_id))
-
-        if str(self.order.price.amount) != amount:
-            raise TypeException('Invalid price.')
 
         return token
 
@@ -583,18 +579,14 @@ class Braintree(BaseType):
 
     def _process_request(self, request):
         order_id = request.POST.get('order_id')
-        amount = request.POST.get('amount')
         token = request.POST.get('payment_method_nonce')
 
-        if not all([order_id, amount, token]):
+        if not all([order_id, token]):
             raise TypeException('Bad request.')
 
         self.order = Order.objects.get_for_payment_system(order_id)
         if not self.order:
             raise TypeException('Order #{} not found.'.format(order_id))
-
-        if str(self.order.price.amount) != amount:
-            raise TypeException('Invalid price.')
 
         return token
 

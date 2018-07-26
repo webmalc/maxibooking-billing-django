@@ -1,4 +1,4 @@
-{% load i18n %} {% with host=request.scheme|add:'://'|add:request.get_host %}
+{% load i18n %} {% load humanize %} {% with host=request.scheme|add:'://'|add:request.get_host %}
 <html>
 
 <head>
@@ -12,7 +12,6 @@
 <body>
     <div>
         <form id="payment-form" method="post" action="{{ host }}{% url 'finances:payment-system-response' braintree.id %}">
-            <input type="hidden" name="amount" id="amount" value="{{ order.price.amount }}">
             <input type="hidden" name="order_id" value="{{ order.pk }}">
             <input type="hidden" name="payment_method_nonce" id="nonce">
             <div class="bt-drop-in-wrapper">

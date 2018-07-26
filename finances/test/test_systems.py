@@ -1,7 +1,7 @@
 import arrow
+import braintree
 import pytest
 import stripe
-import braintree
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
@@ -9,7 +9,7 @@ from billing.lib.test import json_contains
 from clients.models import Client
 from finances.models import Order
 from finances.systems import manager
-from finances.systems.models import Stripe, Braintree
+from finances.systems.models import Braintree, Stripe
 
 pytestmark = pytest.mark.django_db
 
@@ -156,7 +156,7 @@ def test_braintree_display_by_admin(admin_client, make_orders):
     html = response.json()['html']
     assert 'invalid_braintree_token' in html
     assert 'name="order_id" value="4"' in html
-    assert '12500.00' in html
+    assert '12,500.00' in html
 
 
 def test_braintree_response(client, make_orders, mailoutbox, mocker):
@@ -168,7 +168,6 @@ def test_braintree_response(client, make_orders, mailoutbox, mocker):
 
     data = {
         'order_id': 1111,
-        'amount': '1212.00',
         'payment_method_nonce': 'invalid token',
     }
     response = client.post(url, data)
@@ -176,11 +175,6 @@ def test_braintree_response(client, make_orders, mailoutbox, mocker):
     assert response.content == b'Order #1111 not found.'
 
     data['order_id'] = 4
-    response = client.post(url, data)
-    assert response.status_code == 400
-    assert response.content == b'Invalid price.'
-
-    data['amount'] = '12500.00'
 
     class ResultMock(object):
         def __init__(self):
