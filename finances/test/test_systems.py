@@ -22,7 +22,7 @@ def test_payment_system_list_by_user(client):
 def test_payment_system_list_by_admin(admin_client):
     response = admin_client.get(reverse('payment-systems-list'))
     assert response.status_code == 200
-    assert len(response.json()) == 4
+    assert len(response.json()) == 5
     json_contains(response, 'bill')
     json_contains(response, 'rbk')
     json_contains(response, 'stripe')
@@ -32,9 +32,10 @@ def test_payment_system_list_by_admin(admin_client):
 def test_payment_system_list_filtered_by_admin(admin_client, make_orders):
     response = admin_client.get(reverse('payment-systems-list') + '?order=1')
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(response.json()) == 3
     json_contains(response, 'stripe')
     json_contains(response, 'braintree')
+    json_contains(response, 'braintree-subscription')
 
 
 def test_payment_system_without_order_display_by_admin(admin_client,

@@ -344,7 +344,7 @@ if not DEBUG:  # pragma: no cover
 
 # Django money
 DEFAULT_CURRENCY = 'EUR'
-CURRENCIES = ('RUB', 'EUR')
+CURRENCIES = ('RUB', 'EUR', 'CAD', 'USD')
 
 # Cache
 CACHES = {
@@ -371,6 +371,7 @@ ADMIN_VIEW_PERMISSION_MODELS = [
 PAYMENT_SYSTEMS = (
     # 'stripe',
     'braintree',
+    'braintree-subscription',
     'rbk',
     'bill',
 )

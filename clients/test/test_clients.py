@@ -657,3 +657,13 @@ Id: 2; login: user-two-test'
 
     assert last_msg == 'Failed client cache invalidation. \
 Id: 2; login: user-two-test'
+
+
+def test_client_first_and_last_name():
+    assert Client.objects.get(login='user-rus').first_name == 'user'
+    assert Client.objects.get(login='user-rus').last_name == 'rus'
+
+    Client.objects.filter(login='user-rus').update(name='longname')
+
+    assert Client.objects.get(login='user-rus').first_name == 'longname'
+    assert Client.objects.get(login='user-rus').last_name is None

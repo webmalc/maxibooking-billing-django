@@ -11,14 +11,14 @@
 
 <body>
     <div>
-        <form id="payment-form" method="post" action="{{ host }}{% url 'finances:payment-system-response' 'braintree' %}">
+        <form id="payment-form" method="post" action="{{ host }}{% url 'finances:payment-system-response' braintree.id %}">
             <input type="hidden" name="amount" id="amount" value="{{ order.price.amount }}">
             <input type="hidden" name="order_id" value="{{ order.pk }}">
             <input type="hidden" name="payment_method_nonce" id="nonce">
             <div class="bt-drop-in-wrapper">
                 <div id="bt-dropin"></div>
             </div>
-            <button type="submit" id="submit-button" class="btn btn-primary">Pay {{ order.price }}</button>
+            <button type="submit" id="submit-button" class="btn btn-primary">{{ button|title }} {{ order.price }}</button>
         </form>
     </div>
 

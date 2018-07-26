@@ -3,6 +3,7 @@ import logging
 from django.http import HttpResponseNotFound
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
@@ -178,7 +179,8 @@ class PriceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @csrf_exempt
-def payment_system_response(request, system_id):
+@xframe_options_exempt
+def payment_system_response(request, system_id, action='response'):
     """
     Payment system check order response view.
     """
@@ -188,6 +190,7 @@ def payment_system_response(request, system_id):
             system_id, dict(request.GET), dict(request.POST)))
 
     system = manager.get(system_id, request=request)
-    if not system or not hasattr(system, 'response'):
+    if not system or not hasattr(system, action):
         return HttpResponseNotFound('Payment system not found.')
-    return system.response(request)
+    method = getattr(system, action)
+    return method(request)

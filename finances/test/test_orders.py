@@ -210,6 +210,8 @@ def test_order_with_invalid_currencies():
     assert order.price == Money(0, EUR)
     order.client_services.add(5)
     assert order.price == Money(4000, RUB)
+    assert order.get_room_service.id == 2
+
     order.client_services.add(4)
     assert order.status == 'corrupted'
     assert order.price == Money(0, EUR)

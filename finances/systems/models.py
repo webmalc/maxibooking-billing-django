@@ -400,6 +400,147 @@ class Stripe(BaseType):
         })
 
 
+class BraintreeSubscription(BaseType):
+    """
+    Braintree-subscription payment system
+    """
+    id = 'braintree-subscription'
+    name = _('braintree-subscription')
+    description = _('braintree subscription description')
+    template = 'finances/braintree.html'
+    countries_excluded = ['ru']
+    countries = []
+    currencies = ['EUR', 'CAD', 'USD']
+    client_filter_fields = ('phone', )
+
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        self.merchant_id = get_settings(
+            'BRAINTREE_MERCHANT_ID', country=self.country)
+        self.public_key = get_settings(
+            'BRAINTREE_PUBLIC_KEY', country=self.country)
+        self.private_key = get_settings(
+            'BRAINTREE_PRIVATE_KEY', country=self.country)
+        self.gateway = braintree.BraintreeGateway(
+            braintree.Configuration(
+                environment=braintree.Environment.Sandbox,
+                merchant_id=self.merchant_id,
+                public_key=self.public_key,
+                private_key=self.private_key,
+            ))
+        self.logger = logging.getLogger('billing')
+
+    def _process_request(self, request):
+        order_id = request.POST.get('order_id')
+        amount = request.POST.get('amount')
+        token = request.POST.get('payment_method_nonce')
+
+        if not all([order_id, amount, token]):
+            raise TypeException('Bad request.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
+        if not self.order:
+            raise TypeException('Order #{} not found.'.format(order_id))
+
+        if str(self.order.price.amount) != amount:
+            raise TypeException('Invalid price.')
+
+        return token
+
+    def _create_customer(self, token):
+        """ Create a braintree customer if the client does not have one """
+        client = self.order.client
+        result = self.gateway.customer.create({
+            'first_name':
+            client.first_name,
+            'last_name':
+            client.last_name,
+            'email':
+            client.email,
+            'phone':
+            str(client.phone) if client.phone else None,
+            'website':
+            client.url,
+            'payment_method_nonce':
+            token
+        })
+        self.logger.info('Braintree customer response {}'.format(result))
+
+        c = result.customer
+        if not result.is_success or not c or not c.payment_methods:
+            raise TypeException(
+                'An error occurred during creation the customer')
+        return c
+
+    def _create_subscription(self, token):
+        """ Create a braintree subscription """
+        service = self.order.get_room_service
+        if not service:
+            raise TypeException(
+                'The order does not have a room service object.')
+
+        result = self.gateway.subscription.create({
+            'payment_method_token':
+            token,
+            'plan_id':
+            service.period_in_months,
+            'price':
+            self.order.price.amount,
+            'options': {
+                'start_immediately': True
+            }
+        })
+
+        self.logger.info('Braintree subscription response {}'.format(result))
+        subscription = result.subscription
+        if not result.is_success or not subscription:
+            raise TypeException(
+                'An error occurred during creation the subscription')
+        return subscription
+
+    def subscription(self, request):
+        return HttpResponse('OK')
+
+    def response(self, request):
+        """
+        Check the payment system calback response
+        """
+        try:
+            token = self._process_request(request)
+            customer = self._create_customer(token)
+            payment_token = customer.payment_methods[0].token
+
+            # TODO: CHECK A CLIENT CUSTOMER
+            sub = self._create_subscription(payment_token)
+
+        except TypeException as e:
+            return HttpResponseBadRequest(e)
+
+        tr = sub.transactions[-1] if sub.transactions else None
+        if tr and tr.status in Braintree.codes:
+            self._process_order(tr)
+            return HttpResponseRedirect(self._get_success_url(self.order))
+        else:
+            return HttpResponseRedirect(self._get_fail_url(self.order))
+
+    @property
+    def html(self):
+        try:
+            self.client_token = self.gateway.client_token.generate()
+        except braintree.exceptions.braintree_error.BraintreeError:
+            self.client_token = 'invalid_braintree_token'
+        return render_to_string(
+            self.get_template, {
+                'order': self.order,
+                'client_token': self.client_token,
+                'request': self.request,
+                'braintree': self,
+                'button': 'subscribe'
+            })
+
+
 class Braintree(BaseType):
     """
     Braintree payment system
@@ -410,7 +551,7 @@ class Braintree(BaseType):
     template = 'finances/braintree.html'
     countries_excluded = ['ru']
     countries = []
-    currencies = ['EUR']
+    currencies = ['EUR', 'CAD', 'USD']
     client_filter_fields = ('phone', )
     codes = [
         braintree.Transaction.Status.Authorized,
@@ -481,7 +622,7 @@ class Braintree(BaseType):
 
         tr = result.transaction
         if result.is_success and (tr and tr.status in self.codes):
-            self._process_order(result.transaction)
+            self._process_order(tr)
             return HttpResponseRedirect(self._get_success_url(self.order))
         else:
             return HttpResponseRedirect(self._get_fail_url(self.order))
@@ -497,5 +638,6 @@ class Braintree(BaseType):
                 'order': self.order,
                 'client_token': self.client_token,
                 'request': self.request,
-                'braintree': self
+                'braintree': self,
+                'button': 'pay'
             })

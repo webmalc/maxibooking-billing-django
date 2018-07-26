@@ -19,6 +19,7 @@ TEMPLATE_DEBUG = False
 
 PAYMENT_SYSTEMS = (
     'braintree',
+    'braintree-subscription',
     'stripe',
     'rbk',
     'bill',

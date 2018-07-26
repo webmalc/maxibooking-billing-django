@@ -17,6 +17,14 @@ def test_service_period_days():
 
 
 @pytest.mark.django_db
+def test_service_period_in_months():
+    assert Service.objects.get(pk=2).period_in_months == 12
+    Service.objects.filter(pk=2).update(period=3)
+    assert Service.objects.get(pk=2).period_in_months == 36
+    assert Service.objects.get(pk=1).period_in_months == 3
+
+
+@pytest.mark.django_db
 def test_service_default_dates():
     service = Service.objects.get(pk=1)
     format = '%d.%m.%Y %H:%I'

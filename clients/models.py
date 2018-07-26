@@ -436,6 +436,15 @@ lowercase letters, numbers, and "-" character.'),
     comments = GenericRelation(Comment)
 
     @property
+    def first_name(self):
+        return self.name.split()[0]
+
+    @property
+    def last_name(self):
+        parts = self.name.split()
+        return parts[1] if len(parts) > 1 else None
+
+    @property
     def text(self):
         return '{name}, ИНН {inn}, \
         {postal_code}, {region}, {city}, {address}'.format(

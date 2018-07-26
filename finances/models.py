@@ -37,9 +37,13 @@ class Service(CachedModel, CommonInfo, TimeStampedModel,
     """
     Service class
     """
-    PERIODS_UNITS = (('day', _('day')), ('month', _('month')), ('year',
-                                                                _('year')))
-    PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
+    # PERIODS_UNITS = (('day', _('day')), ('month', _('month')), ('year',
+    #                                                             _('year')))
+    # PERIODS_UNITS_TO_DAYS = {'day': 1, 'month': 31, 'year': 365}
+
+    PERIODS_UNITS = (('month', _('month')), ('year', _('year')))
+    PERIODS_UNITS_TO_DAYS = {'month': 31, 'year': 365}
+
     TYPES = (('rooms', _('rooms')), ('other', _('other')))
 
     objects = ServiceManager()
@@ -69,6 +73,13 @@ class Service(CachedModel, CommonInfo, TimeStampedModel,
         db_index=True,
         related_name='services',
     )
+
+    @property
+    def period_in_months(self):
+        if self.period_units == 'month':
+            return self.period
+        if self.period_units == 'year':
+            return self.period * 12
 
     @property
     def price_money(self):
@@ -235,7 +246,7 @@ class Order(CommonInfo, TimeStampedModel):
     paid_date = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('paid date'))
     payment_system = models.CharField(
-        max_length=20,
+        max_length=30,
         null=True,
         blank=True,
         choices=[(s, _(s)) for s in settings.PAYMENT_SYSTEMS],
@@ -246,6 +257,13 @@ class Order(CommonInfo, TimeStampedModel):
         blank=True,
         verbose_name=_('client services'),
         through=ClientService.orders.through)
+
+    @property
+    def get_room_service(self):
+        client_service = self.client_services.filter(
+            service__type='rooms', service__period_units__in=('month',
+                                                              'year')).first()
+        return getattr(client_service, 'service', None)
 
     @property
     def client_services_by_category(self):

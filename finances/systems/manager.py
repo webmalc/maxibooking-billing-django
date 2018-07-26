@@ -13,7 +13,9 @@ def systems_list(order=None, request=None, load=True):
         order = Order.objects.get_for_payment_system(order)
     types = {}
     for s in settings.PAYMENT_SYSTEMS:
-        s_class = getattr(import_module('finances.systems.models'), s.title())
+        s_class = getattr(
+            import_module('finances.systems.models'),
+            s.title().replace('-', ''))
         types[s] = s_class(order, request=request, load=load)
     if order:
         country = order.client.country.tld
