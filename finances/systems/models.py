@@ -494,6 +494,9 @@ class BraintreeSubscription(BaseType):
         if not result.is_success or not subscription:
             raise TypeException(
                 'An error occurred during creation the subscription')
+
+        # TODO: CREATE A SUBSCRIPTION OBJECT
+
         return subscription
 
     def subscription(self, request):
@@ -523,6 +526,7 @@ class BraintreeSubscription(BaseType):
 
     @property
     def html(self):
+        # TODO: CHECK THE CLIENT SUBSCRIPTION
         try:
             self.client_token = self.gateway.client_token.generate()
         except braintree.exceptions.braintree_error.BraintreeError:

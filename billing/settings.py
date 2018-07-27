@@ -371,7 +371,7 @@ ADMIN_VIEW_PERMISSION_MODELS = [
 PAYMENT_SYSTEMS = (
     # 'stripe',
     'braintree',
-    'braintree-subscription',
+    # 'braintree-subscription',
     'rbk',
     'bill',
 )

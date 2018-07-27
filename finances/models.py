@@ -22,6 +22,57 @@ from .managers import OrderManager, PriceManager, ServiceManager
 from .validators import validate_price_periods
 
 
+class Subscription(CommonInfo, TimeStampedModel):
+    """
+    The class represents client subscriptions
+    """
+    STATUSES = (
+        ('enabled', _('enabled')),
+        ('canceled', _('canceled')),
+    )
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.PROTECT,
+        db_index=True,
+        verbose_name=_('client'),
+        related_name='subscriptions')
+    status = models.CharField(
+        max_length=20,
+        default='enabled',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
+    price = MoneyField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        verbose_name=_('price'),
+        validators=[MinValueValidator(0)],
+        db_index=True)
+    period = models.PositiveIntegerField(
+        verbose_name=_('period'), db_index=True)
+    merchant = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('merchant'),
+    )
+    customer = models.CharField(
+        max_length=255,
+        db_index=True,
+        verbose_name=_('merchant'),
+    )
+    subscription = models.CharField(
+        max_length=255,
+        db_index=True,
+        verbose_name=_('subscription'),
+    )
+
+    class Meta:
+        ordering = ['-created']
+
+
 class ServiceCategory(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     """
     ServiceCategory class
