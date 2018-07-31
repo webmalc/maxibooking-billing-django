@@ -22,6 +22,7 @@ PAYMENT_SYSTEMS = (
     'braintree-subscription',
     'stripe',
     'rbk',
+    'sberbank',
     'bill',
 )
 
@@ -31,6 +32,11 @@ MB_SETTINGS_BY_COUNTRY = {}
 # Rbk
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
+
+# Sberbank
+SBERBANK_API_TOKEN = 'sberbank_api_token'
+SBERBANK_SECRET_KEY = 'sberbank_secret_key'
+SBERBANK_URL = 'http://sberbank.url'
 
 # Stripe
 MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {

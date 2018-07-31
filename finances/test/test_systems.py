@@ -22,9 +22,10 @@ def test_payment_system_list_by_user(client):
 def test_payment_system_list_by_admin(admin_client):
     response = admin_client.get(reverse('payment-systems-list'))
     assert response.status_code == 200
-    assert len(response.json()) == 5
+    assert len(response.json()) == 6
     json_contains(response, 'bill')
     json_contains(response, 'rbk')
+    json_contains(response, 'sberbank')
     json_contains(response, 'stripe')
     json_contains(response, 'braintree')
 
@@ -292,3 +293,14 @@ def test_bill_display_by_admin(admin_client, make_orders, settings):
     assert 'Тестовая категория 1' in html
     assert '14001,83' in html
     assert '25' in html
+
+
+def test_sberbank_display_by_admin(admin_client, make_orders):
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('sberbank', )) + '?order=5')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert "api_token: 'sberbank_api_token'" in html
+    assert 'http://sberbank.url' in html
+    assert 'order.mb_id = 5;' in html
+    assert '2,500.50' in html
