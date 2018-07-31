@@ -47,6 +47,15 @@ class BaseType(ABC):
         self._conf(self.order, self.request)
 
     @property
+    def price_as_str(self):
+        """
+        The order price
+        """
+        if not self.order:
+            raise ValueError('The order have not set.')
+        return str(self.order.price.amount)
+
+    @property
     @abstractmethod
     def id(self):
         """
@@ -212,6 +221,80 @@ class Bill(BaseType):
     @property
     def pdf(self):
         return HTML(string=self.html).write_pdf()
+
+
+class Sberbank(BaseType):
+    """
+    Sberbank payment system
+    """
+    id = 'sberbank'
+    name = _('sberbank')
+    description = _('Payment by card through the "Sberbank" system')
+    template = 'finances/sberbank.html'
+    html = ''
+    countries_excluded = []
+    countries = ['ru']
+    currencies = ['RUB']
+    client_filter_fields = ('phone', )
+    payer_local_required = False
+
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        self.api_token = settings.SBERBANK_API_TOKEN
+        self.secret_key = settings.SBERBANK_SECRET_KEY
+        self.js_url = settings.SBERBANK_URL
+
+    def check_signature(self, request):
+        return True
+
+    def response(self, request):
+        """
+        Check payment system calback response
+        """
+        order_id = request.POST.get('mb_id')
+        status = request.POST.get('status')
+        amount = float(request.POST.get('amount')) / 100
+        # currency = request.POST.get('currency')
+        # approvalCode = request.POST.get('approvalCode')
+        # orderNumber = request.POST.get('orderNumber')
+        # panMasked = request.POST.get('panMasked')
+        # refNum = request.POST.get('refNum')
+        # paymentDate = request.POST.get('paymentDate')
+        # formattedFeeAmount = request.POST.get('formattedFeeAmount')
+
+        if not all([order_id, amount, status]):
+            return HttpResponseBadRequest('Bad request.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
+
+        if not self.order:
+            return HttpResponseBadRequest(
+                'Order #{} not found.'.format(order_id))
+
+        if not self.check_signature(request):
+            return HttpResponseBadRequest('Invalid signature')
+
+        if float(self.order.price.amount) != amount:
+            return HttpResponseBadRequest('Invalid price')
+
+        if status != 'DEPOSITED':
+            return HttpResponseBadRequest('Invalid status')
+
+        self._process_order(request.POST)
+
+        return HttpResponse('OK')
+
+    @property
+    def html(self):
+        return render_to_string(
+            self.get_template, {
+                'order': self.order,
+                'request': self.request,
+                'sberbank': self,
+                'required_fields': self.client_filter_fields
+            })
 
 
 class Rbk(BaseType):
@@ -537,7 +620,8 @@ class BraintreeSubscription(BaseType):
                 'client_token': self.client_token,
                 'request': self.request,
                 'braintree': self,
-                'button': 'subscribe'
+                'button': 'subscribe',
+                'required_fields': self.client_filter_fields
             })
 
 
@@ -635,5 +719,6 @@ class Braintree(BaseType):
                 'client_token': self.client_token,
                 'request': self.request,
                 'braintree': self,
-                'button': 'pay'
+                'button': 'pay',
+                'required_fields': self.client_filter_fields
             })

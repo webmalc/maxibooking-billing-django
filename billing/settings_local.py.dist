@@ -29,13 +29,7 @@ BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
 # Django-cors
-CORS_ORIGIN_WHITELIST = (
-    'maxi-booking.com',
-    'maxi-booking.ru',
-    'maxibooking.ru',
-)
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_REGEX_WHITELIST = (r'^(https?://)?(\w+\.)?google\.com$', )
 
 # MB setting by country
 MB_SETTINGS_BY_COUNTRY = {}
@@ -50,6 +44,12 @@ MB_CLIENT_LOGIN_RESTRICTIONS = [
 # Rbk
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
+
+# Sberbank
+SBERBANK_API_TOKEN = 'api_token'
+SBERBANK_SECRET_KEY = 'secret_key'
+SBERBANK_URL = 'https://3dsec.sberbank.ru/demopayment/docsite/\
+assets/js/ipay.js'
 
 # Stripe
 MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {

@@ -1,0 +1,51 @@
+{% load i18n %} {% with host=request.scheme|add:'://'|add:request.get_host %}
+<html lang="ru" dir="ltr" class="no-js">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Sberbank</title>
+    <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+    <script src="{{ sberbank.js_url }}"></script>
+    <script>
+     var ipay = new IPAY({api_token: '{{sberbank.api_token}}' });
+     var successCallback = function (order) {
+         var url = '{{ host }}{% url 'finances:payment-system-response' sberbank.id %}'
+         order.mb_id = {{order.pk}};
+         $.ajax({
+             type: "POST",
+             url: url,
+             data: order,
+             error: function(msg) {
+                 alert(msg.responseText); 
+             }
+         });
+     }
+     var failureCallback = function (order) {
+         return;
+     }
+     $(document).ready(function() {
+         'use strict';
+         $('#pay-button').click(function(e){
+             e.preventDefault();
+            $(this).remove();
+             ipayCheckout({
+                 amount: '{{ sberbank.price_as_str }}',
+                 currency: '{{ order.price.currency.code }}',
+                 order_number: {{ order.pk }},
+             }, successCallback, failureCallback)
+         });
+     });
+    </script>
+</head>
+
+<body>
+    <a href="#" class="btn btn-xs btn-outline btn-primary" id="pay-button">
+        {% trans 'pay' %} {{ order.price }}
+    </a>
+</body>
+
+</html>
+
+{% endwith %}

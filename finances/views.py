@@ -193,4 +193,6 @@ def payment_system_response(request, system_id, action='response'):
     if not system or not hasattr(system, action):
         return HttpResponseNotFound('Payment system not found.')
     method = getattr(system, action)
-    return method(request)
+    response = method(request)
+
+    return response

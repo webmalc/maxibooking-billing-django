@@ -373,6 +373,7 @@ PAYMENT_SYSTEMS = (
     'braintree',
     # 'braintree-subscription',
     'rbk',
+    'sberbank',
     'bill',
 )
 
