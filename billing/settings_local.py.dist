@@ -70,6 +70,16 @@ MB_SETTINGS_BY_COUNTRY['BRAINTREE_PRIVATE_KEY'] = {
     '__all__': 'braintree_private_key',
 }
 
+# Billing
+PAYMENT_SYSTEMS = (
+    'stripe',
+    'braintree',
+    'braintree-subscription',
+    'rbk',
+    'sberbank',
+    'bill',
+)
+
 # Maxibooking urls
 MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
     'ru': {

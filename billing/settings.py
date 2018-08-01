@@ -367,16 +367,6 @@ ADMIN_VIEW_PERMISSION_MODELS = [
     'finances.Order',
 ]
 
-# Billing
-PAYMENT_SYSTEMS = (
-    # 'stripe',
-    'braintree',
-    # 'braintree-subscription',
-    'rbk',
-    'sberbank',
-    'bill',
-)
-
 # MB
 MB_SITE_URL = 'https://maxi-booking.com'
 MB_TRIAL_DAYS = 15
