@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from prettyjson import PrettyJSONWidget
+from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 
 from .models import Comment
@@ -197,8 +198,9 @@ class CommentAdmin(ChangeOwnMixin, AdminRowActionsMixin, VersionAdmin):
                     'created', 'created_by')
     list_display_links = ('id', )
     actions = None
-    list_filter = (CommentActionsListFilter, 'type', 'status', 'date',
-                   'created', 'created_by')
+    list_filter = (CommentActionsListFilter, 'type', 'status',
+                   ('date', DateRangeFilter), ('created',
+                                               DateRangeFilter), 'created_by')
     search_fields = ('=pk', 'text')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     fieldsets = (

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django_admin_row_actions import AdminRowActionsMixin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
+from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 
 from billing.admin import JsonAdmin, ManagerListMixin, TextFieldListFilter
@@ -21,7 +22,7 @@ class TransactionAdmin(VersionAdmin, JsonAdmin):
     list_display_links = ('id', )
     list_filter = (
         ('order', TextFieldListFilter),
-        'created',
+        ('created', DateRangeFilter),
     )
     search_fields = ('=pk', '=order__pk', 'order__client__name',
                      'order__client__email', 'order__client__login')
@@ -62,7 +63,7 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
     Order admin interface
     """
     list_display = ('id', 'price', 'status', 'client', 'expired_date',
-                    'paid_date', 'created', 'modified')
+                    'paid_date', 'payment_system', 'created', 'modified')
     list_display_links = (
         'id',
         'price',
@@ -70,11 +71,13 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
     list_filter = (
         'status',
         'client_services__service',
+        'client_services__service',
         ('client_services', TextFieldListFilter),
         ('client__login', TextFieldListFilter),
-        'expired_date',
-        'paid_date',
-        'created',
+        'payment_system',
+        ('expired_date', DateRangeFilter),
+        ('paid_date', DateRangeFilter),
+        ('created', DateRangeFilter),
     )
     search_fields = ('=pk', '=client_services__pk',
                      'client_services__service__title',
@@ -154,7 +157,7 @@ class ServiceCategoryAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
     """
     list_display = ('id', 'title', 'created')
     list_display_links = ('id', 'title')
-    list_filter = ('created', )
+    list_filter = (('created', DateRangeFilter), )
     search_fields = ('pk', 'title', 'description', 'services__title')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
     inlines = (ServiceInlineAdmin, )
@@ -180,8 +183,8 @@ class ServiceAdmin(VersionAdmin, TabbedExternalJqueryTranslationAdmin):
                     'type', 'is_default', 'is_enabled', 'created')
     list_select_related = ('category', )
     list_display_links = ('id', 'title')
-    list_filter = ('is_enabled', 'period_units', 'created', 'type',
-                   'is_default')
+    list_filter = ('is_enabled', 'period_units', ('created', DateRangeFilter),
+                   'type', 'is_default')
     search_fields = ('pk', 'title', 'description', 'type')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
                        'period_days', 'price')

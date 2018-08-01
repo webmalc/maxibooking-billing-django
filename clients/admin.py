@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
+from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
@@ -69,7 +70,8 @@ class ClientAuthAdmin(VersionAdmin, AjaxSelectAdmin):
         'id',
         'client',
     )
-    list_filter = ('auth_date', ('client__login', TextFieldListFilter))
+    list_filter = (('auth_date', DateRangeFilter), ('client__login',
+                                                    TextFieldListFilter))
     search_fields = ('=pk', 'ip', 'client__name', 'client__email',
                      'client__login', 'user_agent')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
@@ -100,7 +102,7 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
         'service',
     )
     list_filter = ('service', 'is_enabled', ('orders', TextFieldListFilter),
-                   'begin', 'end')
+                   ('begin', DateRangeFilter), ('end', DateRangeFilter))
     search_fields = ('=pk', '=orders__pk', 'service__title', 'client__name',
                      'client__email', 'client__login')
     readonly_fields = ('start_at', 'created', 'price_repr', 'modified',
@@ -280,7 +282,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
                            'sales_status')
     list_display_links = ('id', 'login')
     list_filter = ('status', 'sales_status', 'source', 'installation',
-                   'manager', 'created', 'trial_activated',
+                   'manager', ('created', DateRangeFilter), 'trial_activated',
                    ClientIsPaidListFilter, 'country')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name',
                      'manager__username', 'manager__email',

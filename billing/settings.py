@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'prettyjson',
     'annoying',
     'tabbed_admin',
+    'rangefilter',
 
     # mb apps
     'finances',
