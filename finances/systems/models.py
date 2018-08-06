@@ -278,9 +278,14 @@ class Sberbank(BaseType):
         """
         order_id = request.POST.get('mb_id')
         status = request.POST.get('status')
-        amount = float(request.POST.get('amount')) / 100
+        amount = request.POST.get('amount')
 
         if not all([order_id, amount, status]):
+            return HttpResponseBadRequest('Bad request.')
+
+        try:
+            amount = float(amount) / 100
+        except ValueError:
             return HttpResponseBadRequest('Bad request.')
 
         self.order = Order.objects.get_for_payment_system(order_id)
@@ -289,14 +294,14 @@ class Sberbank(BaseType):
             return HttpResponseBadRequest(
                 'Order #{} not found.'.format(order_id))
 
-        if not self.check_signature(request):
-            return HttpResponseBadRequest('Invalid signature')
-
         if float(self.order.price.amount) != amount:
             return HttpResponseBadRequest('Invalid price')
 
         if status != 'DEPOSITED':
             return HttpResponseBadRequest('Invalid status')
+
+        if not self.check_signature(request):
+            return HttpResponseBadRequest('Invalid signature')
 
         self._process_order(request.POST)
 

@@ -304,3 +304,75 @@ def test_sberbank_display_by_admin(admin_client, make_orders):
     assert 'http://sberbank.url' in html
     assert 'order.mb_id = 5;' in html
     assert '2,500.50' in html
+
+
+def test_sberbank_response(client, make_orders, mailoutbox):
+    pass
+
+    url = reverse('finances:payment-system-response', args=('sberbank', ))
+    response = client.post(url)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data = {
+        'mb_id': '1212',
+        'status': 'invalid_status',
+        'amount': 'invalid_amount',
+    }
+
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data['amount'] = '12.22'
+
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Order #1212 not found.'
+
+    data['mb_id'] = '5'
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid price'
+
+    data['amount'] = '250050'
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid status'
+
+    data.update({
+        'status': 'DEPOSITED',
+        'formattedAmount': '1200,00',
+        'currency': '643',
+        'approvalCode': '123456',
+        'orderNumber': '11004',
+        'panMasked': '555555XXXXXX5599',
+        'refNum': '111111111111',
+        'paymentDate': '03.08.2018 15:28:26',
+        'formattedFeeAmount': '0,00',
+        'digest': 'test'
+    })
+
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid signature'
+
+    data['digest'] = '5C587E628BDBD482CFF0F5A6F6E5F549152DBE44C'\
+                     '747718CDD0308BAA67A4176'
+
+    response = client.post(url, data)
+
+    assert response.status_code == 200
+    assert response.content == b'OK'
+
+    order = Order.objects.get(pk=5)
+    now = arrow.now().datetime
+    format = '%d.%m.%Y %H:%I'
+    assert order.status == 'paid'
+    assert order.payment_system == 'sberbank'
+    assert order.paid_date.strftime(format) == now.strftime(format)
+    assert order.transactions.first().data == data
+
+    mail = mailoutbox[-1]
+    assert mail.recipients() == [order.client.email]
+    assert 'Успешная оплата' in mail.subject
