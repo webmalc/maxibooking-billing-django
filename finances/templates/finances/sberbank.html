@@ -40,6 +40,7 @@
                  amount: '{{ sberbank.price_as_str }}',
                  currency: '{{ order.price.currency.code }}',
                  /* order_number: {{ order.pk }}, */
+                 description: 'Заказ №{{ order.pk }}',
              }, successCallback, failureCallback)
          });
      });
