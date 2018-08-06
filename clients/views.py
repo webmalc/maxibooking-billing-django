@@ -7,13 +7,14 @@ from rest_framework.response import Response
 
 from billing.exceptions import BaseException
 from billing.lib import mb
+from billing.lib.lang import select_locale
 
-from .models import (Client, ClientRu, ClientAuth, ClientService,
-                     ClientWebsite, Company, CompanyWorld, CompanyRu)
-from .serializers import (ClientAuthSerializer, ClientSerializer,
-                          ClientServiceSerializer, CompanySerializer,
-                          WebsiteSerializer, ClientRuSerializer,
-                          CompanyWorldSerializer, CompanyRuSerializer)
+from .models import (Client, ClientAuth, ClientRu, ClientService,
+                     ClientWebsite, Company, CompanyRu, CompanyWorld)
+from .serializers import (ClientAuthSerializer, ClientRuSerializer,
+                          ClientSerializer, ClientServiceSerializer,
+                          CompanyRuSerializer, CompanySerializer,
+                          CompanyWorldSerializer, WebsiteSerializer)
 from .tasks import install_client_task, mail_client_task
 
 
@@ -317,15 +318,19 @@ class ClientViewSet(viewsets.ModelViewSet):
                 client.installation = 'installed'
                 client.url = request_json['url']
                 client.save()
-                mail_client_task.delay(
-                    subject=_('Registration successefull'),
-                    template='emails/registration.html',
-                    data={
-                        'login': client.login,
-                        'url': request_json['url'] + '/user/login',
-                        'password': request_json['password']
-                    },
-                    client_id=client.id)
+
+                with select_locale(client):
+                    mail_client_task.delay(
+                        subject='{}, {}'.format(client.name,
+                                                _('Welcome to MaxiBooking!')),
+                        template='emails/registration.html',
+                        data={
+                            'login': client.login,
+                            'name': client.name,
+                            'url': request_json['url'] + '/user/login',
+                            'password': request_json['password']
+                        },
+                        client_id=client.id)
                 return Response({'status': True})
             else:
                 mail_client_task.delay(

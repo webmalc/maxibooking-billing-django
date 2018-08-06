@@ -247,6 +247,21 @@ class Sberbank(BaseType):
         self.js_url = settings.SBERBANK_URL
 
     def check_signature(self, request):
+        # vals = [
+        #     request.POST.get('status'),
+        #     request.POST.get('formattedAmount'),
+        #     request.POST.get('currency'),
+        #     request.POST.get('approvalCode'),
+        #     request.POST.get('orderNumber'),
+        #     request.POST.get('panMasked'),
+        #     request.POST.get('refNum'),
+        #     request.POST.get('paymentDate'),
+        #     request.POST.get('formattedFeeAmount'),
+        #     self.secret_key,
+        # ]
+        # digest = request.POST.get('digest')
+        # sig = ''.join(vals)
+
         return True
 
     def response(self, request):
@@ -256,13 +271,6 @@ class Sberbank(BaseType):
         order_id = request.POST.get('mb_id')
         status = request.POST.get('status')
         amount = float(request.POST.get('amount')) / 100
-        # currency = request.POST.get('currency')
-        # approvalCode = request.POST.get('approvalCode')
-        # orderNumber = request.POST.get('orderNumber')
-        # panMasked = request.POST.get('panMasked')
-        # refNum = request.POST.get('refNum')
-        # paymentDate = request.POST.get('paymentDate')
-        # formattedFeeAmount = request.POST.get('formattedFeeAmount')
 
         if not all([order_id, amount, status]):
             return HttpResponseBadRequest('Bad request.')
@@ -282,7 +290,7 @@ class Sberbank(BaseType):
         if status != 'DEPOSITED':
             return HttpResponseBadRequest('Invalid status')
 
-        self._process_order(request.POST)
+        # self._process_order(request.POST)
 
         return HttpResponse('OK')
 

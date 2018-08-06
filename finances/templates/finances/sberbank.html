@@ -3,6 +3,9 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>Sberbank</title>
+    <style>
+     body { text-align: center; }
+    </style>
     <script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -19,6 +22,9 @@
              data: order,
              error: function(msg) {
                  alert(msg.responseText); 
+             },
+             success: function(data) {
+                 $('#message').html('Заказ успешно оплачен.')
              }
          });
      }
@@ -28,12 +34,12 @@
      $(document).ready(function() {
          'use strict';
          $('#pay-button').click(function(e){
-             e.preventDefault();
+            e.preventDefault();
             $(this).remove();
              ipayCheckout({
                  amount: '{{ sberbank.price_as_str }}',
                  currency: '{{ order.price.currency.code }}',
-                 order_number: {{ order.pk }},
+                 /* order_number: {{ order.pk }}, */
              }, successCallback, failureCallback)
          });
      });
@@ -44,6 +50,7 @@
     <a href="#" class="btn btn-xs btn-outline btn-primary" id="pay-button">
         {% trans 'pay' %} {{ order.price }}
     </a>
+    <div id="message" class="alert alert-success"></div>
 </body>
 
 </html>

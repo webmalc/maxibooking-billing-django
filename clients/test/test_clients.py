@@ -438,7 +438,7 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     assert client.url == 'http://example.com'
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
-    assert 'Registration successefull' in mail.subject
+    assert 'User One, Welcome to MaxiBooking!' in mail.subject
     assert 'Registration successefull' in html
     assert '123456' in html
     assert 'http://example.com' in html
@@ -462,7 +462,8 @@ def test_client_install_results_ru_by_admin(admin_client, mailoutbox):
 
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
-    assert 'Успешная регистрация' in mail.subject
+
+    assert 'user rus, Добро пожаловать в Максибукинг!' in mail.subject
     assert 'Успешная регистрация' in html
     assert '123456' in html
     assert 'http://example.com' in html
