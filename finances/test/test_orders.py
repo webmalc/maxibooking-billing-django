@@ -181,6 +181,9 @@ def test_orders_clients_disable(make_orders, mailoutbox):
     mailoutbox = [m for m in mailoutbox if 'account is disabled' in m.subject]
     assert len(mailoutbox) == 1
     assert mailoutbox[0].recipients() == ['user@one.com']
+    assert 'User One' in mailoutbox[-1].alternatives[0][0]
+    assert '#3' in mailoutbox[-1].alternatives[0][0]
+
     client = Client.objects.get(login='user-one')
     assert client.status == 'disabled'
     format = '%d.%m.%Y %H:%I'
@@ -227,7 +230,7 @@ def test_order_paid_email(make_orders, mailoutbox):
     assert mailoutbox[-1].recipients() == ['user@one.com']
     assert 'Your payment was successful' in mailoutbox[-1].subject
     assert 'User One' in mailoutbox[-1].alternatives[0][0]
-    assert '1' in mailoutbox[-1].alternatives[0][0]
+    assert '#1' in mailoutbox[-1].alternatives[0][0]
 
     order_ru.status = 'paid'
     order_ru.save()
@@ -235,7 +238,4 @@ def test_order_paid_email(make_orders, mailoutbox):
     assert mailoutbox[-1].recipients() == ['user@rus.com']
     assert 'Успешная оплата' in mailoutbox[-1].subject
     assert 'user rus' in mailoutbox[-1].alternatives[0][0]
-    assert '5' in mailoutbox[-1].alternatives[0][0]
-
-    import ipdb
-    ipdb.set_trace()
+    assert '№5' in mailoutbox[-1].alternatives[0][0]
