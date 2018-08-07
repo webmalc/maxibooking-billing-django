@@ -215,3 +215,27 @@ def test_order_with_invalid_currencies():
     order.client_services.add(4)
     assert order.status == 'corrupted'
     assert order.price == Money(0, EUR)
+
+
+def test_order_paid_email(make_orders, mailoutbox):
+    order_en = Order.objects.get(pk=1)
+    order_ru = Order.objects.get(pk=5)
+
+    order_en.status = 'paid'
+    order_en.save()
+
+    assert mailoutbox[-1].recipients() == ['user@one.com']
+    assert 'Your payment was successful' in mailoutbox[-1].subject
+    assert 'User One' in mailoutbox[-1].alternatives[0][0]
+    assert '1' in mailoutbox[-1].alternatives[0][0]
+
+    order_ru.status = 'paid'
+    order_ru.save()
+
+    assert mailoutbox[-1].recipients() == ['user@rus.com']
+    assert 'Успешная оплата' in mailoutbox[-1].subject
+    assert 'user rus' in mailoutbox[-1].alternatives[0][0]
+    assert '5' in mailoutbox[-1].alternatives[0][0]
+
+    import ipdb
+    ipdb.set_trace()

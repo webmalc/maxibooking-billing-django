@@ -45,6 +45,7 @@ def order_post_save(sender, **kwargs):
             template='emails/order_paid.html',
             data={
                 'order_id': order.pk,
+                'name': order.client.name,
                 'created': order.created.strftime('%d.%m.%Y')
             },
             client_id=order.client.id)
