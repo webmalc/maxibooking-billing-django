@@ -91,6 +91,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'billing.middleware.WhodidMiddleware',
     'billing.middleware.DisableAdminI18nMiddleware',
+    'reversion.middleware.RevisionMiddleware',
 ]
 
 ROOT_URLCONF = 'billing.urls'
