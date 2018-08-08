@@ -5,6 +5,7 @@ from django.apps import apps
 from django.utils.translation import ugettext_lazy as _
 
 from billing.celery import app
+from billing.lib.lang import select_locale
 from billing.lib.messengers.mailer import mail_client
 
 
@@ -36,11 +37,22 @@ def orders_payment_notify():
     orders = apps.get_model('finances',
                             'Order').objects.get_for_payment_notification()
     for order in orders:
-        mail_client(
-            subject=_('Order will expire soon').format(order.pk),
-            template='emails/order_payment_notification.html',
-            data={'order': order},
-            client=order.client)
+        greetings_new = ''
+        client = order.client
+        with select_locale(client):
+            if client.is_trial:
+                greetings_new = '<p>{}</p>'.format(
+                    _('We are glad to see you among our clients!'))
+
+            mail_client(
+                subject=_('Order will expire soon'),
+                template='emails/order_payment_notification.html',
+                data={
+                    'order': order,
+                    'client': client,
+                    'greetings_new': greetings_new
+                },
+                client=order.client)
 
 
 @app.task

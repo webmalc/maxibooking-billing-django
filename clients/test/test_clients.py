@@ -668,3 +668,12 @@ def test_client_first_and_last_name():
 
     assert Client.objects.get(login='user-rus').first_name == 'longname'
     assert Client.objects.get(login='user-rus').last_name is None
+
+
+def test_client_is_trial(make_orders):
+    Order.objects.filter(pk=3).update(client_id=2)
+    client_trial = Client.objects.get(pk=2)
+    client_not_trial = Client.objects.get(pk=1)
+
+    assert client_trial.is_trial is True
+    assert client_not_trial.is_trial is False

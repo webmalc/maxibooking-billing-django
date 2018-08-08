@@ -5,6 +5,8 @@
 ** TODO multiprocessing
 ** TODO user activity stream
 
+** TODO add reversion context manager to tasks
+
 * COMPLETED
 ** DONE prices migration
    CLOSED: [2018-04-28 Sat 16:18]

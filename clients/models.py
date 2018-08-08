@@ -436,6 +436,10 @@ lowercase letters, numbers, and "-" character.'),
     comments = GenericRelation(Comment)
 
     @property
+    def is_trial(self):
+        return not bool(self.orders.filter(status='paid').count())
+
+    @property
     def first_name(self):
         return self.name.split()[0]
 

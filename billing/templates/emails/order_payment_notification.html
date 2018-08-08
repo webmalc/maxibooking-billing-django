@@ -7,8 +7,10 @@
 {% endblock %}
 
 {% block content %}
-{% blocktrans with id=order.id created=order.created|date:'d.m.Y' expired=order.expired_date|date:'d.m.Y H:i' url=order.client.url %}
-    <p>Hello!</p>
+{% blocktrans with name=client.fullname id=order.id greetings_new=greetings_new|safe created=order.created|date:'d.m.Y' expired=order.expired_date|date:'d.m.Y H:i' url=client.url %}
+    <p>Hello, {{ name }}!</p>
+
+    {{ greetings_new }}
 
     <p>You need to pay order #{{ id }} from {{ created }} for using the "Maxbooking".</p>
     <p>Payment must be made before {{ expired }}</p>

@@ -121,9 +121,20 @@ def test_manager_get_for_payment_notification(make_orders):
 
 def test_orders_payment_notification(make_orders, mailoutbox):
     orders_payment_notify.delay()
-    mailoutbox = [m for m in mailoutbox if 'will expire soon' in m.subject]
-    assert len(mailoutbox) == 1
-    assert mailoutbox[0].recipients() == ['user@one.com']
+    mail = mailoutbox[-1]
+    html = mail.alternatives[0][0]
+
+    assert mail.recipients() == ['user@one.com']
+    assert 'Order will expire soon' in mail.subject
+    assert 'We glad to see' not in html
+
+    Order.objects.filter(client_id=1, status='paid').delete()
+    orders_payment_notify.delay()
+
+    mail = mailoutbox[-1]
+    html = mail.alternatives[0][0]
+
+    assert 'We are glad to see' in html
 
 
 def test_manager_get_expired(make_orders):
