@@ -53,8 +53,12 @@ def test_order_creation_and_modifications(mailoutbox):
 
     assert len(mailoutbox) == 1
     mail = mailoutbox[0]
+    html = mail.alternatives[0][0]
+
     assert 'New order created' in mail.subject
     assert mail.recipients() == ['user@one.com']
+    assert '20 more days' in html
+    assert 'User One' in html
 
     order.client_services.add(1, 2)
     assert order.price == Money(14001.83, EUR)
@@ -127,6 +131,7 @@ def test_orders_payment_notification(make_orders, mailoutbox):
     assert mail.recipients() == ['user@one.com']
     assert 'Order will expire soon' in mail.subject
     assert 'We glad to see' not in html
+    assert 'User One' in html
 
     Order.objects.filter(client_id=1, status='paid').delete()
     orders_payment_notify.delay()

@@ -19,11 +19,25 @@ def order_notify_task(order_id):
     try:
         order = order_model.objects.get(pk=order_id)
         if order.status == 'new':
-            mail_client(
-                subject=_('New order created'),
-                template='emails/new_order.html',
-                data={'order': order},
-                client=order.client)
+            greetings_new = ''
+            client = order.client
+            expired = order.expired_date
+            delta = arrow.get(expired) - arrow.now()
+            with select_locale(client):
+                if client.is_trial:
+                    greetings_new = '<p>{}</p>'.format(
+                        _('We are glad to see you among our clients!'))
+                mail_client(
+                    subject=_('New order created'),
+                    template='emails/new_order.html',
+                    data={
+                        'order': order,
+                        'client': client,
+                        'greetings_new': greetings_new,
+                        'expired': expired,
+                        'days': delta.days
+                    },
+                    client=order.client)
         logger.info('New order created {}.'.format(order))
     except order_model.DoesNotExist:
         logger.error('Order notify task failed {}.'.format(order_id))

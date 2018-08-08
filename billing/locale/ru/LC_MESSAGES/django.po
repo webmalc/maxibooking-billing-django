@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-08 10:44+0000\n"
-"PO-Revision-Date: 2018-08-08 10:48+0000\n"
+"POT-Creation-Date: 2018-08-08 13:05+0000\n"
+"PO-Revision-Date: 2018-08-08 13:09+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -126,16 +126,25 @@ msgstr "Новый счет №"
 #, python-format
 msgid ""
 "\n"
-"    <p>Hello!</p>\n"
+"    <p>Hello, %(name)s!</p>\n"
 "\n"
-"    <p>Order #%(id)s from %(created)s was generated to pay for 'Maxibooking'.</p>\n"
-"    <p>It must be paid before %(expired)s</p>\n"
-"    <p>You can view the order and make a payment in the personal cabinet of the 'Maxibooking' system by clicking on the link: %(url)s </p>\n"
-"    <p>If you have any questions, you can find on them an answer in the knowledge base of the 'Maxibooking' system at the address: https://support.maxi-booking.com or by sending an email to the support service: support@maxi-booking.com.</p>\n"
+"    %(greetings_new)s\n"
+"\n"
+"    <p>You still have %(days)s more days of free use! To continue using Maxibooking after %(expired)s we have created for You the order #%(id)s dated %(created)s from the calculation of the number of Your room and the chosen period. It must be paid before %(expired)s.</p>\n"
+"    <p>View the order, change the period and number of rooms, and make payment you can in Your personal account by clicking on the link: %(url)s</p>\n"
+"    <p>Do you have features you want to try but haven't set up yet? Write to us. We are happy only if with us you sell more!</p>\n"
 "\n"
 msgstr ""
+"\n"
+"<p>Здравствуйте %(name)s,</p>\n"
+"\n"
+"%(greetings_new)s\n"
+"\n"
+"<p>У вас остается еще %(days)s д. бесплатного пользования! Для продолжения пользования Максибукинг после %(expired)s мы создали для Вас заказ №%(id)s от %(created)s из расчета количества Ваших номеров и выбранного Вами периода. Его необходимо оплатить до %(expired)s.</p>\n"
+"<p>Просмотреть заказ, изменить период и количество номеров, и произвести оплату Вы можете в Вашем личном кабинете перейдя по ссылке: <a href=\"%(url)s\">%(url)s</a></p>\n"
+"<p>Есть функции которые вы хотите попробовать но еще не успели настроить? Напишите нам. Мы счастливы только если с нами Вы продаете больше!</p> \n"
 
-#: billing/templates/emails/order_client_disabled.html:6 finances/tasks.py:73
+#: billing/templates/emails/order_client_disabled.html:6 finances/tasks.py:87
 msgid "Your account is disabled"
 msgstr "Ваш аккаунт заблокирован"
 
@@ -152,7 +161,7 @@ msgstr ""
 "<p>Здравствуйте %(name)s,</p>\n"
 "<p>Случилось страшное. Из-за задолженности по оплате Ваш аккаунт в системе «Максибукинг» заблокирован.</p>\n"
 "<p>Скорее разблокируйте его, что бы не упустить ни одной брони.</p>\n"
-"<p>Для разблокировки аккаунта Вам необходимо оплатить счет №%(order.id)s от %(created)s в Вашем личном кабинете перейдя по ссылке: %(url)s</p>\n"
+"<p>Для разблокировки аккаунта Вам необходимо оплатить счет №%(order.id)s от %(created)s в Вашем личном кабинете перейдя по ссылке: <a href=\"%(url)s\">%(url)s</a></p>\n"
 "<p>Есть функции которые вы хотите попробовать но еще не успели настроить? Напишите нам. Мы счастливы только если с нами Вы продаете больше!</p>"
 
 #: billing/templates/emails/order_paid.html:6 finances/signals.py:44
@@ -174,7 +183,7 @@ msgstr ""
 "<p>Есть функции которые вы хотите попробовать но еще не успели настроить? Напишите нам. Мы счастливы только если с нами Вы продаете больше!</p>\n"
 
 #: billing/templates/emails/order_payment_notification.html:6
-#: finances/tasks.py:48
+#: finances/tasks.py:62
 msgid "Order will expire soon"
 msgstr "Продление периода использования"
 
@@ -196,8 +205,8 @@ msgstr ""
 "\n"
 "%(greetings_new)s\n"
 "\n"
-"<p>Для продолжения пользования Максибукинг Вам необходимо оплатить заказ №%(id)s от %(created)s.</p>\n"
-"<p>Просмотреть заказ, изменить период и количество номеров, и произвести оплату Вы можете в Вашем личном кабинете перейдя по ссылке: %(url)s.</p>\n"
+"<p>Для продолжения пользования Максибукинг Вам необходимо оплатить счет №%(id)s от %(created)s.</p>\n"
+"<p>Просмотреть счет, изменить период и количество номеров, и произвести оплату Вы можете в Вашем личном кабинете перейдя по ссылке: <a href=\"%(url)s\">%(url)s</a>.</p>\n"
 "<p>Счет надо оплатить до %(expired)s.</p>\n"
 "<p>Есть функции которые вы хотите попробовать но еще не успели настроить? Напишите нам. Мы счастливы только если с нами Вы продаете больше!</p>\n"
 
@@ -264,17 +273,19 @@ msgid ""
 "\n"
 "    <p>Yours faithfully,<br>\n"
 "        Technical support 'Maxibooking'</p>\n"
-"\n"
-"    <p>E-mail: support@maxi-booking.com<br>\n"
-"       Knowledge base: https://support.maxi-booking.com</p>\n"
+"    <p>\n"
+"        E-mail: <a href=\"mailto:support@maxi-booking.com\">support@maxi-booking.com</a><br>\n"
+"        Knowledge base: <a href=\"https://support.maxi-booking.com\">https://support.maxi-booking.com</a>\n"
+"    </p>\n"
 msgstr ""
 "\n"
-"    <p>С уважением,<br>\n"
-"        Служба Клиентской поддержки «Максибукинг»</p>\n"
-"\n"
-"    <p>E-mail: support@maxi-booking.ru<br>\n"
-"       База знаний: https://maxi-booking.zendesk.com/hc/ru</p>\n"
-"\n"
+"<p>С уважением,<br>\n"
+"    Служба Клиентской поддержки «Максибукинг»</p>\n"
+"<p>\n"
+"    E-mail: <a href=\"mailto:support@maxi-booking.ru\">support@maxi-booking.ru</a><br>\n"
+"    Телефон: 8 800 200 78 30<br>\n"
+"    База знаний: <a href=\"https://maxi-booking.zendesk.com/hc/ru\">https://maxi-booking.zendesk.com/hc/ru</a>\n"
+"</p>\n"
 "<p>Максибукинг: Работает программа — зарабатываете Вы!</p>\n"
 
 #: billing/templates/tabbed_admin/change_form.html:15
@@ -839,13 +850,13 @@ msgstr ""
 msgid "braintree description"
 msgstr ""
 
-#: finances/tasks.py:23
-msgid "New order created"
-msgstr "Создан новый заказ"
-
-#: finances/tasks.py:45
+#: finances/tasks.py:29 finances/tasks.py:59
 msgid "We are glad to see you among our clients!"
 msgstr "Мы рады видеть Вас среди наших клиентов!"
+
+#: finances/tasks.py:31
+msgid "New order created"
+msgstr "Создан новый счет"
 
 #: finances/templates/finances/bill.html:114
 msgid "piece"

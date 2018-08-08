@@ -7,13 +7,14 @@
 {% endblock %}
 
 {% block content %}
-{% blocktrans with id=order.id created=order.created|date:'d.m.Y' expired=order.expired_date|date:'d.m.Y H:i' url=order.client.url %}
-    <p>Hello!</p>
+{% blocktrans with name=client.name id=order.id greetings_new=greetings_new|safe created=order.created|date:'d.m.Y' expired=expired|date:'d.m.Y H:i' url=client.url %}
+    <p>Hello, {{ name }}!</p>
 
-    <p>Order #{{ id }} from {{ created }} was generated to pay for 'Maxibooking'.</p>
-    <p>It must be paid before {{ expired }}</p>
-    <p>You can view the order and make a payment in the personal cabinet of the 'Maxibooking' system by clicking on the link: {{ url }} </p>
-    <p>If you have any questions, you can find on them an answer in the knowledge base of the 'Maxibooking' system at the address: https://support.maxi-booking.com or by sending an email to the support service: support@maxi-booking.com.</p>
+    {{ greetings_new }}
+
+    <p>You still have {{ days }} more days of free use! To continue using Maxibooking after {{ expired }} we have created for You the order #{{ id }} dated {{ created }} from the calculation of the number of Your room and the chosen period. It must be paid before {{ expired }}.</p>
+    <p>View the order, change the period and number of rooms, and make payment you can in Your personal account by clicking on the link: {{ url }}</p>
+    <p>Do you have features you want to try but haven't set up yet? Write to us. We are happy only if with us you sell more!</p>
 
 {% endblocktrans %}
 

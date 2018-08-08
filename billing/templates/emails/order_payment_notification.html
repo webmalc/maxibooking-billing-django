@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-{% blocktrans with name=client.fullname id=order.id greetings_new=greetings_new|safe created=order.created|date:'d.m.Y' expired=order.expired_date|date:'d.m.Y H:i' url=client.url %}
+{% blocktrans with name=client.name id=order.id greetings_new=greetings_new|safe created=order.created|date:'d.m.Y' expired=order.expired_date|date:'d.m.Y H:i' url=client.url %}
     <p>Hello, {{ name }}!</p>
 
     {{ greetings_new }}
