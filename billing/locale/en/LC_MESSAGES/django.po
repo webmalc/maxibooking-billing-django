@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-08 13:05+0000\n"
+"POT-Creation-Date: 2018-08-10 12:27+0000\n"
 "PO-Revision-Date: 2018-06-04 10:26+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,6 +111,26 @@ msgstr ""
 
 #: billing/templates/emails/base_manager.html:6
 msgid "Message from billing"
+msgstr ""
+
+#: billing/templates/emails/client_disabled.html:6 clients/tasks.py:99
+msgid "we miss you!"
+msgstr ""
+
+#: billing/templates/emails/client_disabled.html:11
+#, python-format
+msgid ""
+"\n"
+"\n"
+"<p>Hello, %(name)s!</p>\n"
+"<p>New sales are waiting for you! Rather, unlock Your account to start "
+"selling more.</p>\n"
+"<p>To unlock your account you need to pay for the order #%(id)s from "
+"%(created)s in Your personal account by clicking on the link: <a href="
+"\"%(url)s\">%(url)s</a></p>\n"
+"<p>Do you have features you want to try but haven't set up yet? Write to us. "
+"We are happy only if with us you sell more!</p>\n"
+"\n"
 msgstr ""
 
 #: billing/templates/emails/comment_uncompleted.html:6

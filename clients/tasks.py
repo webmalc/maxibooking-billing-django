@@ -1,8 +1,12 @@
 import logging
 from itertools import groupby
 
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
 from billing.celery import app
 from billing.lib import mb
+from billing.lib.lang import select_locale
 from billing.lib.messengers.mailer import mail_client, mail_managers
 from finances.models import Order
 
@@ -81,6 +85,24 @@ def mail_client_task(
             return True
         except Client.DoesNotExist:
             return False
+
+
+@app.task
+def client_disabled_email(days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS):
+    """
+    The task for sending emails to disabled clients
+    """
+    clients = Client.objects.get_disabled(days)
+    for client in clients:
+        with select_locale(client):
+            mail_client(
+                subject='{}, {}'.format(client.name, _('we miss you!')),
+                template='emails/client_disabled.html',
+                data={
+                    'order': client.orders.get_expired(('archived', )).first(),
+                    'client': client,
+                },
+                client=client)
 
 
 @app.task

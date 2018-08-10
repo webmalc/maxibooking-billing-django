@@ -13,7 +13,7 @@ from finances.models import Order, Price, Service
 from hotels.models import Property, Room
 
 from ..models import Client, RefusalReason, SalesStatus
-from ..tasks import client_archivation
+from ..tasks import client_archivation, client_disabled_email
 
 pytestmark = pytest.mark.django_db
 
@@ -577,7 +577,7 @@ def test_admin_trial_by_admin(admin_client):
         days=settings.MB_TRIAL_DAYS).datetime.strftime(format)
 
 
-def test_clients_archivation(admin_client):
+def test_clients_archivation():
     client_archivation.delay()
     client = Client.objects.get(login='user-six')
     assert client.status == 'archived'
@@ -677,3 +677,32 @@ def test_client_is_trial(make_orders):
 
     assert client_trial.is_trial is True
     assert client_not_trial.is_trial is False
+
+
+def test_client_get_disabled():
+    begin = arrow.utcnow().shift(days=-3)
+
+    Client.objects.filter(pk=1).update(
+        status='disabled', disabled_at=begin.datetime)
+    clients = Client.objects.get_disabled()
+    assert clients.count() == 1
+    assert clients[0].login == 'user-one'
+    clients = Client.objects.get_disabled(days=1)
+    assert clients.count() == 0
+    clients = Client.objects.get_disabled(days=5)
+    assert clients.count() == 0
+    Client.objects.filter(pk=1).update(
+        status='disabled', disabled_at=begin.shift(days=-2).datetime)
+    assert clients.count() == 1
+    assert clients[0].login == 'user-one'
+
+
+def test_clients_disabled_email(mailoutbox, make_orders):
+    begin = arrow.utcnow().shift(days=-3)
+    Client.objects.filter(pk=1).update(
+        status='disabled', disabled_at=begin.datetime)
+    client_disabled_email.delay()
+    mail = mailoutbox[-1]
+
+    assert 'User One, we miss you!' in mail.subject
+    assert '#3' in mail.alternatives[0][0]

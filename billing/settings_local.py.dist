@@ -105,6 +105,9 @@ MB_ORDER_EXPIRED_DAYS = 21
 MB_ORDER_BEFORE_DAYS = 14
 # Order payment notify (days before expiration)
 MB_ORDER_PAYMENT_NOTIFY_DAYS = 3
+# The number of days for sending email to the disabled clients
+MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS = 3
+MB_CLIENT_DISABLED_SECOND_EMAIL_DAYS = 8
 # Client archive period (in months)
 MB_CLIENT_ARCHIVE_MONTHS = 6
 # Bill recipient company

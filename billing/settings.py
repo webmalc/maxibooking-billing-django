@@ -298,6 +298,15 @@ CELERYBEAT_SCHEDULE = {
         'task': 'billing.tasks.mail_comments_action_task',
         'schedule': crontab(minute=0, hour='6, 14, 18')
     },
+    'clients_disabled_email_first': {
+        'task': 'clients.tasks.client_disabled_email',
+        'schedule': 60 * 60 * 24
+    },
+    'clients_disabled_email_second': {
+        'task': 'clients.tasks.client_disabled_email',
+        'schedule': 60 * 60 * 24,
+        'args': (MB_CLIENT_DISABLED_SECOND_EMAIL_DAYS, )
+    },
 }
 
 # Django phonenumber

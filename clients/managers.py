@@ -64,11 +64,26 @@ class ClientManager(LookupMixin):
     lookup_search_fields = ('pk', 'login', 'email', 'phone', 'name',
                             'country__name')
 
+    def get_disabled(self,
+                     days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS,
+                     query=None):
+        """
+        The method for getting the disabled clients
+        """
+        query = query if query else self.all()
+        begin = arrow.utcnow().shift(days=-days).floor('day').datetime
+        end = arrow.utcnow().shift(days=-(days - 1)).floor('day').datetime
+
+        return query.filter(
+            status='disabled', disabled_at__range=(begin, end)).exclude(
+                disabled_at__isnull=True).exclude(disabled_at__isnull=True)
+
     def get_for_archivation(self, query=None):
         """
         Get clients for archivation
         """
-        return self.filter(
+        query = query if query else self.all()
+        return query.filter(
             status='disabled',
             disabled_at__lte=arrow.utcnow().shift(
                 months=-settings.MB_CLIENT_ARCHIVE_MONTHS).datetime).exclude(
