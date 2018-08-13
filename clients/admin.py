@@ -341,7 +341,7 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     def get_search_results(self, request, queryset, search_term):
 
         phone_str = search_term
-        if search_term.isnumeric() and len(search_term) == 11:
+        if search_term.isnumeric() and len(search_term) > 7:
             phone_str = '+' + search_term
 
         try:
