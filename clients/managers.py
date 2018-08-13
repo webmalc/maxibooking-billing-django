@@ -64,6 +64,29 @@ class ClientManager(LookupMixin):
     lookup_search_fields = ('pk', 'login', 'email', 'phone', 'name',
                             'country__name')
 
+    def get_for_greeting(self,
+                         days=settings.MB_CLIENT_GREETING_EMAIL_DAYS,
+                         query=None):
+        query = self.get_trial(query)
+        begin = arrow.utcnow().shift(days=-days).floor('day').datetime
+        end = arrow.utcnow().shift(days=-(days - 1)).floor('day').datetime
+        return query.filter(created__range=(begin, end))
+
+    def get_trial(self, query=None):
+        """
+        The method for getting the trial clients
+        """
+        query = query if query else self.all()
+
+        query = query.annotate()
+
+        return query.filter(
+            status='active', ).prefetch_related('orders').annotate(
+                orders_count=Count(
+                    Case(
+                        When(orders__status='paid', then=1),
+                        output_field=IntegerField()))).filter(orders_count=0)
+
     def get_disabled(self,
                      days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS,
                      query=None):
@@ -75,8 +98,8 @@ class ClientManager(LookupMixin):
         end = arrow.utcnow().shift(days=-(days - 1)).floor('day').datetime
 
         return query.filter(
-            status='disabled', disabled_at__range=(begin, end)).exclude(
-                disabled_at__isnull=True).exclude(disabled_at__isnull=True)
+            status='disabled',
+            disabled_at__range=(begin, end)).exclude(disabled_at__isnull=True)
 
     def get_for_archivation(self, query=None):
         """

@@ -88,6 +88,23 @@ def mail_client_task(
 
 
 @app.task
+def client_greeting_email(days=settings.MB_CLIENT_GREETING_EMAIL_DAYS):
+    """
+    The task for sending welcome emails to trial clients
+    """
+    clients = Client.objects.get_for_greeting(days)
+    for client in clients:
+        with select_locale(client):
+            mail_client(
+                subject='{}, {}'.format(client.name, _('how are your sales?')),
+                template='emails/client_welcome.html',
+                data={
+                    'client': client,
+                },
+                client=client)
+
+
+@app.task
 def client_disabled_email(days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS):
     """
     The task for sending emails to disabled clients

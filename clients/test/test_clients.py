@@ -13,7 +13,8 @@ from finances.models import Order, Price, Service
 from hotels.models import Property, Room
 
 from ..models import Client, RefusalReason, SalesStatus
-from ..tasks import client_archivation, client_disabled_email
+from ..tasks import (client_archivation, client_disabled_email,
+                     client_greeting_email)
 
 pytestmark = pytest.mark.django_db
 
@@ -706,3 +707,31 @@ def test_clients_disabled_email(mailoutbox, make_orders):
 
     assert 'User One, we miss you!' in mail.subject
     assert '#3' in mail.alternatives[0][0]
+
+
+def test_client_get_trial(make_orders):
+    trial = Client.objects.get_trial()
+    assert trial.count() == 2
+    assert trial.first().is_trial is True
+
+    Order.objects.filter(client_id=1).delete()
+    trial = Client.objects.get_trial()
+    assert trial.count() == 3
+
+
+def test_client_get_for_greeting(make_orders):
+    begin = arrow.utcnow().shift(days=-8)
+    Client.objects.filter(pk=7).update(created=begin.datetime)
+    clients = Client.objects.get_for_greeting()
+    assert clients.count() == 1
+    assert clients.first().is_trial is True
+    assert clients.first().created == begin.datetime
+
+
+def test_clients_welcome_email(mailoutbox, make_orders):
+    begin = arrow.utcnow().shift(days=-8)
+    Client.objects.filter(pk=7).update(created=begin.datetime)
+    client_greeting_email.delay()
+    mail = mailoutbox[-1]
+
+    assert 'user rus, как Ваши продажи?' in mail.subject
