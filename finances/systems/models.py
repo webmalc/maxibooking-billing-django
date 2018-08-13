@@ -680,7 +680,8 @@ class Braintree(BaseType):
             'BRAINTREE_PRIVATE_KEY', country=self.country)
         self.gateway = braintree.BraintreeGateway(
             braintree.Configuration(
-                environment=braintree.Environment.Sandbox,
+                # environment=braintree.Environment.Sandbox,
+                environment=braintree.Environment.Production,
                 merchant_id=self.merchant_id,
                 public_key=self.public_key,
                 private_key=self.private_key,
