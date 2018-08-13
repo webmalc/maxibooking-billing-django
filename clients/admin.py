@@ -1,4 +1,5 @@
 import arrow
+import phonenumbers
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
@@ -336,6 +337,23 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def get_search_results(self, request, queryset, search_term):
+
+        phone_str = search_term
+        if search_term.isnumeric() and len(search_term) == 11:
+            phone_str = '+' + search_term
+
+        try:
+            phone = phonenumbers.parse(phone_str)
+            search_term = phonenumbers.format_number(
+                phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+        except phonenumbers.phonenumberutil.NumberParseException:
+            pass
+
+        queryset, use_distinct = super().get_search_results(
+            request, queryset, search_term)
+        return queryset, use_distinct
 
     def info(self, obj):
         return '<br>'.join([obj.login, obj.name, str(obj.phone), obj.email])
