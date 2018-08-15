@@ -186,13 +186,13 @@ class CompanyRu(CountryBase, CommonInfo, TimeStampedModel):
     form = models.CharField(
         max_length=20, choices=FORMS, verbose_name=_('form'), db_index=True)
     ogrn = models.CharField(
-        max_length=13,
+        max_length=15,
         db_index=True,
         null=True,
         blank=True,
         validators=[
             MinLengthValidator(13),
-            MaxLengthValidator(13),
+            MaxLengthValidator(15),
             integer_validator,
         ],
         verbose_name=_('ogrn'))
