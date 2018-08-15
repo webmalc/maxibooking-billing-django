@@ -1,8 +1,23 @@
 import arrow
-from billing.managers import LookupMixin
 from django.apps import apps
 from django.conf import settings
 from django.db import models
+
+from billing.managers import LookupMixin
+
+
+class SubscriptionManager(LookupMixin):
+    """"
+    The subscription manager
+    """
+    lookup_search_fields = ('=pk', '=order__pk', 'client__email',
+                            'client__name', 'client__login')
+
+    def get_active(self, client, pk=None):
+        query = self.filter(client=client, status='enabled')
+        if pk:
+            query = query.exclude(pk=pk)
+        return query
 
 
 class OrderManager(LookupMixin):

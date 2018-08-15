@@ -1,6 +1,24 @@
 {% load i18n %}
 {% spaceless %}
-<p class="danger">
-    {% trans 'The required information are not filled in: ' %}{% for field in required_fields %}{% trans field %}{% if not forloop.last %}, {% endif %}{% endfor %} 
-</p>
+<html>
+
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="googlebot" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Invalid request</title>
+    </head>
+
+    <body>
+        <p class="danger">
+            {% if not error %}
+                {% trans 'The required information are not filled in: ' %}{% for field in required_fields %}{% trans field %}{% if not forloop.last %}, {% endif %}{% endfor %} 
+            {% else %}
+                {% trans error %} 
+            {% endif %}
+        </p>
+    </body>
+
+</html>
 {% endspaceless %}

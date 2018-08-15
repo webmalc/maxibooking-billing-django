@@ -68,6 +68,7 @@ ipython==6.0.0
 ipython-genutils==0.2.0
 jmespath==0.9.3
 json-rpc==1.11.0
+jsonpickle==0.9.6
 kombu==4.0.2
 Markdown==2.6.8
 microsofttranslator==0.8

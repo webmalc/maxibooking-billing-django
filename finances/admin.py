@@ -1,16 +1,86 @@
+import jsonpickle
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from django.http import HttpResponse
+from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 
 from billing.admin import JsonAdmin, ManagerListMixin, TextFieldListFilter
+from finances.systems.lib import BraintreeGateway
 
-from .models import Order, Price, Service, ServiceCategory, Transaction
+from .models import (Order, Price, Service, ServiceCategory, Subscription,
+                     Transaction)
 from .systems import manager
+
+
+@admin.register(Subscription)
+class SubsctriptionAdmin(AdminRowActionsMixin, VersionAdmin, JsonAdmin):
+    """
+    The subscription admin interface
+    """
+    list_display = ('id', 'subscription', 'client', 'status', 'period',
+                    'price', 'created', 'modified')
+    list_display_links = ('id', 'subscription')
+    list_filter = (
+        'status',
+        'period',
+        ('client__login', TextFieldListFilter),
+        ('created', DateRangeFilter),
+    )
+    search_fields = ('=pk', '=order__pk', 'client__email', 'client__name',
+                     'client__login')
+    readonly_fields = ('merchant', 'customer', 'subscription', 'created',
+                       'modified', 'created_by', 'modified_by')
+    raw_id_fields = ('order', 'client')
+    form = make_ajax_form(Subscription, {
+        'client': 'clients',
+    })
+    fieldsets = (
+        ('General', {
+            'fields': ('client', 'order', 'country', 'status', 'period',
+                       'price')
+        }),
+        ('Options', {
+            'fields': ('merchant', 'customer', 'subscription', 'created',
+                       'modified', 'created_by', 'modified_by')
+        }),
+    )
+    list_select_related = ('order', 'client')
+
+    def get_row_actions(self, obj):
+        row_actions = [
+            {
+                'label': 'Info',
+                'action': 'info'
+            },
+            {
+                'label': 'Cancel',
+                'action': 'cancel',
+                'enabled': obj.status == 'enabled'
+            },
+        ]
+        row_actions += super().get_row_actions(obj)
+        return row_actions
+
+    def info(self, request, obj):
+        braintree = BraintreeGateway(obj.country, 'sandbox')
+        result = braintree.get_subscription(obj.subscription)
+        return HttpResponse(
+            jsonpickle.encode(result), content_type='application/json')
+
+    def cancel(self, request, obj):
+        """
+        Install client
+        """
+        obj.cancel()
+        self.message_user(request, _('The subscription have canceled.'))
+
+    class Media:
+        js = ('js/admin/subscription.js', )
 
 
 @admin.register(Transaction)

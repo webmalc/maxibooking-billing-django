@@ -24,7 +24,7 @@
                  alert(msg.responseText); 
              },
              success: function(data) {
-                 $('#message').html('Заказ успешно оплачен.')
+                 $('#message').removeClass("hide").html('Заказ успешно оплачен.')
              }
          });
      }
@@ -51,7 +51,7 @@
     <a href="#" class="btn btn-primary" id="pay-button">
         {% trans 'pay' %} {{ order.price }}
     </a>
-    <div id="message" class="alert alert-success"></div>
+    <div id="message" class="alert alert-success hide"></div>
 </body>
 
 </html>

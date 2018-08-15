@@ -16,61 +16,12 @@ from billing.exceptions import BaseException
 from billing.lib.lang import get_lang
 from billing.models import CachedModel, CommonInfo
 from clients.models import Client, ClientService
+from finances.systems.lib import BraintreeGateway
 from hotels.models import Country
 
-from .managers import OrderManager, PriceManager, ServiceManager
+from .managers import (OrderManager, PriceManager, ServiceManager,
+                       SubscriptionManager)
 from .validators import validate_price_periods
-
-
-class Subscription(CommonInfo, TimeStampedModel):
-    """
-    The class represents client subscriptions
-    """
-    STATUSES = (
-        ('enabled', _('enabled')),
-        ('canceled', _('canceled')),
-    )
-    client = models.ForeignKey(
-        Client,
-        on_delete=models.PROTECT,
-        db_index=True,
-        verbose_name=_('client'),
-        related_name='subscriptions')
-    status = models.CharField(
-        max_length=20,
-        default='enabled',
-        choices=STATUSES,
-        verbose_name=_('status'),
-        db_index=True)
-    price = MoneyField(
-        max_digits=20,
-        decimal_places=2,
-        blank=True,
-        verbose_name=_('price'),
-        validators=[MinValueValidator(0)],
-        db_index=True)
-    period = models.PositiveIntegerField(
-        verbose_name=_('period'), db_index=True)
-    merchant = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-        db_index=True,
-        verbose_name=_('merchant'),
-    )
-    customer = models.CharField(
-        max_length=255,
-        db_index=True,
-        verbose_name=_('merchant'),
-    )
-    subscription = models.CharField(
-        max_length=255,
-        db_index=True,
-        verbose_name=_('subscription'),
-    )
-
-    class Meta:
-        ordering = ['-created']
 
 
 class ServiceCategory(CommonInfo, TimeStampedModel, TitleDescriptionModel):
@@ -431,3 +382,89 @@ class Transaction(CommonInfo, TimeStampedModel):
             '-modified',
             '-created',
         )
+
+
+class Subscription(CommonInfo, TimeStampedModel):
+    """
+    The class represents client subscriptions
+    """
+    objects = SubscriptionManager()
+
+    STATUSES = (
+        ('enabled', _('enabled')),
+        ('canceled', _('canceled')),
+    )
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.PROTECT,
+        db_index=True,
+        verbose_name=_('client'),
+        related_name='subscriptions')
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.SET_NULL,
+        verbose_name=_('order'),
+        null=True,
+        blank=True,
+        db_index=True,
+        related_name='subscriptions')
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        verbose_name=_('country'),
+        db_index=True,
+        related_name='subscriptions')
+    status = models.CharField(
+        max_length=20,
+        default='enabled',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
+    price = MoneyField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        verbose_name=_('price'),
+        validators=[MinValueValidator(0)],
+        db_index=True)
+    period = models.PositiveIntegerField(
+        verbose_name=_('period'),
+        db_index=True,
+        help_text=_('the billing period in months'))
+    merchant = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('merchant'),
+    )
+    customer = models.CharField(
+        max_length=255,
+        db_index=True,
+        verbose_name=_('customer'),
+    )
+    subscription = models.CharField(
+        max_length=255,
+        db_index=True,
+        verbose_name=_('subscription'),
+    )
+
+    def cancel(self):
+        """
+        Cancel the subscription
+        """
+        braintree = BraintreeGateway(self.country, 'sandbox')
+        result = braintree.cancel_subscription(self.subscription)
+        if (result):
+            self.status = 'canceled'
+            self.save()
+
+    def save(self, *args, **kwargs):
+        if self.status == 'enabled':
+            for subscription in Subscription.objects.get_active(
+                    self.client, self.pk):
+                subscription.cancel()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['-created']

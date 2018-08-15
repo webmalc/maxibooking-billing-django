@@ -4,9 +4,9 @@ import logging
 from abc import ABC, abstractmethod
 from hashlib import sha512
 
-import braintree
 import stripe
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.template.loader import render_to_string
@@ -16,7 +16,8 @@ from weasyprint import HTML
 
 from billing.lib.conf import get_settings
 
-from ..models import Order, Transaction
+from ..models import Order, Subscription, Transaction
+from .lib import BraintreeGateway
 
 
 class TypeException(Exception):
@@ -141,7 +142,7 @@ class BaseType(ABC):
 
     @property
     def get_template(self):
-        if not self.order or not self.payer:
+        if not self.order or not self.payer or not self.country:
             return self.invalid_template
         if self.order.price.currency.code not in self.currencies:
             return self.invalid_template
@@ -521,20 +522,7 @@ class BraintreeSubscription(BaseType):
         """
         Load config
         """
-        self.merchant_id = get_settings(
-            'BRAINTREE_MERCHANT_ID', country=self.country)
-        self.public_key = get_settings(
-            'BRAINTREE_PUBLIC_KEY', country=self.country)
-        self.private_key = get_settings(
-            'BRAINTREE_PRIVATE_KEY', country=self.country)
-        self.gateway = braintree.BraintreeGateway(
-            braintree.Configuration(
-                environment=braintree.Environment.Sandbox,
-                merchant_id=self.merchant_id,
-                public_key=self.public_key,
-                private_key=self.private_key,
-            ))
-        self.logger = logging.getLogger('billing')
+        self.braintree = BraintreeGateway(self.country, 'sandbox')
 
     def _process_request(self, request):
         order_id = request.POST.get('order_id')
@@ -544,6 +532,7 @@ class BraintreeSubscription(BaseType):
             raise TypeException('Bad request.')
 
         self.order = Order.objects.get_for_payment_system(order_id)
+        self.load()
         if not self.order:
             raise TypeException('Order #{} not found.'.format(order_id))
 
@@ -551,28 +540,11 @@ class BraintreeSubscription(BaseType):
 
     def _create_customer(self, token):
         """ Create a braintree customer if the client does not have one """
-        client = self.order.client
-        result = self.gateway.customer.create({
-            'first_name':
-            client.first_name,
-            'last_name':
-            client.last_name,
-            'email':
-            client.email,
-            'phone':
-            str(client.phone) if client.phone else None,
-            'website':
-            client.url,
-            'payment_method_nonce':
-            token
-        })
-        self.logger.info('Braintree customer response {}'.format(result))
-
-        c = result.customer
-        if not result.is_success or not c or not c.payment_methods:
+        custormer = self.braintree.create_customer(token, self.order.client)
+        if not custormer:
             raise TypeException(
                 'An error occurred during creation the customer')
-        return c
+        return custormer
 
     def _create_subscription(self, token):
         """ Create a braintree subscription """
@@ -581,29 +553,39 @@ class BraintreeSubscription(BaseType):
             raise TypeException(
                 'The order does not have a room service object.')
 
-        result = self.gateway.subscription.create({
-            'payment_method_token':
+        subscription = self.braintree.create_subscription(
             token,
-            'plan_id':
             service.period_in_months,
-            'price':
             self.order.price.amount,
-            'options': {
-                'start_immediately': True
-            }
-        })
-
-        self.logger.info('Braintree subscription response {}'.format(result))
-        subscription = result.subscription
-        if not result.is_success or not subscription:
+        )
+        if not subscription:
             raise TypeException(
                 'An error occurred during creation the subscription')
 
-        # TODO: CREATE A SUBSCRIPTION OBJECT
+        # Create the Subscription object
+        sub_model = Subscription()
+        sub_model.client = self.client
+        sub_model.order = self.order
+        sub_model.country = self.country
+        sub_model.status = 'enabled'
+        sub_model.price = self.order.price
+        sub_model.period = service.period_in_months
+        sub_model.merchant = self.braintree.merchant_id
+        sub_model.customer = self.customer.id
+        sub_model.subscription = subscription.id
+        sub_model.save()
+        try:
+            sub_model.full_clean()
+            sub_model.save()
+        except ValidationError:
+            self.logger.error(
+                'Unable to save the subscription model: {}'.format(
+                    subscription))
 
         return subscription
 
     def subscription(self, request):
+        # TODO: process webhooks
         return HttpResponse('OK')
 
     def response(self, request):
@@ -612,17 +594,15 @@ class BraintreeSubscription(BaseType):
         """
         try:
             token = self._process_request(request)
-            customer = self._create_customer(token)
-            payment_token = customer.payment_methods[0].token
-
-            # TODO: CHECK A CLIENT CUSTOMER
+            self.customer = self._create_customer(token)
+            payment_token = self.customer.payment_methods[0].token
             sub = self._create_subscription(payment_token)
 
         except TypeException as e:
             return HttpResponseBadRequest(e)
 
         tr = sub.transactions[-1] if sub.transactions else None
-        if tr and tr.status in Braintree.codes:
+        if self.braintree.check_transaction(tr):
             self._process_order(tr)
             return HttpResponseRedirect(self._get_success_url(self.order))
         else:
@@ -630,20 +610,22 @@ class BraintreeSubscription(BaseType):
 
     @property
     def html(self):
-        # TODO: CHECK THE CLIENT SUBSCRIPTION
-        try:
-            self.client_token = self.gateway.client_token.generate()
-        except braintree.exceptions.braintree_error.BraintreeError:
-            self.client_token = 'invalid_braintree_token'
-        return render_to_string(
-            self.get_template, {
-                'order': self.order,
-                'client_token': self.client_token,
-                'request': self.request,
-                'braintree': self,
-                'button': 'subscribe',
-                'required_fields': self.client_filter_fields
-            })
+        if Subscription.objects.get_active(self.client).count():
+            return render_to_string(
+                self.invalid_template, {
+                    'error': 'The client already have the subscription',
+                })
+
+        else:
+            return render_to_string(
+                self.get_template, {
+                    'order': self.order,
+                    'client_token': self.braintree.token(),
+                    'request': self.request,
+                    'braintree': self,
+                    'button': 'subscribe',
+                    'required_fields': self.client_filter_fields
+                })
 
 
 class Braintree(BaseType):
@@ -658,34 +640,12 @@ class Braintree(BaseType):
     countries = []
     currencies = ['EUR', 'CAD', 'USD']
     client_filter_fields = ('phone', )
-    codes = [
-        braintree.Transaction.Status.Authorized,
-        braintree.Transaction.Status.Authorizing,
-        braintree.Transaction.Status.Settled,
-        braintree.Transaction.Status.SettlementConfirmed,
-        braintree.Transaction.Status.SettlementPending,
-        braintree.Transaction.Status.Settling,
-        braintree.Transaction.Status.SubmittedForSettlement
-    ]
 
     def _conf(self, order=None, request=None):
         """
         Load config
         """
-        self.merchant_id = get_settings(
-            'BRAINTREE_MERCHANT_ID', country=self.country)
-        self.public_key = get_settings(
-            'BRAINTREE_PUBLIC_KEY', country=self.country)
-        self.private_key = get_settings(
-            'BRAINTREE_PRIVATE_KEY', country=self.country)
-        self.gateway = braintree.BraintreeGateway(
-            braintree.Configuration(
-                # environment=braintree.Environment.Sandbox,
-                environment=braintree.Environment.Production,
-                merchant_id=self.merchant_id,
-                public_key=self.public_key,
-                private_key=self.private_key,
-            ))
+        self.braintree = BraintreeGateway(self.country)
 
     def _process_request(self, request):
         order_id = request.POST.get('order_id')
@@ -704,26 +664,12 @@ class Braintree(BaseType):
         """
         Check the payment system calback response
         """
-        logger = logging.getLogger('billing')
         try:
             token = self._process_request(request)
         except TypeException as e:
             return HttpResponseBadRequest(e)
-
-        result = self.gateway.transaction.sale({
-            'amount':
-            self.order.price.amount,
-            'payment_method_nonce':
-            token,
-            'options': {
-                "submit_for_settlement": True
-            }
-        })
-
-        logger.info('Braintree response {}'.format(result))
-
-        tr = result.transaction
-        if result.is_success and (tr and tr.status in self.codes):
+        tr = self.braintree.sale(token, self.order.price.amount)
+        if tr:
             self._process_order(tr)
             return HttpResponseRedirect(self._get_success_url(self.order))
         else:
@@ -731,14 +677,10 @@ class Braintree(BaseType):
 
     @property
     def html(self):
-        try:
-            self.client_token = self.gateway.client_token.generate()
-        except braintree.exceptions.braintree_error.BraintreeError:
-            self.client_token = 'invalid_braintree_token'
         return render_to_string(
             self.get_template, {
                 'order': self.order,
-                'client_token': self.client_token,
+                'client_token': self.braintree.token(),
                 'request': self.request,
                 'braintree': self,
                 'button': 'pay',
