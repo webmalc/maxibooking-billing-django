@@ -21,10 +21,10 @@
              url: url,
              data: order,
              error: function(msg) {
-                 alert(msg.responseText); 
+                 console.log(msg.responseText);
              },
              success: function(data) {
-                 $('#message').removeClass("hide").html('Заказ успешно оплачен.')
+                 $('#message').removeClass("hide").html('Заказ успешно оплачен.');
              }
          });
      }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-13 11:22+0000\n"
+"POT-Creation-Date: 2018-08-15 12:12+0000\n"
 "PO-Revision-Date: 2018-06-04 10:26+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,7 +67,7 @@ msgstr ""
 msgid "completed"
 msgstr ""
 
-#: billing/models.py:54 finances/models.py:31 finances/models.py:263
+#: billing/models.py:54 finances/models.py:214 finances/models.py:395
 msgid "canceled"
 msgstr ""
 
@@ -80,11 +80,11 @@ msgid "date"
 msgstr ""
 
 #: billing/models.py:68 clients/models.py:387 clients/models.py:644
-#: finances/models.py:43 finances/models.py:273
+#: finances/models.py:224 finances/models.py:421
 msgid "status"
 msgstr ""
 
-#: billing/models.py:76 finances/models.py:115 hotels/models.py:165
+#: billing/models.py:76 finances/models.py:66 hotels/models.py:165
 msgid "type"
 msgstr ""
 
@@ -93,7 +93,7 @@ msgid "code"
 msgstr ""
 
 #: billing/models.py:114 clients/models.py:527 clients/models.py:639
-#: finances/models.py:103 finances/models.py:213 hotels/models.py:42
+#: finances/models.py:54 finances/models.py:164 hotels/models.py:42
 #: hotels/models.py:67 hotels/models.py:94
 msgid "is enabled"
 msgstr ""
@@ -105,7 +105,7 @@ msgid "%(filter_title)s"
 msgstr ""
 
 #: billing/templates/billing/processing.html:13 clients/models.py:631
-#: finances/models.py:261
+#: finances/models.py:212
 msgid "processing"
 msgstr ""
 
@@ -306,25 +306,25 @@ msgstr ""
 msgid "phone"
 msgstr ""
 
-#: clients/admin.py:57
+#: clients/admin.py:58
 msgid "color"
 msgstr ""
 
-#: clients/admin.py:344 clients/models.py:87 clients/models.py:534
-#: clients/models.py:605 clients/models.py:682 finances/models.py:37
-#: finances/models.py:293 hotels/models.py:172
+#: clients/admin.py:362 clients/models.py:87 clients/models.py:534
+#: clients/models.py:605 clients/models.py:682 finances/models.py:244
+#: finances/models.py:401 hotels/models.py:172
 msgid "client"
 msgstr ""
 
-#: clients/admin.py:357
+#: clients/admin.py:375
 msgid "sales"
 msgstr ""
 
-#: clients/admin.py:379
+#: clients/admin.py:397
 msgid "Installation successfully started."
 msgstr ""
 
-#: clients/admin.py:388
+#: clients/admin.py:406
 msgid "Client manger successfully saved."
 msgstr ""
 
@@ -523,7 +523,8 @@ msgstr ""
 msgid "description"
 msgstr ""
 
-#: clients/models.py:354 clients/models.py:659 finances/models.py:208
+#: clients/models.py:354 clients/models.py:659 finances/models.py:159
+#: finances/models.py:414
 msgid "country"
 msgstr ""
 
@@ -611,8 +612,8 @@ msgstr ""
 msgid "is paid"
 msgstr ""
 
-#: clients/models.py:652 clients/models.py:702 finances/models.py:49
-#: finances/models.py:202 finances/models.py:285
+#: clients/models.py:652 clients/models.py:702 finances/models.py:153
+#: finances/models.py:236 finances/models.py:427
 msgid "price"
 msgstr ""
 
@@ -632,7 +633,7 @@ msgstr ""
 msgid "end date"
 msgstr ""
 
-#: clients/models.py:676 finances/models.py:217
+#: clients/models.py:676 finances/models.py:168
 msgid "service"
 msgstr ""
 
@@ -660,173 +661,185 @@ msgstr ""
 msgid "Welcome to MaxiBooking!"
 msgstr ""
 
-#: finances/models.py:30
-msgid "enabled"
+#: finances/admin.py:80
+msgid "The subscription have canceled."
 msgstr ""
 
-#: finances/models.py:53 finances/models.py:107
-msgid "period"
-msgstr ""
-
-#: finances/models.py:59 finances/models.py:64
-msgid "merchant"
-msgstr ""
-
-#: finances/models.py:69
-msgid "subscription"
-msgstr ""
-
-#: finances/models.py:83
+#: finances/models.py:34
 #, fuzzy
 #| msgid "services"
 msgid "service categories"
 msgstr "services"
 
-#: finances/models.py:95
+#: finances/models.py:46
 msgid "month"
 msgstr ""
 
-#: finances/models.py:95
+#: finances/models.py:46
 msgid "year"
 msgstr ""
 
-#: finances/models.py:98 hotels/models.py:203
+#: finances/models.py:49 hotels/models.py:203
 msgid "rooms"
 msgstr ""
 
-#: finances/models.py:98
+#: finances/models.py:49
 msgid "other"
 msgstr ""
 
-#: finances/models.py:105
+#: finances/models.py:56
 msgid "is default"
 msgstr ""
 
-#: finances/models.py:109
+#: finances/models.py:58 finances/models.py:431
+msgid "period"
+msgstr ""
+
+#: finances/models.py:60
 msgid "units of period"
 msgstr ""
 
-#: finances/models.py:123
+#: finances/models.py:74
 msgid "category"
 msgstr ""
 
-#: finances/models.py:185
+#: finances/models.py:136
 msgid "Default service with this type already exists."
 msgstr ""
 
-#: finances/models.py:224
+#: finances/models.py:175
 msgid "from"
 msgstr ""
 
-#: finances/models.py:230
+#: finances/models.py:181
 msgid "to"
 msgstr ""
 
-#: finances/models.py:233
+#: finances/models.py:184
 msgid "for unit"
 msgstr ""
 
-#: finances/models.py:260
+#: finances/models.py:211
 msgid "new"
 msgstr ""
 
-#: finances/models.py:262
+#: finances/models.py:213
 msgid "paid"
 msgstr ""
 
-#: finances/models.py:264
+#: finances/models.py:215
 msgid "corrupted"
 msgstr ""
 
-#: finances/models.py:279
+#: finances/models.py:230
 msgid "note"
 msgstr ""
 
-#: finances/models.py:280
+#: finances/models.py:231
 msgid "Clear to regenerate note"
 msgstr ""
 
-#: finances/models.py:288
+#: finances/models.py:239
 msgid "Set zero to recalculate price"
 msgstr ""
 
-#: finances/models.py:296
+#: finances/models.py:247
 msgid "expired date"
 msgstr ""
 
-#: finances/models.py:298
+#: finances/models.py:249
 msgid "paid date"
 msgstr ""
 
-#: finances/models.py:304
+#: finances/models.py:255
 msgid "payment system"
 msgstr ""
 
-#: finances/models.py:309
+#: finances/models.py:260
 msgid "client services"
 msgstr ""
 
-#: finances/models.py:393
+#: finances/models.py:344
 msgid "Can`t set \"paid\" status with empty payment system and paid date"
 msgstr ""
 
-#: finances/models.py:408
+#: finances/models.py:359
 msgid "Can see assigned entries"
 msgstr ""
 
-#: finances/models.py:418 finances/systems/models.py:156
+#: finances/models.py:369 finances/models.py:406 finances/systems/models.py:157
 msgid "order"
 msgstr ""
 
-#: finances/models.py:423
+#: finances/models.py:374
 msgid "transaction"
 msgstr ""
 
-#: finances/systems/models.py:194
-msgid "bill"
+#: finances/models.py:394
+msgid "enabled"
+msgstr ""
+
+#: finances/models.py:433
+msgid "the billing period in months"
+msgstr ""
+
+#: finances/models.py:439
+msgid "merchant"
+msgstr ""
+
+#: finances/models.py:444
+msgid "customer"
+msgstr ""
+
+#: finances/models.py:449
+msgid "subscription"
 msgstr ""
 
 #: finances/systems/models.py:195
+msgid "bill"
+msgstr ""
+
+#: finances/systems/models.py:196
 msgid "Create a bill for non-cash transfer through the Bank"
 msgstr ""
 
-#: finances/systems/models.py:233
+#: finances/systems/models.py:234
 msgid "sberbank"
 msgstr ""
 
-#: finances/systems/models.py:234
+#: finances/systems/models.py:235
 msgid "Payment by card through the \"Sberbank\" system"
 msgstr ""
 
-#: finances/systems/models.py:326
+#: finances/systems/models.py:327
 msgid "rbk"
 msgstr ""
 
-#: finances/systems/models.py:327
+#: finances/systems/models.py:328
 msgid "Payment by card through the \"RBK Money\" system"
 msgstr ""
 
-#: finances/systems/models.py:427
+#: finances/systems/models.py:428
 msgid "stripe"
 msgstr ""
 
-#: finances/systems/models.py:428
+#: finances/systems/models.py:429
 msgid "stripe description"
 msgstr ""
 
-#: finances/systems/models.py:512
+#: finances/systems/models.py:513
 msgid "braintree-subscription"
 msgstr ""
 
-#: finances/systems/models.py:513
+#: finances/systems/models.py:514
 msgid "braintree subscription description"
 msgstr ""
 
-#: finances/systems/models.py:654
+#: finances/systems/models.py:636
 msgid "braintree"
 msgstr ""
 
-#: finances/systems/models.py:655
+#: finances/systems/models.py:637
 msgid "braintree description"
 msgstr ""
 
@@ -842,7 +855,7 @@ msgstr ""
 msgid "piece"
 msgstr ""
 
-#: finances/templates/finances/invalid_type.html:4
+#: finances/templates/finances/invalid_type.html:16
 msgid "The required information are not filled in: "
 msgstr ""
 
