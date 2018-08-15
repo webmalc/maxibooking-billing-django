@@ -138,9 +138,9 @@ def test_manager_get_braintree(make_orders):
     Client.objects.filter(pk=1).update(country_id=2)
     braintree = manager.get('braintree', Order.objects.get(pk=4))
     assert isinstance(braintree, Braintree)
-    assert braintree.merchant_id == 'braintree_merchant_id'
-    assert braintree.public_key == 'braintree_public_key'
-    assert braintree.private_key == 'braintree_private_key'
+    assert braintree.braintree.merchant_id == 'braintree_merchant_id'
+    assert braintree.braintree.public_key == 'braintree_public_key'
+    assert braintree.braintree.private_key == 'braintree_private_key'
 
 
 def test_manager_get_stripe(make_orders):
