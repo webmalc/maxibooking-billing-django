@@ -307,6 +307,7 @@ class Client(CommonInfo, TimeStampedModel, Payer):
     SOURCES = (
         ('chat', _('chat')),
         ('phone', _('phone')),
+        ('cold call', _('cold call')),
         ('email', _('email')),
         ('registration', _('registration')),
     )
