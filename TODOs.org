@@ -3,6 +3,7 @@
 ** TODO coverage 100%
 ** TODO not periodical order
 ** TODO multiprocessing
+** TODO asyncio
 ** TODO user activity stream
 
 ** TODO add reversion context manager to tasks
