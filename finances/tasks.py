@@ -22,7 +22,7 @@ def order_notify_task(order_id):
             greetings_new = ''
             client = order.client
             expired = order.expired_date
-            delta = arrow.get(expired) - arrow.now()
+            # delta = arrow.get(expired) - arrow.now()
             with select_locale(client):
                 if client.is_trial:
                     greetings_new = '<p>{}</p>'.format(
@@ -35,7 +35,7 @@ def order_notify_task(order_id):
                         'client': client,
                         'greetings_new': greetings_new,
                         'expired': expired,
-                        'days': delta.days
+                        'days': 3
                     },
                     client=order.client)
         logger.info('New order created {}.'.format(order))
