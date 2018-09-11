@@ -278,13 +278,14 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     """
     list_display = ('num', 'login', 'sales_status_html', 'email', 'phone',
                     'name', 'country', 'city', 'status', 'installation', 'url',
-                    'rooms', 'trial_activated', 'logins', 'manager', 'created')
+                    'rooms', 'website', 'trial_activated', 'logins', 'manager',
+                    'created')
     list_select_related = ('country', 'restrictions', 'city', 'manager',
-                           'sales_status')
+                           'sales_status', 'website')
     list_display_links = ('id', 'login')
     list_filter = ('status', 'sales_status', 'source', 'installation',
                    'manager', ('created', DateRangeFilter), 'trial_activated',
-                   ClientIsPaidListFilter, 'country')
+                   ClientIsPaidListFilter, 'country', 'website__is_enabled')
     search_fields = ('id', 'login', 'email', 'phone', 'name', 'country__name',
                      'manager__username', 'manager__email',
                      'manager__last_name')

@@ -525,7 +525,7 @@ among other clients.'),
     is_enabled = models.BooleanField(
         default=False,
         db_index=True,
-        verbose_name=_('is enabled'),
+        verbose_name=_('is the website enabled?'),
     )
 
     client = models.OneToOneField(
