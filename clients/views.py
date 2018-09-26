@@ -320,6 +320,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                 client.save()
 
                 with select_locale(client):
+                    website = client.website.url if client.website else None
                     mail_client_task.delay(
                         subject='{}, {}'.format(client.name,
                                                 _('Welcome to MaxiBooking!')),
@@ -328,6 +329,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                             'login': client.login,
                             'name': client.name,
                             'url': request_json['url'] + '/user/login',
+                            'website': website,
                             'password': request_json['password']
                         },
                         client_id=client.id)

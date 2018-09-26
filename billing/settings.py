@@ -190,7 +190,7 @@ LOCALE_PATHS = (
     os.path.join(os.path.dirname(__file__), "app_locale"),
 )
 
-EMAIL_SUBJECT_PREFIX = '[Maxi-booking]: '
+EMAIL_SUBJECT_PREFIX = 'Maxi-booking: '
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 # Logs
