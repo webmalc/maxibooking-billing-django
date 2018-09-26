@@ -1,12 +1,11 @@
 import arrow
 import pytest
-from django.conf import settings
-from django.core.urlresolvers import reverse
-from moneyed import EUR, RUB, Money
-
 from billing.lib.test import json_contains
 from clients.models import Client, ClientRu, ClientService, Company
 from clients.tasks import client_services_update
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from moneyed import EUR, RUB, Money
 
 from ..models import Order, Price, Service
 from ..tasks import orders_clients_disable, orders_payment_notify
@@ -57,7 +56,8 @@ def test_order_creation_and_modifications(mailoutbox):
 
     assert 'New order created' in mail.subject
     assert mail.recipients() == ['user@one.com']
-    assert '20 more days' in html
+    # assert '20 more days' in html
+    assert '3 more days' in html
     assert 'User One' in html
 
     order.client_services.add(1, 2)

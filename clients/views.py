@@ -320,7 +320,11 @@ class ClientViewSet(viewsets.ModelViewSet):
                 client.save()
 
                 with select_locale(client):
-                    website = client.website.url if client.website else None
+                    try:
+                        website = client.website.url
+                    except ClientWebsite.DoesNotExist:
+                        website = None
+
                     mail_client_task.delay(
                         subject='{}, {}'.format(client.name,
                                                 _('Welcome to MaxiBooking!')),
