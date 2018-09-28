@@ -2,15 +2,14 @@ import json
 
 import arrow
 import pytest
+from billing.lib import mb
+from billing.lib.test import json_contains
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import ValidationError
-from moneyed import EUR, Money
-
-from billing.lib import mb
-from billing.lib.test import json_contains
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
+from moneyed import EUR, Money
 
 from ..models import Client, RefusalReason, SalesStatus
 from ..tasks import (client_archivation, client_disabled_email,
@@ -68,8 +67,8 @@ def test_client_create_invalid_by_admin(admin_client):
     assert response_json['login'] == [
         'Enter a valid domain. This value may \
 contain only lowercase letters, numbers, and "-" character.',
-        'invalid client login: ' +
-        ', '.join(settings.MB_CLIENT_LOGIN_RESTRICTIONS)
+        'invalid client login: ' + ', '.join(
+            settings.MB_CLIENT_LOGIN_RESTRICTIONS)
     ]
     assert response_json['email'] == [
         'client with this e-mail already exists.'
@@ -443,6 +442,7 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     assert 'Registration successefull' in html
     assert '123456' in html
     assert 'http://example.com' in html
+    # assert 'http://user-one.com' in html
     assert 'admin' in html
 
 
@@ -467,6 +467,7 @@ def test_client_install_results_ru_by_admin(admin_client, mailoutbox):
     assert 'user rus, Добро пожаловать в Максибукинг!' in mail.subject
     assert 'Успешная регистрация' in html
     assert '123456' in html
+    assert 'http://hotel.rus' in html
     assert 'http://example.com' in html
     assert 'admin' in html
 

@@ -1,8 +1,7 @@
 import json
 
-from django.core.urlresolvers import reverse
-
 from billing.lib.test import json_contains
+from django.core.urlresolvers import reverse
 
 
 def test_websites_list_by_user(client):
@@ -13,7 +12,7 @@ def test_websites_list_by_user(client):
 def test_websites_list_by_admin(admin_client):
     response = admin_client.get(reverse('clientwebsite-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 2
+    assert len(response.json()['results']) == 3
     json_contains(response, 'http://hotel.one')
 
 
