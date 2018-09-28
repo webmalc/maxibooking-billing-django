@@ -21,7 +21,7 @@ def test_websites_display_by_admin(admin_client):
         reverse('clientwebsite-detail', args=['user-one']))
     assert response.status_code == 200
     response_json = response.json()
-    response_json['url'] = 'http://example.com'
+    response_json['url'] = 'http://user-one.com'
     response_json['is_enabled'] = False
 
 

@@ -13,7 +13,7 @@
     <body>
         <p class="danger">
             {% if not error %}
-                {% trans 'The required information are not filled in: ' %}{% for field in required_fields %}{% trans field %}{% if not forloop.last %}, {% endif %}{% endfor %} 
+                {% trans 'The invalid order or the required information are not filled in: ' %}{% for field in required_fields %}{% trans field %}{% if not forloop.last %}, {% endif %}{% endfor %} 
             {% else %}
                 {% trans error %} 
             {% endif %}

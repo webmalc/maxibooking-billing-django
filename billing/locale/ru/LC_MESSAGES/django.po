@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-28 09:54+0000\n"
+"POT-Creation-Date: 2018-09-28 10:19+0000\n"
 "PO-Revision-Date: 2018-09-26 09:16+0000\n"
 "Last-Translator: b'Sergey  <>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1016,8 +1016,8 @@ msgid "piece"
 msgstr ""
 
 #: finances/templates/finances/invalid_type.html:16
-msgid "The required information are not filled in: "
-msgstr "Необходимая информация не заполнена: "
+msgid "The invalid order or the required information are not filled in: "
+msgstr "Неверный заказ или необходимая информация не заполнена: "
 
 #: finances/templates/finances/rbk.html:17
 #: finances/templates/finances/sberbank.html:52
