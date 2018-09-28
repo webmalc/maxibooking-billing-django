@@ -2,11 +2,10 @@ import arrow
 import braintree
 import pytest
 import stripe
-from django.conf import settings
-from django.core.urlresolvers import reverse
-
 from billing.lib.test import json_contains
 from clients.models import Client
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from finances.models import Order
 from finances.systems import manager
 from finances.systems.models import Braintree, Stripe
@@ -46,7 +45,7 @@ def test_payment_system_without_order_display_by_admin(admin_client,
     assert response.status_code == 200
     response_json = response.json()
     response_json['id'] = 'rbk'
-    assert 'The required information are not filled' in response_json['html']
+    assert 'the required information are not filled' in response_json['html']
 
 
 def test_payment_system_display_by_admin(admin_client, make_orders):
