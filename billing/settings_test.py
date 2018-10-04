@@ -20,6 +20,7 @@ TEMPLATE_DEBUG = False
 PAYMENT_SYSTEMS = (
     'braintree',
     'braintree-subscription',
+    'paypal',
     'stripe',
     'rbk',
     'sberbank',
@@ -32,6 +33,10 @@ MB_SETTINGS_BY_COUNTRY = {}
 # Rbk
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
+
+# Paypal
+PAYPAL_CLIENT_ID = 'paypal_client_id'
+PAYPAL_SECRET = 'paypal_secret'
 
 # Sberbank
 SBERBANK_API_TOKEN = 'sberbank_api_token'

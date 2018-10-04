@@ -4,7 +4,9 @@ import logging
 from abc import ABC, abstractmethod
 from hashlib import sha512
 
+import paypalrestsdk
 import stripe
+from billing.lib.conf import get_settings
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import (HttpResponse, HttpResponseBadRequest,
@@ -13,8 +15,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
-
-from billing.lib.conf import get_settings
 
 from ..models import Order, Subscription, Transaction
 from .lib import BraintreeGateway
@@ -684,5 +684,90 @@ class Braintree(BaseType):
                 'request': self.request,
                 'braintree': self,
                 'button': 'pay',
+                'required_fields': self.client_filter_fields
+            })
+
+
+class Paypal(BaseType):
+    """
+    Paypal payment system
+    """
+    id = 'paypal'
+    name = _('paypal')
+    description = _('paypal description')
+    template = 'finances/paypal.html'
+    countries_excluded = []
+    countries = ['us', 'ca']
+    currencies = ['CAD', 'USD', 'EUR']
+    client_filter_fields = ('phone', )
+
+    def _conf(self, order=None, request=None):
+        """
+        Load the configuration
+        """
+        self.client_id = get_settings('PAYPAL_CLIENT_ID', country=self.country)
+        self.secret = get_settings('PAYPAL_SECRET', country=self.country)
+
+        paypalrestsdk.configure({
+            'mode': 'sandbox',  # sandbox or live
+            'client_id': self.client_id,
+            'client_secret': self.secret
+        })
+
+    def response(self, request):
+        """
+        Check the payment system calback response
+        """
+
+        order_id = request.POST.get('mb_id')
+        status = request.POST.get('state')
+        amount = request.POST.get('total')
+        currency = request.POST.get('currency')
+        id = request.POST.get('id')
+
+        if not all([order_id, amount, status, currency, id]):
+            return HttpResponseBadRequest('Bad request.')
+
+        self.order = Order.objects.get_for_payment_system(order_id)
+
+        if not self.order:
+            return HttpResponseBadRequest(
+                'Order #{} not found.'.format(order_id))
+
+        if float(self.order.price.amount) != float(amount):
+            return HttpResponseBadRequest('Invalid price')
+
+        if self.order.price.currency.code != currency:
+            return HttpResponseBadRequest('Invalid currency')
+
+        if status == 'failed':
+            return HttpResponseBadRequest('Invalid status')
+
+        try:
+            payment = paypalrestsdk.Payment.find(id)
+            payment_amount = payment.transactions[0].amount
+        except paypalrestsdk.exceptions.ResourceNotFound:
+            return HttpResponseBadRequest('Invalid payment')
+
+        if payment.state != status:
+            return HttpResponseBadRequest('Invalid payment status')
+
+        if float(payment_amount.total) != float(amount):
+            return HttpResponseBadRequest('Invalid payment price')
+
+        if payment_amount.currency != currency:
+            return HttpResponseBadRequest('Invalid payment currency')
+
+        self._process_order(request.POST)
+
+        return HttpResponse('OK')
+
+    @property
+    def html(self):
+        return render_to_string(
+            self.get_template, {
+                'order': self.order,
+                'request': self.request,
+                'paypal': self,
                 'required_fields': self.client_filter_fields
             })

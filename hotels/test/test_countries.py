@@ -1,8 +1,7 @@
+from billing.lib.test import json_contains
 from django.core.management import call_command
 from django.core.urlresolvers import reverse
 from django.utils.six import StringIO
-
-from billing.lib.test import json_contains
 
 
 def test_countries_list_by_user(client):
@@ -14,7 +13,7 @@ def test_countries_list_by_admin(admin_client):
     response = admin_client.get(reverse('country-list'))
     assert response.status_code == 200
     assert len(response.json()['results']) == 4
-    json_contains(response, 'Andorra')
+    json_contains(response, 'United States')
 
 
 def test_countries_display_by_admin(admin_client):

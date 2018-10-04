@@ -1,5 +1,6 @@
 import arrow
 import braintree
+import paypalrestsdk
 import pytest
 import stripe
 from billing.lib.test import json_contains
@@ -8,7 +9,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from finances.models import Order
 from finances.systems import manager
-from finances.systems.models import Braintree, Stripe
+from finances.systems.models import Braintree, Paypal, Stripe
 
 pytestmark = pytest.mark.django_db
 
@@ -21,21 +22,23 @@ def test_payment_system_list_by_user(client):
 def test_payment_system_list_by_admin(admin_client):
     response = admin_client.get(reverse('payment-systems-list'))
     assert response.status_code == 200
-    assert len(response.json()) == 6
+    assert len(response.json()) == 7
     json_contains(response, 'bill')
     json_contains(response, 'rbk')
     json_contains(response, 'sberbank')
     json_contains(response, 'stripe')
     json_contains(response, 'braintree')
+    json_contains(response, 'paypal')
 
 
 def test_payment_system_list_filtered_by_admin(admin_client, make_orders):
     response = admin_client.get(reverse('payment-systems-list') + '?order=1')
     assert response.status_code == 200
-    assert len(response.json()) == 3
+    assert len(response.json()) == 4
     json_contains(response, 'stripe')
     json_contains(response, 'braintree')
     json_contains(response, 'braintree-subscription')
+    json_contains(response, 'paypal')
 
 
 def test_payment_system_without_order_display_by_admin(admin_client,
@@ -375,3 +378,91 @@ def test_sberbank_response(client, make_orders, mailoutbox):
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
     assert 'Успешная оплата' in mail.subject
+
+
+def test_paypal_display_by_admin(admin_client, make_orders):
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('paypal', )) + '?order=4')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert "production: 'paypal_client_id'" in html
+    assert 'result.mb_id = 4;' in html
+    assert '12500.00' in html
+
+
+def test_manager_get_paypal(make_orders):
+    paypal = manager.get('paypal', Order.objects.get(pk=4))
+    assert isinstance(paypal, Paypal)
+    assert paypal.client_id == 'paypal_client_id'
+    assert paypal.secret == 'paypal_secret'
+
+
+def test_paypal_response(client, make_orders, mailoutbox, mocker):
+    class TransactionMock(object):
+        def __init__(self, amount):
+            self.amount = amount
+
+    class AmountMock(object):
+        def __init__(self, total, currency):
+            self.total = total
+            self.currency = currency
+
+    class PaymentMock(object):
+        def __init__(self):
+            self.state = 'approved'
+            self.transactions = [TransactionMock(AmountMock('12500', 'EUR'))]
+
+    paypalrestsdk.Payment.find = mocker.MagicMock(return_value=PaymentMock())
+    url = reverse('finances:payment-system-response', args=('paypal', ))
+    response = client.post(url)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data = {
+        'id': 'payment id',
+        'mb_id': '1212',
+        'state': 'failed',
+        'currency': 'invalid_currency',
+    }
+
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data['total'] = '12.22'
+
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Order #1212 not found.'
+
+    data['mb_id'] = '4'
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid price'
+
+    data['total'] = '12500'
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid currency'
+
+    data['currency'] = 'EUR'
+    response = client.post(url, data)
+    assert response.status_code == 400
+    assert response.content == b'Invalid status'
+
+    data['state'] = 'approved'
+    response = client.post(url, data)
+    assert response.status_code == 200
+    assert response.content == b'OK'
+
+    order = Order.objects.get(pk=4)
+    now = arrow.now().datetime
+    format = '%d.%m.%Y %H:%I'
+    assert order.status == 'paid'
+    assert order.payment_system == 'paypal'
+    assert order.paid_date.strftime(format) == now.strftime(format)
+    assert order.transactions.first().data == data
+
+    mail = mailoutbox[-1]
+    assert mail.recipients() == [order.client.email]
+    assert 'Your payment was successful' in mail.subject

@@ -3,16 +3,16 @@
     "model": "hotels.country",
     "pk": 1,
     "fields": {
-        "name_ascii": "Andorra",
-        "slug": "andorra",
+        "name_ascii": "United States",
+        "slug": "us",
         "geoname_id": 3041565,
-        "alternate_names": "Principality of Andorra,\u0410\u043d\u0434\u043e\u0440\u0440\u0430",
-        "name": "Andorra",
-        "code2": "AD",
-        "code3": "AND",
-        "continent": "EU",
-        "tld": "ad",
-        "phone": "376"
+        "alternate_names": "America,United States of America",
+        "name": "United States",
+        "code2": "US",
+        "code3": "USA",
+        "continent": "NA",
+        "tld": "us",
+        "phone": "1"
     }
 },
 {

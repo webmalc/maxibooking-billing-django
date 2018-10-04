@@ -2,15 +2,14 @@ import json
 
 import arrow
 import pytest
-from django.core.urlresolvers import reverse
-from moneyed import EUR, Money
-
 from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_activation, client_services_update
+from django.core.urlresolvers import reverse
 from finances.lib.calc import Calc
 from finances.models import Order, Price, Service, ServiceCategory
+from moneyed import EUR, Money
 
 pytestmark = pytest.mark.django_db
 
@@ -134,7 +133,7 @@ def test_client_service_create_by_admin(admin_client):
     assert response_json['price'] == '17500.00'
     assert response_json['client'] == client.login
     assert response_json['is_enabled'] is True
-    assert response_json['country'] == 'ad'
+    assert response_json['country'] == 'us'
     assert response_json['status'] == 'active'
 
     client = Client.objects.get(login='user-one')

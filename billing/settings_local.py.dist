@@ -45,6 +45,10 @@ MB_CLIENT_LOGIN_RESTRICTIONS = [
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'
 
+# Paypal
+PAYPAL_CLIENT_ID = 'paypal_client_id'
+PAYPAL_SECRET = 'paypal_secret'
+
 # Sberbank
 SBERBANK_API_TOKEN = 'api_token'
 SBERBANK_SECRET_KEY = 'secret_key'
@@ -75,6 +79,7 @@ PAYMENT_SYSTEMS = (
     'stripe',
     'braintree',
     'braintree-subscription',
+    'paypal',
     'rbk',
     'sberbank',
     'bill',

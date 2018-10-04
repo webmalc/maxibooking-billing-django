@@ -1,8 +1,7 @@
 import json
 
-from django.core.urlresolvers import reverse
-
 from billing.lib.test import json_contains
+from django.core.urlresolvers import reverse
 
 
 def test_cities_list_by_user(client):
@@ -32,7 +31,7 @@ def test_city_create_by_admin(admin_client, mailoutbox):
     data = json.dumps({
         'name': 'new test city',
         'display_name': 'new test city',
-        'country': 'ad',
+        'country': 'us',
         'region': 1,
         'is_checked': False,
         'request_client': 'user-one'

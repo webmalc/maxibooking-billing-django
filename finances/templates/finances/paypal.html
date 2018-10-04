@@ -1,0 +1,103 @@
+{% load i18n %} {% load humanize %} {% with host=request.scheme|add:'://'|add:request.get_host %}
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Paypal</title>
+    <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="loading" class="alert alert-warning hide"></div>
+    <div id="message" class="alert alert-success hide"></div>
+    <div id="paypal-button-container"></div>
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+    <script>
+        paypal.Button.render({
+            // Set your environment
+            env: 'sandbox', // sandbox | production
+
+            // Specify the style of the button
+            style: {
+                layout: 'vertical', // horizontal | vertical
+                size: 'medium', // medium | large | responsive
+                shape: 'rect', // pill | rect
+                color: 'gold' // gold | blue | silver | white | black
+            },
+
+            // Specify allowed and disallowed funding sources
+            //
+            // Options:
+            // - paypal.FUNDING.CARD
+            // - paypal.FUNDING.CREDIT
+            // - paypal.FUNDING.ELV
+            funding: {
+                allowed: [
+                    paypal.FUNDING.CARD,
+                    paypal.FUNDING.CREDIT,
+                    paypal.FUNDING.ELV
+                ],
+                disallowed: []
+            },
+
+            // PayPal Client IDs - replace with your own
+            client: {
+                sandbox: '{{ paypal.client_id }}',
+                production: '{{ paypal.client_id }}'
+            },
+
+            payment: function(data, actions) {
+                return actions.payment.create({
+                    payment: {
+                        transactions: [{
+                            amount: {
+                                total: '{{ order.price.amount }}',
+                                currency: '{{ order.price.currency.code }}'
+                            },
+                            /* description: 'The payment transaction description.', */
+                            /* invoice_number: '{{ order.id }}' */
+                        }
+                        ]
+                    }
+                });
+            },
+
+            onAuthorize: function(data, actions) {
+                return actions.payment.execute()
+                    .then(function(result) {
+                        $('#paypal-button-container').hide();
+                        $('#loading').removeClass("hide").html('Loading...');
+                        var url = '{{ host }}{% url 'finances:payment-system-response' paypal.id %}'
+                        result.mb_id = {{order.pk}};
+                        result.total = result.transactions[0].amount.total;
+                        result.currency = result.transactions[0].amount.currency;
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: result,
+                            error: function(msg) {
+                                console.log(msg);
+                                $('#loading').hide();
+                                window.alert('An error occurred during the payment process!');
+                            },
+                            success: function(data) {
+                                $('#loading').hide();
+                                $('#message').removeClass("hide").html('Order has been successfully paid');
+                            }
+                        });
+                    });
+            }
+        }, '#paypal-button-container');
+    </script>
+</body>
+
+</html>
+
+{% endwith %}

@@ -84,12 +84,12 @@ def test_calc_api_by_user(client):
 def test_calc_api_invalid_by_admin(admin_client):
     url = reverse('service-calc')
     response_empty = admin_client.get(url)
-    response_quantity = admin_client.get(
-        url + '?quantity=1sd&country=ff&period=1')
-    response_country = admin_client.get(
-        url + '?quantity=1&country=ff&period=1')
-    response_service = admin_client.get(
-        url + '?quantity=12&country=ad&period=9')
+    response_quantity = admin_client.get(url +
+                                         '?quantity=1sd&country=ff&period=1')
+    response_country = admin_client.get(url +
+                                        '?quantity=1&country=ff&period=1')
+    response_service = admin_client.get(url +
+                                        '?quantity=12&country=us&period=9')
 
     assert response_empty.status_code == 200
     assert response_empty.json() == {
@@ -125,10 +125,10 @@ def test_calc_api_invalid_by_admin(admin_client):
 def test_calc_api_by_admin(admin_client, make_prices):
     url = reverse('service-calc')
 
-    response_1 = admin_client.get(url + '?quantity=12&country=ad&period=3')
-    response_2 = admin_client.get(url + '?quantity=12&country=ad&period=1')
-    response_3 = admin_client.get(url + '?quantity=12&country=ad&period=3')
-    response_4 = admin_client.get(url + '?quantity=12&country=ad')
+    response_1 = admin_client.get(url + '?quantity=12&country=us&period=3')
+    response_2 = admin_client.get(url + '?quantity=12&country=us&period=1')
+    response_3 = admin_client.get(url + '?quantity=12&country=us&period=3')
+    response_4 = admin_client.get(url + '?quantity=12&country=us')
     response_data_1 = {
         'status': True,
         'price': 27600.0,
@@ -164,8 +164,8 @@ class CalcTestCase(TestCase):
         url = reverse('service-calc')
 
         with self.assertNumQueries(7):
-            admin_client.get(url + '?quantity=12&country=ad&period=3')
+            admin_client.get(url + '?quantity=12&country=us&period=3')
         with self.assertNumQueries(7):
-            admin_client.get(url + '?quantity=22&country=ad&period=3')
+            admin_client.get(url + '?quantity=22&country=us&period=3')
         with self.assertNumQueries(2):
-            admin_client.get(url + '?quantity=12&country=ad&period=3')
+            admin_client.get(url + '?quantity=12&country=us&period=3')
