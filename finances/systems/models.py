@@ -6,7 +6,6 @@ from hashlib import sha512
 
 import paypalrestsdk
 import stripe
-from billing.lib.conf import get_settings
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import (HttpResponse, HttpResponseBadRequest,
@@ -15,6 +14,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
+
+from billing.lib.conf import get_settings
 
 from ..models import Order, Subscription, Transaction
 from .lib import BraintreeGateway
@@ -745,9 +746,13 @@ class Paypal(BaseType):
 
         try:
             payment = paypalrestsdk.Payment.find(id)
-            payment_amount = payment.transactions[0].amount
+            transaction = payment.transactions[0]
+            payment_amount = transaction.amount
         except paypalrestsdk.exceptions.ResourceNotFound:
             return HttpResponseBadRequest('Invalid payment')
+
+        if int(transaction.custom) != self.order.id:
+            return HttpResponseBadRequest('Invalid payment order')
 
         if payment.state != status:
             return HttpResponseBadRequest('Invalid payment status')

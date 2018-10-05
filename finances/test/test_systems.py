@@ -3,10 +3,11 @@ import braintree
 import paypalrestsdk
 import pytest
 import stripe
-from billing.lib.test import json_contains
-from clients.models import Client
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+from billing.lib.test import json_contains
+from clients.models import Client
 from finances.models import Order
 from finances.systems import manager
 from finances.systems.models import Braintree, Paypal, Stripe
@@ -401,6 +402,7 @@ def test_paypal_response(client, make_orders, mailoutbox, mocker):
     class TransactionMock(object):
         def __init__(self, amount):
             self.amount = amount
+            self.custom = 4
 
     class AmountMock(object):
         def __init__(self, total, currency):
