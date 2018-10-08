@@ -710,7 +710,7 @@ class Paypal(BaseType):
         self.secret = get_settings('PAYPAL_SECRET', country=self.country)
 
         paypalrestsdk.configure({
-            'mode': 'sandbox',  # sandbox or live
+            'mode': 'live',  # sandbox or live
             'client_id': self.client_id,
             'client_secret': self.secret
         })
