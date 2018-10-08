@@ -1,4 +1,4 @@
-{% load i18n %} {% load humanize %} {% with host=request.scheme|add:'://'|add:request.get_host %}
+{% load i18n %} {% load l10n %} {% load humanize %} {% with host=request.scheme|add:'://'|add:request.get_host %}
 <html>
 
 <head>
@@ -58,7 +58,7 @@
                     payment: {
                         transactions: [{
                             amount: {
-                                total: '{{ order.price.amount }}',
+                                total: '{{ order.price.amount|unlocalize }}',
                                 currency: '{{ order.price.currency.code }}'
                             },
                             /* description: 'The payment transaction description.', */
