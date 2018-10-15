@@ -93,6 +93,7 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     request_client = serializers.SlugRelatedField(
         many=False,
         read_only=False,
+        allow_null=True,
         slug_field='login',
         queryset=Client.objects.all())
 

@@ -1,7 +1,8 @@
 import json
 
-from billing.lib.test import json_contains
 from django.core.urlresolvers import reverse
+
+from billing.lib.test import json_contains
 
 
 def test_cities_list_by_user(client):
@@ -50,3 +51,18 @@ def test_city_create_by_admin(admin_client, mailoutbox):
     mail = mailoutbox[0]
     assert mail.recipients() == ['admin@example.com', 'manager@example.com']
     assert 'new test city' in mail.alternatives[0][0]
+
+
+def test_city_update_by_admin(admin_client):
+    data = json.dumps({
+        'name': 'updated title',
+        'request_client': None,
+    })
+    response = admin_client.patch(
+        reverse('city-detail', args=[1]),
+        data=data,
+        content_type="application/json")
+    response_json = response.json()
+
+    assert response.status_code == 200
+    assert response_json['name'] == 'updated title'
