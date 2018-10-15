@@ -30,6 +30,7 @@ var/logs/*
 .installed.cfg
 *.egg
 
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -66,6 +67,9 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+#mypy
+.mypy_cache
 
 #IDE
 .idea
