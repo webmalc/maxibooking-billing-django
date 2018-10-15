@@ -412,6 +412,11 @@ lowercase letters, numbers, and "-" character.'),
         on_delete=models.SET_NULL,
         verbose_name=_('manager'),
         related_name="%(app_label)s_%(class)s_manager")
+    manager_code = models.CharField(
+        max_length=10,
+        blank=True,
+        null=True,
+        validators=[MinLengthValidator(3)])
     source = models.CharField(
         max_length=20,
         default='registration',

@@ -34,5 +34,17 @@
     },
     "model": "auth.user",
     "pk": 2
+},
+{
+    "model": "users.profile",
+    "pk": 1,
+    "fields": {
+        "created": "2018-10-15T10:59:07.123Z",
+        "modified": "2018-10-15T11:09:32.879Z",
+        "created_by": 1,
+        "modified_by": 1,
+        "user": 2,
+        "code": "test_code"
+    }
 }
 ]

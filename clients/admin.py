@@ -315,8 +315,8 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     )
     tab_sales = (
         ('General', {
-            'fields': ('info', 'source', 'manager', 'sales_status',
-                       'refusal_reason')
+            'fields': ('info', 'source', 'manager', 'manager_code',
+                       'sales_status', 'refusal_reason')
         }),
         CommentInlineAdmin,
     )

@@ -2,14 +2,15 @@ import json
 
 import arrow
 import pytest
-from billing.lib import mb
-from billing.lib.test import json_contains
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.validators import ValidationError
+from moneyed import EUR, Money
+
+from billing.lib import mb
+from billing.lib.test import json_contains
 from finances.models import Order, Price, Service
 from hotels.models import Property, Room
-from moneyed import EUR, Money
 
 from ..models import Client, RefusalReason, SalesStatus
 from ..tasks import (client_archivation, client_disabled_email,
@@ -84,16 +85,19 @@ def test_client_create_by_admin(admin_client):
         'country': 'af',
         'postal_code': '123456',
         'address': 'test address',
+        'manager_code': 'test_code',
     })
     response = admin_client.post(
         reverse('client-list'), data=data, content_type="application/json")
     response_json = response.json()
+    client = Client.objects.get(pk=response_json['id'])
 
     assert response_json['login'] == 'new-user'
     assert response_json['status'] == 'not_confirmed'
     assert response_json['created_by'] == 'admin'
     assert response_json['postal_code'] == '123456'
     assert response_json['address'] == 'test address'
+    assert client.manager.username == 'test'
 
     response = admin_client.get(reverse('client-list'))
     assert len(response.json()['results']) == 8

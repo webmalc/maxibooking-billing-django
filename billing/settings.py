@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'clients',
     'hotels',
     'fms',
+    'users',
 ]
 
 SITE_ID = 1
