@@ -1,3 +1,5 @@
+import re
+
 from annoying.fields import AutoOneToOneField
 from colorful.fields import RGBColorField
 from django.conf import settings
@@ -318,6 +320,8 @@ class Client(CommonInfo, TimeStampedModel, Payer):
         max_length=50,
         unique=True,
         db_index=True,
+        blank=True,
+        null=False,
         error_messages={'unique': _('Client with this domain already exist.')},
         verbose_name=_('login'),
         validators=[
@@ -341,6 +345,8 @@ lowercase letters, numbers, and "-" character.'),
     name = models.CharField(
         max_length=255,
         db_index=True,
+        null=True,
+        blank=True,
         validators=[MinLengthValidator(2)],
         verbose_name=_('full name'))
     description = models.TextField(
@@ -500,6 +506,28 @@ lowercase letters, numbers, and "-" character.'),
         self.restrictions.rooms_limit = rooms
         self.restrictions.save()
 
+    def generate_login(self, add: str = None) -> str:
+        """
+        Generate a client login from a client email
+        """
+        login = self.email.split('@')[0].lower()
+        login = re.sub('[^a-z0-9\-]+', '', login)
+        if add:
+            login += str(add)
+            add += 1
+        else:
+            add = 1
+        try:
+            validate_client_login_restrictions(login)
+        except ValidationError:
+            return self.generate_login(add)
+
+        if Client.objects.filter(login=login).exclude(pk=self.pk).count():
+            return self.generate_login(add)
+        else:
+            self.login = login
+            return login
+
     @property
     def language(self):
         return 'ru' if self.country.tld == 'ru' else 'en'
@@ -510,7 +538,7 @@ lowercase letters, numbers, and "-" character.'),
             raise ValidationError(_('Empty refusal reason.'))
 
     def __str__(self):
-        return '{} - {}'.format(self.login, self.name)
+        return '{} - {} - {}'.format(self.login, self.email, self.name or '')
 
     class Meta:
         ordering = ['-created']
@@ -537,8 +565,26 @@ among other clients.'),
         Client,
         on_delete=models.CASCADE,
         db_index=True,
+        unique=True,
         verbose_name=_('client'),
         related_name='website')
+
+    def generate_url(self, add: str = None) -> str:
+        """
+        Generate a website url from a client login
+        """
+        url = self.client.login
+        if add:
+            url += str(add)
+            add += 1
+        else:
+            add = 1
+        url = settings.MB_WEBSITE_DOMAIN.format(url)
+        if ClientWebsite.objects.filter(url=url).exclude(pk=self.pk).count():
+            return self.generate_url(add)
+        else:
+            self.url = url
+            return url
 
     def __str__(self):
         return self.url

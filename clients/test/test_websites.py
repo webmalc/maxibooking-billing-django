@@ -1,7 +1,10 @@
 import json
 
-from billing.lib.test import json_contains
 from django.core.urlresolvers import reverse
+
+from billing.lib.test import json_contains
+
+from ..models import ClientWebsite
 
 
 def test_websites_list_by_user(client):
@@ -12,8 +15,8 @@ def test_websites_list_by_user(client):
 def test_websites_list_by_admin(admin_client):
     response = admin_client.get(reverse('clientwebsite-list'))
     assert response.status_code == 200
-    assert len(response.json()['results']) == 3
-    json_contains(response, 'http://hotel.one')
+    assert len(response.json()['results']) == 7
+    json_contains(response, 'https://user-rus.maaaxi.com')
 
 
 def test_websites_display_by_admin(admin_client):
@@ -21,8 +24,8 @@ def test_websites_display_by_admin(admin_client):
         reverse('clientwebsite-detail', args=['user-one']))
     assert response.status_code == 200
     response_json = response.json()
-    response_json['url'] = 'http://user-one.com'
-    response_json['is_enabled'] = False
+    assert response_json['url'] == 'https://user-one.maaaxi.com'
+    assert response_json['is_enabled'] is True
 
 
 def test_websites_display_by_user(client):
@@ -33,7 +36,7 @@ def test_websites_display_by_user(client):
 def test_websites_create_by_admin(admin_client):
     data = {
         'client': 'invalid-user',
-        'url': 'http://hotel.one',
+        'url': 'https://user-one.maaaxi.com',
     }
     url = reverse('clientwebsite-list')
     response = admin_client.post(
@@ -54,7 +57,17 @@ def test_websites_create_by_admin(admin_client):
     response = admin_client.post(
         url, data=json.dumps(data), content_type="application/json")
     response_json = response.json()
+    assert response.status_code == 400
+    assert response_json['non_field_errors'] == [
+        'This client already has a website'
+    ]
+
+    ClientWebsite.objects.filter(client__login='user-four').delete()
+    response = admin_client.post(
+        url, data=json.dumps(data), content_type="application/json")
+    response_json = response.json()
     assert response.status_code == 201
+
     assert response_json['client'] == 'user-four'
     assert response_json['url'] == 'http://hotel.two'
     assert response_json['is_enabled'] is False

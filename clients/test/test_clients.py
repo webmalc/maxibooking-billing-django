@@ -33,6 +33,25 @@ def service():
     return service
 
 
+def test_client_generate_login(client):
+    client = Client()
+    client.email = 'd!e.M.o@example.com'
+    client.country_id = 1
+    client.save()
+
+    client2 = Client()
+    client2.email = 'demo@example.com'
+    client2.country_id = 1
+    client2.save()
+
+    assert client.login == 'demo1'
+    assert client.website.url == 'https://demo1.maaaxi.com'
+    assert client.website.is_enabled is True
+
+    assert client2.login == 'demo2'
+    assert client2.website.url == 'https://demo2.maaaxi.com'
+
+
 def test_clients_list_by_user(client):
     response = client.get(reverse('client-list'))
     assert response.status_code == 401
@@ -446,7 +465,7 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     assert 'Registration successefull' in html
     assert '123456' in html
     assert 'http://example.com' in html
-    # assert 'http://user-one.com' in html
+    assert 'https://user-one.maaaxi.com' in html
     assert 'admin' in html
 
 
@@ -471,7 +490,8 @@ def test_client_install_results_ru_by_admin(admin_client, mailoutbox):
     assert 'user rus, Добро пожаловать в Максибукинг!' in mail.subject
     assert 'Успешная регистрация' in html
     assert '123456' in html
-    assert 'http://hotel.rus' in html
+
+    assert 'https://user-rus.maaaxi.com' in html
     assert 'http://example.com' in html
     assert 'admin' in html
 

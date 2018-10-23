@@ -357,7 +357,12 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
         return queryset, use_distinct
 
     def info(self, obj):
-        return '<br>'.join([obj.login, obj.name, str(obj.phone), obj.email])
+        return '<br>'.join([
+            obj.login or '-',
+            obj.name or '-',
+            obj.email or '-',
+            str(obj.phone) if obj.phone else '-',
+        ])
 
     info.allow_tags = True
     info.short_description = _('client')

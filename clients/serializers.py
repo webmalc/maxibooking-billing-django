@@ -119,6 +119,19 @@ class WebsiteSerializer(serializers.ModelSerializer):
         slug_field='login',
         queryset=Client.objects.all())
 
+    def validate(self, data):
+        """
+        Check that the start is before the stop.
+        """
+        if 'client' in data:
+            query = ClientWebsite.objects.filter(client=data['client'])
+            if 'id' in self.initial_data:
+                query = query.exclude(pk=self.initial_data['id'])
+            if query.count():
+                raise serializers.ValidationError(
+                    'This client already has a website')
+        return data
+
     class Meta:
         model = ClientWebsite
         lookup_field = 'client__login'

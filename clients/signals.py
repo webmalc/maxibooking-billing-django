@@ -3,16 +3,19 @@ from django.dispatch import receiver
 
 from users.models import Profile
 
-from .models import Client
+from .models import Client, ClientWebsite
 from .tasks import invalidate_client_cache_task
 
 
 @receiver(pre_save, sender=Client, dispatch_uid='client_pre_save')
 def client_pre_save(sender, **kwargs):
     """
-    Client post save signal
+    Client pre save signal
     """
     client = kwargs['instance']
+
+    if not client.login:
+        client.generate_login()
 
     if client.manager_code and not client.manager:
         try:
@@ -31,3 +34,11 @@ def client_post_save(sender, **kwargs):
 
     if client.installation == 'installed':
         invalidate_client_cache_task.delay(client_id=client.id)
+    try:
+        client.website
+    except Client.website.RelatedObjectDoesNotExist:
+        website = ClientWebsite()
+        website.is_enabled = True
+        website.client = client
+        website.generate_url()
+        website.save()

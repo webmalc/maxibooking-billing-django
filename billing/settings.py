@@ -382,3 +382,4 @@ ADMIN_VIEW_PERMISSION_MODELS = [
 # MB
 MB_SITE_URL = 'https://maxi-booking.com'
 MB_TRIAL_DAYS = 15
+MB_WEBSITE_DOMAIN = 'https://{}.maaaxi.com'
