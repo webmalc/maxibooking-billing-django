@@ -1,7 +1,8 @@
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
-from billing.serializers import NestedUpdateSerializerMixin
+from billing.serializers import (NestedUpdateSerializerMixin,
+                                 ValidationSerializerMixin)
 from finances.models import Service
 from hotels.models import City, Country, Region
 
@@ -159,7 +160,7 @@ class ClientRuSerializer(serializers.ModelSerializer):
                   'modified', 'created_by', 'modified_by')
 
 
-class ClientSerializer(NestedUpdateSerializerMixin,
+class ClientSerializer(NestedUpdateSerializerMixin, ValidationSerializerMixin,
                        serializers.HyperlinkedModelSerializer):
     """
     Client serializer
@@ -194,12 +195,12 @@ class ClientSerializer(NestedUpdateSerializerMixin,
 
     class Meta:
         model = Client
-        fields = ('id', 'login', 'email', 'phone', 'name', 'description',
-                  'get_status_display', 'status', 'country', 'region', 'city',
-                  'address', 'postal_code', 'ru', 'installation',
-                  'trial_activated', 'url', 'properties', 'manager_code',
-                  'restrictions', 'disabled_at', 'ip', 'created', 'modified',
-                  'created_by', 'modified_by')
+        fields = ('id', 'login', 'login_alias', 'email', 'phone', 'name',
+                  'description', 'get_status_display', 'status', 'country',
+                  'region', 'city', 'address', 'postal_code', 'ru',
+                  'installation', 'trial_activated', 'url', 'properties',
+                  'manager_code', 'restrictions', 'disabled_at', 'ip',
+                  'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
         references = {}
         reference_parent = 'client'

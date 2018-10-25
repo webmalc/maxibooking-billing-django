@@ -80,8 +80,9 @@ test issued by. инн 1212222222222'
 
 def test_client_create_invalid_by_admin(admin_client):
     data = json.dumps({'login': '_amazonses', 'email': 'user@one.com'})
+    url = reverse('client-list')
     response = admin_client.post(
-        reverse('client-list'), data=data, content_type="application/json")
+        url, data=data, content_type="application/json")
     response_json = response.json()
 
     assert response_json['login'] == [
@@ -94,10 +95,45 @@ contain only lowercase letters, numbers, and "-" character.',
         'client with this e-mail already exists.'
     ]
 
+    data = json.dumps({'login': 'user-two', 'email': 'user@one.com'})
+    response = admin_client.post(
+        url, data=data, content_type="application/json")
+    response_json = response.json()
+
+    assert response_json['login'] == ['Client with this domain already exist.']
+
+    data = json.dumps({
+        'login': 'user-two-alias',
+        'email': 'user12@one.com',
+        'country': 'ru'
+    })
+    response = admin_client.post(
+        url, data=data, content_type="application/json")
+    response_json = response.json()
+
+    assert response_json['non_field_errors'] == [
+        'Client with this domain already exist.'
+    ]
+
+    data = json.dumps({
+        'login': 'user-two-12',
+        'login_alias': 'user-two',
+        'email': 'user12@one.com',
+        'country': 'ru'
+    })
+    response = admin_client.post(
+        url, data=data, content_type="application/json")
+    response_json = response.json()
+
+    assert response_json['non_field_errors'] == [
+        'Client with this domain already exist.'
+    ]
+
 
 def test_client_create_by_admin(admin_client):
     data = json.dumps({
         'login': 'new-user',
+        'login_alias': 'new-user-alias',
         'email': 'new@user.mail',
         'name': 'New User',
         'phone': '+79239999999',
@@ -112,6 +148,7 @@ def test_client_create_by_admin(admin_client):
     client = Client.objects.get(pk=response_json['id'])
 
     assert response_json['login'] == 'new-user'
+    assert response_json['login_alias'] == 'new-user-alias'
     assert response_json['status'] == 'not_confirmed'
     assert response_json['created_by'] == 'admin'
     assert response_json['postal_code'] == '123456'

@@ -316,6 +316,17 @@ class Client(CommonInfo, TimeStampedModel, Payer):
 
     objects = ClientManager()
 
+    login_validators = [
+        MinLengthValidator(4),
+        RegexValidator(
+            regex='^[a-z0-9\-]*$',
+            code='invalid_login',
+            message=_('Enter a valid domain. This value may contain only \
+lowercase letters, numbers, and "-" character.'),
+        ),
+        validate_client_login_restrictions,
+    ]
+
     login = models.CharField(
         max_length=50,
         unique=True,
@@ -324,16 +335,16 @@ class Client(CommonInfo, TimeStampedModel, Payer):
         null=False,
         error_messages={'unique': _('Client with this domain already exist.')},
         verbose_name=_('login'),
-        validators=[
-            MinLengthValidator(4),
-            RegexValidator(
-                regex='^[a-z0-9\-]*$',
-                code='invalid_login',
-                message=_('Enter a valid domain. This value may contain only \
-lowercase letters, numbers, and "-" character.'),
-            ),
-            validate_client_login_restrictions,
-        ])
+        validators=login_validators)
+    login_alias = models.CharField(
+        max_length=50,
+        unique=True,
+        db_index=True,
+        blank=True,
+        null=True,
+        error_messages={'unique': _('Client with this domain already exist.')},
+        verbose_name=_('login alias'),
+        validators=login_validators)
     email = models.EmailField(
         db_index=True, unique=True, verbose_name=_('e-mail'))
     phone = PhoneNumberField(
@@ -522,7 +533,7 @@ lowercase letters, numbers, and "-" character.'),
         except ValidationError:
             return self.generate_login(add)
 
-        if Client.objects.filter(login=login).exclude(pk=self.pk).count():
+        if Client.objects.get_by_login(login, self.pk).count():
             return self.generate_login(add)
         else:
             self.login = login
@@ -536,6 +547,23 @@ lowercase letters, numbers, and "-" character.'),
         code = getattr(self.sales_status, 'code', None)
         if code == 'refusal' and not self.refusal_reason:
             raise ValidationError(_('Empty refusal reason.'))
+
+    def validate_unique(self, exclude=None):
+        super().validate_unique(exclude)
+
+        if self.login == self.login_alias:
+            raise ValidationError('Domain and alias cannot be the same.')
+
+        logins = aliases = False
+        if self.login:
+            logins = Client.objects.get_by_login(self.login, self.pk).count()
+
+        if self.login_alias:
+            aliases = Client.objects.get_by_login(self.login_alias,
+                                                  self.pk).count()
+
+        if logins or aliases:
+            raise ValidationError('Client with this domain already exist.')
 
     def __str__(self):
         return '{} - {} - {}'.format(self.login, self.email, self.name or '')

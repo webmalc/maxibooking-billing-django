@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from billing.serializers import ValidationSerializerMixin
+
 from .models import Order, Price, Service, ServiceCategory, Transaction
 
 
@@ -80,7 +82,8 @@ class ServiceCategorySerializer(serializers.HyperlinkedModelSerializer):
                   'modified', 'created_by', 'modified_by')
 
 
-class ServiceSerializer(serializers.HyperlinkedModelSerializer):
+class ServiceSerializer(ValidationSerializerMixin,
+                        serializers.HyperlinkedModelSerializer):
     """
     Service serializer
     """

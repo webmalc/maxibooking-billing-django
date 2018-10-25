@@ -27,6 +27,7 @@
         "created": "2017-07-18T14:06:27.890Z",
         "modified": "2017-07-19T09:12:27.554Z",
         "login": "user-two",
+        "login_alias": "user-two-alias",
         "email": "user@two.com",
         "phone": "+79250000001",
         "name": "User Two",

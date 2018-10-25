@@ -276,13 +276,13 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
     """
     Client admin interface
     """
-    list_display = ('num', 'login', 'sales_status_html', 'email', 'phone',
-                    'name', 'country', 'city', 'status', 'installation', 'url',
-                    'rooms', 'website', 'trial_activated', 'logins', 'manager',
-                    'created')
+    list_display = ('num', 'login', 'login_alias', 'sales_status_html',
+                    'email', 'phone', 'name', 'country', 'city', 'status',
+                    'installation', 'url', 'rooms', 'website',
+                    'trial_activated', 'logins', 'manager', 'created')
     list_select_related = ('country', 'restrictions', 'city', 'manager',
                            'sales_status', 'website')
-    list_display_links = ('id', 'login')
+    list_display_links = ('id', 'login', 'login_alias')
     list_filter = ('status', 'sales_status', 'source', 'installation',
                    'manager', ('created', DateRangeFilter), 'trial_activated',
                    ClientIsPaidListFilter, 'country', 'website__is_enabled')
@@ -294,7 +294,8 @@ class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
                        'created_by', 'modified_by')
     tab_client = (
         ('General', {
-            'fields': ('login', 'email', 'phone', 'name', 'description')
+            'fields': ('login', 'login_alias', 'email', 'phone', 'name',
+                       'description')
         }),
         ('Address', {
             'fields': ('country', 'region', 'city', 'address', 'postal_code')

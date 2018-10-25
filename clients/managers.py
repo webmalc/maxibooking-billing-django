@@ -64,6 +64,18 @@ class ClientManager(LookupMixin):
     lookup_search_fields = ('pk', 'login', 'email', 'phone', 'name',
                             'country__name')
 
+    def get_by_login(self, login: str, exclude_pk: int = None, query=None):
+        """
+        Get clients by their login or alias
+        """
+        if not query:
+            query = self.all()
+
+        query = self.filter(Q(login=login) | Q(login_alias=login))
+        if exclude_pk:
+            query = query.exclude(pk=exclude_pk)
+        return query
+
     def get_for_greeting(self,
                          days=settings.MB_CLIENT_GREETING_EMAIL_DAYS,
                          query=None):

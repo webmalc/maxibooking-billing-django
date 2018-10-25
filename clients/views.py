@@ -1,12 +1,14 @@
 import logging
 
-from billing.exceptions import BaseException
-from billing.lib import mb
-from billing.lib.lang import select_locale
 from django.utils.translation import ugettext_lazy as _
+from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+
+from billing.exceptions import BaseException
+from billing.lib import mb
+from billing.lib.lang import select_locale
 
 from .models import (Client, ClientAuth, ClientRu, ClientService,
                      ClientWebsite, Company, CompanyRu, CompanyWorld)
@@ -104,6 +106,30 @@ class ClientServiceViewSet(viewsets.ModelViewSet):
     filter_fields = ('client', 'service', 'is_enabled', 'begin', 'end')
 
 
+class ClientFilter(filters.FilterSet):
+    login_or_alias = filters.CharFilter(
+        label="Login or alias",
+        method='filter_login_or_alias',
+    )
+
+    def filter_login_or_alias(self, queryset, name, value):
+        return Client.objects.get_by_login(value, query=queryset)
+
+    class Meta:
+        model = Client
+        fields = (
+            'login_or_alias',
+            'login',
+            'login_alias',
+            'status',
+            'installation',
+            'country',
+            'email',
+            'website__url',
+            'website__is_enabled',
+        )
+
+
 class ClientViewSet(viewsets.ModelViewSet):
     """
     This class contains the client's routes.
@@ -114,6 +140,7 @@ class ClientViewSet(viewsets.ModelViewSet):
             'properties', 'services', 'services__service')
     search_fields = (
         'login',
+        'login_alias',
         'email',
         'description',
         'phone',
@@ -121,14 +148,7 @@ class ClientViewSet(viewsets.ModelViewSet):
         'website__url',
     )
     serializer_class = ClientSerializer
-    filter_fields = (
-        'status',
-        'installation',
-        'country',
-        'email',
-        'website__url',
-        'website__is_enabled',
-    )
+    filter_class = ClientFilter
     lookup_field = 'login'
 
     @detail_route(methods=['get'])
