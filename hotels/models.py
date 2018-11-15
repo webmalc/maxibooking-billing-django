@@ -44,6 +44,9 @@ class Country(CachedModel, CityMixin, AbstractCountry):
     is_checked = models.BooleanField(
         default=True, db_index=True, verbose_name=_('is checked'))
 
+    is_former = models.BooleanField(
+        default=False, db_index=True, verbose_name=_('is former'))
+
     request_client = models.ForeignKey(
         'clients.Client',
         on_delete=models.SET_NULL,

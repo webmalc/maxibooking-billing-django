@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
+from .filters import CountryFilter
 from .models import City, Country, Property, Region, Room
 from .serializers import (CitySerializer, CountrySerializer,
                           PropertySerializer, RegionSerializer, RoomSerializer)
@@ -29,13 +30,13 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
 
 
-class CountryViewSet(CacheResponseMixin, viewsets.ModelViewSet):
+class CountryViewSet(viewsets.ModelViewSet):
     """
     Country viewset
     """
+    filter_class = CountryFilter
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    filter_fields = ('name', 'code2', 'code3', 'continent')
     search_fields = ('name', 'alternate_names', 'code2', 'code3')
     lookup_field = 'tld'
     page_size_query_param = 'page_size'
