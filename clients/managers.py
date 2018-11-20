@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Case, Count, IntegerField, Q, Sum, When
 
 from billing.exceptions import BaseException
-from billing.managers import LookupMixin
+from billing.managers import DepartmentMixin, LookupMixin
 from hotels.models import Room
 
 
@@ -57,7 +57,7 @@ class ServiceCategoryGroup(object):
         return list(self.client_services)[0].end
 
 
-class ClientManager(LookupMixin):
+class ClientManager(LookupMixin, DepartmentMixin):
     """"
     Client manager
     """

@@ -570,6 +570,10 @@ lowercase letters, numbers, and "-" character.'),
 
     class Meta:
         ordering = ['-created']
+        permissions = (
+            ('change_own', _('Can change only own entries')),
+            ('change_department', _('Can change only department entries')),
+        )
 
 
 class ClientWebsite(CommonInfo, TimeStampedModel):

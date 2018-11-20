@@ -117,5 +117,16 @@ class BillingUser(User):
     Django user model proxy
     """
 
+    @property
+    def profile(self):
+        try:
+            return super().profile
+        except Profile.DoesNotExist:
+            return None
+
+    @property
+    def department(self):
+        return self.profile.department
+
     class Meta:
         proxy = True

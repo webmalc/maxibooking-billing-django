@@ -54,15 +54,69 @@
     "pk": 3
 },
 {
+    "model": "users.department",
+    "pk": 1,
+    "fields": {
+        "created": "2018-11-15T08:05:07.854Z",
+        "modified": "2018-11-15T08:05:07.854Z",
+        "title": "Canada",
+        "description": "Canada department description",
+        "created_by": 1,
+        "modified_by": 1,
+        "default_group": null,
+        "admin_group": null,
+        "admin": 1,
+        "max_percentage_discount": 40,
+        "min_percentage_discount": 10,
+        "max_discount": 1222,
+        "min_discount": 122,
+        "country": 1
+    }
+},
+{
+    "model": "users.department",
+    "pk": 2,
+    "fields": {
+        "created": "2018-11-15T08:12:09.805Z",
+        "modified": "2018-11-15T08:12:09.805Z",
+        "title": "Moscow",
+        "description": "Moscow department",
+        "created_by": 1,
+        "modified_by": 1,
+        "default_group": null,
+        "admin_group": null,
+        "admin": null,
+        "max_percentage_discount": null,
+        "min_percentage_discount": null,
+        "max_discount": null,
+        "min_discount": null,
+        "country": 192
+    }
+},
+{
     "model": "users.profile",
     "pk": 1,
     "fields": {
         "created": "2018-10-15T10:59:07.123Z",
         "modified": "2018-10-15T11:09:32.879Z",
+        "created_by": 2,
+        "modified_by": 2,
+        "user": 2,
+        "code": "test_code",
+        "department": 1 
+    }
+},
+{
+    "model": "users.profile",
+    "pk": 2,
+    "fields": {
+        "created": "2018-10-15T10:59:07.123Z",
+        "modified": "2018-10-15T11:09:32.879Z",
         "created_by": 1,
         "modified_by": 1,
-        "user": 2,
-        "code": "test_code"
+        "user": 1,
+        "code": "new_code",
+        "department": 1 
     }
 }
 ]

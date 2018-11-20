@@ -34,6 +34,19 @@ class DictManager(models.Manager):
         return self.filter(is_enabled=True)
 
 
+class DepartmentMixin(models.Manager):
+    def filter_by_department(self, user, query=None):
+        """
+        Get clients filter by user's department
+        """
+        if not query:
+            query = self.all()
+        department = user.department
+        if not department:
+            return query.none()
+        return query.filter(manager__profile__department=department)
+
+
 class CommentsManager(models.Manager):
     """
     Comments manager

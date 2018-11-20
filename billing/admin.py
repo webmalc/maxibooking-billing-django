@@ -73,6 +73,53 @@ class ManagerListMixin(admin.ModelAdmin):
         return query
 
 
+class ChangePermissionMixin(admin.ModelAdmin):
+    """
+    Get permission based on user permission and owner of an entry
+    """
+
+    def _get_permissions(self, request):
+        opts = self.opts
+        user = request.user
+        own_perm = user.has_perm('{}.change_own'.format(opts.app_label))
+        department_perm = user.has_perm('{}.change_department'.format(
+            opts.app_label))
+        return (own_perm, department_perm)
+
+    def has_change_permission(self, request, obj=None):
+        return True
+        result = super().has_change_permission(request, obj)
+        user = request.user
+        own_perm, department_perm = self._get_permissions(request)
+        if result:
+            return result
+        if own_perm and (not obj or obj.manager == user):
+            return True
+        if department_perm:
+            query = self.model.objects.filter_by_department(user)
+            if not obj or query.filter(pk=obj.pk).count():
+                return True
+
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        result = super().has_delete_permission(request, obj)
+        if result:
+            return result
+        return self.has_change_permission(request, obj)
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        user = request.user
+        own_perm, department_perm = self._get_permissions(request)
+        if not super().has_change_permission(request):
+            if own_perm:
+                query = query.filter(manager=user)
+            if department_perm:
+                query = self.model.objects.filter_by_department(user, query)
+        return query
+
+
 class ManagerInlineListMixin(admin.TabularInline):
     """
     Change list with list_manager perm
