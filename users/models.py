@@ -37,6 +37,7 @@ class Department(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         on_delete=models.SET_NULL,
         verbose_name=_('admin'),
         db_index=True,
+        related_name='admin_departments',
         null=True,
         blank=True)
     max_percentage_discount = models.PositiveIntegerField(
@@ -109,3 +110,12 @@ class Profile(CommonInfo, TimeStampedModel):
 
     def __str__(self):
         return '{}`s profile'.format(self.user)
+
+
+class BillingUser(User):
+    """
+    Django user model proxy
+    """
+
+    class Meta:
+        proxy = True

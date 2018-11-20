@@ -48,6 +48,10 @@
   become: true
   tags: deploy  
 
+- name: Billing deploy - kill extra uwsgi
+  shell: "pkill -9 uwsgi"
+  tags: deploy  
+
 - name: Billing deploy - restart nginx
   service: name=nginx state=restarted
   become: true

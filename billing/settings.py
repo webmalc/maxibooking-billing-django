@@ -194,6 +194,8 @@ LOCALE_PATHS = (
 EMAIL_SUBJECT_PREFIX = 'Maxi-booking: '
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
+AUTHENTICATION_BACKENDS = ['users.auth_backends.ProxiedModelBackend']
+
 # Logs
 LOGGING = {
     'version': 1,

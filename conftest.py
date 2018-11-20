@@ -1,5 +1,7 @@
 import arrow
 import pytest
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 from django.core.validators import ValidationError
 from moneyed import EUR, RUB, Money
@@ -7,6 +9,7 @@ from moneyed import EUR, RUB, Money
 from clients.models import Client
 from finances.models import Order, Price, Service
 from hotels.models import Country
+from users.models import Department
 
 
 @pytest.fixture(scope='session')
@@ -18,6 +21,46 @@ def django_db_setup(django_db_setup, django_db_blocker):
             'tests/service_categories', 'tests/services', 'tests/auth',
             'tests/client_services', 'tests/transactions', 'tests/companies',
             'tests/sales_statuses', 'tests/refusal_reasons')
+
+
+@pytest.fixture()
+def permissions():
+    content_type = ContentType.objects.get_for_model(Client)
+    permission_one = Permission.objects.create(
+        codename='test_client_permission_one',
+        name='test client permission one',
+        content_type=content_type,
+    )
+    permission_two = Permission.objects.create(
+        codename='test_client_permission_two',
+        name='test client permission two',
+        content_type=content_type,
+    )
+    permission_three = Permission.objects.create(
+        codename='test_client_permission_three',
+        name='test client permission three',
+        content_type=content_type,
+    )
+    group_one = Group()
+    group_one.name = 'test_group_one'
+    group_one.save()
+    group_one.permissions.add(permission_one)
+
+    group_two = Group()
+    group_two.name = 'test_group_two'
+    group_two.save()
+    group_two.permissions.add(permission_two)
+
+    group_three = Group()
+    group_three.name = 'test_group_three'
+    group_three.save()
+    group_three.permissions.add(permission_three)
+
+    department = Department()
+    department.title = 'managers'
+    department.default_group = group_two
+    department.admin_group = group_three
+    department.save()
 
 
 @pytest.fixture()
