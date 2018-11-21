@@ -16,6 +16,8 @@ class ProxiedModelBackend(ModelBackend):
             department = user_obj.profile.department
             if department and department.default_group:
                 perms = perms.union(department.default_group.permissions.all())
+                perms = perms | department.default_group.permissions.all()
+                perms = perms.distinct()
             for department in user_obj.admin_departments.all():
                 if department.admin_group:
                     perms = perms.union(
