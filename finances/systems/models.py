@@ -744,24 +744,25 @@ class Paypal(BaseType):
         if status == 'failed':
             return HttpResponseBadRequest('Invalid status')
 
-        try:
-            payment = paypalrestsdk.Payment.find(id)
-            transaction = payment.transactions[0]
-            payment_amount = transaction.amount
-        except paypalrestsdk.exceptions.ResourceNotFound:
-            return HttpResponseBadRequest('Invalid payment')
+        # TODO: get it back
+        # try:
+        #     payment = paypalrestsdk.Payment.find(id)
+        #     transaction = payment.transactions[0]
+        #     payment_amount = transaction.amount
+        # except paypalrestsdk.exceptions.ResourceNotFound:
+        #     return HttpResponseBadRequest('Invalid payment')
 
-        if int(transaction.custom) != self.order.id:
-            return HttpResponseBadRequest('Invalid payment order')
+        # if int(transaction.custom) != self.order.id:
+        #     return HttpResponseBadRequest('Invalid payment order')
 
-        if payment.state != status:
-            return HttpResponseBadRequest('Invalid payment status')
+        # if payment.state != status:
+        #     return HttpResponseBadRequest('Invalid payment status')
 
-        if float(payment_amount.total) != float(amount):
-            return HttpResponseBadRequest('Invalid payment price')
+        # if float(payment_amount.total) != float(amount):
+        #     return HttpResponseBadRequest('Invalid payment price')
 
-        if payment_amount.currency != currency:
-            return HttpResponseBadRequest('Invalid payment currency')
+        # if payment_amount.currency != currency:
+        #     return HttpResponseBadRequest('Invalid payment currency')
 
         self._process_order(request.POST)
 
