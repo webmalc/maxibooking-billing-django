@@ -30,7 +30,7 @@
     chdir: "{{billing.path}}"
     executable: /bin/bash
   with_items:
-    - makemigrations --no-input
+    # - makemigrations --no-input
     - migrate --no-input
     - collectstatic --no-input
     - compilemessages

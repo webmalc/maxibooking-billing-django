@@ -1,4 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.models import Permission
+from django.db.models import Q
 
 from .models import BillingUser, Profile
 
@@ -11,17 +14,19 @@ class ProxiedModelBackend(ModelBackend):
             return None
 
     def _get_group_permissions(self, user_obj):
-        perms = super()._get_group_permissions(user_obj)
+
+        user_groups_field = get_user_model()._meta.get_field('groups')
+        user_groups_query = 'group__%s' % user_groups_field.related_query_name(
+        )
+        query = Permission.objects.all()
+        filters = Q(**{user_groups_query: user_obj})
         try:
             department = user_obj.profile.department
             if department and department.default_group:
-                perms = perms.union(department.default_group.permissions.all())
-                perms = perms | department.default_group.permissions.all()
-                perms = perms.distinct()
+                filters = filters | Q(group=department.default_group)
             for department in user_obj.admin_departments.all():
                 if department.admin_group:
-                    perms = perms.union(
-                        department.admin_group.permissions.all())
+                    filters = filters | Q(group=department.admin_group)
         except Profile.DoesNotExist:
             pass
-        return perms
+        return query.filter(filters)
