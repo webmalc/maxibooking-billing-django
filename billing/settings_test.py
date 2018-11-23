@@ -67,12 +67,14 @@ MB_SETTINGS_BY_COUNTRY['BRAINTREE_PRIVATE_KEY'] = {
 MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
     'ru': {
         'install': 'https://www.example.com',
+        'login_invalidation': 'https://www.example.com',
         'archive': 'https://www.example.com',
         'fixtures': 'https://{}.example.com',
         'token': 'token_ru'
     },
     '__all__': {
         'install': 'https://example.com',
+        'login_invalidation': 'https://www.example.com',
         'archive': 'https://example.com',
         'fixtures': 'https://{}.example.com',
         'token': 'token_all'

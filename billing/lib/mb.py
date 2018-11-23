@@ -145,6 +145,29 @@ def client_cache_invalidate(client):
     )
 
 
+def client_login_cache_invalidate(client):
+    """
+    Invalidate client login/alias cache
+    """
+    logging.getLogger('billing').info(
+        'Begin a client login cache invalidation task. Id: {}; login: {}'.
+        format(client.id, client.login))
+
+    urls = mb_settings(client)
+
+    def _error_callback():
+        logging.getLogger('billing').error('Client login cache invalidation \
+            task is failed. Id: {}; login: {}'.format(client.id, client.login))
+
+    return _request(
+        url=urls['login_invalidation'],
+        data={
+            'client_login': client.login,
+            'token': urls['token']
+        },
+        error_callback=_error_callback)
+
+
 def client_archive(client):
     """
     Client archivation

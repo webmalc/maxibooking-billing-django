@@ -4,7 +4,8 @@ from django.dispatch import receiver
 from users.models import Profile
 
 from .models import Client, ClientWebsite
-from .tasks import invalidate_client_cache_task
+from .tasks import (invalidate_client_cache_task,
+                    invalidate_mb_client_login_cache)
 
 
 @receiver(pre_save, sender=Client, dispatch_uid='client_pre_save')
@@ -31,6 +32,10 @@ def client_post_save(sender, **kwargs):
     Client post save signal
     """
     client = kwargs['instance']
+    tracker = client.tracker
+
+    if tracker.has_changed('login') or tracker.has_changed('login_alias'):
+        invalidate_mb_client_login_cache.delay(client_id=client.id)
 
     if client.installation == 'installed':
         invalidate_client_cache_task.delay(client_id=client.id)

@@ -123,6 +123,20 @@ def client_disabled_email(days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS):
 
 
 @app.task
+def invalidate_mb_client_login_cache(client_id):
+    """
+    Invalidate client login cache on the remote Maxibooking server
+    """
+    try:
+        client = Client.objects.get(pk=client_id)
+    except Client.DoesNotExist:
+        return False
+    mb.client_login_cache_invalidate(client)
+
+    return True
+
+
+@app.task
 def client_services_activation():
     """
     Client services periodical activation

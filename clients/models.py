@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
+from model_utils import FieldTracker
 from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import Comment, CommonInfo, CountryBase, DictMixin
@@ -315,6 +316,7 @@ class Client(CommonInfo, TimeStampedModel, Payer):
     )
 
     objects = ClientManager()
+    tracker = FieldTracker()
 
     login_validators = [
         MinLengthValidator(4),
