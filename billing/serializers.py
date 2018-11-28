@@ -7,9 +7,6 @@ class ValidationSerializerMixin(object):
     """
 
     def validate(self, data):
-        instance = self.Meta.model(**data)
-        instance.full_clean()
-        return data
         if self.instance:
             instance = self.instance
         else:
