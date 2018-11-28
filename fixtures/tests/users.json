@@ -68,8 +68,6 @@
         "admin": 1,
         "max_percentage_discount": 40,
         "min_percentage_discount": 10,
-        "max_discount": 1222,
-        "min_discount": 122,
         "country": 1
     }
 },
@@ -88,8 +86,6 @@
         "admin": null,
         "max_percentage_discount": null,
         "min_percentage_discount": null,
-        "max_discount": null,
-        "min_discount": null,
         "country": 192
     }
 },

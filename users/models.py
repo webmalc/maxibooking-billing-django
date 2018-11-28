@@ -52,16 +52,6 @@ class Department(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         db_index=True,
         null=True,
         blank=True)
-    max_discount = models.PositiveIntegerField(
-        verbose_name=_('maximum discount'),
-        db_index=True,
-        null=True,
-        blank=True)
-    min_discount = models.PositiveIntegerField(
-        verbose_name=_('minimum discount'),
-        db_index=True,
-        null=True,
-        blank=True)
     country = models.ForeignKey(
         Country,
         on_delete=models.SET_NULL,
@@ -92,17 +82,17 @@ class Profile(CommonInfo, TimeStampedModel):
         blank=True,
         db_index=True)
     code = models.CharField(
-        max_length=10,
+        max_length=20,
         blank=True,
         null=False,
         unique=True,
         validators=[MinLengthValidator(3)],
-        help_text='The unique user`s code',
+        help_text=_('The unique user`s code'),
     )
 
     def generate_code(self):
         """
-        Generate a unique code for user
+        Generate a unique code for the user
         """
         code = ''.join(
             random.choices(string.ascii_lowercase + string.digits, k=5))

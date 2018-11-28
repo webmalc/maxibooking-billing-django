@@ -1,9 +1,13 @@
 import logging
+import random
+import string
 
 import arrow
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
-from django.core.validators import MinValueValidator, ValidationError
+from django.core.validators import (MinLengthValidator, MinValueValidator,
+                                    ValidationError)
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -18,6 +22,7 @@ from billing.models import CachedModel, CommonInfo
 from clients.models import Client, ClientService
 from finances.systems.lib import BraintreeGateway
 from hotels.models import Country
+from users.models import Department
 
 from .managers import (OrderManager, PriceManager, ServiceManager,
                        SubscriptionManager)
@@ -468,3 +473,55 @@ class Subscription(CommonInfo, TimeStampedModel):
 
     class Meta:
         ordering = ['-created']
+
+
+class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
+    """
+    Discount class
+    """
+    start_date = models.DateTimeField(
+        db_index=True, null=True, blank=True, verbose_name=_('begin date'))
+    end_date = models.DateTimeField(
+        db_index=True, null=True, blank=True, verbose_name=_('end date'))
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        verbose_name=_('user'),
+        db_index=True,
+        related_name='users',
+        null=True,
+        blank=True)
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.SET_NULL,
+        verbose_name=_('department'),
+        related_name='departments',
+        null=True,
+        blank=True,
+        db_index=True)
+    number_of_uses = models.PositiveIntegerField(
+        verbose_name=_('number of uses'),
+        db_index=True,
+        default=1,
+        help_text=_(
+            'To how many orders per user can this discount be applied'))
+    percentage_discount = models.PositiveIntegerField(
+        verbose_name=_('percentage discount'), db_index=True)
+    code = models.CharField(
+        max_length=20,
+        blank=True,
+        null=False,
+        unique=True,
+        validators=[MinLengthValidator(5)],
+        help_text=_('The unique code of the discount'),
+    )
+
+    def generate_code(self):
+        """
+        Generate a unique code for the discount
+        """
+        code = ''.join(
+            random.choices(string.ascii_lowercase + string.digits, k=8))
+        user_id = self.user.id if self.user else 0
+        department_id = self.department.id if self.department else 0
+        self.code = '{}{}{}'.format(department_id, user_id, code)
