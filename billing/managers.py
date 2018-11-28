@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractproperty
 from functools import reduce
 
 import arrow
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from django.db.models import Q
 
@@ -35,9 +36,28 @@ class DictManager(models.Manager):
 
 
 class DepartmentMixin(models.Manager):
+    def _is_manager(self, query):
+        try:
+            query.model._meta.get_field('manager')
+            return True
+        except FieldDoesNotExist:
+            return False
+
+    def filter_by_manager(self, user, query=None):
+        """
+        Get entries filtered by manager
+        """
+        if not query:
+            query = self.all()
+
+        if self._is_manager(query):
+            return query.filter(manager=user)
+        else:
+            return query.filter(client__manager=user).select_related('client')
+
     def filter_by_department(self, user, query=None):
         """
-        Get clients filter by user's department
+        Get entries filtered by manager department
         """
         if not query:
             query = self.all()

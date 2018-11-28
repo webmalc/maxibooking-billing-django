@@ -8,7 +8,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
-from billing.models import CachedModel, CheckedModel, CommonInfo
+from billing.models import (CachedModel, CheckedModel, ClientPermissionsModel,
+                            CommonInfo, GetManagerMixin)
 
 from .managers import PropertyManager, RoomManager
 
@@ -126,7 +127,8 @@ class City(CachedModel, CityMixin, AbstractCity):
 connect_default_signals(City)
 
 
-class Property(CommonInfo, TimeStampedModel):
+class Property(CommonInfo, TimeStampedModel, ClientPermissionsModel,
+               GetManagerMixin):
     """
     Property class
     """
@@ -180,7 +182,7 @@ class Property(CommonInfo, TimeStampedModel):
     def rooms_count(self):
         return self.rooms.count_rooms(self.client)
 
-    class Meta:
+    class Meta(ClientPermissionsModel.Meta):
         ordering = ['name']
         verbose_name_plural = 'properties'
 

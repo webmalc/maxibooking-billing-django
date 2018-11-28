@@ -1,8 +1,7 @@
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
-from billing.serializers import (NestedUpdateSerializerMixin,
-                                 ValidationSerializerMixin)
+from billing.serializers import ValidationSerializerMixin
 from finances.models import Service
 from hotels.models import City, Country, Region
 
@@ -72,8 +71,7 @@ class ClientAuthSerializer(serializers.ModelSerializer):
                   'modified', 'created_by', 'modified_by')
 
 
-class CompanySerializer(NestedUpdateSerializerMixin,
-                        serializers.ModelSerializer):
+class CompanySerializer(serializers.ModelSerializer):
     """
     Company serializer
     """
@@ -160,7 +158,7 @@ class ClientRuSerializer(serializers.ModelSerializer):
                   'modified', 'created_by', 'modified_by')
 
 
-class ClientSerializer(NestedUpdateSerializerMixin, ValidationSerializerMixin,
+class ClientSerializer(ValidationSerializerMixin,
                        serializers.HyperlinkedModelSerializer):
     """
     Client serializer

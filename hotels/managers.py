@@ -1,8 +1,10 @@
 from django.db import models
 from django.db.models import Sum
 
+from billing.managers import DepartmentMixin
 
-class PropertyManager(models.Manager):
+
+class PropertyManager(DepartmentMixin):
     """"
     Property manager
     """

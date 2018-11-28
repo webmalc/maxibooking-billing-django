@@ -16,7 +16,8 @@ from djmoney.models.fields import MoneyField
 from model_utils import FieldTracker
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import Comment, CommonInfo, CountryBase, DictMixin
+from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
+                            CountryBase, DictMixin)
 from finances.lib.calc import Calc
 from hotels.models import Country
 
@@ -292,7 +293,7 @@ class CompanyRu(CountryBase, CommonInfo, TimeStampedModel):
         verbose_name = _('ru')
 
 
-class Client(CommonInfo, TimeStampedModel, Payer):
+class Client(CommonInfo, TimeStampedModel, Payer, ClientPermissionsModel):
     """
     Client class
     """
@@ -570,12 +571,8 @@ lowercase letters, numbers, and "-" character.'),
     def __str__(self):
         return '{} - {} - {}'.format(self.login, self.email, self.name or '')
 
-    class Meta:
+    class Meta(ClientPermissionsModel.Meta):
         ordering = ['-created']
-        permissions = (
-            ('change_own', _('Can change only own entries')),
-            ('change_department', _('Can change only department entries')),
-        )
 
 
 class ClientWebsite(CommonInfo, TimeStampedModel):

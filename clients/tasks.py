@@ -36,6 +36,7 @@ def install_client_task(client_id):
         client = Client.objects.get(pk=client_id)
     except Client.DoesNotExist:
         return False
+
     if client.installation == 'installed':
         return False
 

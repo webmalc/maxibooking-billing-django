@@ -134,6 +134,24 @@ class ABCModel(models.Model):
         abstract = True
 
 
+class ClientPermissionsModel(models.Model):
+    class Meta:
+        abstract = True
+        permissions = (
+            ('change_own', _('Can change only own entries')),
+            ('change_department', _('Can change only department entries')),
+        )
+
+
+class GetManagerMixin(models.Model):
+    @property
+    def manager(self):
+        return self.client.manager
+
+    class Meta:
+        abstract = True
+
+
 class CachedModel(models.Model):
     class Meta:
         abstract = True

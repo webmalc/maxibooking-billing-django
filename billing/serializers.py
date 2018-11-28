@@ -10,6 +10,14 @@ class ValidationSerializerMixin(object):
         instance = self.Meta.model(**data)
         instance.full_clean()
         return data
+        if self.instance:
+            instance = self.instance
+        else:
+            instance = self.Meta.model(**data)
+        for (key, value) in data.items():
+            setattr(instance, key, value)
+        instance.full_clean()
+        return data
 
 
 class NestedUpdateSerializerMixin(object):

@@ -87,7 +87,6 @@ class ChangePermissionMixin(admin.ModelAdmin):
         return (own_perm, department_perm)
 
     def has_change_permission(self, request, obj=None):
-        return True
         result = super().has_change_permission(request, obj)
         user = request.user
         own_perm, department_perm = self._get_permissions(request)
@@ -114,7 +113,7 @@ class ChangePermissionMixin(admin.ModelAdmin):
         own_perm, department_perm = self._get_permissions(request)
         if not super().has_change_permission(request):
             if own_perm:
-                query = query.filter(manager=user)
+                query = self.model.objects.filter_by_manager(user, query)
             if department_perm:
                 query = self.model.objects.filter_by_department(user, query)
         return query

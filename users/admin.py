@@ -69,8 +69,7 @@ class DepartmentAdmin(VersionAdmin):
         }),
         ('Security and permissions', {
             'fields': ('admin', 'users', 'default_group', 'admin_group',
-                       'max_percentage_discount', 'min_percentage_discount',
-                       'max_discount', 'min_discount')
+                       'max_percentage_discount', 'min_percentage_discount')
         }),
         ('Options', {
             'fields': ('created', 'modified', 'created_by', 'modified_by')

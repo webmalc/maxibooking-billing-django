@@ -5,6 +5,8 @@ from django.contrib import admin
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from reversion.admin import VersionAdmin
 
+from billing.admin import ChangePermissionMixin
+
 from .models import City, Country, Property, Region, Room
 
 
