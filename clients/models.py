@@ -17,7 +17,7 @@ from model_utils import FieldTracker
 from phonenumber_field.modelfields import PhoneNumberField
 
 from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
-                            CountryBase, DictMixin)
+                            CountryBase, DictMixin, GetManagerMixin)
 from finances.lib.calc import Calc
 from hotels.models import Country
 
@@ -73,7 +73,8 @@ class Payer():
         raise NotImplementedError()
 
 
-class Company(CommonInfo, TimeStampedModel, Payer):
+class Company(CommonInfo, TimeStampedModel, Payer, ClientPermissionsModel,
+              GetManagerMixin):
     """
     Company base class
     """
@@ -135,7 +136,7 @@ class Company(CommonInfo, TimeStampedModel, Payer):
             address=self.address,
         )
 
-    class Meta:
+    class Meta(ClientPermissionsModel.Meta):
         ordering = ['-created']
         unique_together = (('client', 'name'), )
         verbose_name_plural = _('companies')
@@ -705,7 +706,8 @@ class ClientAuth(CommonInfo, TimeStampedModel):
         verbose_name_plural = _('Client authentications')
 
 
-class ClientService(CommonInfo, TimeStampedModel):
+class ClientService(CommonInfo, TimeStampedModel, ClientPermissionsModel,
+                    GetManagerMixin):
     """
     ClientService class
     """
@@ -859,5 +861,5 @@ class ClientService(CommonInfo, TimeStampedModel):
         return '#{} - {} - {} - {}'.format(self.id, self.client, self.service,
                                            self.price)
 
-    class Meta:
+    class Meta(ClientPermissionsModel.Meta):
         ordering = ['-created']

@@ -19,7 +19,7 @@ class RoomsInlineAdmin(admin.TabularInline):
 
 
 @admin.register(Property)
-class PropertyAdmin(VersionAdmin):
+class PropertyAdmin(ChangePermissionMixin, VersionAdmin):
     """
     Property admin interface
     """

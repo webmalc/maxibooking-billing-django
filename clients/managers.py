@@ -9,7 +9,7 @@ from billing.managers import DepartmentMixin, LookupMixin
 from hotels.models import Room
 
 
-class CompanyManager(LookupMixin):
+class CompanyManager(LookupMixin, DepartmentMixin):
     """"
     Company manager
     """
@@ -155,7 +155,7 @@ class ClientManager(LookupMixin, DepartmentMixin):
         return query
 
 
-class ClientServiceManager(LookupMixin):
+class ClientServiceManager(LookupMixin, DepartmentMixin):
     """"
     ClientService manager
     """

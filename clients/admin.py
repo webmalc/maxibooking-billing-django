@@ -14,9 +14,9 @@ from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
 from billing.admin import (ArchorAdminMixin, ChangeOwnMixin,
-                           ChangePermissionMixin, DictAdminMixin,
-                           ManagerInlineListMixin, ShowAllInlineAdminMixin,
-                           TextFieldListFilter)
+                           ChangePermissionInlineMixin, ChangePermissionMixin,
+                           DictAdminMixin, ManagerInlineListMixin,
+                           ShowAllInlineAdminMixin, TextFieldListFilter)
 from billing.models import Comment
 from finances.models import Order
 from hotels.models import Property
@@ -93,7 +93,7 @@ class ClientAuthAdmin(VersionAdmin, AjaxSelectAdmin):
 
 
 @admin.register(ClientService)
-class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
+class ClientServiceAdmin(ChangePermissionMixin, VersionAdmin, AjaxSelectAdmin):
     """
     ClientService admin interface
     """
@@ -137,7 +137,8 @@ class ClientServiceAdmin(VersionAdmin, AjaxSelectAdmin):
         return form
 
 
-class ClientServiceInlineAdmin(admin.TabularInline):
+class ClientServiceInlineAdmin(ChangePermissionInlineMixin,
+                               admin.TabularInline):
     """
     ClientServiceInline admin interface
     """
@@ -150,7 +151,7 @@ class ClientServiceInlineAdmin(admin.TabularInline):
     show_change_link = True
 
 
-class PropertyInlineAdmin(admin.TabularInline):
+class PropertyInlineAdmin(ChangePermissionInlineMixin):
     """
     PropertyInline admin interface
     """
@@ -169,7 +170,7 @@ class RestrictionsInlineAdmin(admin.StackedInline):
     can_delete = False
 
 
-class CompanyInlineAdmin(admin.TabularInline):
+class CompanyInlineAdmin(ChangePermissionInlineMixin):
     """
     CompanyInline admin interface
     """
@@ -272,8 +273,13 @@ class WebsiteInlineAdmin(admin.StackedInline):
 
 
 @admin.register(Client)
-class ClientAdmin(AdminRowActionsMixin, VersionAdmin, TabbedModelAdmin,
-                  ArchorAdminMixin, ChangePermissionMixin):
+class ClientAdmin(
+        ChangePermissionMixin,
+        AdminRowActionsMixin,
+        VersionAdmin,
+        TabbedModelAdmin,
+        ArchorAdminMixin,
+):
     """
     Client admin interface
     """
@@ -488,7 +494,7 @@ class CompanyRuAdmin(admin.StackedInline):
 
 
 @admin.register(Company)
-class CompanyAdmin(VersionAdmin, AjaxSelectAdmin):
+class CompanyAdmin(ChangePermissionMixin, VersionAdmin, AjaxSelectAdmin):
     """
     Company admin interface
     """

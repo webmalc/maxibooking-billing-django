@@ -73,7 +73,7 @@ class ManagerListMixin(admin.ModelAdmin):
         return query
 
 
-class ChangePermissionMixin(admin.ModelAdmin):
+class ChangePermissionBaseMixin():
     """
     Get permission based on user permission and owner of an entry
     """
@@ -86,10 +86,10 @@ class ChangePermissionMixin(admin.ModelAdmin):
             opts.app_label))
         return (own_perm, department_perm)
 
-    def has_change_permission(self, request, obj=None):
-        result = super().has_change_permission(request, obj)
+    def check_change_permission(self, result, request, obj=None):
         user = request.user
         own_perm, department_perm = self._get_permissions(request)
+
         if result:
             return result
         if own_perm and (not obj or obj.manager == user):
@@ -101,22 +101,53 @@ class ChangePermissionMixin(admin.ModelAdmin):
 
         return False
 
-    def has_delete_permission(self, request, obj=None):
-        result = super().has_delete_permission(request, obj)
+    def check_delete_permission(self, result, change):
         if result:
             return result
-        return self.has_change_permission(request, obj)
+        return change
 
-    def get_queryset(self, request):
-        query = super().get_queryset(request)
+    def fetch_queryset(self, request, query, change):
         user = request.user
         own_perm, department_perm = self._get_permissions(request)
-        if not super().has_change_permission(request):
+        if not change:
             if own_perm:
                 query = self.model.objects.filter_by_manager(user, query)
             if department_perm:
                 query = self.model.objects.filter_by_department(user, query)
         return query
+
+
+class ChangePermissionMixin(admin.ModelAdmin, ChangePermissionBaseMixin):
+    def has_change_permission(self, request, obj=None):
+        change = super().has_change_permission(request, obj)
+        return self.check_change_permission(change, request, obj)
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        change = super().has_change_permission(request)
+        return self.fetch_queryset(request, query, change)
+
+    def has_delete_permission(self, request, obj=None):
+        change = super().has_change_permission(request, obj)
+        delete = super().has_delete_permission(request, obj)
+        return self.check_delete_permission(delete, change)
+
+
+class ChangePermissionInlineMixin(admin.TabularInline,
+                                  ChangePermissionBaseMixin):
+    def has_change_permission(self, request, obj=None):
+        change = super().has_change_permission(request)
+        return self.check_change_permission(change, request)
+
+    def get_queryset(self, request):
+        query = super().get_queryset(request)
+        change = super().has_change_permission(request)
+        return self.fetch_queryset(request, query, change)
+
+    def has_delete_permission(self, request, obj=None):
+        change = super().has_change_permission(request)
+        delete = super().has_delete_permission(request)
+        return self.check_delete_permission(delete, change)
 
 
 class ManagerInlineListMixin(admin.TabularInline):
