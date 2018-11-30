@@ -13,7 +13,7 @@ from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import (ArchorAdminMixin, ChangeOwnMixin,
+from billing.admin import (ArchorAdminMixin, ChangeOwnInlineMixin,
                            ChangePermissionInlineMixin, ChangePermissionMixin,
                            DictAdminMixin, ManagerInlineListMixin,
                            ShowAllInlineAdminMixin, TextFieldListFilter)
@@ -248,7 +248,7 @@ class ClientRuAdmin(admin.StackedInline):
     )
 
 
-class CommentInlineAdmin(ChangeOwnMixin, GenericTabularInline):
+class CommentInlineAdmin(ChangeOwnInlineMixin, GenericTabularInline):
     """
     ClientAuthInline admin interface
     """

@@ -93,6 +93,10 @@ class Comment(CommonInfo, TimeStampedModel):
 
     class Meta:
         ordering = ['-created']
+        permissions = (
+            ('change_related_comment', _('Can change related comments')),
+            ('change_add_comment', _('Can add related comments')),
+        )
 
 
 class DictMixin(CommonInfo, TimeStampedModel, TitleDescriptionModel):

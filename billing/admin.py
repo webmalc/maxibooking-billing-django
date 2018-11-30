@@ -186,26 +186,57 @@ class ArchorAdminMixin(admin.ModelAdmin):
         return self.response_post_save_change(request, obj)
 
 
-class ChangeOwnMixin():
+class ChangeOwnBaseMixin():
+    def _get_permissions(self, request):
+        opts = self.opts
+        user = request.user
+        perm = user.has_perm('{}.change_related_{}'.format(
+            opts.app_label, opts.model_name))
+        return perm
+
+    def check_change_permission(self, parent, request, obj=None):
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+    def check_delete_permission(self, parent, request, obj=None):
+        if not parent:
+            return parent
+        if obj is not None and obj.created_by != request.user:
+            return False
+        return True
+
+
+class ChangeOwnMixin(admin.ModelAdmin, ChangeOwnBaseMixin):
     """
     Change created by user object only
     """
 
     def has_change_permission(self, request, obj=None):
         parent = super().has_change_permission(request, obj)
-        if not parent:
-            return parent
-        if obj is not None and obj.created_by != request.user:
-            return False
-        return True
+        return self.check_change_permission(parent, request, obj)
 
     def has_delete_permission(self, request, obj=None):
         parent = super().has_delete_permission(request, obj)
-        if not parent:
-            return parent
-        if obj is not None and obj.created_by != request.user:
-            return False
-        return True
+        return self.check_delete_permission(parent, request, obj)
+
+
+class ChangeOwnInlineMixin(admin.TabularInline, ChangeOwnBaseMixin):
+    """
+    Change created by user object only
+    """
+
+    def has_change_permission(self, request, obj=None):
+        parent = super().has_change_permission(request, obj)
+        related = self._get_permissions(request)
+        return parent or related
+
+    def has_delete_permission(self, request, obj=None):
+        parent = super().has_delete_permission(request, obj)
+        related = self._get_permissions(request)
+        return parent or related
 
 
 class DictAdminMixin():
@@ -331,6 +362,9 @@ class CommentAdmin(ChangeOwnMixin, AdminRowActionsMixin, VersionAdmin):
         )
 
     client.allow_tags = True
+
+    def has_add_permission(self, request):
+        return False
 
     class Media:
         js = ('js/admin/comments.js', )
