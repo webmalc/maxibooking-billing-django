@@ -71,11 +71,17 @@ class RegionSerializer(serializers.HyperlinkedModelSerializer):
         read_only=False,
         slug_field='tld',
         queryset=Country.objects.all())
+    request_client = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        allow_null=True,
+        slug_field='login',
+        queryset=Client.objects.all())
 
     class Meta:
         model = Region
         fields = ('id', 'name', 'alternate_names', 'country', 'is_enabled',
-                  'is_checked')
+                  'is_checked', 'request_client')
 
 
 class CitySerializer(serializers.HyperlinkedModelSerializer):
