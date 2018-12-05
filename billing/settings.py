@@ -381,6 +381,9 @@ ADMIN_VIEW_PERMISSION_MODELS = [
     'finances.Order',
 ]
 
+# Django tabbed admin
+TABBED_ADMIN_USE_JQUERY_UI = True
+
 # MB
 MB_SITE_URL = 'https://maxi-booking.com'
 MB_TRIAL_DAYS = 15

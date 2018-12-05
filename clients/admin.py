@@ -297,8 +297,10 @@ class ClientAdmin(
                      'manager__username', 'manager__email',
                      'manager__last_name')
     raw_id_fields = ('country', 'region', 'city')
-    readonly_fields = ('info', 'disabled_at', 'created', 'modified',
-                       'created_by', 'modified_by')
+    readonly_fields = [
+        'info', 'disabled_at', 'created', 'modified', 'created_by',
+        'modified_by'
+    ]
     tab_client = (
         ('General', {
             'fields': ('login', 'login_alias', 'email', 'phone', 'name',
@@ -308,9 +310,11 @@ class ClientAdmin(
             'fields': ('country', 'region', 'city', 'address', 'postal_code')
         }),
         ('Options', {
-            'fields':
-            ('status', 'installation', 'trial_activated', 'url', 'disabled_at',
-             'ip', 'created', 'modified', 'created_by', 'modified_by')
+            'fields': [
+                'status', 'installation', 'trial_activated', 'url',
+                'disabled_at', 'ip', 'created', 'modified', 'created_by',
+                'modified_by'
+            ]
         }),
     )
     tab_properties = (
@@ -346,6 +350,25 @@ class ClientAdmin(
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def get_tabs(self, request, obj=None):
+        tabs = super().get_tabs(request, obj)
+        if request.user.is_superuser:
+            return tabs
+        fields = tabs[0][1][-1][1]['fields']
+
+        for title in ('created_by', 'modified_by'):
+            if title in fields:
+                fields.remove(title)
+
+        return tabs
+
+    def get_readonly_fields(self, request, obj=None):
+        parent = super().get_readonly_fields(request, obj)
+        user = request.user
+        if 'manager' not in parent and not user.has_perm('auth.change_user'):
+            parent.append('manager')
+        return parent
 
     def get_search_results(self, request, queryset, search_term):
 

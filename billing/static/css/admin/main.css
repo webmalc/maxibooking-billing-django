@@ -81,6 +81,20 @@ input[type="tel"]:focus {
 .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .ui-tabs .ui-tabs-nav li.ui-tabs-selected a {
   background-color: #79aec8 !important;
+  color: #212121 !important;
+}
+.ui-tabs .ui-tabs-nav .ui-state-default:hover {
+  background-color: #e0e0e0 !important;
+}
+.ui-tabs .ui-tabs-nav .ui-state-default:hover a {
+  color: #212121 !important;
+}
+.ui-tabs .ui-tabs-nav .ui-state-default {
+  background-color: #e6e6e6 !important;
+  color: #555555 !important;
+}
+.ui-tabs .ui-tabs-nav .ui-state-default a {
+  color: #555555 !important;
 }
 .ui-tabs .ui-corner-all,
 .ui-tabs .ui-corner-top,
