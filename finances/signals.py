@@ -9,8 +9,25 @@ from django.utils.translation import ugettext_lazy as _
 from billing.lib.trans import auto_populate
 from clients.tasks import mail_client_task
 
-from .models import Order
+from .models import Discount, Order
 from .tasks import order_notify_task
+
+
+@receiver(pre_save, sender=Discount, dispatch_uid='discount_pre_save')
+def discount_pre_save(sender, **kwargs):
+    """
+    Discount pre save signal
+    """
+    discount = kwargs['instance']
+
+    def generate(discount):
+        discount.generate_code()
+        if Discount.objects.filter(code=discount.code).count():
+            generate(discount)
+        return discount
+
+    if not discount.code:
+        generate(discount)
 
 
 @receiver(pre_save, sender=Order, dispatch_uid='order_pre_save')

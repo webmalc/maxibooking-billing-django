@@ -6,8 +6,8 @@ import arrow
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
-from django.core.validators import (MinLengthValidator, MinValueValidator,
-                                    ValidationError)
+from django.core.validators import (MaxValueValidator, MinLengthValidator,
+                                    MinValueValidator, ValidationError)
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -506,7 +506,10 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         help_text=_(
             'To how many orders per user can this discount be applied'))
     percentage_discount = models.PositiveIntegerField(
-        verbose_name=_('percentage discount'), db_index=True)
+        verbose_name=_('percentage discount'),
+        validators=[MaxValueValidator(100)],
+        db_index=True,
+    )
     code = models.CharField(
         max_length=20,
         blank=True,
@@ -515,6 +518,16 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         validators=[MinLengthValidator(5)],
         help_text=_('The unique code of the discount'),
     )
+
+    def get_code(self, user=None):
+        user = self.user if self.user else user
+        if not user or not user.profile.code:
+            raise ValueError('valid user is not defined')
+        if not self.code:
+            raise ValueError('discount has no code')
+        user_code = user.profile.code
+
+        return '{}-{}'.format(user_code, self.code)
 
     def generate_code(self):
         """
@@ -525,3 +538,10 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         user_id = self.user.id if self.user else 0
         department_id = self.department.id if self.department else 0
         self.code = '{}{}{}'.format(department_id, user_id, code)
+
+    class Meta:
+        permissions = (
+            ('change_own_discount', _('Can change only own discounts')),
+            ('change_department_discount',
+             _('Can change only department discounts')),
+        )

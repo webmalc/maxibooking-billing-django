@@ -11,11 +11,16 @@ from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from billing.models import CommonInfo
 from hotels.models import Country
 
+from .managers import DepartmentManager
+
 
 class Department(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     """
     Users department class
     """
+
+    objects = DepartmentManager()
+
     default_group = models.ForeignKey(
         Group,
         on_delete=models.SET_NULL,

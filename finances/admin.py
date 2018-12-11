@@ -12,9 +12,56 @@ from reversion.admin import VersionAdmin
 from billing.admin import JsonAdmin, ManagerListMixin, TextFieldListFilter
 from finances.systems.lib import BraintreeGateway
 
-from .models import (Order, Price, Service, ServiceCategory, Subscription,
-                     Transaction)
+from .models import (Discount, Order, Price, Service, ServiceCategory,
+                     Subscription, Transaction)
 from .systems import manager
+
+
+@admin.register(Discount)
+class DiscountAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin):
+    """
+    The discount admin interface
+    """
+    user = None
+
+    list_display = ('id', 'title', 'user_code', 'department', 'user',
+                    'percentage_discount', 'number_of_uses', 'start_date',
+                    'end_date')
+    list_display_links = ('id', 'title', 'user_code')
+    list_filter = (
+        'department',
+        'user',
+        ('start_date', DateRangeFilter),
+        ('end_date', DateRangeFilter),
+    )
+    search_fields = ('=pk', 'user__username', 'department__username', 'code')
+
+    readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
+                       'user_code')
+    raw_id_fields = ('department', 'user')
+    form = make_ajax_form(Discount, {
+        'user': 'users',
+        'department': 'departments',
+    })
+    fieldsets = (
+        ('General', {
+            'fields':
+            ('title', 'description', 'percentage_discount', 'number_of_uses',
+             'start_date', 'end_date', 'code', 'user_code')
+        }),
+        ('Options', {
+            'fields': ('department', 'user', 'created', 'modified',
+                       'created_by', 'modified_by')
+        }),
+    )
+    list_select_related = ('department', 'user', 'user__profile')
+
+    def get_queryset(self, request):
+        self.user = request.user
+        return super().get_queryset(request)
+
+    def user_code(self, obj=None):
+        return obj.get_code(self.user)
 
 
 @admin.register(Subscription)

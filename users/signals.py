@@ -7,7 +7,7 @@ from .models import Profile
 @receiver(pre_save, sender=Profile, dispatch_uid='profile_post_save')
 def order_post_save(sender, **kwargs):
     """
-    User`s profile post save
+    Users profile post save
     """
     profile = kwargs['instance']
 

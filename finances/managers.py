@@ -10,7 +10,7 @@ class SubscriptionManager(LookupMixin):
     """"
     The subscription manager
     """
-    lookup_search_fields = ('=pk', '=order__pk', 'client__email',
+    lookup_search_fields = ('id', '=order__pk', 'client__email',
                             'client__name', 'client__login')
 
     def get_active(self, client, pk=None):
@@ -24,7 +24,7 @@ class OrderManager(LookupMixin):
     """"
     Order manager
     """
-    lookup_search_fields = ('pk', 'client__name', 'client__email',
+    lookup_search_fields = ('id', 'client__name', 'client__email',
                             'client__login')
 
     def get_for_payment_system(self, pk):
@@ -55,9 +55,9 @@ class OrderManager(LookupMixin):
         """
         now = arrow.utcnow()
         return self.filter(
-            status__in=('new',
-                        'processing'), expired_date__lte=now.datetime).exclude(
-                            client__status__in=exclude_client_statuses)
+            status__in=('new', 'processing'),
+            expired_date__lte=now.datetime).exclude(
+                client__status__in=exclude_client_statuses)
 
 
 class PriceManager(models.Manager):
@@ -77,7 +77,7 @@ class ServiceManager(LookupMixin):
     Service manager
     """
 
-    lookup_search_fields = ('pk', 'title', 'description', 'type')
+    lookup_search_fields = ('id', 'title', 'description', 'type')
 
     def get_by_period(self, service_type, period, period_units='month'):
         """
