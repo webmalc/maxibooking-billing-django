@@ -6,6 +6,7 @@ from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.views.generic import TemplateView
+from rest_framework_swagger.views import get_swagger_view
 
 from clients.urls import router as clients_router
 from finances.urls import router as finances_router
@@ -23,8 +24,11 @@ urlpatterns = [
     url(r'', include('two_factor.urls', 'two_factor')),
 ]
 
+schema_view = get_swagger_view(title='Billing API')
+
 urlpatterns += i18n_patterns(
     url(r'^ajax_select/', include(ajax_select_urls)),
+    url(r'^swagger/', schema_view),
     url(r'^adminactions/', include('adminactions.urls')),
     url(r'^finances/', include('finances.urls', namespace='finances')),
     url(r'^billing/processing$',

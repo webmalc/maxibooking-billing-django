@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'annoying',
     'tabbed_admin',
     'rangefilter',
+    'rest_framework_swagger',
 
     # mb apps
     'finances',
@@ -103,6 +104,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'billing/templates'),
         ],
+        # 'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
