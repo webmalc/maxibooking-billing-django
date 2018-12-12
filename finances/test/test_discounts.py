@@ -9,7 +9,7 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture()
 def discounts():
     discount = Discount()
-    discount.user_id = 1
+    discount.manager_id = 1
     discount.percentage_discount = 10
     discount.save()
 
@@ -19,6 +19,20 @@ def discounts():
     discount_department.save()
 
     return discount, discount_department
+
+
+def test_discount_set_user(discounts):
+    discount_user = discounts[0]
+    discount_department = discounts[1]
+
+    discount = Discount()
+    discount.created_by_id = 2
+    discount.percentage_discount = 10
+    discount.save()
+
+    assert discount_user.manager_id == 1
+    assert discount_department.manager is None
+    assert discount.manager_id == 2
 
 
 def test_discount_generate_code(discounts):

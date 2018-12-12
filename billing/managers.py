@@ -69,7 +69,6 @@ class DepartmentMixin(models.Manager):
         if self._is_manager(query):
             return query.filter(manager__profile__department=department)
         else:
-
             return query.filter(
                 client__manager__profile__department=department)
 

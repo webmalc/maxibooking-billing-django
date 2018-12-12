@@ -9,7 +9,8 @@ from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 
-from billing.admin import JsonAdmin, ManagerListMixin, TextFieldListFilter
+from billing.admin import (ChangePermissionMixin, JsonAdmin, ManagerListMixin,
+                           TextFieldListFilter)
 from finances.systems.lib import BraintreeGateway
 
 from .models import (Discount, Order, Price, Service, ServiceCategory,
@@ -18,50 +19,56 @@ from .systems import manager
 
 
 @admin.register(Discount)
-class DiscountAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin):
+class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
+                    AjaxSelectAdmin):
     """
     The discount admin interface
     """
     user = None
+    own_perm = 'change_own_discount'
+    department_perm = 'change_department_discount'
 
-    list_display = ('id', 'title', 'user_code', 'department', 'user',
+    list_display = ('id', 'title', 'manager_code', 'department', 'manager',
                     'percentage_discount', 'number_of_uses', 'start_date',
                     'end_date')
     list_display_links = ('id', 'title', 'user_code')
     list_filter = (
         'department',
-        'user',
+        'manager',
         ('start_date', DateRangeFilter),
         ('end_date', DateRangeFilter),
     )
-    search_fields = ('=pk', 'user__username', 'department__username', 'code')
+    search_fields = ('=pk', 'manager__username', 'department__title', 'code')
 
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
-                       'user_code')
-    raw_id_fields = ('department', 'user')
+                       'manager_code')
+    raw_id_fields = ('department', 'manager')
     form = make_ajax_form(Discount, {
-        'user': 'users',
+        'manager': 'users',
         'department': 'departments',
     })
     fieldsets = (
         ('General', {
             'fields':
             ('title', 'description', 'percentage_discount', 'number_of_uses',
-             'start_date', 'end_date', 'code', 'user_code')
+             'start_date', 'end_date', 'code', 'manager_code')
         }),
         ('Options', {
-            'fields': ('department', 'user', 'created', 'modified',
+            'fields': ('department', 'manager', 'created', 'modified',
                        'created_by', 'modified_by')
         }),
     )
-    list_select_related = ('department', 'user', 'user__profile')
+    list_select_related = ('department', 'manager', 'manager__profile')
 
     def get_queryset(self, request):
         self.user = request.user
         return super().get_queryset(request)
 
-    def user_code(self, obj=None):
+    def manager_code(self, obj=None):
         return obj.get_code(self.user)
+
+    # def has_delete_permission(self, request, obj=None):
+    #     return True
 
 
 @admin.register(Subscription)

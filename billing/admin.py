@@ -81,9 +81,17 @@ class ChangePermissionBaseMixin():
     def _get_permissions(self, request):
         opts = self.opts
         user = request.user
-        own_perm = user.has_perm('{}.change_own'.format(opts.app_label))
-        department_perm = user.has_perm('{}.change_department'.format(
-            opts.app_label))
+        own_perm_code = getattr(self, 'own_perm', 'change_own')
+        department_perm_code = getattr(
+            self,
+            'department_perm',
+            'change_department',
+        )
+        own_perm = user.has_perm('{}.{}'.format(opts.app_label, own_perm_code))
+        department_perm = user.has_perm('{}.{}'.format(
+            opts.app_label,
+            department_perm_code,
+        ))
         return (own_perm, department_perm)
 
     def check_change_permission(self, result, request, obj=None):

@@ -30,6 +30,17 @@ def discount_pre_save(sender, **kwargs):
         generate(discount)
 
 
+@receiver(post_save, sender=Discount, dispatch_uid='discount_post_save')
+def discount_post_save(sender, **kwargs):
+    """
+    Discount post save signal
+    """
+    discount = kwargs['instance']
+    if not discount.department and not discount.manager:
+        discount.manager = discount.created_by
+        discount.save()
+
+
 @receiver(pre_save, sender=Order, dispatch_uid='order_pre_save')
 def order_pre_save(sender, **kwargs):
     """

@@ -24,8 +24,8 @@ from finances.systems.lib import BraintreeGateway
 from hotels.models import Country
 from users.models import Department
 
-from .managers import (OrderManager, PriceManager, ServiceManager,
-                       SubscriptionManager)
+from .managers import (DiscountManager, OrderManager, PriceManager,
+                       ServiceManager, SubscriptionManager)
 from .validators import validate_price_periods
 
 
@@ -479,16 +479,19 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     """
     Discount class
     """
+
+    objects = DiscountManager()
+
     start_date = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('begin date'))
     end_date = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('end date'))
-    user = models.ForeignKey(
+    manager = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        verbose_name=_('user'),
+        verbose_name=_('manager'),
         db_index=True,
-        related_name='users',
+        related_name='managers',
         null=True,
         blank=True)
     department = models.ForeignKey(
@@ -520,7 +523,7 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     )
 
     def get_code(self, user=None):
-        user = self.user if self.user else user
+        user = self.manager if self.manager else user
         if not user or not user.profile.code:
             raise ValueError('valid user is not defined')
         if not self.code:
@@ -535,7 +538,7 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         """
         code = ''.join(
             random.choices(string.ascii_lowercase + string.digits, k=8))
-        user_id = self.user.id if self.user else 0
+        user_id = self.manager.id if self.manager else 0
         department_id = self.department.id if self.department else 0
         self.code = '{}{}{}'.format(department_id, user_id, code)
 

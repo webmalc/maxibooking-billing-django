@@ -2,13 +2,33 @@ import arrow
 from django.apps import apps
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
-from billing.managers import LookupMixin
+from billing.managers import DepartmentMixin, LookupMixin
+
+
+class DiscountManager(DepartmentMixin):
+    """
+    Discounts manager
+    """
+
+    def filter_by_department(self, user, query=None):
+        """
+        Get entries filtered by manager department
+        """
+        if not query:
+            query = self.all()
+        department = user.department
+
+        if not department:
+            return query.none()
+
+        return query.filter(Q(department=department) | Q(manager=user))
 
 
 class SubscriptionManager(LookupMixin):
-    """"
-    The subscription manager
+    """
+    Subscriptions manager
     """
     lookup_search_fields = ('id', '=order__pk', 'client__email',
                             'client__name', 'client__login')
@@ -22,7 +42,7 @@ class SubscriptionManager(LookupMixin):
 
 class OrderManager(LookupMixin):
     """"
-    Order manager
+    Orders manager
     """
     lookup_search_fields = ('id', 'client__name', 'client__email',
                             'client__login')
