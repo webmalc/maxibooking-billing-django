@@ -36,12 +36,12 @@ class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
                     'end_date')
 
     list_display_links = ('id', 'title', 'user_code')
-    list_filter = (
+    list_filter = [
         'department',
         'manager',
         ('start_date', DateRangeFilter),
         ('end_date', DateRangeFilter),
-    )
+    ]
     search_fields = ('=pk', 'manager__username', 'department__title', 'code')
 
     readonly_fields = [
@@ -87,6 +87,12 @@ class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
         if not self._get_change_perm(request):
             return None
         return super().get_actions(request)
+
+    def get_list_filter(self, request):
+        filters = super().get_list_filter(request)
+        if not self._get_change_perm(request):
+            filters = filters[2:]
+        return filters
 
     def get_readonly_fields(self, request, obj=None):
         fields = list(super().get_readonly_fields(request, obj=None))

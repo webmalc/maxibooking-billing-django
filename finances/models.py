@@ -569,6 +569,16 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         department_id = self.department.id if self.department else 0
         self.code = '{}{}{}'.format(department_id, user_id, code)
 
+    def clean(self):
+        """
+        Department validation
+        """
+        if not self.start_date or not self.end_date:
+            return None
+        if self.start_date > self.end_date:
+            raise ValidationError('The start date cannot be greater \
+than the end date')
+
     class Meta:
         permissions = (
             ('change_own_discount', _('Can change only own discounts')),
