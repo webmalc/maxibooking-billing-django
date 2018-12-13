@@ -366,7 +366,8 @@ class ClientAdmin(
     def get_readonly_fields(self, request, obj=None):
         parent = super().get_readonly_fields(request, obj)
         user = request.user
-        if 'manager' not in parent and not user.has_perm('auth.change_user'):
+        if 'manager' not in parent and \
+           not user.has_perm('clients.change_client'):
             parent.append('manager')
         return parent
 
