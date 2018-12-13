@@ -1,7 +1,10 @@
+from functools import wraps
+
 import jsonpickle
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
@@ -31,6 +34,7 @@ class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
     list_display = ('id', 'title', 'manager_code', 'department', 'manager',
                     'percentage_discount', 'number_of_uses', 'start_date',
                     'end_date')
+
     list_display_links = ('id', 'title', 'user_code')
     list_filter = (
         'department',
@@ -40,8 +44,9 @@ class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
     )
     search_fields = ('=pk', 'manager__username', 'department__title', 'code')
 
-    readonly_fields = ('created', 'modified', 'created_by', 'modified_by',
-                       'manager_code')
+    readonly_fields = [
+        'created', 'modified', 'created_by', 'modified_by', 'manager_code'
+    ]
     raw_id_fields = ('department', 'manager')
     form = make_ajax_form(Discount, {
         'manager': 'users',
@@ -60,15 +65,69 @@ class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
     )
     list_select_related = ('department', 'manager', 'manager__profile')
 
+    def _get_change_perm(self, request):
+        return request.user.has_perm('finances.change_discount')
+
+    def _history_perm(func):
+        """
+        Decorator for the VersionAdmin methods
+        """
+
+        @wraps(func)
+        def wrapped(instance, request, *args, **kwargs):
+            if not instance._get_change_perm(request):
+                raise PermissionDenied()
+            result = func(instance, request, *args, **kwargs)
+
+            return result
+
+        return wrapped
+
+    def get_actions(self, request):
+        if not self._get_change_perm(request):
+            return None
+        return super().get_actions(request)
+
+    def get_readonly_fields(self, request, obj=None):
+        fields = list(super().get_readonly_fields(request, obj=None))
+        change_perm = self._get_change_perm(request)
+        own, department = self._get_permissions(request)
+        if not change_perm and not department:
+            fields.extend(['manager', 'department'])
+        return fields
+
+    @_history_perm
+    def recover_view(self, request, version_id, extra_context=None):
+        return super().recover_view(request, version_id, extra_context)
+
+    @_history_perm
+    def history_view(self, request, object_id, extra_context=None):
+        return super().history_view(request, object_id, extra_context)
+
+    @_history_perm
+    def recoverlist_view(self, request, extra_context=None):
+        return super().recoverlist_view(request, extra_context)
+
     def get_queryset(self, request):
         self.user = request.user
-        return super().get_queryset(request)
+        query = super().get_queryset(request)
+        change = self._get_change_perm(request)
+        return self.fetch_queryset(request, query, change)
 
     def manager_code(self, obj=None):
         return obj.get_code(self.user)
 
-    # def has_delete_permission(self, request, obj=None):
-    #     return True
+    def has_delete_permission(self, request, obj=None):
+        user = request.user
+        if user.has_perm('finances.delete_any_discount'):
+            return True
+        return obj and obj.manager == user
+
+    def has_view_permission(self, request, obj=None):
+        if not obj or obj.department == request.user.department:
+            return True
+        else:
+            return False
 
 
 @admin.register(Subscription)

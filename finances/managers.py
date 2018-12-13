@@ -12,6 +12,16 @@ class DiscountManager(DepartmentMixin):
     Discounts manager
     """
 
+    def filter_by_manager(self, user, query=None):
+        """
+        Get entries filtered by manager
+        """
+        if not query:
+            query = self.all()
+        department = user.department
+
+        return query.filter(Q(department=department) | Q(manager=user))
+
     def filter_by_department(self, user, query=None):
         """
         Get entries filtered by manager department
@@ -23,7 +33,9 @@ class DiscountManager(DepartmentMixin):
         if not department:
             return query.none()
 
-        return query.filter(Q(department=department) | Q(manager=user))
+        return query.filter(
+            Q(department=department) | Q(manager=user)
+            | Q(manager__profile__department=department))
 
 
 class SubscriptionManager(LookupMixin):

@@ -381,6 +381,7 @@ REST_FRAMEWORK_EXTENSIONS = {
 # View permission
 ADMIN_VIEW_PERMISSION_MODELS = [
     'finances.Order',
+    'finances.Discount',
 ]
 
 # Django tabbed admin

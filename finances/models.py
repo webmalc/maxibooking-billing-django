@@ -508,9 +508,10 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         default=1,
         help_text=_(
             'To how many orders per user can this discount be applied'))
-    percentage_discount = models.PositiveIntegerField(
+    percentage_discount = models.FloatField(
         verbose_name=_('percentage discount'),
-        validators=[MaxValueValidator(100)],
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(100)],
         db_index=True,
     )
     code = models.CharField(
@@ -521,6 +522,32 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         validators=[MinLengthValidator(5)],
         help_text=_('The unique code of the discount'),
     )
+
+    def update_prices(self):
+        """
+        Update discount prices according related department
+        """
+        if self.department:
+            department = self.department
+        elif self.manager:
+            department = self.manager.profile.department
+        else:
+            department = None
+
+        if not department:
+            return self
+
+        if department.max_percentage_discount:
+            self.percentage_discount = min(
+                self.percentage_discount,
+                department.max_percentage_discount,
+            )
+        if department.min_percentage_discount:
+            self.percentage_discount = max(
+                self.percentage_discount,
+                department.min_percentage_discount,
+            )
+        return self
 
     def get_code(self, user=None):
         user = self.manager if self.manager else user
@@ -545,6 +572,7 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
     class Meta:
         permissions = (
             ('change_own_discount', _('Can change only own discounts')),
+            ('delete_any_discount', _('Can delete any discounts')),
             ('change_department_discount',
              _('Can change only department discounts')),
         )

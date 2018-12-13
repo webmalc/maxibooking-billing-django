@@ -26,6 +26,7 @@ def discount_pre_save(sender, **kwargs):
             generate(discount)
         return discount
 
+    discount.update_prices()
     if not discount.code:
         generate(discount)
 
@@ -38,6 +39,7 @@ def discount_post_save(sender, **kwargs):
     discount = kwargs['instance']
     if not discount.department and not discount.manager:
         discount.manager = discount.created_by
+        discount.update_prices()
         discount.save()
 
 

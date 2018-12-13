@@ -3,7 +3,8 @@ import string
 
 from annoying.fields import AutoOneToOneField
 from django.contrib.auth.models import Group, User
-from django.core.validators import MaxValueValidator, MinLengthValidator
+from django.core.validators import (MaxValueValidator, MinLengthValidator,
+                                    MinValueValidator, ValidationError)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
@@ -45,15 +46,17 @@ class Department(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         related_name='admin_departments',
         null=True,
         blank=True)
-    max_percentage_discount = models.PositiveIntegerField(
+    max_percentage_discount = models.FloatField(
         verbose_name=_('maximum percentage discount'),
-        validators=[MaxValueValidator(100)],
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(100)],
         db_index=True,
         null=True,
         blank=True)
-    min_percentage_discount = models.PositiveIntegerField(
+    min_percentage_discount = models.FloatField(
         verbose_name=_('minimum percentage discount'),
-        validators=[MaxValueValidator(100)],
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(100)],
         db_index=True,
         null=True,
         blank=True)
@@ -64,6 +67,17 @@ class Department(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         null=True,
         blank=True,
         db_index=True)
+
+    def clean(self):
+        """
+        Department validation
+        """
+        if not self.max_percentage_discount or\
+           not self.min_percentage_discount:
+            return None
+        if self.min_percentage_discount > self.max_percentage_discount:
+            raise ValidationError('The minimum discount cannot be greater \
+than the maximum discount')
 
     class Meta:
         ordering = ['title']
