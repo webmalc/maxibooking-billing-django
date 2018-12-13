@@ -259,7 +259,7 @@ msgstr "Успешная регистрация"
 #, python-format
 msgid ""
 "\n"
-"    <p>Hello, %(name)s!</p>\n"
+"    <p>Hello!</p>\n"
 "    <p>Thank you for registering in 'Maxibooking'!</p>\n"
 "    <p>To enter the program, please follow the link: %(url)s\n"
 "        and use the user's credentials:</p>\n"
