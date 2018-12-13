@@ -346,8 +346,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                         website = None
 
                     mail_client_task.delay(
-                        subject='{}, {}'.format(client.name,
-                                                _('Welcome to MaxiBooking!')),
+                        subject=_('Welcome to MaxiBooking!'),
                         template='emails/registration.html',
                         data={
                             'login': client.login,
