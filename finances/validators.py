@@ -3,6 +3,11 @@ from django.core.validators import ValidationError
 from django.db.models import Q
 
 
+def validate_code(value):
+    if '~' in value:
+        raise ValidationError('~ symbol is not allowed')
+
+
 def validate_price_periods(p):
     # validate default country price
     model = apps.get_model('finances.Price')

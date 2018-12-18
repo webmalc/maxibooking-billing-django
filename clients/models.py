@@ -434,7 +434,7 @@ lowercase letters, numbers, and "-" character.'),
         verbose_name=_('manager'),
         related_name="%(app_label)s_%(class)s_manager")
     manager_code = models.CharField(
-        max_length=10,
+        max_length=50,
         blank=True,
         null=True,
         validators=[MinLengthValidator(3)])

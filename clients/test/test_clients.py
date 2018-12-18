@@ -160,6 +160,50 @@ def test_client_create_by_admin(admin_client):
     json_contains(response, 'new@user.mail')
 
 
+def test_client_create_with_invalide_code_by_admin(admin_client, discounts):
+    data = json.dumps({
+        'email': 'new@user.mail',
+        'country': 'af',
+        'manager_code': 'test12_code~discount~112',
+    })
+    response = admin_client.post(
+        reverse('client-list'), data=data, content_type="application/json")
+    response_json = response.json()
+    client = Client.objects.get(pk=response_json['id'])
+
+    assert client.manager is None
+
+
+def test_client_create_with_discount_by_admin(admin_client, discounts):
+    discount = discounts[0]
+    discount.percentage_discount = 23.4
+    discount.code = 'discount'
+    discount.save()
+
+    data = json.dumps({
+        'email': 'new@user.mail',
+        'country': 'af',
+        'manager_code': 'test_code~discount',
+    })
+    response = admin_client.post(
+        reverse('client-list'), data=data, content_type="application/json")
+    response_json = response.json()
+    client = Client.objects.get(pk=response_json['id'])
+    snapshot = client.discount
+
+    assert client.manager.username == 'test'
+    assert snapshot.percentage_discount == 23.4
+    assert snapshot.start_date == discount.start_date
+    assert snapshot.original_discount == discount
+
+    snapshot.percentage_discount = 11.1
+    snapshot.save()
+    client.save()
+
+    client = Client.objects.get(pk=client.id)
+    assert snapshot.percentage_discount == 11.1
+
+
 def test_client_tariff_update_by_user(client):
     response = client.post(
         reverse('client-tariff-update', args=['user-one']),

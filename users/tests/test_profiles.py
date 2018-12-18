@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth.models import Group, User
+from django.core.validators import ValidationError
 
 from clients.models import Client
 from users.models import BillingUser, Department
@@ -15,6 +16,14 @@ def test_profile_code_generate():
     )
     assert user.profile is not None
     assert user.profile.code[0] == str(user.id)
+
+
+def test_profile_code_validation():
+    admin = BillingUser.objects.get(username='admin')
+    admin.profile.code = 'adfa~'
+    with pytest.raises(ValidationError) as e:
+        admin.profile.full_clean()
+    assert '~ symbol is not allowed' in str(e)
 
 
 def test_query_filter_by_department():

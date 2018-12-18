@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
+from billing.lib.utils import get_code
 from billing.managers import DepartmentMixin, LookupMixin
 
 
@@ -11,6 +12,21 @@ class DiscountManager(DepartmentMixin):
     """
     Discounts manager
     """
+
+    def get_by_code(self, code):
+        """
+        Get discount by the code
+        """
+        try:
+            user, code = get_code(code)
+        except ValueError:
+            return None
+        if not code:
+            return None
+        try:
+            return self.get(code=code)
+        except apps.get_model('finances', 'Discount').DoesNotExist:
+            return None
 
     def filter_by_manager(self, user, query=None):
         """

@@ -10,9 +10,10 @@ from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 
 from billing.models import CommonInfo
+from finances.validators import validate_code
 from hotels.models import Country
 
-from .managers import DepartmentManager
+from .managers import DepartmentManager, ProfileManager
 
 
 class Department(CommonInfo, TimeStampedModel, TitleDescriptionModel):
@@ -87,6 +88,9 @@ class Profile(CommonInfo, TimeStampedModel):
     """
     User profile class
     """
+
+    objects = ProfileManager()
+
     user = AutoOneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -105,7 +109,7 @@ class Profile(CommonInfo, TimeStampedModel):
         blank=True,
         null=False,
         unique=True,
-        validators=[MinLengthValidator(3)],
+        validators=[MinLengthValidator(3), validate_code],
         help_text=_('The unique user`s code'),
     )
 

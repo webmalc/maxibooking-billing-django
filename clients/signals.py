@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from finances.models import ClientDiscount, Discount
 from users.models import Profile
 
 from .models import Client, ClientWebsite
@@ -19,11 +20,8 @@ def client_pre_save(sender, **kwargs):
         client.generate_login()
 
     if client.manager_code and not client.manager:
-        try:
-            profile = Profile.objects.get(code=client.manager_code)
-            client.manager = profile.user
-        except Profile.DoesNotExist:
-            pass
+        user = Profile.objects.get_user_by_code(client.manager_code)
+        client.manager = user
 
 
 @receiver(post_save, sender=Client, dispatch_uid='client_post_save')
@@ -33,6 +31,10 @@ def client_post_save(sender, **kwargs):
     """
     client = kwargs['instance']
     tracker = client.tracker
+
+    if client.manager_code and not getattr(client, 'discount', None):
+        discount = Discount.objects.get_by_code(client.manager_code)
+        ClientDiscount.client_spanshot(discount, client)
 
     if tracker.has_changed('login') or tracker.has_changed('login_alias'):
         invalidate_mb_client_login_cache.delay(client_id=client.id)

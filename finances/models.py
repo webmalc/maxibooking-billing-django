@@ -26,7 +26,7 @@ from users.models import Department
 
 from .managers import (DiscountManager, OrderManager, PriceManager,
                        ServiceManager, SubscriptionManager)
-from .validators import validate_price_periods
+from .validators import validate_code, validate_price_periods
 
 
 class ServiceCategory(CommonInfo, TimeStampedModel, TitleDescriptionModel):
@@ -475,12 +475,7 @@ class Subscription(CommonInfo, TimeStampedModel):
         ordering = ['-created']
 
 
-class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
-    """
-    Discount class
-    """
-
-    objects = DiscountManager()
+class DiscountBase(CommonInfo, TimeStampedModel, TitleDescriptionModel):
 
     start_date = models.DateTimeField(
         db_index=True, null=True, blank=True, verbose_name=_('begin date'))
@@ -491,14 +486,14 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         on_delete=models.SET_NULL,
         verbose_name=_('manager'),
         db_index=True,
-        related_name='managers',
+        related_name='%(app_label)s_%(class)s_discounts',
         null=True,
         blank=True)
     department = models.ForeignKey(
         Department,
         on_delete=models.SET_NULL,
         verbose_name=_('department'),
-        related_name='departments',
+        related_name='%(app_label)s_%(class)s_discounts',
         null=True,
         blank=True,
         db_index=True)
@@ -519,9 +514,30 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         blank=True,
         null=False,
         unique=True,
-        validators=[MinLengthValidator(5)],
+        validators=[MinLengthValidator(5), validate_code],
         help_text=_('The unique code of the discount'),
     )
+
+    def clean(self):
+        """
+        Department validation
+        """
+        if not self.start_date or not self.end_date:
+            return None
+        if self.start_date > self.end_date:
+            raise ValidationError('The start date cannot be greater \
+than the end date')
+
+    class Meta:
+        abstract = True
+
+
+class Discount(DiscountBase):
+    """
+    Discount class
+    """
+
+    objects = DiscountManager()
 
     def update_prices(self):
         """
@@ -557,7 +573,7 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
             raise ValueError('discount has no code')
         user_code = user.profile.code
 
-        return '{}-{}'.format(user_code, self.code)
+        return '{}~{}'.format(user_code, self.code)
 
     def generate_code(self):
         """
@@ -569,15 +585,8 @@ class Discount(CommonInfo, TimeStampedModel, TitleDescriptionModel):
         department_id = self.department.id if self.department else 0
         self.code = '{}{}{}'.format(department_id, user_id, code)
 
-    def clean(self):
-        """
-        Department validation
-        """
-        if not self.start_date or not self.end_date:
-            return None
-        if self.start_date > self.end_date:
-            raise ValidationError('The start date cannot be greater \
-than the end date')
+    def __str__(self):
+        return '#{} {}'.format(self.id, self.title)
 
     class Meta:
         permissions = (
@@ -586,3 +595,39 @@ than the end date')
             ('change_department_discount',
              _('Can change only department discounts')),
         )
+
+
+class ClientDiscount(DiscountBase):
+    """
+    Discount spanshot for client
+    """
+    client = models.OneToOneField(
+        Client, on_delete=models.CASCADE, related_name='discount')
+    original_discount = models.ForeignKey(
+        Discount,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='client_discount')
+
+    @staticmethod
+    def client_spanshot(discount, client):
+        if not discount:
+            return None
+        snapshot = ClientDiscount()
+        values = discount.__dict__.copy()
+        remove = [
+            '_state', 'id', 'created', 'updated', 'created_by_id',
+            'updated_by_id'
+        ]
+        for k in remove:
+            values.pop(k, None)
+        snapshot.__dict__.update(values)
+        try:
+            snapshot.client = client
+            snapshot.original_discount_id = discount.id
+            snapshot.full_clean()
+            snapshot.save()
+            return snapshot
+        except ValidationError:
+            return None

@@ -18,7 +18,7 @@ from billing.admin import (ArchorAdminMixin, ChangeOwnInlineMixin,
                            DictAdminMixin, ManagerInlineListMixin,
                            ShowAllInlineAdminMixin, TextFieldListFilter)
 from billing.models import Comment
-from finances.models import Order
+from finances.models import ClientDiscount, Order
 from hotels.models import Property
 
 from .admin_filters import ClientIsPaidListFilter
@@ -272,6 +272,21 @@ class WebsiteInlineAdmin(admin.StackedInline):
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
 
 
+class DiscountInlineAdmin(admin.StackedInline):
+    """
+    This class represents the administration interface
+    for client`s website information.
+    """
+    model = ClientDiscount
+    fields = ('title', 'percentage_discount', 'start_date', 'end_date',
+              'number_of_uses', 'code', 'manager', 'department',
+              'original_discount', 'created', 'modified', 'created_by',
+              'modified_by')
+    readonly_fields = ('title', 'code', 'department', 'manager', 'created',
+                       'original_discount', 'modified', 'created_by',
+                       'modified_by')
+
+
 @admin.register(Client)
 class ClientAdmin(
         ChangePermissionMixin,
@@ -336,6 +351,7 @@ class ClientAdmin(
     tab_auth = (ClientAuthInlineAdmin, )
     tab_orders = (OrderInlineAdmin, )
     tab_website = (WebsiteInlineAdmin, )
+    tab_discount = (DiscountInlineAdmin, )
     tabs = (
         ('Client', tab_client),
         ('Properties', tab_properties),
@@ -345,6 +361,7 @@ class ClientAdmin(
         ('Sales', tab_sales),
         ('Orders', tab_orders),
         ('Website', tab_website),
+        ('Discount', tab_discount),
     )
 
     form = make_ajax_form(Client, {

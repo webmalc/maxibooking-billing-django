@@ -1,4 +1,5 @@
 import pytest
+from django.core.validators import ValidationError
 
 from finances.models import Discount
 from users.models import BillingUser
@@ -6,19 +7,12 @@ from users.models import BillingUser
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture()
-def discounts():
-    discount = Discount()
-    discount.manager_id = 1
-    discount.percentage_discount = 10
-    discount.save()
-
-    discount_department = Discount()
-    discount_department.department_id = 1
-    discount_department.percentage_discount = 10
-    discount_department.save()
-
-    return discount, discount_department
+def test_discount_code_validation(discounts):
+    discount = discounts[0]
+    discount.code = 'adfa~'
+    with pytest.raises(ValidationError) as e:
+        discount.full_clean()
+    assert '~ symbol is not allowed' in str(e)
 
 
 def test_discount_set_user(discounts):
@@ -51,9 +45,9 @@ def test_discount_get_code(discounts):
     user_one = BillingUser.objects.get(pk=1)
     user_two = BillingUser.objects.get(pk=2)
 
-    assert '{}-{}'.format(user_one.profile.code,
+    assert '{}~{}'.format(user_one.profile.code,
                           discount_user.code) == discount_user.get_code()
-    assert '{}-{}'.format(
+    assert '{}~{}'.format(
         user_one.profile.code,
         discount_user.code) == discount_user.get_code(user_two)
 
@@ -61,10 +55,10 @@ def test_discount_get_code(discounts):
         discount_department.get_code()
     assert 'valid user is not defined' in str(e.value)
 
-    assert '{}-{}'.format(
+    assert '{}~{}'.format(
         user_one.profile.code,
         discount_department.code) == discount_department.get_code(user_one)
 
-    assert '{}-{}'.format(
+    assert '{}~{}'.format(
         user_two.profile.code,
         discount_department.code) == discount_department.get_code(user_two)

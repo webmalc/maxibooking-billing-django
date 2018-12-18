@@ -7,7 +7,7 @@ from django.core.validators import ValidationError
 from moneyed import EUR, RUB, Money
 
 from clients.models import Client
-from finances.models import Order, Price, Service
+from finances.models import Discount, Order, Price, Service
 from hotels.models import Country
 from users.models import Department
 
@@ -21,6 +21,24 @@ def django_db_setup(django_db_setup, django_db_blocker):
             'tests/service_categories', 'tests/services', 'tests/auth',
             'tests/client_services', 'tests/transactions', 'tests/companies',
             'tests/sales_statuses', 'tests/refusal_reasons')
+
+
+@pytest.fixture()
+def discounts():
+    discount = Discount()
+    discount.title = 'user_discount'
+    discount.manager_id = 1
+    discount.start_date = arrow.utcnow().shift(days=-1).datetime
+    discount.percentage_discount = 10
+    discount.save()
+
+    discount_department = Discount()
+    discount.title = 'department_discount'
+    discount_department.department_id = 1
+    discount_department.percentage_discount = 10
+    discount_department.save()
+
+    return discount, discount_department
 
 
 @pytest.fixture()
