@@ -1,16 +1,66 @@
 import arrow
 import pytest
-from billing.lib.test import json_contains
-from clients.models import Client, ClientRu, ClientService, Company
-from clients.tasks import client_services_update
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from moneyed import EUR, RUB, Money
 
-from ..models import Order, Price, Service
+from billing.lib.test import json_contains
+from clients.models import Client, ClientRu, ClientService, Company
+from clients.tasks import client_services_update
+
+from ..models import ClientDiscount, Order, Price, Service
 from ..tasks import orders_clients_disable, orders_payment_notify
 
 pytestmark = pytest.mark.django_db
+
+
+def test_order_apply_discount(make_orders, discounts):
+    discount = discounts[0]
+    discount.percentage_discount = 23.42
+    discount.save()
+    order = Order.objects.get(pk=1)
+    client = order.client
+    ClientDiscount.client_spanshot(discount, client)
+
+    assert order.apply_discount(order.price) == Money(9572.5, EUR)
+    assert order.client.discount.remaining_uses == 0
+    assert order.discount == order.client.discount
+    assert order.apply_discount(order.price) == Money(9572.5, EUR)
+    assert order.client.discount.usage_count == 1
+
+    order = Order.objects.get(pk=2)
+    order.client = client
+    order.price = Money(100, EUR)
+    order.save()
+
+    assert order.apply_discount(order.price) == Money(100, EUR)
+
+
+def test_order_apply_discount_without_uses(make_orders, discounts):
+    discount = discounts[0]
+    discount.usage_count = 1
+    discount.save()
+    order = Order.objects.get(pk=1)
+    ClientDiscount.client_spanshot(discount, order.client)
+    assert order.apply_discount(order.price) == Money(12500, EUR)
+
+
+def test_order_apply_expired_discount(make_orders, discounts):
+    discount = discounts[0]
+    discount.end_date = arrow.utcnow().shift(days=-1).datetime
+    discount.save()
+    order = Order.objects.get(pk=1)
+    ClientDiscount.client_spanshot(discount, order.client)
+    assert order.apply_discount(order.price) == Money(12500, EUR)
+
+
+def test_order_apply_not_started_discount(make_orders, discounts):
+    discount = discounts[0]
+    discount.start_date = arrow.utcnow().shift(days=+1).datetime
+    discount.save()
+    order = Order.objects.get(pk=1)
+    ClientDiscount.client_spanshot(discount, order.client)
+    assert order.apply_discount(order.price) == Money(12500, EUR)
 
 
 def test_order_client_services_by_category(make_orders):

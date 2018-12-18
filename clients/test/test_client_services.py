@@ -2,14 +2,16 @@ import json
 
 import arrow
 import pytest
+from django.core.urlresolvers import reverse
+from moneyed import EUR, Money
+
 from billing.lib.test import json_contains
 from clients.managers import ServiceCategoryGroup
 from clients.models import Client, ClientService
 from clients.tasks import client_services_activation, client_services_update
-from django.core.urlresolvers import reverse
 from finances.lib.calc import Calc
-from finances.models import Order, Price, Service, ServiceCategory
-from moneyed import EUR, Money
+from finances.models import (ClientDiscount, Order, Price, Service,
+                             ServiceCategory)
 
 pytestmark = pytest.mark.django_db
 
@@ -197,6 +199,57 @@ def test_client_services_update_active_task(admin_client):
     orders = Order.objects.filter(
         client__pk=4, client_services__pk=client_service.pk)
     assert orders.count() == 1
+
+
+def test_client_services_update_with_discount(admin_client, discounts):
+    end = arrow.utcnow().shift(days=+5)
+    service_rooms = Service.objects.get(pk=1)
+    service_other = Service.objects.get(pk=3)
+    service_other.period = 1
+    service_other.save()
+
+    client_service = ClientService()
+    client_service.quantity = 2
+    client_service.begin = arrow.utcnow().shift(months=-1).datetime
+    client_service.end = end.datetime
+    client_service.service = service_rooms
+    client_service.client_id = 4
+    client_service.is_paid = True
+    client_service.save()
+
+    discount = discounts[0]
+    discount.percentage_discount = 15.5
+    discount.save()
+    ClientDiscount.client_spanshot(discount, client_service.client)
+
+    Price.objects.create(price=Money(1000, EUR), service=service_other)
+    client_service_other = ClientService()
+    client_service_other.quantity = 2
+    client_service_other.begin = client_service.begin
+    client_service_other.end = client_service.end
+    client_service_other.service = service_other
+    client_service_other.client_id = 4
+    client_service_other.is_paid = True
+    client_service_other.save()
+
+    assert client_service.price == Calc.factory(client_service).calc()
+    price = service_rooms.prices.get(pk=8)
+    price.price = Money(2500, EUR)
+    price.save()
+
+    client_services_update.delay()
+    client_service.refresh_from_db()
+
+    assert client_service.is_paid is False
+    assert client_service.end == end.shift(months=+3).datetime
+    assert client_service.price == Money(5000, EUR)
+
+    order = Order.objects.get(
+        client__pk=4, client_services__pk=client_service.pk)
+
+    assert order.price == Money(5915, EUR)
+    assert order.status == 'new'
+    assert order.client_services.count() == 2
 
 
 def test_client_services_update_next_task(admin_client):

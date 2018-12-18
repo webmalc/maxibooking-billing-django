@@ -272,7 +272,8 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
                      'client_services__service__title',
                      'client_services__service__description', 'client__name',
                      'client__email', 'client__login')
-    readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
+    readonly_fields = ('discount', 'created', 'modified', 'created_by',
+                       'modified_by')
     raw_id_fields = ('client', )
     inlines = (TransactionInlineAdmin, )
     fieldsets = (
@@ -281,8 +282,8 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
                        'client_services')
         }),
         ('Options', {
-            'fields': ('status', 'paid_date', 'payment_system', 'created',
-                       'modified', 'created_by', 'modified_by')
+            'fields': ('status', 'discount', 'paid_date', 'payment_system',
+                       'created', 'modified', 'created_by', 'modified_by')
         }),
     )
     form = make_ajax_form(Order, {

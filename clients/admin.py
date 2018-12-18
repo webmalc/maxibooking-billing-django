@@ -279,12 +279,12 @@ class DiscountInlineAdmin(admin.StackedInline):
     """
     model = ClientDiscount
     fields = ('title', 'percentage_discount', 'start_date', 'end_date',
-              'number_of_uses', 'code', 'manager', 'department',
+              'number_of_uses', 'usage_count', 'code', 'manager', 'department',
               'original_discount', 'created', 'modified', 'created_by',
               'modified_by')
-    readonly_fields = ('title', 'code', 'department', 'manager', 'created',
-                       'original_discount', 'modified', 'created_by',
-                       'modified_by')
+    readonly_fields = ('title', 'code', 'usage_count', 'department', 'manager',
+                       'created', 'original_discount', 'modified',
+                       'created_by', 'modified_by')
 
 
 @admin.register(Client)
