@@ -120,8 +120,10 @@ class ChangePermissionBaseMixin():
         if not change:
             if own_perm:
                 query = self.model.objects.filter_by_manager(user, query)
-            if department_perm:
+            elif department_perm:
                 query = self.model.objects.filter_by_department(user, query)
+            else:
+                query = query.none()
         return query
 
 

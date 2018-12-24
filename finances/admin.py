@@ -3,18 +3,17 @@ from functools import wraps
 import jsonpickle
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
+from billing.admin import (ChangePermissionMixin, JsonAdmin, ManagerListMixin,
+                           TextFieldListFilter)
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
+from finances.systems.lib import BraintreeGateway
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
-
-from billing.admin import (ChangePermissionMixin, JsonAdmin, ManagerListMixin,
-                           TextFieldListFilter)
-from finances.systems.lib import BraintreeGateway
 
 from .models import (Discount, Order, Price, Service, ServiceCategory,
                      Subscription, Transaction)
@@ -130,7 +129,10 @@ class DiscountAdmin(ChangePermissionMixin, AdminRowActionsMixin, VersionAdmin,
         return obj and obj.manager == user
 
     def has_view_permission(self, request, obj=None):
-        if not obj or obj.department == request.user.department:
+        user = request.user
+        if not user.has_perm('finances.view_discount'):
+            return False
+        if not obj or obj.department == user.department:
             return True
         else:
             return False
