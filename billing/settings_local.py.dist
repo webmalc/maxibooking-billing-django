@@ -104,6 +104,8 @@ MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
         'token': 'token_all'
     }
 }
+#MB_COUNTRIES_OVERWRITE = {'ge': 'ru'}
+
 # Requests timeout (sec)
 MB_TIMEOUT = 1
 # Order expired period (in days)

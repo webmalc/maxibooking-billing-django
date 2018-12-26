@@ -21,3 +21,5 @@ def test_get_settings(settings):
     assert get_settings('TEST_PARAM', client=client) == 'all'
     settings.MB_SETTINGS_BY_COUNTRY['TEST_PARAM']['us'] = {'test': 11}
     assert get_settings('TEST_PARAM', client=client) == {'test': 11}
+    settings.MB_COUNTRIES_OVERWRITE = {'ff': 'ae'}
+    assert get_settings('TEST_PARAM', 'ff') == 'ae_val'

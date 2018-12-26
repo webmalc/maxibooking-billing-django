@@ -18,6 +18,8 @@ def get_settings(param_name, country=None, client=None):
     param = settings.MB_SETTINGS_BY_COUNTRY.get(param_name, None)
     if not param:
         return default()
+
+    country = settings.MB_COUNTRIES_OVERWRITE.get(country, country)
     param_country = param.get(country, None)
     if not param_country:
         param_country = param.get('__all__', None)
