@@ -25,7 +25,7 @@ def test_mail_client_by_email(admin_client, mailoutbox):
     assert 'Registation failed' in mail.alternatives[0][0]
 
 
-def test_mail_client_by_client(admin_client, mailoutbox):
+def test_mail_client_by_client(admin_client, mailoutbox, settings):
     def send(login):
         client = Client.objects.get(login=login)
         mailer.mail_client(
@@ -45,5 +45,13 @@ def test_mail_client_by_client(admin_client, mailoutbox):
     assert len(mailoutbox) == 2
     mail = mailoutbox[1]
     assert mail.recipients() == ['user@rus.com']
+    assert 'Ошибка при регистрации' in mail.subject
+    assert 'Ошибка при регистрации' in mail.alternatives[0][0]
+
+    settings.MB_COUNTRIES_OVERWRITE = {'us': 'ru'}
+    send('user-one')
+    assert len(mailoutbox) == 3
+    mail = mailoutbox[2]
+    assert mail.recipients() == ['user@one.com']
     assert 'Ошибка при регистрации' in mail.subject
     assert 'Ошибка при регистрации' in mail.alternatives[0][0]

@@ -1,6 +1,8 @@
 import re
 
 from annoying.fields import AutoOneToOneField
+from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
+                            CountryBase, DictMixin, GetManagerMixin)
 from colorful.fields import RGBColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -13,13 +15,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from model_utils import FieldTracker
-from phonenumber_field.modelfields import PhoneNumberField
-
-from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
-                            CountryBase, DictMixin, GetManagerMixin)
 from finances.lib.calc import Calc
 from hotels.models import Country
+from model_utils import FieldTracker
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -545,7 +544,9 @@ lowercase letters, numbers, and "-" character.'),
 
     @property
     def language(self):
-        return 'ru' if self.country.tld == 'ru' else 'en'
+        country = self.country.tld
+        country = settings.MB_COUNTRIES_OVERWRITE.get(country, country)
+        return 'ru' if country == 'ru' else 'en'
 
     def clean(self):
         code = getattr(self.sales_status, 'code', None)
