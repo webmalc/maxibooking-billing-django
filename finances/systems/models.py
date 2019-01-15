@@ -5,9 +5,11 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 from time import time
 
-import paypalrestsdk
 import requests
+
+import paypalrestsdk
 import stripe
+from billing.lib.conf import get_settings
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -17,8 +19,6 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
-
-from billing.lib.conf import get_settings
 
 from ..models import Order, Subscription, Transaction
 from .lib import BraintreeGateway
@@ -234,7 +234,6 @@ class SberbankRest(BaseType):
     """
     Sberbank REST payment system
     """
-    pass
     id = 'sberbank-rest'
     name = _('sberbank')
     description = _('Payment by card through the "Sberbank" system')
@@ -308,7 +307,8 @@ class SberbankRest(BaseType):
         """
         Create an order in the payment system
         """
-
+        if not self.order:
+            return False
         return_url = self.request.build_absolute_uri(
             reverse(
                 'finances:payment-system-response', args=('sberbank-rest', )))
@@ -330,7 +330,7 @@ class SberbankRest(BaseType):
     def html(self):
         url = self._create_order()
         if not url:
-            return render_to_string(self.get_template, {
+            return render_to_string(self.template, {
                 'error': True,
                 'request': self.request,
             })
