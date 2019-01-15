@@ -3,11 +3,14 @@ import hmac
 import logging
 from abc import ABC, abstractmethod
 from hashlib import sha512
+from time import time
 
 import paypalrestsdk
+import requests
 import stripe
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.template.loader import render_to_string
@@ -225,6 +228,117 @@ class Bill(BaseType):
     @property
     def pdf(self):
         return HTML(string=self.html).write_pdf()
+
+
+class SberbankRest(BaseType):
+    """
+    Sberbank REST payment system
+    """
+    pass
+    id = 'sberbank-rest'
+    name = _('sberbank')
+    description = _('Payment by card through the "Sberbank" system')
+    template = 'finances/sberbank_rest.html'
+    countries_excluded = []
+    countries = ['ru']
+    currencies = ['RUB']
+    client_filter_fields = ('phone', )
+    payer_local_required = False
+
+    def _conf(self, order=None, request=None):
+        """
+        Load config
+        """
+        self.api_token = settings.SBERBANK_API_TOKEN
+        self.secret_key = settings.SBERBANK_SECRET_KEY
+        self.js_url = settings.SBERBANK_URL
+        self.rest_url = settings.SBERBANK_REST_URL
+        self.rest_user = settings.SBERBANK_REST_USER
+        self.rest_password = settings.SBERBANK_REST_PASSWORD
+        self.logger = logging.getLogger('billing')
+
+    def response(self, request):
+        """
+        Check payment system calback response
+        """
+        orderId = request.GET.get('orderId')
+        if not orderId:
+            orderId = request.GET.get('mbOrder')
+        if not orderId:
+            return HttpResponseBadRequest('ID of the order is not received.')
+
+        rest_order = self._get_order(orderId)
+        if rest_order and int(rest_order.get('orderStatus', 0)) in [1, 2]:
+            order_id = rest_order.get('orderNumber').split('_')[0]
+            self.order = Order.objects.get_for_payment_system(order_id)
+            self._process_order(rest_order)
+
+        return HttpResponseRedirect(reverse('billing-payment-successful'))
+
+    def _make_request(self, path, data):
+        """
+        Make a request to the REST api
+        """
+        url = self.rest_url + path
+        data.update({
+            'userName': self.rest_user,
+            'password': self.rest_password
+        })
+        response = requests.post(url, data=data)
+        if not response.status_code == requests.codes.ok:
+            return False
+        response_data = response.json()
+        self.logger.info('SberbankRest {} response {}'.format(
+            path, response_data))
+
+        if int(response_data.get('errorCode', 0)):
+            return False
+        return response_data
+
+    def _get_order(self, id):
+        """
+        Get an order
+        """
+        return self._make_request(
+            'getOrderStatusExtended.do',
+            {'orderId': id},
+        )
+
+    def _create_order(self) -> str:
+        """
+        Create an order in the payment system
+        """
+
+        return_url = self.request.build_absolute_uri(
+            reverse(
+                'finances:payment-system-response', args=('sberbank-rest', )))
+        fail_url = self.request.build_absolute_uri(reverse('billing-fail'))
+        order = self._make_request(
+            'register.do',
+            {
+                'orderNumber': '{}_{}'.format(self.order.id, time()),
+                'amount': int(self.order.price.amount * 100),
+                'returnUrl': return_url,
+                'failUrl': fail_url
+            },
+        )
+        if order:
+            return order['formUrl']
+        return False
+
+    @property
+    def html(self):
+        url = self._create_order()
+        if not url:
+            return render_to_string(self.get_template, {
+                'error': True,
+                'request': self.request,
+            })
+
+        return render_to_string(self.get_template, {
+            'url': url,
+            'request': self.request,
+        })
 
 
 class Sberbank(BaseType):

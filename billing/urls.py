@@ -34,6 +34,12 @@ urlpatterns += i18n_patterns(
     url(r'^billing/processing$',
         TemplateView.as_view(template_name='billing/processing.html'),
         name='billing-processing'),
+    url(r'^billing/payment-successful$',
+        TemplateView.as_view(template_name='billing/payment_successful.html'),
+        name='billing-payment-successful'),
+    url(r'^billing/fail$',
+        TemplateView.as_view(template_name='billing/fail.html'),
+        name='billing-fail'),
     url(r'^', include(router.urls)),
 )
 

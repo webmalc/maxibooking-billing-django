@@ -41,7 +41,12 @@ PAYPAL_SECRET = 'paypal_secret'
 # Sberbank
 SBERBANK_API_TOKEN = 'sberbank_api_token'
 SBERBANK_SECRET_KEY = 'sberbank_secret_key'
-SBERBANK_URL = 'http://sberbank.url'
+SBERBANK_BASE_URL = 'http://sberbank.url'
+SBERBANK_URL = SBERBANK_BASE_URL + 'docsite/assets/js/ipay.js'
+
+SBERBANK_REST_USER = 'sberbank-api'
+SBERBANK_REST_PASSWORD = 'sberbank'
+SBERBANK_REST_URL = SBERBANK_BASE_URL + '/rest/'
 
 # Stripe
 MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {

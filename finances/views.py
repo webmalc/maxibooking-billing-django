@@ -15,9 +15,9 @@ from .lib.calc import Calc
 from .lib.calc import Exception as CalcException
 from .models import Order, Price, Service, ServiceCategory, Transaction
 from .serializers import (CalcQuerySerializer, OrderSerializer,
-                          PaymentSystemSerializer, PriceSerializer,
-                          ServiceCategorySerializer, ServiceSerializer,
-                          TransactionSerializer)
+                          PaymentSystemListSerializer, PaymentSystemSerializer,
+                          PriceSerializer, ServiceCategorySerializer,
+                          ServiceSerializer, TransactionSerializer)
 from .systems import manager
 
 
@@ -31,7 +31,7 @@ class PaymentSystemViewSet(viewsets.ViewSet):
     def list(self, request):
         entries = manager.systems_list(
             request.query_params.get('order', None), request=request)
-        serializer = PaymentSystemSerializer(
+        serializer = PaymentSystemListSerializer(
             instance=entries.values(), many=True)
 
         return Response(serializer.data)

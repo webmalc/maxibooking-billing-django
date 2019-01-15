@@ -19,15 +19,21 @@ class CalcQuerySerializer(serializers.Serializer):
     country = serializers.CharField(max_length=2, min_length=2)
 
 
-class PaymentSystemSerializer(serializers.Serializer):
+class PaymentSystemListSerializer(serializers.Serializer):
     """
-    PaymentSystem serializer
+    PaymentSystem list serializer
     """
     id = serializers.CharField()
     name = serializers.CharField()
     description = serializers.CharField()
     countries = serializers.ListField()
     countries_excluded = serializers.ListField()
+
+
+class PaymentSystemSerializer(PaymentSystemListSerializer):
+    """
+    PaymentSystem serializer
+    """
     html = serializers.CharField()
 
 

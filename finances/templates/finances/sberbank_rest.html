@@ -1,0 +1,23 @@
+{% load i18n %} {% with host=request.scheme|add:'://'|add:request.get_host %}
+<html lang="ru" dir="ltr" class="no-js">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Sberbank</title>
+    <style>
+     body { text-align: center; }
+    </style>
+
+    {% if not error and url %}
+        <meta http-equiv="refresh" content="0; URL='{{url}}'" />
+    {% endif %}
+</head>
+
+<body>
+    {% if error %}
+        Извините! Произошла ошибка при обработке платежа. Попробуйте еще раз.       
+    {% endif %}
+</body>
+
+</html>
+
+{% endwith %}
