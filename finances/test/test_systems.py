@@ -3,14 +3,13 @@ import braintree
 import paypalrestsdk
 import pytest
 import stripe
-from django.conf import settings
-from django.core.urlresolvers import reverse
-
 from billing.lib.test import json_contains
 from clients.models import Client
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from finances.models import Order
 from finances.systems import manager
-from finances.systems.models import Braintree, Paypal, Stripe
+from finances.systems.models import Braintree, Paypal, SberbankRest, Stripe
 
 pytestmark = pytest.mark.django_db
 
@@ -23,10 +22,11 @@ def test_payment_system_list_by_user(client):
 def test_payment_system_list_by_admin(admin_client):
     response = admin_client.get(reverse('payment-systems-list'))
     assert response.status_code == 200
-    assert len(response.json()) == 7
+    assert len(response.json()) == 8
     json_contains(response, 'bill')
     json_contains(response, 'rbk')
     json_contains(response, 'sberbank')
+    json_contains(response, 'sberbank-rest')
     json_contains(response, 'stripe')
     json_contains(response, 'braintree')
     json_contains(response, 'paypal')
@@ -298,6 +298,55 @@ def test_bill_display_by_admin(admin_client, make_orders, settings):
     assert '25' in html
 
 
+def test_sberbank_rest_display_by_admin(admin_client, make_orders, mocker):
+    SberbankRest._create_order = mocker.MagicMock(return_value='redirect_url')
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('sberbank-rest', )) +
+        '?order=5')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert 'redirect_url' in html
+
+
+def test_sberbank_rest_display_invalid_by_admin(admin_client, make_orders,
+                                                mocker):
+    SberbankRest._create_order = mocker.MagicMock(return_value=False)
+    response = admin_client.get(
+        reverse('payment-systems-detail', args=('sberbank-rest', )) +
+        '?order=5')
+    assert response.status_code == 200
+    html = response.json()['html']
+    assert 'Извините! Произошла ошибка при обработке платежа.' in html
+
+
+def test_sberbank_rest_response(client, make_orders, mailoutbox, mocker):
+
+    SberbankRest._get_order = mocker.MagicMock(return_value={
+        'orderStatus': '1',
+        'orderNumber': '5_test'
+    })
+    url = reverse('finances:payment-system-response', args=('sberbank-rest', ))
+    response = client.get(url + '')
+    assert response.status_code == 400
+    assert response.content == b'ID of the order is not received.'
+
+    response = client.get(url + '?orderId=order_id', follow=True)
+
+    assert response.status_code == 200
+    assert 'Your payment was successful' in str(response.content)
+
+    order = Order.objects.get(pk=5)
+    now = arrow.now().datetime
+    format = '%d.%m.%Y %H:%I'
+    assert order.status == 'paid'
+    assert order.payment_system == 'sberbank-rest'
+    assert order.paid_date.strftime(format) == now.strftime(format)
+
+    mail = mailoutbox[-1]
+    assert mail.recipients() == [order.client.email]
+    assert 'Успешная оплата' in mail.subject
+
+
 def test_sberbank_display_by_admin(admin_client, make_orders):
     response = admin_client.get(
         reverse('payment-systems-detail', args=('sberbank', )) + '?order=5')
@@ -310,8 +359,6 @@ def test_sberbank_display_by_admin(admin_client, make_orders):
 
 
 def test_sberbank_response(client, make_orders, mailoutbox):
-    pass
-
     url = reverse('finances:payment-system-response', args=('sberbank', ))
     response = client.post(url)
     assert response.status_code == 400

@@ -24,6 +24,7 @@ PAYMENT_SYSTEMS = (
     'stripe',
     'rbk',
     'sberbank',
+    'sberbank-rest',
     'bill',
 )
 
