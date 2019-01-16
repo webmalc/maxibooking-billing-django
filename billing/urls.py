@@ -1,17 +1,17 @@
 """billing URL Configuration
 """
 from ajax_select import urls as ajax_select_urls
+from clients.urls import router as clients_router
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import TemplateView
-from rest_framework_swagger.views import get_swagger_view
-
-from clients.urls import router as clients_router
 from finances.urls import router as finances_router
 from fms.urls import router as fms_router
 from hotels.urls import router as hotels_router
+from rest_framework_swagger.views import get_swagger_view
 
 from .routers import DefaultRouter
 
@@ -32,13 +32,17 @@ urlpatterns += i18n_patterns(
     url(r'^adminactions/', include('adminactions.urls')),
     url(r'^finances/', include('finances.urls', namespace='finances')),
     url(r'^billing/processing$',
-        TemplateView.as_view(template_name='billing/processing.html'),
+        xframe_options_exempt(
+            TemplateView.as_view(template_name='billing/processing.html')),
         name='billing-processing'),
     url(r'^billing/payment-successful$',
-        TemplateView.as_view(template_name='billing/payment_successful.html'),
+        xframe_options_exempt(
+            TemplateView.as_view(
+                template_name='billing/payment_successful.html')),
         name='billing-payment-successful'),
     url(r'^billing/fail$',
-        TemplateView.as_view(template_name='billing/fail.html'),
+        xframe_options_exempt(
+            TemplateView.as_view(template_name='billing/fail.html')),
         name='billing-fail'),
     url(r'^', include(router.urls)),
 )
