@@ -3,6 +3,13 @@ from .settings import *
 LOGGING.pop('root', None)
 # LOGGING['loggers']['billing']['handlers'].remove('file')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 CELERY_ALWAYS_EAGER = True
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 BROKER_BACKEND = 'memory'
