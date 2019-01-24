@@ -7,6 +7,7 @@ from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
+from timezone_field import TimeZoneField
 
 from billing.models import (CachedModel, CheckedModel, ClientPermissionsModel,
                             CommonInfo, GetManagerMixin)
@@ -107,6 +108,7 @@ class City(CachedModel, CityMixin, AbstractCity):
         null=True,
         blank=True,
     )
+    timezone = TimeZoneField(default='UTC')
 
     @property
     def full_name(self):

@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'tabbed_admin',
     'rangefilter',
     'rest_framework_swagger',
+    'timezone_field',
 
     # mb apps
     'finances',
