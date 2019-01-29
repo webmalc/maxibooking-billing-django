@@ -25,6 +25,9 @@ class CityMixin(CheckedModel):
         Returns first cyrilic alternate name
         :return: string
         """
+        if not self.alternate_names:
+            return None
+
         for name in self.alternate_names.split(','):
             if re.match(r'[А-яа-я\-\s]{2,}', name):
                 return name
