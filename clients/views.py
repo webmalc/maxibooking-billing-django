@@ -135,7 +135,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     This class contains the client's routes.
     """
     queryset = Client.objects.all().select_related(
-        'created_by', 'modified_by', 'country',
+        'created_by', 'modified_by', 'country', 'city',
         'restrictions', 'ru', 'website').prefetch_related(
             'properties', 'services', 'services__service')
     search_fields = (

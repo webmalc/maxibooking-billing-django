@@ -1,8 +1,6 @@
 import re
 
 from annoying.fields import AutoOneToOneField
-from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
-                            CountryBase, DictMixin, GetManagerMixin)
 from colorful.fields import RGBColorField
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
@@ -15,10 +13,13 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
-from finances.lib.calc import Calc
-from hotels.models import Country
 from model_utils import FieldTracker
 from phonenumber_field.modelfields import PhoneNumberField
+
+from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
+                            CountryBase, DictMixin, GetManagerMixin)
+from finances.lib.calc import Calc
+from hotels.models import Country
 
 from .managers import ClientManager, ClientServiceManager, CompanyManager
 from .validators import validate_client_login_restrictions
@@ -460,6 +461,10 @@ lowercase letters, numbers, and "-" character.'),
         verbose_name=_('refusal reason'),
         related_name='clients')
     comments = GenericRelation(Comment)
+
+    @property
+    def timezone(self):
+        return getattr(self.city, 'timezone')
 
     @property
     def is_trial(self):

@@ -88,6 +88,10 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     """
     City serializer
     """
+
+    timezone = serializers.CharField(
+        source='timezone.zone', required=False, read_only=True)
+
     country = serializers.SlugRelatedField(
         many=False,
         read_only=False,
@@ -106,5 +110,5 @@ class CitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = City
         fields = ('id', 'name', 'full_name', 'alternate_names', 'latitude',
-                  'longitude', 'population', 'region', 'country', 'is_enabled',
-                  'is_checked', 'request_client')
+                  'longitude', 'population', 'region', 'country', 'timezone',
+                  'is_enabled', 'is_checked', 'request_client')

@@ -15,3 +15,5 @@ def test_get_timezone():
     assert get_timezone(55.91, 37.72) == 'Europe/Moscow'
     assert get_timezone(47.283049, -120.760049) == 'America/Los_Angeles'
     assert get_timezone(48.864716, 2.349014) == 'Europe/Paris'
+    # test timezone Asia/Qostanay overwrite
+    assert get_timezone(53.229647, 63.659657) == 'Asia/Almaty'

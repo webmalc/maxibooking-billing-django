@@ -188,6 +188,9 @@ class ClientSerializer(ValidationSerializerMixin,
         queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
 
+    timezone = serializers.CharField(
+        source='timezone.zone', required=False, read_only=True)
+
     def get_restrictions(self, obj):
         return model_to_dict(obj.restrictions)
 
@@ -197,8 +200,8 @@ class ClientSerializer(ValidationSerializerMixin,
                   'description', 'get_status_display', 'status', 'country',
                   'region', 'city', 'address', 'postal_code', 'ru',
                   'installation', 'trial_activated', 'url', 'properties',
-                  'manager_code', 'restrictions', 'disabled_at', 'ip',
-                  'created', 'modified', 'created_by', 'modified_by')
+                  'manager_code', 'restrictions', 'timezone', 'disabled_at',
+                  'ip', 'created', 'modified', 'created_by', 'modified_by')
         lookup_field = 'login'
         references = {}
         reference_parent = 'client'

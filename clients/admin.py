@@ -313,7 +313,7 @@ class ClientAdmin(
                      'manager__last_name')
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = [
-        'info', 'disabled_at', 'created', 'modified', 'created_by',
+        'info', 'timezone', 'disabled_at', 'created', 'modified', 'created_by',
         'modified_by'
     ]
     tab_client = (
@@ -322,7 +322,8 @@ class ClientAdmin(
                        'description')
         }),
         ('Address', {
-            'fields': ('country', 'region', 'city', 'address', 'postal_code')
+            'fields': ('country', 'region', 'city', 'address', 'postal_code',
+                       'timezone')
         }),
         ('Options', {
             'fields': [

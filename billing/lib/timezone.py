@@ -2,9 +2,12 @@ from timezonefinder import TimezoneFinder
 
 tf = TimezoneFinder()
 
+RESULT_TIMEZONE_OVERWRITE = {'Asia/Qostanay': 'Asia/Almaty'}
 
-def get_timezone(latitude: float = None, longitude: float = None,
-                 city=None) -> str:
+
+def get_timezone_strict(latitude: float = None,
+                        longitude: float = None,
+                        city=None) -> str:
     """
     Get timezone by city or coordinates
     """
@@ -21,3 +24,9 @@ def get_timezone(latitude: float = None, longitude: float = None,
         timezone = tf.closest_timezone_at(lng=longitude, lat=latitude)
 
     return timezone
+
+
+def get_timezone(latitude: float = None, longitude: float = None,
+                 city=None) -> str:
+    timezone = get_timezone_strict(latitude, longitude, city)
+    return RESULT_TIMEZONE_OVERWRITE.get(timezone, timezone)

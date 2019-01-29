@@ -108,7 +108,7 @@ class City(CachedModel, CityMixin, AbstractCity):
         null=True,
         blank=True,
     )
-    timezone = TimeZoneField(default='UTC')
+    timezone = TimeZoneField(null=True, blank=True)
 
     @property
     def full_name(self):

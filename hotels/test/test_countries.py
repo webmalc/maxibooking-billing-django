@@ -56,6 +56,6 @@ def test_countries_translations(admin_client, settings):
     response = admin_client.get(reverse('country-detail', args=['ae']))
     assert response.status_code == 200
     assert response.json()['name'] == 'United Arab Emirates'
-    call_command('citytranslate', stdout=StringIO())
+    call_command('citiesprocess', stdout=StringIO())
     response = admin_client.get(reverse('country-detail', args=['ae']))
     assert response.json()['name'] == 'Объединенные Арабские Эмираты'
