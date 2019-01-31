@@ -5,11 +5,9 @@ from abc import ABC, abstractmethod
 from hashlib import sha512
 from time import time
 
-import requests
-
 import paypalrestsdk
+import requests
 import stripe
-from billing.lib.conf import get_settings
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -19,6 +17,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
+
+from billing.lib.conf import get_settings
 
 from ..models import Order, Subscription, Transaction
 from .lib import BraintreeGateway
@@ -241,7 +241,7 @@ class SberbankRest(BaseType):
     countries_excluded = []
     countries = ['ru']
     currencies = ['RUB']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
     payer_local_required = False
 
     def _conf(self, order=None, request=None):
@@ -353,7 +353,7 @@ class Sberbank(BaseType):
     countries_excluded = []
     countries = ['ru']
     currencies = ['RUB']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
     payer_local_required = False
 
     def _conf(self, order=None, request=None):
@@ -446,7 +446,7 @@ class Rbk(BaseType):
     countries_excluded = []
     countries = ['ru']
     currencies = ['RUB', 'EUR']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
     payer_local_required = False
 
     # Rbk config
@@ -546,7 +546,7 @@ class Stripe(BaseType):
     countries_excluded = ['ru']
     countries = []
     currencies = ['EUR']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
 
     def _conf(self, order=None, request=None):
         """
@@ -631,7 +631,7 @@ class BraintreeSubscription(BaseType):
     countries_excluded = ['ru']
     countries = []
     currencies = ['EUR', 'CAD', 'USD']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
 
     def _conf(self, order=None, request=None):
         """
@@ -693,9 +693,8 @@ class BraintreeSubscription(BaseType):
             sub_model.full_clean()
             sub_model.save()
         except ValidationError:
-            self.logger.error(
-                'Unable to save the subscription model: {}'.format(
-                    subscription))
+            self.logger.error('Unable to save the subscription model: {}'.
+                              format(subscription))
 
         return subscription
 
@@ -754,7 +753,7 @@ class Braintree(BaseType):
     countries_excluded = ['ru']
     countries = []
     currencies = ['EUR', 'CAD', 'USD']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
 
     def _conf(self, order=None, request=None):
         """
@@ -814,7 +813,7 @@ class Paypal(BaseType):
     countries_excluded = []
     countries = ['us', 'ca']
     currencies = ['CAD', 'USD', 'EUR']
-    client_filter_fields = ('phone', )
+    client_filter_fields = []
 
     def _conf(self, order=None, request=None):
         """
