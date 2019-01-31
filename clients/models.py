@@ -433,6 +433,10 @@ lowercase letters, numbers, and "-" character.'),
         on_delete=models.SET_NULL,
         verbose_name=_('manager'),
         related_name="%(app_label)s_%(class)s_manager")
+    managers_history = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_('managers history'),
+        blank=True)
     manager_code = models.CharField(
         max_length=50,
         blank=True,

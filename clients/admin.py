@@ -314,7 +314,7 @@ class ClientAdmin(
     raw_id_fields = ('country', 'region', 'city')
     readonly_fields = [
         'info', 'timezone', 'disabled_at', 'created', 'modified', 'created_by',
-        'modified_by'
+        'modified_by', 'managers_history'
     ]
     tab_client = (
         ('General', {
@@ -344,7 +344,7 @@ class ClientAdmin(
     tab_sales = (
         ('General', {
             'fields': ('info', 'source', 'manager', 'manager_code',
-                       'sales_status', 'refusal_reason')
+                       'managers_history', 'sales_status', 'refusal_reason')
         }),
         CommentInlineAdmin,
     )
@@ -368,6 +368,13 @@ class ClientAdmin(
     form = make_ajax_form(Client, {
         'manager': 'users',
     })
+
+    def save_related(self, request, form, formsets, change):
+        super(ClientAdmin, self).save_related(request, form, formsets, change)
+        client = form.instance
+        manager = client.manager
+        if manager:
+            client.managers_history.add(manager)
 
     def get_tabs(self, request, obj=None):
         tabs = super().get_tabs(request, obj)
