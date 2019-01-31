@@ -3,10 +3,11 @@ import braintree
 import paypalrestsdk
 import pytest
 import stripe
-from billing.lib.test import json_contains
-from clients.models import Client
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+from billing.lib.test import json_contains
+from clients.models import Client
 from finances.models import Order
 from finances.systems import manager
 from finances.systems.models import Braintree, Paypal, SberbankRest, Stripe
@@ -23,10 +24,6 @@ def test_payment_system_list_by_admin(admin_client):
     response = admin_client.get(reverse('payment-systems-list'))
     assert response.status_code == 200
     assert len(response.json()) == 8
-    json_contains(response, 'bill')
-    json_contains(response, 'rbk')
-    json_contains(response, 'sberbank')
-    json_contains(response, 'sberbank-rest')
     json_contains(response, 'stripe')
     json_contains(response, 'braintree')
     json_contains(response, 'paypal')
@@ -40,6 +37,21 @@ def test_payment_system_list_filtered_by_admin(admin_client, make_orders):
     json_contains(response, 'braintree')
     json_contains(response, 'braintree-subscription')
     json_contains(response, 'paypal')
+
+
+def test_payment_system_list_with_country_overwrite(
+        admin_client,
+        make_orders,
+        settings,
+):
+    settings.MB_COUNTRIES_OVERWRITE = {'us': 'ru'}
+    response = admin_client.get(reverse('payment-systems-list') + '?order=1')
+    assert response.status_code == 200
+    assert len(response.json()) == 4
+    json_contains(response, 'bill')
+    json_contains(response, 'rbk')
+    json_contains(response, 'sberbank')
+    json_contains(response, 'sberbank-rest')
 
 
 def test_payment_system_without_order_display_by_admin(admin_client,

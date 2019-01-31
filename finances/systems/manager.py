@@ -19,6 +19,7 @@ def systems_list(order=None, request=None, load=True):
         types[s] = s_class(order, request=request, load=load)
     if order:
         country = order.client.country.tld
+        country = settings.MB_COUNTRIES_OVERWRITE.get(country, country)
         result = {}
         for k, v in types.items():
             if len(v.countries) and country not in v.countries:
