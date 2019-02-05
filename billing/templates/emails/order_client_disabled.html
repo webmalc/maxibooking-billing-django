@@ -8,7 +8,7 @@
 
 {% block content %}
     {% blocktrans with url=url name=name odrder=order created=created %}
-        <p>Hello, {{ name }}!</p>
+        <p>Hello!</p>
         <p>Due to payment arrears, your account in the 'Maxibooking' system is blocked.</p>
         <p>To unlock your account, go to your personal account and pay for the order #{{ order.id}} from {{ created }} {{ url }}</p> 
     {% endblocktrans %}

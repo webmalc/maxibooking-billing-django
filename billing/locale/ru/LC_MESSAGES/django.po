@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-15 11:59+0000\n"
+"POT-Creation-Date: 2019-02-05 10:30+0000\n"
 "PO-Revision-Date: 2018-12-13 12:04+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,12 +82,12 @@ msgstr ""
 msgid "date"
 msgstr ""
 
-#: billing/models.py:68 clients/models.py:408 clients/models.py:730
+#: billing/models.py:68 clients/models.py:409 clients/models.py:739
 #: finances/models.py:396 finances/models.py:635
 msgid "status"
 msgstr ""
 
-#: billing/models.py:76 finances/models.py:71 hotels/models.py:170
+#: billing/models.py:76 finances/models.py:71 hotels/models.py:175
 msgid "type"
 msgstr ""
 
@@ -103,9 +103,9 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: billing/models.py:118 clients/models.py:725 finances/models.py:59
-#: finances/models.py:169 hotels/models.py:43 hotels/models.py:71
-#: hotels/models.py:98
+#: billing/models.py:118 clients/models.py:734 finances/models.py:59
+#: finances/models.py:169 hotels/models.py:47 hotels/models.py:75
+#: hotels/models.py:102
 msgid "is enabled"
 msgstr ""
 
@@ -127,7 +127,12 @@ msgstr ""
 msgid "An error occurred. Please try again later"
 msgstr ""
 
-#: billing/templates/billing/processing.html:13 clients/models.py:717
+#: billing/templates/billing/payment_successful.html:13
+#: billing/templates/emails/order_paid.html:6 finances/signals.py:74
+msgid "Your payment was successful"
+msgstr "Успешная оплата"
+
+#: billing/templates/billing/processing.html:13 clients/models.py:726
 #: finances/models.py:384
 msgid "processing"
 msgstr ""
@@ -141,11 +146,10 @@ msgid "we miss you!"
 msgstr "мы скучаем по Вам!"
 
 #: billing/templates/emails/client_disabled.html:11
-#, python-format
 msgid ""
 "\n"
 "\n"
-"<p>Hello, %(name)s!</p>\n"
+"<p>Hello!</p>\n"
 "<p>New sales are waiting for you! Rather, unlock Your account to start "
 "selling more.</p>\n"
 "<p>To unlock your account you need to pay for the order #%(id)s from "
@@ -156,7 +160,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"<p>Здравствуйте %(name)s,</p>\n"
+"<p>Здравствуйте,</p>\n"
 "<p>Новые продажи ждут Вас! Скорее разблокируйте Ваш аккаунт, что бы начать "
 "продавать больше.</p>\n"
 "<p>Для разблокировки аккаунта Вам необходимо оплатить заказ №%(id)s от "
@@ -170,10 +174,9 @@ msgid "how are your sales?"
 msgstr "как Ваши продажи?"
 
 #: billing/templates/emails/client_welcome.html:10
-#, python-format
 msgid ""
 "\n"
-"        <p>Hello, %(name)s!</p>\n"
+"        <p>Hello!</p>\n"
 "        <p>How are your sales?</p>\n"
 "        <p>In Maxibooking, we are always happy to help you set up the "
 "features, prices and special offers you need, and individually adjust the "
@@ -183,7 +186,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Здравствуйте %(name)s,</p>\n"
+"<p>Здравствуйте,</p>\n"
 "<p>Как Ваши продажи?</p>\n"
 "<p>В Максибукинг мы всегда рады помочь Вам настроить нужные Вам функции, "
 "цены и спецпредложения, и индивидуально настроить количество предлагаемых "
@@ -200,10 +203,9 @@ msgid "New order #"
 msgstr "Новый счет №"
 
 #: billing/templates/emails/new_order.html:10
-#, python-format
 msgid ""
 "\n"
-"    <p>Hello, %(name)s!</p>\n"
+"    <p>Hello!</p>\n"
 "\n"
 "    %(greetings_new)s\n"
 "\n"
@@ -219,7 +221,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"<p>Здравствуйте %(name)s,</p>\n"
+"<p>Здравствуйте,</p>\n"
 "\n"
 "%(greetings_new)s\n"
 "\n"
@@ -238,10 +240,9 @@ msgid "Your account is disabled"
 msgstr "Ваш аккаунт заблокирован"
 
 #: billing/templates/emails/order_client_disabled.html:10
-#, python-format
 msgid ""
 "\n"
-"        <p>Hello, %(name)s!</p>\n"
+"        <p>Hello!</p>\n"
 "        <p>Due to payment arrears, your account in the 'Maxibooking' system "
 "is blocked.</p>\n"
 "        <p>To unlock your account, go to your personal account and pay for "
@@ -249,7 +250,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"<p>Здравствуйте %(name)s,</p>\n"
+"<p>Здравствуйте,</p>\n"
 "<p>Случилось страшное. Из-за задолженности по оплате Ваш аккаунт в системе "
 "«Максибукинг» заблокирован.</p>\n"
 "<p>Скорее разблокируйте его, что бы не упустить ни одной брони.</p>\n"
@@ -259,20 +260,15 @@ msgstr ""
 "<p>Есть функции которые вы хотите попробовать но еще не успели настроить? "
 "Напишите нам. Мы счастливы только если с нами Вы продаете больше!</p>"
 
-#: billing/templates/emails/order_paid.html:6 finances/signals.py:74
-msgid "Your payment was successful"
-msgstr "Успешная оплата"
-
 #: billing/templates/emails/order_paid.html:10
-#, python-format
 msgid ""
 "\n"
-"    <p>Hello, %(name)s!</p>\n"
+"    <p>Hello!</p>\n"
 "    <p>Thank you for payment!</p>\n"
 "    <p>Order #%(id)s from %(created)s was paid.</p>\n"
 msgstr ""
 "\n"
-"<p>Здравствуйте %(name)s,</p>\n"
+"<p>Здравствуйте,</p>\n"
 "<p>Ваша оплата счета №%(id)s от %(created)s прошла успешно.</p>\n"
 "<p>Мы рады видеть Вас среди наших клиентов!</p>\n"
 "<p>Есть функции которые вы хотите попробовать но еще не успели настроить? "
@@ -284,10 +280,9 @@ msgid "Order will expire soon"
 msgstr "Продление периода использования"
 
 #: billing/templates/emails/order_payment_notification.html:10
-#, python-format
 msgid ""
 "\n"
-"    <p>Hello, %(name)s!</p>\n"
+"    <p>Hello!</p>\n"
 "\n"
 "    %(greetings_new)s\n"
 "\n"
@@ -299,7 +294,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"<p>Здравствуйте %(name)s,</p>\n"
+"<p>Здравствуйте,</p>\n"
 "\n"
 "%(greetings_new)s\n"
 "\n"
@@ -454,23 +449,23 @@ msgstr ""
 msgid "postal_code"
 msgstr "индекс"
 
-#: billing/templates/trans/fix.html:3 clients/models.py:104
-#: clients/models.py:389
+#: billing/templates/trans/fix.html:3 clients/models.py:105
+#: clients/models.py:390
 msgid "region"
 msgstr "область"
 
-#: billing/templates/trans/fix.html:4 clients/models.py:99
-#: clients/models.py:382 hotels/models.py:163
+#: billing/templates/trans/fix.html:4 clients/models.py:100
+#: clients/models.py:383 hotels/models.py:168
 msgid "city"
 msgstr "город"
 
-#: billing/templates/trans/fix.html:5 clients/models.py:110
-#: clients/models.py:397 hotels/models.py:155
+#: billing/templates/trans/fix.html:5 clients/models.py:111
+#: clients/models.py:398 hotels/models.py:160
 msgid "address"
 msgstr "адрес"
 
-#: billing/templates/trans/fix.html:6 clients/models.py:313
-#: clients/models.py:358
+#: billing/templates/trans/fix.html:6 clients/models.py:314
+#: clients/models.py:359
 msgid "phone"
 msgstr "телефон"
 
@@ -478,21 +473,21 @@ msgstr "телефон"
 msgid "color"
 msgstr ""
 
-#: clients/admin.py:417 clients/models.py:91 clients/models.py:602
-#: clients/models.py:690 clients/models.py:768 finances/models.py:416
-#: finances/models.py:615 hotels/models.py:177
+#: clients/admin.py:425 clients/models.py:92 clients/models.py:611
+#: clients/models.py:699 clients/models.py:777 finances/models.py:416
+#: finances/models.py:615 hotels/models.py:182
 msgid "client"
 msgstr ""
 
-#: clients/admin.py:430
+#: clients/admin.py:438
 msgid "sales"
 msgstr ""
 
-#: clients/admin.py:452
+#: clients/admin.py:460
 msgid "Installation successfully started."
 msgstr ""
 
-#: clients/admin.py:461
+#: clients/admin.py:469
 msgid "Client manger successfully saved."
 msgstr ""
 
@@ -508,170 +503,170 @@ msgstr ""
 msgid "Not paid"
 msgstr ""
 
-#: clients/models.py:33
+#: clients/models.py:34
 msgid "refusal reasons"
 msgstr ""
 
-#: clients/models.py:43
+#: clients/models.py:44
 msgid "sales statuses"
 msgstr ""
 
-#: clients/models.py:51
+#: clients/models.py:52
 msgid "rooms limit"
 msgstr ""
 
-#: clients/models.py:60
+#: clients/models.py:61
 msgid "restrictions"
 msgstr ""
 
-#: clients/models.py:87 fms/models.py:12 hotels/models.py:143
-#: hotels/models.py:198
+#: clients/models.py:88 fms/models.py:12 hotels/models.py:148
+#: hotels/models.py:203
 msgid "name"
 msgstr ""
 
-#: clients/models.py:118
+#: clients/models.py:119
 msgid "bank"
 msgstr ""
 
-#: clients/models.py:141
+#: clients/models.py:142
 msgid "companies"
 msgstr ""
 
-#: clients/models.py:158
+#: clients/models.py:159
 msgid "swift"
 msgstr ""
 
-#: clients/models.py:168 clients/models.py:169
+#: clients/models.py:169 clients/models.py:170
 msgid "world"
 msgstr ""
 
-#: clients/models.py:180
+#: clients/models.py:181
 msgid "ooo"
 msgstr "ООО"
 
-#: clients/models.py:181
+#: clients/models.py:182
 msgid "oao"
 msgstr "ОАО"
 
-#: clients/models.py:182
+#: clients/models.py:183
 msgid "ip"
 msgstr "ИП"
 
-#: clients/models.py:183
+#: clients/models.py:184
 msgid "zao"
 msgstr "ЗАО"
 
-#: clients/models.py:186
+#: clients/models.py:187
 msgid "charter"
 msgstr ""
 
-#: clients/models.py:187
+#: clients/models.py:188
 msgid "proxy"
 msgstr ""
 
-#: clients/models.py:191
+#: clients/models.py:192
 msgid "form"
 msgstr ""
 
-#: clients/models.py:202
+#: clients/models.py:203
 msgid "ogrn"
 msgstr ""
 
-#: clients/models.py:211 clients/models.py:665
+#: clients/models.py:212 clients/models.py:674
 msgid "inn"
 msgstr ""
 
-#: clients/models.py:222 fms/models.py:39
+#: clients/models.py:223 fms/models.py:39
 msgid "kpp"
 msgstr ""
 
-#: clients/models.py:231
+#: clients/models.py:232
 msgid "bik"
 msgstr ""
 
-#: clients/models.py:239
+#: clients/models.py:240
 msgid "correspondent account"
 msgstr ""
 
-#: clients/models.py:243
+#: clients/models.py:244
 msgid "boss firstname"
 msgstr ""
 
-#: clients/models.py:248
+#: clients/models.py:249
 msgid "boss lastname"
 msgstr ""
 
-#: clients/models.py:252
+#: clients/models.py:253
 msgid "boss patronymic"
 msgstr ""
 
-#: clients/models.py:256
+#: clients/models.py:257
 msgid "boss operation base"
 msgstr ""
 
-#: clients/models.py:265
+#: clients/models.py:266
 msgid "proxy number"
 msgstr ""
 
-#: clients/models.py:267
+#: clients/models.py:268
 msgid "proxy date"
 msgstr ""
 
-#: clients/models.py:281
+#: clients/models.py:282
 msgid "Please fill a proxy date and a proxy number."
 msgstr ""
 
-#: clients/models.py:292 clients/models.py:293
+#: clients/models.py:293 clients/models.py:294
 msgid "ru"
 msgstr ""
 
-#: clients/models.py:301
+#: clients/models.py:302
 msgid "not confirmed"
 msgstr ""
 
-#: clients/models.py:302 clients/models.py:718
+#: clients/models.py:303 clients/models.py:727
 msgid "active"
 msgstr ""
 
-#: clients/models.py:303
+#: clients/models.py:304
 msgid "disabled"
 msgstr ""
 
-#: clients/models.py:304
+#: clients/models.py:305
 msgid "archived"
 msgstr ""
 
-#: clients/models.py:307
+#: clients/models.py:308
 msgid "not installed"
 msgstr ""
 
-#: clients/models.py:308
+#: clients/models.py:309
 msgid "process"
 msgstr ""
 
-#: clients/models.py:309
+#: clients/models.py:310
 msgid "installed"
 msgstr ""
 
-#: clients/models.py:312
+#: clients/models.py:313
 msgid "chat"
 msgstr ""
 
-#: clients/models.py:314
+#: clients/models.py:315
 msgid "cold call"
 msgstr ""
 
-#: clients/models.py:315
+#: clients/models.py:316
 msgid "email"
 msgstr ""
 
-#: clients/models.py:316
+#: clients/models.py:317
 #, fuzzy
 #| msgid "Registation failed"
 msgid "registration"
 msgstr "Ошибка при регистрации"
 
-#: clients/models.py:327
+#: clients/models.py:328
 msgid ""
 "Enter a valid domain. This value may contain only lowercase letters, "
 "numbers, and \"-\" character."
@@ -679,161 +674,165 @@ msgstr ""
 "Введенный Вами адрес содержит недопустимые символы. Адрес может содержать "
 "только латинские буквы, цифры и символ -(тире)"
 
-#: clients/models.py:339 clients/models.py:348
+#: clients/models.py:340 clients/models.py:349
 msgid "Client with this domain already exist."
 msgstr "Клиент с таким доменом уже существует."
 
-#: clients/models.py:340
+#: clients/models.py:341
 msgid "login"
 msgstr ""
 
-#: clients/models.py:349
+#: clients/models.py:350
 msgid "login alias"
 msgstr ""
 
-#: clients/models.py:352
+#: clients/models.py:353
 msgid "e-mail"
 msgstr ""
 
-#: clients/models.py:365
+#: clients/models.py:366
 msgid "full name"
 msgstr ""
 
-#: clients/models.py:370 hotels/models.py:149 hotels/models.py:204
+#: clients/models.py:371 hotels/models.py:154 hotels/models.py:209
 msgid "description"
 msgstr ""
 
-#: clients/models.py:375 clients/models.py:745 finances/models.py:164
+#: clients/models.py:376 clients/models.py:754 finances/models.py:164
 #: finances/models.py:628 users/models.py:67
 msgid "country"
 msgstr ""
 
-#: clients/models.py:413
+#: clients/models.py:414
 msgid "installation status"
 msgstr ""
 
-#: clients/models.py:417
+#: clients/models.py:418
 msgid "trial activated"
 msgstr ""
 
-#: clients/models.py:419
+#: clients/models.py:420
 msgid "disabled at"
 msgstr ""
 
-#: clients/models.py:424 clients/models.py:586 hotels/models.py:173
+#: clients/models.py:425 clients/models.py:595 hotels/models.py:178
 msgid "url"
 msgstr ""
 
-#: clients/models.py:425
+#: clients/models.py:426
 msgid "maxibooking url"
 msgstr ""
 
-#: clients/models.py:433 finances/models.py:220
+#: clients/models.py:434 finances/models.py:220
 msgid "manager"
 msgstr ""
 
-#: clients/models.py:444
+#: clients/models.py:438
+msgid "managers history"
+msgstr ""
+
+#: clients/models.py:449
 msgid "source"
 msgstr ""
 
-#: clients/models.py:452
+#: clients/models.py:457
 msgid "sales status"
 msgstr ""
 
-#: clients/models.py:460
+#: clients/models.py:465
 msgid "refusal reason"
 msgstr ""
 
-#: clients/models.py:554
+#: clients/models.py:563
 msgid "Empty refusal reason."
 msgstr ""
 
-#: clients/models.py:587
+#: clients/models.py:596
 msgid "The URL of client`s website must be unique among other clients."
 msgstr ""
 
-#: clients/models.py:594
+#: clients/models.py:603
 msgid "is the website enabled?"
 msgstr ""
 
-#: clients/models.py:641
+#: clients/models.py:650
 msgid "passport serial"
 msgstr ""
 
-#: clients/models.py:650
+#: clients/models.py:659
 msgid "passport number"
 msgstr ""
 
-#: clients/models.py:651
+#: clients/models.py:660
 msgid "passport date"
 msgstr ""
 
-#: clients/models.py:656
+#: clients/models.py:665
 msgid "passport issued by"
 msgstr ""
 
-#: clients/models.py:695
+#: clients/models.py:704
 msgid "authentication date"
 msgstr ""
 
-#: clients/models.py:702
+#: clients/models.py:711
 msgid "user agent"
 msgstr ""
 
-#: clients/models.py:707
+#: clients/models.py:716
 msgid "Client authentications"
 msgstr ""
 
-#: clients/models.py:716
+#: clients/models.py:725
 msgid "archive"
 msgstr ""
 
-#: clients/models.py:719
+#: clients/models.py:728
 msgid "next"
 msgstr ""
 
-#: clients/models.py:733
+#: clients/models.py:742
 msgid "is paid"
 msgstr ""
 
-#: clients/models.py:738 clients/models.py:788 finances/models.py:158
+#: clients/models.py:747 clients/models.py:797 finances/models.py:158
 #: finances/models.py:408 finances/models.py:641
 msgid "price"
 msgstr ""
 
-#: clients/models.py:749
+#: clients/models.py:758
 msgid "quantity"
 msgstr ""
 
-#: clients/models.py:753
+#: clients/models.py:762
 msgid "start date"
 msgstr ""
 
-#: clients/models.py:755 finances/models.py:214
+#: clients/models.py:764 finances/models.py:214
 msgid "begin date"
 msgstr ""
 
-#: clients/models.py:757 finances/models.py:216 fms/models.py:24
+#: clients/models.py:766 finances/models.py:216 fms/models.py:24
 msgid "end date"
 msgstr ""
 
-#: clients/models.py:762 finances/models.py:173
+#: clients/models.py:771 finances/models.py:173
 msgid "service"
 msgstr ""
 
-#: clients/models.py:771
+#: clients/models.py:780
 msgid "orders"
 msgstr ""
 
-#: clients/models.py:834
+#: clients/models.py:843
 msgid "Please correct dates."
 msgstr ""
 
-#: clients/models.py:840
+#: clients/models.py:849
 msgid "Empty service prices."
 msgstr ""
 
-#: clients/models.py:859
+#: clients/models.py:868
 msgid "Client service with this type already exists."
 msgstr ""
 
@@ -863,7 +862,7 @@ msgstr ""
 msgid "year"
 msgstr ""
 
-#: finances/models.py:54 hotels/models.py:208
+#: finances/models.py:54 hotels/models.py:213
 msgid "rooms"
 msgstr ""
 
@@ -1023,11 +1022,11 @@ msgstr "счет"
 msgid "Create a bill for non-cash transfer through the Bank"
 msgstr "Сформировать счет для безналичного перевода через банк"
 
-#: finances/systems/models.py:239 finances/systems/models.py:349
+#: finances/systems/models.py:238 finances/systems/models.py:349
 msgid "sberbank"
 msgstr "сбербанк"
 
-#: finances/systems/models.py:240 finances/systems/models.py:350
+#: finances/systems/models.py:239 finances/systems/models.py:350
 msgid "Payment by card through the \"Sberbank\" system"
 msgstr "Оплата банковской картой через систему \"Cбербанк\""
 
@@ -1055,19 +1054,19 @@ msgstr ""
 msgid "braintree subscription description"
 msgstr ""
 
-#: finances/systems/models.py:751
+#: finances/systems/models.py:750
 msgid "braintree"
 msgstr ""
 
-#: finances/systems/models.py:752
+#: finances/systems/models.py:751
 msgid "braintree description"
 msgstr ""
 
-#: finances/systems/models.py:811
+#: finances/systems/models.py:810
 msgid "paypal"
 msgstr ""
 
-#: finances/systems/models.py:812
+#: finances/systems/models.py:811
 msgid "paypal description"
 msgstr ""
 
@@ -1100,47 +1099,47 @@ msgstr ""
 msgid "fms"
 msgstr ""
 
-#: hotels/models.py:46 hotels/models.py:74 hotels/models.py:101
+#: hotels/models.py:50 hotels/models.py:78 hotels/models.py:105
 msgid "is checked"
 msgstr ""
 
-#: hotels/models.py:49
+#: hotels/models.py:53
 msgid "is former"
 msgstr ""
 
-#: hotels/models.py:61
+#: hotels/models.py:65
 msgid "countries"
 msgstr ""
 
-#: hotels/models.py:124
+#: hotels/models.py:129
 msgid "cities"
 msgstr ""
 
-#: hotels/models.py:135
+#: hotels/models.py:140
 msgid "Hotel"
 msgstr ""
 
-#: hotels/models.py:135
+#: hotels/models.py:140
 msgid "Hostel"
 msgstr ""
 
-#: hotels/models.py:136
+#: hotels/models.py:141
 msgid "Flat"
 msgstr ""
 
-#: hotels/models.py:136
+#: hotels/models.py:141
 msgid "B&B"
 msgstr ""
 
-#: hotels/models.py:137
+#: hotels/models.py:142
 msgid "Vacation rental"
 msgstr ""
 
-#: hotels/models.py:211
+#: hotels/models.py:216
 msgid "max rooms"
 msgstr ""
 
-#: hotels/models.py:215
+#: hotels/models.py:220
 msgid "property"
 msgstr ""
 
