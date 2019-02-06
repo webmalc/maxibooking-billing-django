@@ -71,7 +71,7 @@ def order_post_save(sender, **kwargs):
        order.status == 'paid':
 
         mail_client_task.delay(
-            subject=_('Your payment was successful'),
+            subject=_('Thank you for your payment!'),
             template='emails/order_paid.html',
             data={
                 'order_id': order.pk,

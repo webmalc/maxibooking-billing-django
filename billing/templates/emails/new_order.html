@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "New order #" %}{{ order.id }}
+    {% trans "New Invoice #" %}{{ order.id }}
 {% endblock %}
 
 {% block content %}
@@ -12,9 +12,9 @@
 
     {{ greetings_new }}
 
-    <p>You still have {{ days }} more days of free use! To continue using Maxibooking after {{ expired }} we have created for You the order #{{ id }} dated {{ created }} from the calculation of the number of Your room and the chosen period. It must be paid before {{ expired }}.</p>
-    <p>View the order, change the period and number of rooms, and make payment you can in Your personal account by clicking on the link: {{ url }}</p>
-    <p>Do you have features you want to try but haven't set up yet? Write to us. We are happy only if with us you sell more!</p>
+    <p>You still have {{ days }} more days of Free Trial! To continue using MaxiBooking after {{ expired }} the Invoice #{{ id }} dated {{ created }} has been created based on your number of properties and selected subscription period. The Invoice should be paid before {{ expired }}.</p>
+    <p>To view your Invoice, update and confirm your subscription details, and pay online simply go to “My Account” by clicking on the link: {{ url }}</p>
+    <p>Are there features that you want to try but didn’t have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 
 {% endblocktrans %}
 

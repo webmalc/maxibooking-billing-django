@@ -28,7 +28,7 @@ def order_notify_task(order_id):
                     greetings_new = '<p>{}</p>'.format(
                         _('We are glad to see you among our clients!'))
                 mail_client(
-                    subject=_('New order created'),
+                    subject=_('New Invoice created'),
                     template='emails/new_order.html',
                     data={
                         'order': order,
@@ -59,7 +59,8 @@ def orders_payment_notify():
                     _('We are glad to see you among our clients!'))
 
             mail_client(
-                subject=_('Order will expire soon'),
+                subject=_(
+                    'Invoice is due - don’t forget to extend your access! '),
                 template='emails/order_payment_notification.html',
                 data={
                     'order': order,
@@ -84,7 +85,7 @@ def orders_clients_disable():
         logger.info('Client disabled {}.'.format(client))
 
         mail_client(
-            subject=_('Your account is disabled'),
+            subject=_('Oh No! Your Account has been suspended'),
             template='emails/order_client_disabled.html',
             data={
                 'url': order.client.url,

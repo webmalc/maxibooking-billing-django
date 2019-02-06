@@ -3,14 +3,15 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Your payment was successful" %}
+    {% trans "Thank you for your payment!" %}
 {% endblock %}
 
 {% block content %}
 {% blocktrans with id=order_id created=created name=name %}
     <p>Hello!</p>
-    <p>Thank you for payment!</p>
-    <p>Order #{{ id }} from {{ created }} was paid.</p>
+    <p>Your payment for Invoice #{{ id }} from {{ created }} has been successful.</p>
+    <p>We are delighted to have You as our client.</p>
+    <p>Are there features that you want to try but didn’t have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 {% endblocktrans %}
 
 {% include "emails/sign.html" %}

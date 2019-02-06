@@ -288,8 +288,8 @@ def test_client_tariff_update_invalid_by_admin(admin_client):
         data=data,
     )
     assert response.json()['status'] is False
-    assert response.json()[
-        'message'] == 'failed update. Error: rooms service not found'
+    assert response.json(
+    )['message'] == 'failed update. Error: rooms service not found'
 
 
 def test_client_tariff_update_by_admin(admin_client, service):
@@ -543,7 +543,7 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
     assert 'Welcome to MaxiBooking!' in mail.subject
-    assert 'Registration successefull' in html
+    assert 'Registration Successefull' in html
     assert '123456' in html
     assert 'http://example.com' in html
     assert 'https://user-one.maaaxi.com' in html
@@ -821,7 +821,7 @@ def test_clients_disabled_email(mailoutbox, make_orders):
     client_disabled_email.delay()
     mail = mailoutbox[-1]
 
-    assert 'User One, we miss you!' in mail.subject
+    assert 'User One, we miss You!' in mail.subject
     assert '#3' in mail.alternatives[0][0]
 
 

@@ -3,14 +3,14 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "Registation failed" %}
+    {% trans "Registation failure" %}
 {% endblock %}
 
 {% block content %}
 {% blocktrans %}
     <p>Hello!</p>
-    <p>When installing the program "Maxibooking" an error occurred.</p>
-    <p>To resolve this error, please contact support at: support@maxi-booking.com</p> 
+    <p>Looks like some part of the program has not been installed correctly.</p>
+    <p>To resolve this, please contact Customer Support Team at: support@maxi-booking.com</p> 
 {% endblocktrans %}
 
 {% include "emails/sign.html" %}

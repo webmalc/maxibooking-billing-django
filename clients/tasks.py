@@ -97,7 +97,7 @@ def client_greeting_email(days=settings.MB_CLIENT_GREETING_EMAIL_DAYS):
     for client in clients:
         with select_locale(client):
             mail_client(
-                subject='{}, {}'.format(client.name, _('how are your sales?')),
+                subject='{}, {}'.format(client.name, _('How is your Sales?')),
                 template='emails/client_welcome.html',
                 data={
                     'client': client,
@@ -114,7 +114,7 @@ def client_disabled_email(days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS):
     for client in clients:
         with select_locale(client):
             mail_client(
-                subject='{}, {}'.format(client.name, _('we miss you!')),
+                subject='{}, {}'.format(client.name, _('we miss You!')),
                 template='emails/client_disabled.html',
                 data={
                     'order': client.orders.get_expired(('archived', )).first(),

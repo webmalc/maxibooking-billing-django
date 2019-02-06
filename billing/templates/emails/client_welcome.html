@@ -3,15 +3,15 @@
 {% load i18n %}
 
 {% block title %}
-    {% trans "how are your sales?" %}
+    {% trans "How is your Sales?" %}
 {% endblock %}
 
 {% block content %}
     {% blocktrans with name=client.name %}
         <p>Hello!</p>
-        <p>How are your sales?</p>
-        <p>In Maxibooking, we are always happy to help you set up the features, prices and special offers you need, and individually adjust the number of rooms offered for sale for each individual sales channel (Your website, Booking.com et al.)</p>
-        <p>Write to us. We are happy only if with us you sell more!</p>
+        <p>How is your Sales?</p>
+        <p>At Maxibooking, we are always happy to help you set up all the features, prices and special offers you need, including individual configuration of the number of rooms and properties offered for sale in each of your sales channels (Your personal website, Booking.com and others.)</p>
+        <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
     {% endblocktrans %}
 
     {% include "emails/sign.html" %}

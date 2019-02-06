@@ -22,14 +22,14 @@ def test_mail_client_by_email(admin_client, mailoutbox):
     mail = mailoutbox[0]
     assert mail.recipients() == ['client@example.com']
     assert 'Text message' in mail.subject
-    assert 'Registation failed' in mail.alternatives[0][0]
+    assert 'Registation failure' in mail.alternatives[0][0]
 
 
 def test_mail_client_by_client(admin_client, mailoutbox, settings):
     def send(login):
         client = Client.objects.get(login=login)
         mailer.mail_client(
-            subject='Registation failed',
+            subject='Registation failure',
             template='emails/registration_fail.html',
             data={},
             client=client)
@@ -38,8 +38,8 @@ def test_mail_client_by_client(admin_client, mailoutbox, settings):
     assert len(mailoutbox) == 1
     mail = mailoutbox[0]
     assert mail.recipients() == ['user@one.com']
-    assert 'Registation failed' in mail.subject
-    assert 'Registation failed' in mail.alternatives[0][0]
+    assert 'Registation failure' in mail.subject
+    assert 'Registation failure' in mail.alternatives[0][0]
 
     send('user-rus')
     assert len(mailoutbox) == 2

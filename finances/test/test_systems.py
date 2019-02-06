@@ -146,7 +146,7 @@ c1d3c0dc88bfb22d2d5ed68c2f4128e726d7ad1ed12c2b50159440358e06371368d739'
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Успешная оплата' in mail.subject
+    assert 'Спасибо за Ваш платеж' in mail.subject
 
 
 def test_manager_get_braintree(make_orders):
@@ -228,7 +228,7 @@ api/payment/success'
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Your payment was successful' in mail.subject
+    assert 'Thank you for your payment!' in mail.subject
 
 
 def _test_stripe_display_by_admin(admin_client, key):
@@ -292,7 +292,7 @@ def test_stripe_response(client, make_orders, mailoutbox, mocker):
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Your payment was successful' in mail.subject
+    assert 'Thank you for your payment!' in mail.subject
 
 
 def test_bill_display_by_admin(admin_client, make_orders, settings):
@@ -356,7 +356,7 @@ def test_sberbank_rest_response(client, make_orders, mailoutbox, mocker):
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Успешная оплата' in mail.subject
+    assert 'Спасибо за Ваш платеж' in mail.subject
 
 
 def test_sberbank_display_by_admin(admin_client, make_orders):
@@ -437,7 +437,7 @@ def test_sberbank_response(client, make_orders, mailoutbox):
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Успешная оплата' in mail.subject
+    assert 'Спасибо за Ваш платеж' in mail.subject
 
 
 def test_paypal_display_by_admin(admin_client, make_orders):
@@ -526,4 +526,4 @@ def test_paypal_response(client, make_orders, mailoutbox, mocker):
 
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
-    assert 'Your payment was successful' in mail.subject
+    assert 'Thank you for your payment!' in mail.subject

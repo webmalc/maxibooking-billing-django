@@ -104,7 +104,7 @@ def test_order_creation_and_modifications(mailoutbox):
     mail = mailoutbox[0]
     html = mail.alternatives[0][0]
 
-    assert 'New order created' in mail.subject
+    assert 'New Invoice created' in mail.subject
     assert mail.recipients() == ['user@one.com']
     # assert '20 more days' in html
     assert '3 more days' in html
@@ -178,7 +178,7 @@ def test_orders_payment_notification(make_orders, mailoutbox):
     html = mail.alternatives[0][0]
 
     assert mail.recipients() == ['user@one.com']
-    assert 'Order will expire soon' in mail.subject
+    assert 'Invoice is due' in mail.subject
     assert 'We glad to see' not in html
 
     Order.objects.filter(client_id=1, status='paid').delete()
@@ -242,7 +242,7 @@ def test_order_payer(make_orders, settings):
 
 def test_orders_clients_disable(make_orders, mailoutbox):
     orders_clients_disable.delay()
-    mailoutbox = [m for m in mailoutbox if 'account is disabled' in m.subject]
+    mailoutbox = [m for m in mailoutbox if 'has been suspended' in m.subject]
     assert len(mailoutbox) == 1
     assert mailoutbox[0].recipients() == ['user@one.com']
     assert '#3' in mailoutbox[-1].alternatives[0][0]
@@ -291,12 +291,12 @@ def test_order_paid_email(make_orders, mailoutbox):
     order_en.save()
 
     assert mailoutbox[-1].recipients() == ['user@one.com']
-    assert 'Your payment was successful' in mailoutbox[-1].subject
+    assert 'Thank you for your payment!' in mailoutbox[-1].subject
     assert '#1' in mailoutbox[-1].alternatives[0][0]
 
     order_ru.status = 'paid'
     order_ru.save()
 
     assert mailoutbox[-1].recipients() == ['user@rus.com']
-    assert 'Успешная оплата' in mailoutbox[-1].subject
+    assert 'Спасибо за Ваш платеж' in mailoutbox[-1].subject
     assert '№5' in mailoutbox[-1].alternatives[0][0]

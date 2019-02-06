@@ -12,7 +12,7 @@ def mail_comments_action_task():
     comments = Comment.objects.get_uncompleted()
     for comment in comments:
         data = {
-            'subject': 'Uncompleted action',
+            'subject': 'Action not completed',
             'template': 'emails/comment_uncompleted.html',
             'data': {
                 'comment': comment
