@@ -1,3 +1,6 @@
+"""
+The module for interaction with the maxibooking service by HTTP protocol
+"""
 import json
 import logging
 import time
@@ -7,14 +10,39 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from clients.models import Client
+
 from .conf import get_settings
 from .messengers.mailer import mail_client
+
+
+def get_parsed_client_urls(client: Client) -> dict:
+    """
+    Get MB_URLS with inserted the client URL
+    """
+    settings = dict(mb_settings(client))
+    url = client.url
+    for key, value in settings.items():
+        if isinstance(value, str) and '{}' in value:
+            settings[key] = value.format(url) if url else None
+
+    return settings
+
+
+def mb_settings(client):
+    """
+    Get MB_URLS by country code
+    """
+    return get_settings('MB_URLS', client=client)
 
 
 def _request(url, data, error_callback):
     """
     Send request to maxibooking
     """
+    if not url:
+        return False
+
     for i in range(0, 10):
         try:
             logging.getLogger('billing').info(
@@ -47,13 +75,6 @@ def _request(url, data, error_callback):
     return False
 
 
-def mb_settings(client=None, country=None):
-    """
-    Get MB_URLS by country code
-    """
-    return get_settings('MB_URLS', country=country, client=client)
-
-
 def client_fixtures(client):
     """
     Install client fixtures
@@ -62,7 +83,7 @@ def client_fixtures(client):
         'Begin client fixtures installation. Id: {}; login: {}'.format(
             client.id, client.login))
 
-    urls = mb_settings(client)
+    client_settings = get_parsed_client_urls(client)
 
     def _error_callback():
         logging.getLogger('billing').error(
@@ -75,10 +96,10 @@ def client_fixtures(client):
             client=client)
 
     response = _request(
-        url=urls['fixtures'].format(client.login),
+        url=client_settings.get('fixtures'),
         data={
             'client_login': client.login,
-            'token': urls['token']
+            'token': client_settings['token']
         },
         error_callback=_error_callback)
     if response:
@@ -127,20 +148,15 @@ def client_cache_invalidate(client):
         'Begin client cache invalidation task. Id: {}; login: {}'.format(
             client.id, client.login))
 
-    urls = mb_settings(client)
-    url = urls.get('client_invalidation')
-
-    if not url:
-        return True
-
     def _error_callback():
         logging.getLogger('billing').error(
             'Failed client cache invalidation. Id: {}; login: {}'.format(
                 client.id, client.login))
 
+    client_settings = get_parsed_client_urls(client)
     return _request(
-        url=url.format(client.login),
-        data={'token': urls['token']},
+        url=client_settings.get('client_invalidation'),
+        data={'token': client_settings['token']},
         error_callback=_error_callback,
     )
 

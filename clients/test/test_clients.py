@@ -432,7 +432,7 @@ def test_client_process_fixtures_by_admin(admin_client):
 
 def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
     settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
-        'fixtures'] = 'http://{}.invalid-domain-name.com'
+        'fixtures'] = 'http://invalid-domain-name.com'
     response = admin_client.post(
         reverse('client-fixtures', args=['user-two']),
         content_type="application/json")
@@ -754,9 +754,10 @@ def test_client_refusal_reason():
 
 def test_client_cache_invalidation(caplog, settings):
     settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
-        'client_invalidation'] = 'http://{}.example.com'
+        'client_invalidation'] = '{}/invalidation'
     client = Client.objects.get(login='user-two')
     client.description = 'user-two-test'
+    client.url = 'http://example.com'
     client.save()
     first_msg = caplog.records[0].msg
     last_msg = caplog.records[-1].msg
