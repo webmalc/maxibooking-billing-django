@@ -59,3 +59,12 @@ def test_countries_translations(admin_client, settings):
     call_command('citiesprocess', stdout=StringIO())
     response = admin_client.get(reverse('country-detail', args=['ae']))
     assert response.json()['name'] == 'Объединенные Арабские Эмираты'
+
+
+def test_countries_currencies(admin_client, settings):
+    response = admin_client.get(reverse('country-detail', args=['ae']))
+    assert response.status_code == 200
+    assert response.json()['currency'] is None
+    call_command('citiesprocess', stdout=StringIO())
+    response = admin_client.get(reverse('country-detail', args=['ae']))
+    assert response.json()['currency'] == 'AED'

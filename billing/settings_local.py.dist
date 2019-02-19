@@ -41,6 +41,9 @@ MB_CLIENT_LOGIN_RESTRICTIONS = [
     'maxibooking'
 ]
 
+# Django money
+FIXER_ACCESS_KEY = 'the secret key'
+
 # Rbk
 RBK_SHOP_ID = 'rbk_shop_id'
 RBK_SECRET_KEY = 'rbk_secret_key'

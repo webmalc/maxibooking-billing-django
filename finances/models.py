@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from djmoney.models.fields import MoneyField
+from djmoney.models.validators import MinMoneyValidator
 from model_utils import FieldTracker
 from moneyed import EUR, Money
 
@@ -156,7 +157,7 @@ class Price(CachedModel, CommonInfo, TimeStampedModel):
         max_digits=20,
         decimal_places=2,
         verbose_name=_('price'),
-        validators=[MinValueValidator(0)],
+        validators=[MinMoneyValidator(0)],
         db_index=True)
     country = models.ForeignKey(
         Country,
@@ -406,7 +407,7 @@ class Order(CommonInfo, TimeStampedModel):
         decimal_places=2,
         default=0,
         verbose_name=_('price'),
-        validators=[MinValueValidator(0)],
+        validators=[MinMoneyValidator(0)],
         db_index=True,
         help_text=_('Set zero to recalculate price'))
     client = models.ForeignKey(
@@ -639,7 +640,7 @@ class Subscription(CommonInfo, TimeStampedModel):
         decimal_places=2,
         blank=True,
         verbose_name=_('price'),
-        validators=[MinValueValidator(0)],
+        validators=[MinMoneyValidator(0)],
         db_index=True)
     period = models.PositiveIntegerField(
         verbose_name=_('period'),

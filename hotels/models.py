@@ -11,6 +11,7 @@ from timezone_field import TimeZoneField
 
 from billing.models import (CachedModel, CheckedModel, ClientPermissionsModel,
                             CommonInfo, GetManagerMixin)
+from finances.lib.calc import CURRENCIES_CODES
 
 from .managers import PropertyManager, RoomManager
 
@@ -51,6 +52,13 @@ class Country(CachedModel, CityMixin, AbstractCountry):
 
     is_former = models.BooleanField(
         default=False, db_index=True, verbose_name=_('is former'))
+
+    currency = models.CharField(
+        max_length=3,
+        choices=zip(CURRENCIES_CODES, CURRENCIES_CODES),
+        null=True,
+        blank=True,
+    )
 
     request_client = models.ForeignKey(
         'clients.Client',

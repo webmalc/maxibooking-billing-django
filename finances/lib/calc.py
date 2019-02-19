@@ -1,12 +1,125 @@
 import logging
+from typing import Optional
+
+import moneyed
+from django.apps import apps
 
 from billing.lib.utils import clsfstr
-from django.apps import apps
-from hotels.models import Country
+
+from .rates import convert_money
+
+CURRENCIES_CODES = moneyed.CURRENCIES.keys()
 
 
-class Exception(Exception):
+def get_currency_by_country(country) -> Optional[moneyed.Currency]:
+    country = get_country_by_tld_or_name(country)
+    names = [country.name_en.upper()]
+    names += [x.upper() for x in country.alternate_names.split(',')]
+
+    for code, currency in moneyed.CURRENCIES.items():
+        for name in names:
+            if name in currency.countries:
+                return currency
+    return None
+
+
+def get_country_by_tld_or_name(country):
+    country_model = apps.get_model('hotels.Country')
+    try:
+        if country and str(country).isnumeric() and not isinstance(
+                country, country_model):
+            country = country_model.objects.get(pk=country)
+        elif country and not str(country).isnumeric() and not isinstance(
+                country, country_model):
+            country = country_model.objects.get(tld=country)
+    except country_model.DoesNotExist:
+        country = None
+
+    return country
+
+
+class CalcException(Exception):
     pass
+
+
+class CalcByQantityPeriodCountry(object):
+    """
+    Calculate the service price by the period, country and quantity
+    """
+
+    def __init__(self, period: int, period_units: str, quantity: int,
+                 country: str) -> None:
+        self.period = period
+        self.period_units = period_units
+        self.quantity = quantity
+        self.country = get_country_by_tld_or_name(country)
+        self.services = []  # type: list
+
+    def get_prices(self):
+        self._fill_services_for_calcualtion()
+        prices = self._calc_services()
+
+        if not len(prices):
+            raise CalcException('Prices are empty')
+
+        return prices
+
+    def _fill_services_for_calcualtion(self):
+        service_model = apps.get_model('finances.Service')
+        if self.period:
+            service = service_model.objects.get_by_period(
+                service_type='rooms',
+                period=self.period,
+                period_units=self.period_units,
+            )
+            if not service:
+                raise CalcException('Service not found.')
+            self.services.append(service)
+        else:
+            self.services = service_model.objects.get_all_periods(
+                service_type='rooms',
+                period_units=self.period_units,
+            )
+
+    def _get_local_price(self, price: moneyed.Money) -> moneyed.Money:
+        """
+        Get the local price according to the country currency
+        """
+        currency = getattr(self.country, 'currency')
+        if currency and currency != price.currency:
+            return convert_money(price, currency)
+        return price
+
+    def _calc_services(self) -> list:
+        prices = []
+        for service in self.services:
+            price = Calc.factory(service).calc(
+                quantity=self.quantity, country=self.country)
+            price_local = self._get_local_price(price)
+            prices.append({
+                'status': True,
+                'price': price.amount,
+                'price_currency': price.currency.code,
+                'period': service.period,
+                'price_local': price_local.amount,
+                'price_currency_local': price_local.currency.code
+            })
+
+        return prices
+
+
+class CalcByQuery(CalcByQantityPeriodCountry):
+    """
+    Calculate the service price by the query serializer
+    """
+
+    def __init__(self, query: dict) -> None:
+        super().__init__(
+            query.get('period'),
+            query.get('period_units'),
+            query.get('quantity'),
+            query.get('country'),
+        )
 
 
 class Calc(object):
@@ -50,28 +163,37 @@ class Calc(object):
         """
         if not quantity:
             quantity = getattr(self, 'quantity', None)
-        try:
-            if country and str(country).isnumeric() and not isinstance(
-                    country, Country):
-                country = Country.objects.get(pk=country)
-            elif country and not str(country).isnumeric() and not isinstance(
-                    country, Country):
-                country = Country.objects.get(tld=country)
-        except Country.DoesNotExist:
-            country = None
 
-        if not country:
-            country = getattr(self, 'country', None)
+        country = self._get_country(country)
 
         if not quantity or not country:
-            raise Exception('Invalid country or quantity.')
+            raise CalcException('Invalid country or quantity.')
 
         prices = list(
             apps.get_model('finances.Price').objects.filter_by_country(
                 country, self.service))
         if not prices:
-            raise Exception('Empty prices.')
+            raise CalcException('Empty prices.')
 
+        total = self._do_calc_total_price(prices, quantity)
+        self._log_calc_result(total, prices, country, quantity)
+
+        return total
+
+    def _get_country(self, country):
+        """
+        Polymorph getting of country
+        """
+        country = get_country_by_tld_or_name(country)
+        if not country:
+            country = getattr(self, 'country', None)
+
+        return country
+
+    def _do_calc_total_price(self, prices, quantity):
+        """
+        Calculate price based on prices table and quantity
+        """
         table = []
         default = [d for d in prices if d.for_unit]
 
@@ -90,10 +212,15 @@ class Calc(object):
         total = 0
         for item in table:
             total += getattr(item, 'price', 0)
+        return total
 
+    def _log_calc_result(self, total, prices, country, quantity):
+        """
+        Log the result of calculation
+        """
         template = """
 'Calc result: {}. Prices: {}. Country: {}. \
-Quantity: {}. Service: {}. Table: {}'.
+Quantity: {}. Service: {}.'
         """
         logging.getLogger('billing').info(
             template.format(
@@ -102,10 +229,7 @@ Quantity: {}. Service: {}. Table: {}'.
                 country,
                 quantity,
                 self.service,
-                table,
             ))
-
-        return total
 
 
 class Rooms(Calc):

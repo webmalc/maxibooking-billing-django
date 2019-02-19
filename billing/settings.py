@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'tabbed_admin',
     'rangefilter',
     'rest_framework_swagger',
+    'djmoney.contrib.exchange',
     'timezone_field',
 
     # mb apps
@@ -296,6 +297,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'finances.tasks.orders_clients_disable',
         'schedule': 60 * 10
     },
+    'update_exchange_rates': {
+        'task': 'finances.tasks.update_exchange_rates_task',
+        'schedule': 60 * 60 * 24
+    },
     'clients_archivation': {
         'task': 'clients.tasks.clients_archivation',
         'schedule': 60 * 10
@@ -361,7 +366,9 @@ if not DEBUG:  # pragma: no cover
 
 # Django money
 DEFAULT_CURRENCY = 'EUR'
+BASE_CURRENCY = 'EUR'
 CURRENCIES = ('RUB', 'EUR', 'CAD', 'USD')
+EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.FixerBackend'
 
 # Cache
 CACHES = {

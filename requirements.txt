@@ -43,9 +43,9 @@ django-formtools==2.0
 django-iprestrict==1.5.0
 django-ipware==2.0.1
 django-material==1.0.0
-django-model-utils==3.0.0
+django-model-utils==3.1.2
 django-modeltranslation==0.12.1
-django-money==0.11.4
+django-money==0.14.4
 django-object-actions==0.10.0
 django-ordered-model==1.4.1
 django-otp==0.3.14
@@ -105,7 +105,7 @@ progressbar2==3.30.2
 psycopg2==2.7.3.1
 ptyprocess==0.5.1
 py==1.5.3
-py-moneyed==0.7.0
+py-moneyed==0.8.0
 pyasn1==0.3.7
 pycodestyle==2.3.1
 pycparser==2.18

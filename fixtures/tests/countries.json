@@ -11,6 +11,7 @@
         "code2": "US",
         "code3": "USA",
         "continent": "NA",
+        "currency": "USD",
         "tld": "us",
         "phone": "1"
     }
@@ -36,6 +37,7 @@
     "pk": 192,
     "fields": {
         "name_ascii": "Russia",
+        "alternate_names": "Russian Federation",
         "slug": "russia",
         "geoname_id": 1111111,
         "name": "Russia",

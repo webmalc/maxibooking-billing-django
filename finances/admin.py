@@ -3,21 +3,31 @@ from functools import wraps
 import jsonpickle
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
-from billing.admin import (ChangePermissionMixin, JsonAdmin, ManagerListMixin,
-                           TextFieldListFilter)
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django_admin_row_actions import AdminRowActionsMixin
-from finances.systems.lib import BraintreeGateway
+from djmoney.contrib.exchange.admin import RateAdmin
+from djmoney.contrib.exchange.models import Rate
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 
+from billing.admin import (ChangePermissionMixin, JsonAdmin, ManagerListMixin,
+                           TextFieldListFilter)
+from finances.systems.lib import BraintreeGateway
+
 from .models import (Discount, Order, Price, Service, ServiceCategory,
                      Subscription, Transaction)
 from .systems import manager
+
+admin.site.unregister(Rate)
+
+
+@admin.register(Rate)
+class VersionRateAdmin(VersionAdmin, RateAdmin):
+    pass
 
 
 @admin.register(Discount)

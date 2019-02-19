@@ -1,0 +1,1522 @@
+[
+{
+    "model": "exchange.exchangebackend",
+    "pk": "fixer.io",
+    "fields": {
+        "last_update": "2019-02-11T13:25:39.800Z",
+        "base_currency": "EUR"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 841,
+    "fields": {
+        "currency": "AED",
+        "value": "4.153797",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 842,
+    "fields": {
+        "currency": "AFN",
+        "value": "85.160322",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 843,
+    "fields": {
+        "currency": "ALL",
+        "value": "124.206825",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 844,
+    "fields": {
+        "currency": "AMD",
+        "value": "553.971734",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 845,
+    "fields": {
+        "currency": "ANG",
+        "value": "2.030077",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 846,
+    "fields": {
+        "currency": "AOA",
+        "value": "354.139162",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 847,
+    "fields": {
+        "currency": "ARS",
+        "value": "42.768430",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 848,
+    "fields": {
+        "currency": "AUD",
+        "value": "1.598575",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 849,
+    "fields": {
+        "currency": "AWG",
+        "value": "2.035624",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 850,
+    "fields": {
+        "currency": "AZN",
+        "value": "1.928169",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 851,
+    "fields": {
+        "currency": "BAM",
+        "value": "1.955103",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 852,
+    "fields": {
+        "currency": "BBD",
+        "value": "2.263840",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 853,
+    "fields": {
+        "currency": "BDT",
+        "value": "94.889503",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 854,
+    "fields": {
+        "currency": "BGN",
+        "value": "1.955726",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 855,
+    "fields": {
+        "currency": "BHD",
+        "value": "0.426372",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 856,
+    "fields": {
+        "currency": "BIF",
+        "value": "2035.793416",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 857,
+    "fields": {
+        "currency": "BMD",
+        "value": "1.130902",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 858,
+    "fields": {
+        "currency": "BND",
+        "value": "1.527227",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 859,
+    "fields": {
+        "currency": "BOB",
+        "value": "7.818548",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 860,
+    "fields": {
+        "currency": "BRL",
+        "value": "4.225333",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 861,
+    "fields": {
+        "currency": "BSD",
+        "value": "1.131015",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 862,
+    "fields": {
+        "currency": "BTC",
+        "value": "0.000313",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 863,
+    "fields": {
+        "currency": "BTN",
+        "value": "80.474673",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 864,
+    "fields": {
+        "currency": "BWP",
+        "value": "11.880165",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 865,
+    "fields": {
+        "currency": "BYN",
+        "value": "2.439638",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 866,
+    "fields": {
+        "currency": "BYR",
+        "value": "22165.681164",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 867,
+    "fields": {
+        "currency": "BZD",
+        "value": "2.273347",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 868,
+    "fields": {
+        "currency": "CAD",
+        "value": "1.501170",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 869,
+    "fields": {
+        "currency": "CDF",
+        "value": "1844.501224",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 870,
+    "fields": {
+        "currency": "CHF",
+        "value": "1.135084",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 871,
+    "fields": {
+        "currency": "CLF",
+        "value": "0.028326",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 872,
+    "fields": {
+        "currency": "CLP",
+        "value": "746.525479",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 873,
+    "fields": {
+        "currency": "CNY",
+        "value": "7.678142",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 874,
+    "fields": {
+        "currency": "COP",
+        "value": "3524.569486",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 875,
+    "fields": {
+        "currency": "CRC",
+        "value": "692.015955",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 876,
+    "fields": {
+        "currency": "CUC",
+        "value": "1.130902",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 877,
+    "fields": {
+        "currency": "CUP",
+        "value": "29.968906",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 878,
+    "fields": {
+        "currency": "CVE",
+        "value": "110.092750",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 879,
+    "fields": {
+        "currency": "CZK",
+        "value": "25.838824",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 880,
+    "fields": {
+        "currency": "DJF",
+        "value": "200.984117",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 881,
+    "fields": {
+        "currency": "DKK",
+        "value": "7.463705",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 882,
+    "fields": {
+        "currency": "DOP",
+        "value": "57.257756",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 883,
+    "fields": {
+        "currency": "DZD",
+        "value": "134.452542",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 884,
+    "fields": {
+        "currency": "EGP",
+        "value": "19.923142",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 885,
+    "fields": {
+        "currency": "ERN",
+        "value": "16.963933",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 886,
+    "fields": {
+        "currency": "ETB",
+        "value": "32.131185",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 887,
+    "fields": {
+        "currency": "EUR",
+        "value": "1.000000",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 888,
+    "fields": {
+        "currency": "FJD",
+        "value": "2.417082",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 889,
+    "fields": {
+        "currency": "FKP",
+        "value": "0.870728",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 890,
+    "fields": {
+        "currency": "GBP",
+        "value": "0.876721",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 891,
+    "fields": {
+        "currency": "GEL",
+        "value": "2.991202",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 892,
+    "fields": {
+        "currency": "GGP",
+        "value": "0.876751",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 893,
+    "fields": {
+        "currency": "GHS",
+        "value": "5.909419",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 894,
+    "fields": {
+        "currency": "GIP",
+        "value": "0.870817",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 895,
+    "fields": {
+        "currency": "GMD",
+        "value": "56.036033",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 896,
+    "fields": {
+        "currency": "GNF",
+        "value": "10323.044556",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 897,
+    "fields": {
+        "currency": "GTQ",
+        "value": "8.770820",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 898,
+    "fields": {
+        "currency": "GYD",
+        "value": "236.935148",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 899,
+    "fields": {
+        "currency": "HKD",
+        "value": "8.875127",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 900,
+    "fields": {
+        "currency": "HNL",
+        "value": "27.607556",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 901,
+    "fields": {
+        "currency": "HRK",
+        "value": "7.403113",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 902,
+    "fields": {
+        "currency": "HTG",
+        "value": "93.357107",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 903,
+    "fields": {
+        "currency": "HUF",
+        "value": "319.739769",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 904,
+    "fields": {
+        "currency": "IDR",
+        "value": "15927.059728",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 905,
+    "fields": {
+        "currency": "ILS",
+        "value": "4.121177",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 906,
+    "fields": {
+        "currency": "IMP",
+        "value": "0.876751",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 907,
+    "fields": {
+        "currency": "INR",
+        "value": "80.469317",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 908,
+    "fields": {
+        "currency": "IQD",
+        "value": "1349.505476",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 909,
+    "fields": {
+        "currency": "IRR",
+        "value": "47616.633036",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 910,
+    "fields": {
+        "currency": "ISK",
+        "value": "136.567182",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 911,
+    "fields": {
+        "currency": "JEP",
+        "value": "0.876751",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 912,
+    "fields": {
+        "currency": "JMD",
+        "value": "152.174024",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 913,
+    "fields": {
+        "currency": "JOD",
+        "value": "0.801243",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 914,
+    "fields": {
+        "currency": "JPY",
+        "value": "124.641231",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 915,
+    "fields": {
+        "currency": "KES",
+        "value": "113.712147",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 916,
+    "fields": {
+        "currency": "KGS",
+        "value": "78.950877",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 917,
+    "fields": {
+        "currency": "KHR",
+        "value": "4540.797174",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 918,
+    "fields": {
+        "currency": "KMF",
+        "value": "491.518315",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 919,
+    "fields": {
+        "currency": "KPW",
+        "value": "1017.863030",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 920,
+    "fields": {
+        "currency": "KRW",
+        "value": "1272.047673",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 921,
+    "fields": {
+        "currency": "KWD",
+        "value": "0.343573",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 922,
+    "fields": {
+        "currency": "KYD",
+        "value": "0.942471",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 923,
+    "fields": {
+        "currency": "KZT",
+        "value": "424.326174",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 924,
+    "fields": {
+        "currency": "LAK",
+        "value": "9690.931087",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 925,
+    "fields": {
+        "currency": "LBP",
+        "value": "1711.224191",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 926,
+    "fields": {
+        "currency": "LKR",
+        "value": "201.028796",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 927,
+    "fields": {
+        "currency": "LRD",
+        "value": "181.957302",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 928,
+    "fields": {
+        "currency": "LSL",
+        "value": "15.403161",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 929,
+    "fields": {
+        "currency": "LTL",
+        "value": "3.339260",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 930,
+    "fields": {
+        "currency": "LVL",
+        "value": "0.684071",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 931,
+    "fields": {
+        "currency": "LYD",
+        "value": "1.571275",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 932,
+    "fields": {
+        "currency": "MAD",
+        "value": "10.782530",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 933,
+    "fields": {
+        "currency": "MDL",
+        "value": "19.379163",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 934,
+    "fields": {
+        "currency": "MGA",
+        "value": "4044.572618",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 935,
+    "fields": {
+        "currency": "MKD",
+        "value": "61.591203",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 936,
+    "fields": {
+        "currency": "MMK",
+        "value": "1741.138978",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 937,
+    "fields": {
+        "currency": "MNT",
+        "value": "2973.115920",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 938,
+    "fields": {
+        "currency": "MOP",
+        "value": "9.141650",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 939,
+    "fields": {
+        "currency": "MRO",
+        "value": "403.732449",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 940,
+    "fields": {
+        "currency": "MUR",
+        "value": "38.908484",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 941,
+    "fields": {
+        "currency": "MVR",
+        "value": "17.495203",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 942,
+    "fields": {
+        "currency": "MWK",
+        "value": "823.211942",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 943,
+    "fields": {
+        "currency": "MXN",
+        "value": "21.579311",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 944,
+    "fields": {
+        "currency": "MYR",
+        "value": "4.610232",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 945,
+    "fields": {
+        "currency": "MZN",
+        "value": "70.460893",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 946,
+    "fields": {
+        "currency": "NAD",
+        "value": "15.402960",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 947,
+    "fields": {
+        "currency": "NGN",
+        "value": "408.855273",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 948,
+    "fields": {
+        "currency": "NIO",
+        "value": "37.152957",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 949,
+    "fields": {
+        "currency": "NOK",
+        "value": "9.820188",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 950,
+    "fields": {
+        "currency": "NPR",
+        "value": "128.742278",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 951,
+    "fields": {
+        "currency": "NZD",
+        "value": "1.677105",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 952,
+    "fields": {
+        "currency": "OMR",
+        "value": "0.435403",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 953,
+    "fields": {
+        "currency": "PAB",
+        "value": "1.131524",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 954,
+    "fields": {
+        "currency": "PEN",
+        "value": "3.757591",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 955,
+    "fields": {
+        "currency": "PGK",
+        "value": "3.810405",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 956,
+    "fields": {
+        "currency": "PHP",
+        "value": "58.999727",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 957,
+    "fields": {
+        "currency": "PKR",
+        "value": "158.103812",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 958,
+    "fields": {
+        "currency": "PLN",
+        "value": "4.317027",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 959,
+    "fields": {
+        "currency": "PYG",
+        "value": "6827.818410",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 960,
+    "fields": {
+        "currency": "QAR",
+        "value": "4.117620",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 961,
+    "fields": {
+        "currency": "RON",
+        "value": "4.741418",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 962,
+    "fields": {
+        "currency": "RSD",
+        "value": "118.156804",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 963,
+    "fields": {
+        "currency": "RUB",
+        "value": "74.136212",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 964,
+    "fields": {
+        "currency": "RWF",
+        "value": "1014.843272",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 965,
+    "fields": {
+        "currency": "SAR",
+        "value": "4.239979",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 966,
+    "fields": {
+        "currency": "SBD",
+        "value": "9.129659",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 967,
+    "fields": {
+        "currency": "SCR",
+        "value": "15.460540",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 968,
+    "fields": {
+        "currency": "SDG",
+        "value": "53.855792",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 969,
+    "fields": {
+        "currency": "SEK",
+        "value": "10.490813",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 970,
+    "fields": {
+        "currency": "SGD",
+        "value": "1.536439",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 971,
+    "fields": {
+        "currency": "SHP",
+        "value": "1.493811",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 972,
+    "fields": {
+        "currency": "SLL",
+        "value": "9754.031054",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 973,
+    "fields": {
+        "currency": "SOS",
+        "value": "657.053913",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 974,
+    "fields": {
+        "currency": "SRD",
+        "value": "8.434247",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 975,
+    "fields": {
+        "currency": "STD",
+        "value": "23806.167310",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 976,
+    "fields": {
+        "currency": "SVC",
+        "value": "9.896467",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 977,
+    "fields": {
+        "currency": "SYP",
+        "value": "582.414777",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 978,
+    "fields": {
+        "currency": "SZL",
+        "value": "15.543687",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 979,
+    "fields": {
+        "currency": "THB",
+        "value": "35.517128",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 980,
+    "fields": {
+        "currency": "TJS",
+        "value": "10.659206",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 981,
+    "fields": {
+        "currency": "TMT",
+        "value": "3.969466",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 982,
+    "fields": {
+        "currency": "TND",
+        "value": "3.380714",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 983,
+    "fields": {
+        "currency": "TOP",
+        "value": "2.565337",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 984,
+    "fields": {
+        "currency": "TRY",
+        "value": "5.956947",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 985,
+    "fields": {
+        "currency": "TTD",
+        "value": "7.659995",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 986,
+    "fields": {
+        "currency": "TWD",
+        "value": "34.896805",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 987,
+    "fields": {
+        "currency": "TZS",
+        "value": "2629.122794",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 988,
+    "fields": {
+        "currency": "UAH",
+        "value": "30.556412",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 989,
+    "fields": {
+        "currency": "UGX",
+        "value": "4150.750416",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 990,
+    "fields": {
+        "currency": "USD",
+        "value": "1.130902",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 991,
+    "fields": {
+        "currency": "UYU",
+        "value": "36.875889",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 992,
+    "fields": {
+        "currency": "UZS",
+        "value": "9494.318357",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 993,
+    "fields": {
+        "currency": "VEF",
+        "value": "11.294885",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 994,
+    "fields": {
+        "currency": "VND",
+        "value": "26252.761354",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 995,
+    "fields": {
+        "currency": "VUV",
+        "value": "129.024517",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 996,
+    "fields": {
+        "currency": "WST",
+        "value": "2.972338",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 997,
+    "fields": {
+        "currency": "XAF",
+        "value": "655.719355",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 998,
+    "fields": {
+        "currency": "XAG",
+        "value": "0.071979",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 999,
+    "fields": {
+        "currency": "XAU",
+        "value": "0.000866",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1000,
+    "fields": {
+        "currency": "XCD",
+        "value": "3.056319",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1001,
+    "fields": {
+        "currency": "XDR",
+        "value": "0.814058",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1002,
+    "fields": {
+        "currency": "XOF",
+        "value": "655.731028",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1003,
+    "fields": {
+        "currency": "XPF",
+        "value": "119.220019",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1004,
+    "fields": {
+        "currency": "YER",
+        "value": "282.640680",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1005,
+    "fields": {
+        "currency": "ZAR",
+        "value": "15.534920",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1006,
+    "fields": {
+        "currency": "ZMK",
+        "value": "10179.478280",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1007,
+    "fields": {
+        "currency": "ZMW",
+        "value": "13.362753",
+        "backend": "fixer.io"
+    }
+},
+{
+    "model": "exchange.rate",
+    "pk": 1008,
+    "fields": {
+        "currency": "ZWL",
+        "value": "364.551959",
+        "backend": "fixer.io"
+    }
+}
+]

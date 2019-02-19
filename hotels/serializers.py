@@ -58,7 +58,8 @@ class CountrySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Country
         fields = ('id', 'name', 'code2', 'code3', 'continent', 'tld', 'phone',
-                  'alternate_names', 'is_enabled', 'is_checked', 'is_former')
+                  'alternate_names', 'currency', 'is_enabled', 'is_checked',
+                  'is_former')
         lookup_field = 'tld'
 
 

@@ -35,6 +35,9 @@ PAYMENT_SYSTEMS = (
     'bill',
 )
 
+# Django money
+FIXER_ACCESS_KEY = 'the secret key'
+
 # MB setting by country
 MB_SETTINGS_BY_COUNTRY = {}
 

@@ -11,8 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .filters import OrderFilterSet
-from .lib.calc import Calc
-from .lib.calc import Exception as CalcException
+from .lib.calc import CalcByQuery, CalcException
 from .models import Order, Price, Service, ServiceCategory, Transaction
 from .serializers import (CalcQuerySerializer, OrderSerializer,
                           PaymentSystemListSerializer, PaymentSystemSerializer,
@@ -109,61 +108,16 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
         if not query.is_valid():
             return Response({'errors': query.errors, 'status': False})
 
-        data = query.data
-        period = data.get('period')
-        prices = []
+        calc = CalcByQuery(query.data)
+        try:
+            prices = calc.get_prices()
+            response = prices[0] if len(prices) == 1 else {
+                'status': True,
+                'prices': prices
+            }
+        except CalcException as exception:
+            response = {'errors': {'calc': [str(exception)]}, 'status': False}
 
-        if period:
-            service = Service.objects.get_by_period(
-                service_type='rooms',
-                period=data.get('period'),
-                period_units=data.get('period_units'),
-            )
-            if not service:
-                return Response({
-                    'errors': {
-                        'service': ['service not found.']
-                    },
-                    'status': False
-                })
-            services = [service]
-        else:
-            services = Service.objects.get_all_periods(
-                service_type='rooms',
-                period_units=data.get('period_units'),
-            )
-
-        for service in services:
-            try:
-                price = Calc.factory(service).calc(
-                    quantity=data.get('quantity'), country=data.get('country'))
-                prices.append({
-                    'status': True,
-                    'price': price.amount,
-                    'price_currency': price.currency.code,
-                    'period': service.period
-                })
-            except CalcException as e:
-                return Response({
-                    'errors': {
-                        'calc': [str(e)]
-                    },
-                    'status': False
-                })
-
-        prices_count = len(prices)
-        if not prices_count:
-            return Response({
-                'errors': {
-                    'calc': 'Empty prices'
-                },
-                'status': False
-            })
-
-        response = prices[0] if prices_count == 1 else {
-            'status': True,
-            'prices': prices
-        }
         return Response(response)
 
 

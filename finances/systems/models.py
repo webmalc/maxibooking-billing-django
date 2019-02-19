@@ -810,8 +810,8 @@ class Paypal(BaseType):
     name = _('paypal')
     description = _('paypal description')
     template = 'finances/paypal.html'
-    countries_excluded = []
-    countries = ['us', 'ca']
+    countries_excluded = ['ru']
+    countries = []
     currencies = ['CAD', 'USD', 'EUR']
     client_filter_fields = []
 

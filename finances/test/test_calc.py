@@ -1,12 +1,13 @@
 import pytest
-from clients.models import ClientService
 from django.core.urlresolvers import reverse
 from django.test import TestCase
-from finances.lib.calc import Calc
-from finances.lib.calc import Exception as CalcException
-from finances.lib.calc import Other, Rooms
+from moneyed import AED, EUR, RUB, Money
+
+from clients.models import ClientService
+from finances.lib.calc import (Calc, CalcException, Other, Rooms,
+                               get_currency_by_country)
 from finances.models import Service
-from moneyed import EUR, RUB, Money
+from hotels.models import Country
 
 pytestmark = pytest.mark.django_db
 
@@ -116,7 +117,7 @@ def test_calc_api_invalid_by_admin(admin_client):
     assert response_service.status_code == 200
     assert response_service.json() == {
         'errors': {
-            'service': ['service not found.'],
+            'calc': ['Service not found.'],
         },
         'status': False
     }
@@ -133,13 +134,17 @@ def test_calc_api_by_admin(admin_client, make_prices):
         'status': True,
         'price': 27600.0,
         'price_currency': 'EUR',
-        'period': 3
+        'period': 3,
+        'price_local': 31212.8952,
+        'price_currency_local': 'USD'
     }
     response_data_2 = {
         'status': True,
         'price': 492.0,
         'price_currency': 'EUR',
-        'period': 1
+        'period': 1,
+        'price_local': 556.403784,
+        'price_currency_local': 'USD'
     }
     response_data_3 = {
         'status': True,
@@ -156,6 +161,11 @@ def test_calc_api_by_admin(admin_client, make_prices):
     assert response_4.json() == response_data_3
 
 
+def test_get_currency_by_country():
+    assert get_currency_by_country('ru') == RUB
+    assert get_currency_by_country(Country.objects.get(tld='ae')) == AED
+
+
 @pytest.mark.usefixtures("make_prices")
 class CalcTestCase(TestCase):
     def test_calc_api_cache(self):
@@ -163,7 +173,7 @@ class CalcTestCase(TestCase):
         admin_client.login(username='admin', password='password')
         url = reverse('service-calc')
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             admin_client.get(url + '?quantity=12&country=us&period=3')
         with self.assertNumQueries(7):
             admin_client.get(url + '?quantity=22&country=us&period=3')

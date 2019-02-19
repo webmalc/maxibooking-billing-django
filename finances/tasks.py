@@ -8,6 +8,16 @@ from billing.celery import app
 from billing.lib.lang import select_locale
 from billing.lib.messengers.mailer import mail_client
 
+from .lib.rates import update_exchange_rates
+
+
+@app.task
+def update_exchange_rates_task():
+    """
+    Update the exchange rates from the remote source
+    """
+    update_exchange_rates()
+
 
 @app.task
 def order_notify_task(order_id):

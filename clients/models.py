@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 from djmoney.models.fields import MoneyField
+from djmoney.models.validators import MinMoneyValidator
 from model_utils import FieldTracker
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -745,7 +746,7 @@ class ClientService(CommonInfo, TimeStampedModel, ClientPermissionsModel,
         decimal_places=2,
         blank=True,
         verbose_name=_('price'),
-        validators=[MinValueValidator(0)],
+        validators=[MinMoneyValidator(0)],
         db_index=True)
     country = models.ForeignKey(
         Country,
