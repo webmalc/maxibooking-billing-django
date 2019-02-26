@@ -110,8 +110,7 @@ contain only lowercase letters, numbers, and "-" character.',
     response = admin_client.post(
         url, data=data, content_type="application/json")
     response_json = response.json()
-
-    assert response_json['non_field_errors'] == [
+    assert response_json['__all__'] == [
         'Client with this domain already exist.'
     ]
 
@@ -125,7 +124,7 @@ contain only lowercase letters, numbers, and "-" character.',
         url, data=data, content_type="application/json")
     response_json = response.json()
 
-    assert response_json['non_field_errors'] == [
+    assert response_json['__all__'] == [
         'Client with this domain already exist.'
     ]
 
