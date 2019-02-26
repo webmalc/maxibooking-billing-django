@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 import pytest
 from django.conf import settings
 from django.core.management import call_command
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from billing.lib.test import json_contains
 

@@ -1,5 +1,5 @@
-from django.core.urlresolvers import resolve
 from django.db.models import signals
+from django.urls import resolve
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import curry
 from django.utils.translation import activate
@@ -14,12 +14,12 @@ class DisableAdminI18nMiddleware(MiddlewareMixin):
 
 class WhodidMiddleware(MiddlewareMixin):
     """
-    Fill created_by and updated_by fields
+    Fill the created_by and updated_by fields
     """
 
     def process_request(self, request):
         if request.method not in ('GET', 'HEAD', 'OPTIONS', 'TRACE'):
-            if hasattr(request, 'user') and request.user.is_authenticated():
+            if hasattr(request, 'user') and request.user.is_authenticated:
                 user = request.user
             else:
                 user = None

@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 def test_transaction_list_by_user(client):

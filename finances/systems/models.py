@@ -10,18 +10,18 @@ import requests
 import stripe
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
 from django.http import (HttpResponse, HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from num2words import num2words
 from weasyprint import HTML
 
 from billing.lib.conf import get_settings
 
-from ..models import Order, Subscription, Transaction
 from .lib import BraintreeGateway
+from ..models import Order, Subscription, Transaction
 
 
 class TypeException(Exception):

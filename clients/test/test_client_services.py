@@ -2,7 +2,7 @@ import json
 
 import arrow
 import pytest
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from moneyed import EUR, Money
 
 from billing.lib.test import json_contains

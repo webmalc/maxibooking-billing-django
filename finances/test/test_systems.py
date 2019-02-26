@@ -4,7 +4,7 @@ import paypalrestsdk
 import pytest
 import stripe
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from billing.lib.test import json_contains
 from clients.models import Client

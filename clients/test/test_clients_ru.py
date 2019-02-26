@@ -1,7 +1,7 @@
 import json
-import arrow
 
-from django.core.urlresolvers import reverse
+import arrow
+from django.urls import reverse
 
 from billing.lib.test import json_contains
 

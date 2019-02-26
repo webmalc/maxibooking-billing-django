@@ -1,6 +1,6 @@
 import pytest
-from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.urls import reverse
 from moneyed import AED, EUR, RUB, Money
 
 from clients.models import ClientService

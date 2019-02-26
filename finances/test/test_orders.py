@@ -1,7 +1,7 @@
 import arrow
 import pytest
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from moneyed import EUR, RUB, Money
 
 from billing.lib.test import json_contains

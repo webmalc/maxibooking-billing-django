@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 import raven
-from celery.schedules import crontab
 from kombu import Queue
+
+from celery.schedules import crontab
 
 # Local settings
 try:
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'djmoney.contrib.exchange',
     'timezone_field',
+    'rest_framework_filters',
 
     # mb apps
     'finances',
@@ -106,7 +108,6 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'billing/templates'),
         ],
-        # 'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -339,10 +340,10 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
+        # 'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework_filters.backends.RestFrameworkFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
-        'rest_framework_filters.backends.DjangoFilterBackend',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',

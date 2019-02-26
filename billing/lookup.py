@@ -1,5 +1,5 @@
 from ajax_select import LookupChannel
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 class BaseLookup(LookupChannel):

@@ -3,8 +3,8 @@ import json
 import arrow
 import pytest
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.core.validators import ValidationError
+from django.urls import reverse
 from moneyed import EUR, Money
 
 from billing.lib import mb
