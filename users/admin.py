@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
 
 from .admin_filters import UserDepartmentListFilter
@@ -91,6 +92,5 @@ class DepartmentAdmin(VersionAdmin):
         template = """
         <a href="{}?client__login__exact={}" target="_blank">Show all</a>
         """
-        return template.format(reverse(self.all_url), self.parent_obj.login)
-
-    users.allow_tags = True
+        return mark_safe(
+            template.format(reverse(self.all_url), self.parent_obj.login))

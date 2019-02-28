@@ -1,11 +1,13 @@
 import adminactions.actions as actions
+from django import forms
 from django.contrib import admin
-from django.contrib.admin import site
+from django.contrib.admin import ModelAdmin, site
 from django.contrib.postgres.fields import JSONField
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django_admin_row_actions import AdminRowActionsMixin
+from django_admin_row_actions import AdminRowActionsMixin as BaseRowActions
 from prettyjson import PrettyJSONWidget
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
@@ -13,6 +15,15 @@ from reversion.admin import VersionAdmin
 from .models import Comment
 
 actions.add_to_site(site)
+
+
+class AdminRowActionsMixin(BaseRowActions):
+    @property
+    def media(self):
+        return (ModelAdmin.media.fget)(self) + forms.Media(
+            css={"all": ["css/jquery.dropdown.min.css"]},
+            js=["js/jquery.dropdown.min.js"],
+        )
 
 
 class TextFieldListFilter(admin.ChoicesFieldListFilter):
@@ -23,9 +34,8 @@ class TextFieldListFilter(admin.ChoicesFieldListFilter):
             'selected':
             False,
             'query_string':
-            changelist.get_query_string({
-                self.lookup_kwarg: 0
-            }, [self.lookup_kwarg_isnull]),
+            changelist.get_query_string({self.lookup_kwarg: 0},
+                                        [self.lookup_kwarg_isnull]),
             'query_param':
             self.lookup_kwarg,
             'display':
@@ -50,9 +60,8 @@ class ShowAllInlineAdminMixin(admin.TabularInline):
         template = """
         <a href="{}?client__login__exact={}" target="_blank">Show all</a>
         """
-        return template.format(reverse(self.all_url), self.parent_obj.login)
-
-    all.allow_tags = True
+        return mark_safe(
+            template.format(reverse(self.all_url), self.parent_obj.login))
 
 
 class ManagerListMixin(admin.ModelAdmin):
@@ -184,9 +193,7 @@ class ArchorAdminMixin(admin.ModelAdmin):
     """
 
     def num(self, obj):
-        return '<a name="el_{0}"/>{0}'.format(obj.pk)
-
-    num.allow_tags = True
+        return mark_safe('<a name="el_{0}"/>{0}'.format(obj.pk))
 
     def response_post_save_change(self, request, obj):
         parent = super().response_post_save_change(request, obj)
@@ -270,7 +277,8 @@ class DictAdminMixin():
                 'fields': ['title', 'description']
             }],
             [
-                'Options', {
+                'Options',
+                {
                     'fields': [
                         'is_enabled', 'code', 'created', 'modified',
                         'created_by', 'modified_by'
@@ -366,12 +374,11 @@ class CommentAdmin(ChangeOwnMixin, AdminRowActionsMixin, VersionAdmin):
         template = """
         <a href="{}" target="_blank">{}</a>
         """
-        return template.format(
-            reverse('admin:clients_client_change', args=[client_id]),
-            client_id,
-        )
-
-    client.allow_tags = True
+        return mark_safe(
+            template.format(
+                reverse('admin:clients_client_change', args=[client_id]),
+                client_id,
+            ))
 
     def has_add_permission(self, request):
         return False

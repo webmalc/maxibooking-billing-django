@@ -7,15 +7,14 @@ from django.contrib import admin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
-from django_admin_row_actions import AdminRowActionsMixin
 from djmoney.contrib.exchange.admin import RateAdmin
 from djmoney.contrib.exchange.models import Rate
 from modeltranslation.admin import TabbedExternalJqueryTranslationAdmin
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 
-from billing.admin import (ChangePermissionMixin, JsonAdmin, ManagerListMixin,
-                           TextFieldListFilter)
+from billing.admin import (AdminRowActionsMixin, ChangePermissionMixin,
+                           JsonAdmin, ManagerListMixin, TextFieldListFilter)
 from finances.systems.lib import BraintreeGateway
 
 from .models import (Discount, Order, Price, Service, ServiceCategory,

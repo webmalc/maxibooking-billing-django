@@ -7,16 +7,17 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django_admin_row_actions import AdminRowActionsMixin
 from rangefilter.filter import DateRangeFilter
 from reversion.admin import VersionAdmin
 from tabbed_admin import TabbedModelAdmin
 
-from billing.admin import (ArchorAdminMixin, ChangeOwnInlineMixin,
-                           ChangePermissionInlineMixin, ChangePermissionMixin,
-                           DictAdminMixin, ManagerInlineListMixin,
-                           ShowAllInlineAdminMixin, TextFieldListFilter)
+from billing.admin import (AdminRowActionsMixin, ArchorAdminMixin,
+                           ChangeOwnInlineMixin, ChangePermissionInlineMixin,
+                           ChangePermissionMixin, DictAdminMixin,
+                           ManagerInlineListMixin, ShowAllInlineAdminMixin,
+                           TextFieldListFilter)
 from billing.models import Comment
 from finances.models import ClientDiscount, Order
 from hotels.models import Property
@@ -53,9 +54,8 @@ class SalesStatusAdmin(DictAdminMixin, VersionAdmin):
         template = """
         <span style='background-color: {};' class='color'>&nbsp;</span>
         """
-        return template.format(obj.color)
+        return mark_safe(template.format(obj.color))
 
-    color_html.allow_tags = True
     color_html.short_description = _('color')
 
     class Media:
@@ -414,14 +414,13 @@ class ClientAdmin(
         return queryset, use_distinct
 
     def info(self, obj):
-        return '<br>'.join([
+        return mark_safe('<br>'.join([
             obj.login or '-',
             obj.name or '-',
             obj.email or '-',
             str(obj.phone) if obj.phone else '-',
-        ])
+        ]))
 
-    info.allow_tags = True
     info.short_description = _('client')
 
     def sales_status_html(self, obj):
@@ -432,9 +431,8 @@ class ClientAdmin(
         <span style='background-color: {}; margin-right: 2px;' \
 class='color'>&nbsp;</span><br> {}
         """
-        return template.format(sales_status.color, sales_status)
+        return mark_safe(template.format(sales_status.color, sales_status))
 
-    sales_status_html.allow_tags = True
     sales_status_html.short_description = _('sales')
 
     def save_formset(self, request, form, formset, change):
