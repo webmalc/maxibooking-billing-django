@@ -141,3 +141,6 @@ body.change-list table#result_list thead th {
   position: sticky;
   top: 0;
 }
+.field-_row_actions {
+  position: relative;
+}
