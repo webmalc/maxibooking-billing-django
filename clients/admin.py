@@ -4,7 +4,7 @@ from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -301,7 +301,8 @@ class ClientAdmin(
     list_display = ('num', 'login', 'login_alias', 'sales_status_html',
                     'email', 'phone', 'name', 'country', 'city', 'status',
                     'installation', 'url', 'rooms', 'website',
-                    'trial_activated', 'logins', 'manager', 'created')
+                    'trial_activated', 'logins', 'manager', 'expired_date',
+                    'created')
     list_select_related = ('country', 'restrictions', 'city', 'manager',
                            'sales_status', 'website')
     list_display_links = ('id', 'login', 'login_alias')
@@ -493,9 +494,22 @@ class='color'>&nbsp;</span><br> {}
     def logins(self, obj):
         return obj.auth_count
 
+    @staticmethod
+    def expired_date(obj: Client):
+        """
+        Get the date when the user will be blocked
+        """
+        order = obj.orders.all().first()
+        return getattr(order, 'expired_date', None)
+
     def get_queryset(self, request):
         query = super().get_queryset(request)
-        query = query.annotate(auth_count=Count('authentications'))
+        prefetch = Prefetch(
+            'orders',
+            queryset=Order.objects.filter(
+                status='new').order_by('expired_date'))
+        query = query.annotate(
+            auth_count=Count('authentications')).prefetch_related(prefetch)
         return query
 
     def render_change_form(self, request, context, *args, **kwargs):
