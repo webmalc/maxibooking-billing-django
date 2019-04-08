@@ -31,7 +31,7 @@ def get_country_by_tld_or_name(country):
             country = country_model.objects.get(pk=country)
         elif country and not str(country).isnumeric() and not isinstance(
                 country, country_model):
-            country = country_model.objects.get(tld=country)
+            country = country_model.objects.filter(tld=country).first()
     except country_model.DoesNotExist:
         country = None
 
@@ -97,12 +97,18 @@ class CalcByQantityPeriodCountry(object):
                 quantity=self.quantity, country=self.country)
             price_local = self._get_local_price(price)
             prices.append({
-                'status': True,
-                'price': price.amount,
-                'price_currency': price.currency.code,
-                'period': service.period,
-                'price_local': price_local.amount,
-                'price_currency_local': price_local.currency.code
+                'status':
+                True,
+                'price':
+                price.amount,
+                'price_currency':
+                price.currency.code,
+                'period':
+                service.period,
+                'price_local':
+                price_local.amount if price_local else None,
+                'price_currency_local':
+                price_local.currency.code if price_local else None
             })
 
         return prices
