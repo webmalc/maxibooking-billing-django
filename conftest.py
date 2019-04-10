@@ -1,26 +1,28 @@
 import arrow
 import pytest
-from clients.models import Client
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 from django.core.validators import ValidationError
+from moneyed import EUR, RUB, Money
+
+from clients.models import Client
 from finances.models import Discount, Order, Price, Service
 from hotels.models import Country
-from moneyed import EUR, RUB, Money
 from users.models import Department
 
 
 @pytest.fixture(scope='session')
 def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
-        call_command(
-            'loaddata', 'tests/users', 'tests/countries', 'tests/regions',
-            'tests/cities', 'tests/clients', 'tests/properties', 'tests/rooms',
-            'tests/service_categories', 'tests/services', 'tests/auth',
-            'tests/client_services', 'tests/transactions', 'tests/companies',
-            'tests/sales_statuses', 'tests/refusal_reasons',
-            'tests/exchange_rates')
+        call_command('loaddata', 'tests/users', 'tests/countries',
+                     'tests/regions', 'tests/cities', 'tests/clients',
+                     'tests/properties', 'tests/rooms',
+                     'tests/service_categories', 'tests/services',
+                     'tests/auth', 'tests/client_services',
+                     'tests/transactions', 'tests/companies',
+                     'tests/sales_statuses', 'tests/refusal_reasons',
+                     'tests/exchange_rates')
 
 
 @pytest.fixture()
@@ -100,18 +102,15 @@ def make_comments():
         type='action',
         status='canceled',
     )
-    client1.comments.create(
-        text='test action uncompleted comment 1',
-        type='action',
-        date=arrow.utcnow().shift(days=-1).datetime)
-    client2.comments.create(
-        text='test action uncompleted comment 2',
-        type='action',
-        date=arrow.utcnow().shift(hours=-5).datetime)
-    client2.comments.create(
-        text='test action old uncompleted comment 2',
-        type='action',
-        date=arrow.utcnow().shift(days=-15).datetime)
+    client1.comments.create(text='test action uncompleted comment 1',
+                            type='action',
+                            date=arrow.utcnow().shift(days=-1).datetime)
+    client2.comments.create(text='test action uncompleted comment 2',
+                            type='action',
+                            date=arrow.utcnow().shift(hours=-5).datetime)
+    client2.comments.create(text='test action old uncompleted comment 2',
+                            type='action',
+                            date=arrow.utcnow().shift(days=-15).datetime)
 
 
 @pytest.fixture()
