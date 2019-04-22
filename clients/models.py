@@ -314,7 +314,7 @@ class Client(CommonInfo, TimeStampedModel, Payer, ClientPermissionsModel):
     tracker = FieldTracker()
 
     login_validators = [
-        MinLengthValidator(4),
+        MinLengthValidator(2),
         RegexValidator(
             regex='^[a-z0-9\-]*$',
             code='invalid_login',
@@ -522,7 +522,8 @@ lowercase letters, numbers, and "-" character.'),
         else:
             add = 1
         try:
-            validate_client_login_restrictions(login)
+            for validator in self.login_validators:
+                validator(login)
         except ValidationError:
             return self.generate_login(add)
 
@@ -546,7 +547,7 @@ lowercase letters, numbers, and "-" character.'),
     def validate_unique(self, exclude=None):
         super().validate_unique(exclude)
 
-        if self.login == self.login_alias:
+        if self.login_alias and self.login == self.login_alias:
             raise ValidationError('Domain and alias cannot be the same.')
 
         logins = aliases = False
