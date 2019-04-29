@@ -193,7 +193,9 @@ class ClientViewSet(viewsets.ModelViewSet):
             'Client services update. Client {}; rooms {}; period: {}'.format(
                 client, request_json.get('rooms'), request_json.get('period')))
 
-        if all(k in request_json for k in ('rooms', 'period')):
+        if all(
+                k in request_json and int(request_json[k] > 0)
+                for k in ('rooms', 'period')):
             try:
                 ClientService.objects.client_tariff_update(
                     client, request_json['rooms'], request_json['period'])

@@ -280,6 +280,15 @@ def test_client_tariff_update_invalid_by_admin(admin_client):
     assert response.json()['status'] is False
     assert response.json()['message'] == 'invalid request'
 
+    data = json.dumps({'rooms': 0, 'period': 1})
+    response = admin_client.post(
+        reverse('client-tariff-update', args=['user-four']),
+        content_type="application/json",
+        data=data)
+
+    assert response.json()['status'] is False
+    assert response.json()['message'] == 'invalid request'
+
     data = json.dumps({'rooms': 34, 'period': 5})
     response = admin_client.post(
         reverse('client-tariff-update', args=['user-four']),
