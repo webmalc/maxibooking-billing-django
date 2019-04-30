@@ -1,4 +1,4 @@
-image: python:3.6.3
+image: python:3.6.7
 
 pipelines:
   default:
