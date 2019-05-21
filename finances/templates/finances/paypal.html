@@ -16,6 +16,10 @@
     <div id="paypal-button-container"></div>
     <script src="https://www.paypalobjects.com/api/checkout.js"></script>
     <script>
+        $(window).bind('beforeunload', function() {
+            return 'You must wait for the payment to be completed!';
+        });
+
         paypal.Button.render({
             // Set your environment
             // env: 'sandbox', 
@@ -71,19 +75,10 @@
                     .then(function(result) {
                         $('#paypal-button-container').hide();
                         $('#loading').removeClass("hide").html('Loading...');
-                        var url = '{{ host }}{% url '
-                        finances: payment - system - response ' paypal.id %}'
-                        result.mb_id = {
-                            {
-                                order.pk
-                            }
-                        };
+                        var url = "{{ host }}{% url 'finances:payment-system-response' paypal.id %}"
+                        result.mb_id = parseInt("{{order.pk}}");
                         result.total = result.transactions[0].amount.total;
                         result.currency = result.transactions[0].amount.currency;
-
-                        $(window).bind('beforeunload', function() {
-                            return 'You must wait for the payment to be completed!';
-                        });
 
                         $.ajax({
                             type: "POST",
@@ -92,6 +87,7 @@
                             error: function(msg) {
                                 console.log(msg);
                                 $('#loading').hide();
+                                $(window).unbind('beforeunload');
                                 window.alert('An error occurred during the payment process!');
                             },
                             success: function(data) {
