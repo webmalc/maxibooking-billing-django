@@ -446,7 +446,7 @@ def test_paypal_display_by_admin(admin_client, make_orders):
     assert response.status_code == 200
     html = response.json()['html']
     assert "production: 'paypal_client_id'" in html
-    assert 'result.mb_id = 4;' in html
+    assert 'result.mb_id = parseInt("4");' in html
     assert '12500.00' in html
 
 
