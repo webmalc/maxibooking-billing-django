@@ -7,10 +7,7 @@
     <meta name="googlebot" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Paypal</title>
-    <script
-			  src="https://code.jquery.com/jquery-3.3.1.min.js"
-			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-			  crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -64,8 +61,7 @@
                             /* description: 'The payment transaction description.', */
                             /* invoice_number: '{{ order.id }}' */
                             custom: '{{ order.id}}'
-                        }
-                        ]
+                        }]
                     }
                 });
             },
@@ -75,10 +71,19 @@
                     .then(function(result) {
                         $('#paypal-button-container').hide();
                         $('#loading').removeClass("hide").html('Loading...');
-                        var url = '{{ host }}{% url 'finances:payment-system-response' paypal.id %}'
-                        result.mb_id = {{order.pk}};
+                        var url = '{{ host }}{% url '
+                        finances: payment - system - response ' paypal.id %}'
+                        result.mb_id = {
+                            {
+                                order.pk
+                            }
+                        };
                         result.total = result.transactions[0].amount.total;
                         result.currency = result.transactions[0].amount.currency;
+
+                        $(window).bind('beforeunload', function() {
+                            return 'You must wait for the payment to be completed!';
+                        });
 
                         $.ajax({
                             type: "POST",
@@ -92,6 +97,7 @@
                             success: function(data) {
                                 $('#loading').hide();
                                 $('#message').removeClass("hide").html('Order has been successfully paid');
+                                $(window).unbind('beforeunload');
                             }
                         });
                     });
