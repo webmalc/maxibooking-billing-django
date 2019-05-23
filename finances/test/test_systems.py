@@ -1,3 +1,5 @@
+import json
+
 import arrow
 import braintree
 import paypalrestsdk
@@ -527,3 +529,54 @@ def test_paypal_response(client, make_orders, mailoutbox, mocker):
     mail = mailoutbox[-1]
     assert mail.recipients() == [order.client.email]
     assert 'Thank you for your payment!' in mail.subject
+
+
+def test_paypal_response_webhook(client, make_orders):
+    """
+    Should be able to process webhooks from the Paypal
+    """
+    url = reverse('finances:payment-system-response', args=('paypal', ))
+    response = client.post(url)
+    assert response.status_code == 400
+    assert response.content == b'Bad request.'
+
+    data = json.dumps({
+        "id": "WH-8VE479231F4043730-0PU210753V239925U",
+        "event_version": "1.0",
+        "create_time": "2019-05-22T09:28:52.275Z",
+        "resource_type": "sale",
+        "event_type": "PAYMENT.SALE.COMPLETED",
+        "summary": "Payment completed for $ 1.0 USD",
+        "resource": {
+            "id": "4FJ15301WT637284K",
+            "state": "completed",
+            "amount": {
+                "total": "12500.00",
+                "currency": "EUR",
+                "details": {
+                    "subtotal": "1.00"
+                }
+            },
+            "payment_mode": "INSTANT_TRANSFER",
+            "protection_eligibility": "ELIGIBLE",
+            "protection_eligibility_type":
+            "ITEM_NOT_RECEIVED_ELIGIBLE,UNAUTHORIZED_PAYMENT_ELIGIBLE",
+            "transaction_fee": {
+                "value": "0.33",
+                "currency": "USD"
+            },
+            "invoice_number": "4",
+            "custom": "4",
+            "receipt_id": "1206484636933976",
+            "parent_payment": "PAYID-LTSRKZY6C451945F7163081L",
+            "create_time": "2019-05-22T09:28:47Z",
+            "update_time": "2019-05-22T09:28:47Z",
+            "soft_descriptor": "PAYPAL *TEST"
+        },
+    })
+    response = client.post(url, data=data, content_type="application/json")
+    assert response.status_code == 200
+    assert response.content == b'OK'
+
+    order = Order.objects.get(pk=4)
+    assert order.status == 'paid'

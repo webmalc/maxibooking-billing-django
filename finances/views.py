@@ -28,16 +28,17 @@ class PaymentSystemViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
 
     def list(self, request):
-        entries = manager.systems_list(
-            request.query_params.get('order', None), request=request)
-        serializer = PaymentSystemListSerializer(
-            instance=entries.values(), many=True)
+        entries = manager.systems_list(request.query_params.get('order', None),
+                                       request=request)
+        serializer = PaymentSystemListSerializer(instance=entries.values(),
+                                                 many=True)
 
         return Response(serializer.data)
 
     def retrieve(self, request, pk):
-        entry = manager.get(
-            pk, request.query_params.get('order', None), request=request)
+        entry = manager.get(pk,
+                            request.query_params.get('order', None),
+                            request=request)
         if not entry:
             return Response(status=404)
         serializer = PaymentSystemSerializer(instance=entry, many=False)
@@ -140,8 +141,13 @@ def payment_system_response(request, system_id, action='response'):
     """
     logger = logging.getLogger('billing')
     logger.info(
-        'Payment system response; System_id: {}; GET: {}; POST: {}'.format(
-            system_id, dict(request.GET), dict(request.POST)))
+        'Payment system response; System_id: {}; BODY: {}; GET: {}; POST: {}'.
+        format(
+            system_id,
+            request.body.decode('utf-8'),
+            dict(request.GET),
+            dict(request.POST),
+        ))
 
     system = manager.get(system_id, request=request)
     if not system or not hasattr(system, action):

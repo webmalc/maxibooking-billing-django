@@ -1,7 +1,9 @@
 import hashlib
 import hmac
+import json
 import logging
 from abc import ABC, abstractmethod
+from collections import namedtuple
 from hashlib import sha512
 from time import time
 
@@ -20,8 +22,8 @@ from weasyprint import HTML
 
 from billing.lib.conf import get_settings
 
-from .lib import BraintreeGateway
 from ..models import Order, Subscription, Transaction
+from .lib import BraintreeGateway
 
 
 class TypeException(Exception):
@@ -209,11 +211,10 @@ class Bill(BaseType):
     def html(self):
         data = {}
         if self.order:
-            price_text = num2words(
-                self.order.price.amount,
-                lang='ru',
-                to='currency',
-                currency='RUB')
+            price_text = num2words(self.order.price.amount,
+                                   lang='ru',
+                                   to='currency',
+                                   currency='RUB')
             data = {
                 'order': self.order,
                 'payer': self.payer,
@@ -310,8 +311,8 @@ class SberbankRest(BaseType):
         if not self.order:
             return False
         return_url = self.request.build_absolute_uri(
-            reverse(
-                'finances:payment-system-response', args=('sberbank-rest', )))
+            reverse('finances:payment-system-response',
+                    args=('sberbank-rest', )))
         fail_url = self.request.build_absolute_uri(reverse('billing-fail'))
         order = self._make_request(
             'register.do',
@@ -552,10 +553,10 @@ class Stripe(BaseType):
         """
         Load config
         """
-        self.publishable_key = get_settings(
-            'STRIPE_PUBLISHABLE_KEY', country=self.country)
-        self.secret_key = get_settings(
-            'STRIPE_SECRET_KEY', country=self.country)
+        self.publishable_key = get_settings('STRIPE_PUBLISHABLE_KEY',
+                                            country=self.country)
+        self.secret_key = get_settings('STRIPE_SECRET_KEY',
+                                       country=self.country)
 
     @property
     def price_in_cents(self):
@@ -594,11 +595,10 @@ class Stripe(BaseType):
 
         stripe.api_key = self.secret_key
         try:
-            charge = stripe.Charge.create(
-                source=token,
-                amount=self.price_in_cents,
-                currency='eur',
-                description=self.service_name)
+            charge = stripe.Charge.create(source=token,
+                                          amount=self.price_in_cents,
+                                          currency='eur',
+                                          description=self.service_name)
 
             logger.info('Stripe response {}'.format(charge))
         except stripe.error.StripeError as error:
@@ -693,8 +693,9 @@ class BraintreeSubscription(BaseType):
             sub_model.full_clean()
             sub_model.save()
         except ValidationError:
-            self.logger.error('Unable to save the subscription model: {}'.
-                              format(subscription))
+            self.logger.error(
+                'Unable to save the subscription model: {}'.format(
+                    subscription))
 
         return subscription
 
@@ -815,6 +816,14 @@ class Paypal(BaseType):
     currencies = ['CAD', 'USD', 'EUR']
     client_filter_fields = []
 
+    params = namedtuple('Point', [
+        'order_id',
+        'status',
+        'amount',
+        'currency',
+        'id',
+    ])
+
     def _conf(self, order=None, request=None):
         """
         Load the configuration
@@ -828,56 +837,92 @@ class Paypal(BaseType):
             'client_secret': self.secret
         })
 
+    def _get_params_from_request(self, request):
+        """
+        Get params from the GET and POST request
+        """
+
+        post = request.POST
+        if not post:
+            return None
+
+        return self.params(
+            order_id=post.get('mb_id'),
+            status=post.get('state'),
+            amount=post.get('total'),
+            currency=post.get('currency'),
+            id=post.get('id'),
+        )
+
+    def _get_params_from_json(self, request):
+        """
+        Get params from the json request body
+        """
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+        except ValueError:
+            return None
+
+        resource = data.get('resource')
+
+        if not resource:
+            return None
+        amount = resource.get('amount')
+        order_id = resource.get('custom', data.get('invoice_number'))
+        if not amount:
+            return None
+
+        return self.params(
+            order_id=order_id,
+            status=resource.get('state'),
+            amount=amount.get('total'),
+            currency=amount.get('currency'),
+            id=data.get('id'),
+        )
+
     def response(self, request):
         """
         Check the payment system calback response
         """
 
-        order_id = request.POST.get('mb_id')
-        status = request.POST.get('state')
-        amount = request.POST.get('total')
-        currency = request.POST.get('currency')
-        id = request.POST.get('id')
+        try:
 
-        if not all([order_id, amount, status, currency, id]):
-            return HttpResponseBadRequest('Bad request.')
+            params = self._get_params_from_json(request)
+            if not params:
+                params = self._get_params_from_request(request)
 
-        self.order = Order.objects.get_for_payment_system(order_id)
+            if not params:
+                raise TypeException('Bad request.')
 
-        if not self.order:
-            return HttpResponseBadRequest(
-                'Order #{} not found.'.format(order_id))
+            order_id = params.order_id
+            status = params.status
+            amount = params.amount
+            currency = params.currency
+            paypal_id = params.id
 
-        if float(self.order.price.amount) != float(amount):
-            return HttpResponseBadRequest('Invalid price')
+            if not all([order_id, amount, status, currency, paypal_id]):
+                raise TypeException('Bad request.')
 
-        if self.order.price.currency.code != currency:
-            return HttpResponseBadRequest('Invalid currency')
+            self.order = Order.objects.get_for_payment_system(order_id)
 
-        if status == 'failed':
-            return HttpResponseBadRequest('Invalid status')
+            if not self.order:
+                raise TypeException('Order #{} not found.'.format(order_id))
 
-        # TODO: get it back
-        # try:
-        #     payment = paypalrestsdk.Payment.find(id)
-        #     transaction = payment.transactions[0]
-        #     payment_amount = transaction.amount
-        # except paypalrestsdk.exceptions.ResourceNotFound:
-        #     return HttpResponseBadRequest('Invalid payment')
+            if float(self.order.price.amount) != float(amount):
+                raise TypeException('Invalid price')
 
-        # if int(transaction.custom) != self.order.id:
-        #     return HttpResponseBadRequest('Invalid payment order')
+            if self.order.price.currency.code != currency:
+                raise TypeException('Invalid currency')
 
-        # if payment.state != status:
-        #     return HttpResponseBadRequest('Invalid payment status')
+            if status == 'failed':
+                raise TypeException('Invalid status')
 
-        # if float(payment_amount.total) != float(amount):
-        #     return HttpResponseBadRequest('Invalid payment price')
+            # TODO: check the payment via SDK or the REST API
 
-        # if payment_amount.currency != currency:
-        #     return HttpResponseBadRequest('Invalid payment currency')
+            self._process_order(request.POST)
 
-        self._process_order(request.POST)
+        except TypeException as e:
+            return HttpResponseBadRequest(e)
 
         return HttpResponse('OK')
 

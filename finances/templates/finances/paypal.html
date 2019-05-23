@@ -22,7 +22,7 @@
 
         paypal.Button.render({
             // Set your environment
-            // env: 'sandbox', 
+            /* env: 'sandbox', */
             env: 'production', // sandbox | production
 
             // Specify the style of the button
@@ -62,8 +62,8 @@
                                 total: '{{ order.price.amount|unlocalize }}',
                                 currency: '{{ order.price.currency.code }}'
                             },
-                            /* description: 'The payment transaction description.', */
-                            /* invoice_number: '{{ order.id }}' */
+                            description: '{{ order.id }}',
+                            invoice_number: '{{ order.id }}',
                             custom: '{{ order.id}}'
                         }]
                     }
