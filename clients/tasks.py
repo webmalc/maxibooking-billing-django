@@ -81,8 +81,10 @@ def mail_client_task(
     if client_id:
         try:
             client = Client.objects.get(pk=client_id)
-            mail_client(
-                subject=subject, template=template, data=data, client=client)
+            mail_client(subject=subject,
+                        template=template,
+                        data=data,
+                        client=client)
             return True
         except Client.DoesNotExist:
             return False
@@ -96,13 +98,12 @@ def client_greeting_email(days=settings.MB_CLIENT_GREETING_EMAIL_DAYS):
     clients = Client.objects.get_for_greeting(days)
     for client in clients:
         with select_locale(client):
-            mail_client(
-                subject='{}, {}'.format(client.name, _('How is your Sales?')),
-                template='emails/client_welcome.html',
-                data={
-                    'client': client,
-                },
-                client=client)
+            mail_client(subject=_('How is your Sales?'),
+                        template='emails/client_welcome.html',
+                        data={
+                            'client': client,
+                        },
+                        client=client)
 
 
 @app.task
@@ -113,14 +114,15 @@ def client_disabled_email(days=settings.MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS):
     clients = Client.objects.get_disabled(days)
     for client in clients:
         with select_locale(client):
-            mail_client(
-                subject='{}, {}'.format(client.name, _('we miss You!')),
-                template='emails/client_disabled.html',
-                data={
-                    'order': client.orders.get_expired(('archived', )).first(),
-                    'client': client,
-                },
-                client=client)
+            mail_client(subject=_('we miss You!'),
+                        template='emails/client_disabled.html',
+                        data={
+                            'order':
+                            client.orders.get_expired(('archived', )).first(),
+                            'client':
+                            client,
+                        },
+                        client=client)
 
 
 @app.task
