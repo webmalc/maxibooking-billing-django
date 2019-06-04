@@ -70,15 +70,15 @@ def order_post_save(sender, **kwargs):
     if not kwargs['created'] and order.tracker.has_changed('status') and \
        order.status == 'paid':
 
-        mail_client_task.delay(
-            subject=_('Thank you for your payment!'),
-            template='emails/order_paid.html',
-            data={
-                'order_id': order.pk,
-                'name': order.client.name,
-                'created': order.created.strftime('%d.%m.%Y')
-            },
-            client_id=order.client.id)
+        mail_client_task.delay(subject=_('Thank you for your payment!'),
+                               template='emails/order_paid.html',
+                               data={
+                                   'order_id': order.pk,
+                                   'name': order.client.name,
+                                   'created':
+                                   order.created.strftime('%d.%m.%Y')
+                               },
+                               client_id=order.client.id)
 
         logger = logging.getLogger('billing')
         logger.info('Order paid #{}. Payment system: {}'.format(
@@ -96,10 +96,9 @@ def order_post_save(sender, **kwargs):
         order_notify_task.apply_async((order.id, ), countdown=1)
 
 
-@receiver(
-    m2m_changed,
-    sender=Order.client_services.through,
-    dispatch_uid='order_m2m_changed')
+@receiver(m2m_changed,
+          sender=Order.client_services.through,
+          dispatch_uid='order_m2m_changed')
 def order_m2m_changed(sender, **kwargs):
     """
     Order m2m_changed
@@ -112,6 +111,11 @@ def order_m2m_changed(sender, **kwargs):
         return None
 
     order.set_corrupted()
+
+    # disable other orders with service type equal to 'rooms'
+    if order.status == 'new' and order.get_room_service:
+        Order.objects.get_by_service_type(order.client,
+                                          'rooms').update(status='canceled')
 
     is_changed = False
     if order.client_services.count():

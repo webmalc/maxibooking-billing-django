@@ -2,10 +2,11 @@ import arrow
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from billing.lib.utils import get_code
 from billing.managers import DepartmentMixin, LookupMixin
+from clients.models import Client
 
 
 class DiscountManager(DepartmentMixin):
@@ -75,6 +76,21 @@ class OrderManager(LookupMixin):
     lookup_search_fields = ('id', 'client__name', 'client__email',
                             'client__login')
 
+    def get_by_service_type(
+            self,
+            client: Client,
+            service_type: str,
+            status: str = 'new',
+    ) -> QuerySet:
+        """
+        Get client orders by the service type
+        """
+        return self.filter(
+            client=client,
+            status=status,
+            client_services__service__type=service_type).select_related(
+                'client')
+
     def get_for_payment_system(self, pk):
         """
         Get order for payment systems
@@ -102,10 +118,9 @@ class OrderManager(LookupMixin):
         Get expired orders
         """
         now = arrow.utcnow()
-        return self.filter(
-            status__in=('new', 'processing'),
-            expired_date__lte=now.datetime).exclude(
-                client__status__in=exclude_client_statuses)
+        return self.filter(status__in=('new', 'processing'),
+                           expired_date__lte=now.datetime).exclude(
+                               client__status__in=exclude_client_statuses)
 
 
 class PriceManager(models.Manager):
@@ -156,7 +171,8 @@ class ServiceManager(LookupMixin):
         Get default service
         """
         try:
-            return self.get(
-                type=service_type, is_enabled=True, is_default=True)
+            return self.get(type=service_type,
+                            is_enabled=True,
+                            is_default=True)
         except apps.get_model('finances', 'Service').DoesNotExist:
             return None

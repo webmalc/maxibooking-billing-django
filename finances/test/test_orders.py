@@ -14,6 +14,50 @@ from ..tasks import orders_clients_disable, orders_payment_notify
 pytestmark = pytest.mark.django_db
 
 
+def test_order_disable_rooms_orders(make_orders):
+    """
+    The client should have only one order with service type equal to 'rooms'
+    """
+    client = Client.objects.get(pk=1)
+    client_service = ClientService.objects.get(client=client,
+                                               service__type='rooms')
+    order_one = Order.objects.get(client=client, pk=1)
+    order_two = Order.objects.get(client=client, pk=4)
+    order_one.client_services.add(client_service)
+    order_one.save()
+
+    assert order_one.status == 'new'
+    assert order_two.status == 'new'
+
+    order_two.client_services.add(client_service)
+    order_two.save()
+    order_one.refresh_from_db()
+    order_two.refresh_from_db()
+
+    assert order_one.status == 'canceled'
+    assert order_two.status == 'new'
+
+
+def test_order_get_by_service_type(make_orders):
+    """
+    Should get client orders by the service type
+    """
+    client = Client.objects.get(pk=1)
+    orders = Order.objects.get_by_service_type(client, 'rooms')
+
+    assert orders.count() == 0
+
+    order = Order.objects.filter(client=client).first()
+    client_service = ClientService.objects.get(client=client,
+                                               service__type='rooms')
+    order.client_services.add(client_service)
+    order.save()
+    orders = Order.objects.get_by_service_type(client, 'rooms')
+
+    assert orders.count() == 1
+    assert orders.first() == order
+
+
 def test_order_apply_discount(make_orders, discounts):
     discount = discounts[0]
     discount.percentage_discount = 23.42
