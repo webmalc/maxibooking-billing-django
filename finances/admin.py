@@ -171,8 +171,8 @@ class SubsctriptionAdmin(AdminRowActionsMixin, VersionAdmin, JsonAdmin):
     })
     fieldsets = (
         ('General', {
-            'fields': ('client', 'order', 'country', 'status', 'period',
-                       'price')
+            'fields':
+            ('client', 'order', 'country', 'status', 'period', 'price')
         }),
         ('Options', {
             'fields': ('merchant', 'customer', 'subscription', 'created',
@@ -199,8 +199,8 @@ class SubsctriptionAdmin(AdminRowActionsMixin, VersionAdmin, JsonAdmin):
     def info(self, request, obj):
         braintree = BraintreeGateway(obj.country, 'sandbox')
         result = braintree.get_subscription(obj.subscription)
-        return HttpResponse(
-            jsonpickle.encode(result), content_type='application/json')
+        return HttpResponse(jsonpickle.encode(result),
+                            content_type='application/json')
 
     def cancel(self, request, obj):
         """
@@ -274,6 +274,7 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
         'client_services__service',
         ('client_services', TextFieldListFilter),
         ('client__login', TextFieldListFilter),
+        'client__manager',
         'payment_system',
         ('expired_date', DateRangeFilter),
         ('paid_date', DateRangeFilter),
@@ -282,6 +283,7 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
     search_fields = ('=pk', '=client_services__pk',
                      'client_services__service__title',
                      'client_services__service__description', 'client__name',
+                     'client__manager__username', 'client__manager__last_name',
                      'client__email', 'client__login')
     readonly_fields = ('discount', 'created', 'modified', 'created_by',
                        'modified_by')
@@ -289,8 +291,8 @@ class OrderAdmin(AdminRowActionsMixin, VersionAdmin, AjaxSelectAdmin,
     inlines = (TransactionInlineAdmin, )
     fieldsets = (
         ('General', {
-            'fields': ('price', 'client', 'expired_date', 'note',
-                       'client_services')
+            'fields':
+            ('price', 'client', 'expired_date', 'note', 'client_services')
         }),
         ('Options', {
             'fields': ('status', 'discount', 'paid_date', 'payment_system',
