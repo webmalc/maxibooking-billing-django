@@ -81,23 +81,25 @@ test issued by. инн 1212222222222'
 def test_client_create_invalid_by_admin(admin_client):
     data = json.dumps({'login': '_amazonses', 'email': 'user@one.com'})
     url = reverse('client-list')
-    response = admin_client.post(
-        url, data=data, content_type="application/json")
+    response = admin_client.post(url,
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
 
     assert response_json['login'] == [
         'Enter a valid domain. This value may \
 contain only lowercase letters, numbers, and "-" character.',
-        'invalid client login: ' + ', '.join(
-            settings.MB_CLIENT_LOGIN_RESTRICTIONS)
+        'invalid client login: ' +
+        ', '.join(settings.MB_CLIENT_LOGIN_RESTRICTIONS)
     ]
     assert response_json['email'] == [
         'client with this e-mail already exists.'
     ]
 
     data = json.dumps({'login': 'user-two', 'email': 'user@one.com'})
-    response = admin_client.post(
-        url, data=data, content_type="application/json")
+    response = admin_client.post(url,
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
 
     assert response_json['login'] == ['Client with this domain already exist.']
@@ -107,8 +109,9 @@ contain only lowercase letters, numbers, and "-" character.',
         'email': 'user12@one.com',
         'country': 'ru'
     })
-    response = admin_client.post(
-        url, data=data, content_type="application/json")
+    response = admin_client.post(url,
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
     assert response_json['__all__'] == [
         'Client with this domain already exist.'
@@ -120,8 +123,9 @@ contain only lowercase letters, numbers, and "-" character.',
         'email': 'user12@one.com',
         'country': 'ru'
     })
-    response = admin_client.post(
-        url, data=data, content_type="application/json")
+    response = admin_client.post(url,
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
 
     assert response_json['__all__'] == [
@@ -141,8 +145,9 @@ def test_client_create_by_admin(admin_client):
         'address': 'test address',
         'manager_code': 'test_code',
     })
-    response = admin_client.post(
-        reverse('client-list'), data=data, content_type="application/json")
+    response = admin_client.post(reverse('client-list'),
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
     client = Client.objects.get(pk=response_json['id'])
 
@@ -165,8 +170,9 @@ def test_client_create_with_invalide_code_by_admin(admin_client, discounts):
         'country': 'af',
         'manager_code': 'test12_code~discount~112',
     })
-    response = admin_client.post(
-        reverse('client-list'), data=data, content_type="application/json")
+    response = admin_client.post(reverse('client-list'),
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
     client = Client.objects.get(pk=response_json['id'])
 
@@ -184,8 +190,9 @@ def test_client_create_with_discount_by_admin(admin_client, discounts):
         'country': 'af',
         'manager_code': 'test_code~discount',
     })
-    response = admin_client.post(
-        reverse('client-list'), data=data, content_type="application/json")
+    response = admin_client.post(reverse('client-list'),
+                                 data=data,
+                                 content_type="application/json")
     response_json = response.json()
     client = Client.objects.get(pk=response_json['id'])
     snapshot = client.discount
@@ -204,9 +211,8 @@ def test_client_create_with_discount_by_admin(admin_client, discounts):
 
 
 def test_client_tariff_update_by_user(client):
-    response = client.post(
-        reverse('client-tariff-update', args=['user-one']),
-        content_type="application/json")
+    response = client.post(reverse('client-tariff-update', args=['user-one']),
+                           content_type="application/json")
     assert response.status_code == 401
 
 
@@ -226,9 +232,8 @@ def _update_tariff(rooms, period, admin_client):
 
 
 def test_client_tariff_detail_by_user(client):
-    response = client.post(
-        reverse('client-tariff-detail', args=['user-one']),
-        content_type="application/json")
+    response = client.post(reverse('client-tariff-detail', args=['user-one']),
+                           content_type="application/json")
     assert response.status_code == 401
 
 
@@ -238,9 +243,9 @@ def test_client_tariff_detail_by_admin(admin_client, service):
     next_begin = arrow.utcnow().shift(months=2).format('YYYY-MM-DD')
     _update_tariff(25, 2, admin_client)
 
-    response = admin_client.get(
-        reverse('client-tariff-detail', args=['user-four']),
-        content_type="application/json")
+    response = admin_client.get(reverse('client-tariff-detail',
+                                        args=['user-four']),
+                                content_type="application/json")
     assert response.status_code == 200
     response_json = response.json()
 
@@ -251,9 +256,9 @@ def test_client_tariff_detail_by_admin(admin_client, service):
 
     client.services.update(status='active')
     _update_tariff(44, 2, admin_client)
-    response = admin_client.get(
-        reverse('client-tariff-detail', args=['user-four']),
-        content_type="application/json")
+    response = admin_client.get(reverse('client-tariff-detail',
+                                        args=['user-four']),
+                                content_type="application/json")
 
     response_json = response.json()
 
@@ -267,24 +272,24 @@ def test_client_tariff_detail_by_admin(admin_client, service):
 
 
 def test_client_tariff_update_invalid_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-tariff-update', args=['user-five']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-tariff-update',
+                                         args=['user-five']),
+                                 content_type="application/json")
     assert response.json()['status'] is False
     assert response.json()['message'] == 'invalid client'
 
-    response = admin_client.post(
-        reverse('client-tariff-update', args=['user-four']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-tariff-update',
+                                         args=['user-four']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is False
     assert response.json()['message'] == 'invalid request'
 
     data = json.dumps({'rooms': 0, 'period': 1})
-    response = admin_client.post(
-        reverse('client-tariff-update', args=['user-four']),
-        content_type="application/json",
-        data=data)
+    response = admin_client.post(reverse('client-tariff-update',
+                                         args=['user-four']),
+                                 content_type="application/json",
+                                 data=data)
 
     assert response.json()['status'] is False
     assert response.json()['message'] == 'invalid request'
@@ -313,8 +318,8 @@ def test_client_tariff_update_by_admin(admin_client, service):
     _update_tariff(44, 3, admin_client)
     assert client.services.count() == 2
     assert client.services.filter(status='next').count() == 1
-    assert client.services.get(
-        status='next', service__type='rooms').quantity == 44
+    assert client.services.get(status='next',
+                               service__type='rooms').quantity == 44
 
     next_rooms = client.services.get(status='next', service__type='rooms')
     prev_rooms = client.services.get(status='active', service__type='rooms')
@@ -399,16 +404,15 @@ def test_client_tariff_update_by_admin(admin_client, service):
 
 
 def test_client_confirm_by_user(client):
-    response = client.post(
-        reverse('client-confirm', args=['new-user']),
-        content_type="application/json")
+    response = client.post(reverse('client-confirm', args=['new-user']),
+                           content_type="application/json")
     assert response.status_code == 401
 
 
 def test_client_confirm_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-confirm', args=['user-three']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-confirm',
+                                         args=['user-three']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is True
     client = Client.objects.get(login='user-three')
@@ -416,24 +420,22 @@ def test_client_confirm_by_admin(admin_client):
 
 
 def test_client_fixtures_by_user(client):
-    response = client.post(
-        reverse('client-fixtures', args=['user-three']),
-        content_type="application/json")
+    response = client.post(reverse('client-fixtures', args=['user-three']),
+                           content_type="application/json")
     assert response.status_code == 401
 
 
 def test_client_not_installed_fixtures_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-fixtures', args=['user-one']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-fixtures', args=['user-one']),
+                                 content_type="application/json")
     assert response.json()['status'] is False
     assert response.json()['message'] == 'client not installed'
 
 
 def test_client_process_fixtures_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-fixtures', args=['user-four']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-fixtures',
+                                         args=['user-four']),
+                                 content_type="application/json")
     assert response.json()['status'] is False
     assert response.json()['message'] == 'client installation in process'
 
@@ -441,9 +443,8 @@ def test_client_process_fixtures_by_admin(admin_client):
 def test_client_invalid_fixtures_by_admin(admin_client, settings, mailoutbox):
     settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
         'fixtures'] = 'http://invalid-domain-name.com'
-    response = admin_client.post(
-        reverse('client-fixtures', args=['user-two']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-fixtures', args=['user-two']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is False
     assert len(mailoutbox) == 2
@@ -461,9 +462,8 @@ def test_client_fixtures_by_admin(admin_client, mocker):
         'url': 'test url',
         'token': 'test token',
     })
-    response = admin_client.post(
-        reverse('client-fixtures', args=['user-two']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-fixtures', args=['user-two']),
+                                 content_type="application/json")
     response_json = response.json()
     assert response_json['status'] is True
     assert response_json['message'] == 'client fixtures installed'
@@ -472,16 +472,15 @@ def test_client_fixtures_by_admin(admin_client, mocker):
 
 
 def test_client_install_by_user(client):
-    response = client.post(
-        reverse('client-install', args=['user-three']),
-        content_type="application/json")
+    response = client.post(reverse('client-install', args=['user-three']),
+                           content_type="application/json")
     assert response.status_code == 401
 
 
 def test_client_install_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-install', args=['user-three']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install',
+                                         args=['user-three']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is True
     client = Client.objects.get(login='user-three')
@@ -491,9 +490,8 @@ def test_client_install_by_admin(admin_client):
 def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
     settings.MB_SETTINGS_BY_COUNTRY['MB_URLS']['__all__'][
         'install'] = 'http://invalid-domain-name.com'
-    response = admin_client.post(
-        reverse('client-install', args=['user-one']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install', args=['user-one']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is True
     client = Client.objects.get(login='user-one')
@@ -509,25 +507,24 @@ def test_client_failed_install_by_admin(admin_client, settings, mailoutbox):
 
 
 def test_client_already_installed_install_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-install', args=['user-two']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install', args=['user-two']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is False
 
 
 def test_client_install_results_by_client(client):
-    response = client.post(
-        reverse('client-install-result', args=['user-four']),
-        content_type="application/json")
+    response = client.post(reverse('client-install-result',
+                                   args=['user-four']),
+                           content_type="application/json")
 
     assert response.status_code == 401
 
 
 def test_client_install_results_invalid_by_admin(admin_client):
-    response = admin_client.post(
-        reverse('client-install-result', args=['user-one']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install-result',
+                                         args=['user-one']),
+                                 content_type="application/json")
 
     assert response.json()['status'] is False
 
@@ -538,10 +535,10 @@ def test_client_install_results_by_admin(admin_client, mailoutbox):
         'password': '123456',
         'url': 'http://example.com'
     })
-    response = admin_client.post(
-        reverse('client-install-result', args=['user-one']),
-        data=data,
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install-result',
+                                         args=['user-one']),
+                                 data=data,
+                                 content_type="application/json")
 
     assert response.json()['status'] is True
 
@@ -566,10 +563,10 @@ def test_client_install_results_ru_by_admin(admin_client, mailoutbox):
     })
     Client.objects.filter(login='user-rus').update(
         installation='not_installed')
-    response = admin_client.post(
-        reverse('client-install-result', args=['user-rus']),
-        data=data,
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install-result',
+                                         args=['user-rus']),
+                                 data=data,
+                                 content_type="application/json")
 
     assert response.json()['status'] is True
 
@@ -587,10 +584,10 @@ def test_client_install_results_ru_by_admin(admin_client, mailoutbox):
 
 def test_client_install_fail_results_by_admin(admin_client, mailoutbox):
     data = json.dumps({'status': False, 'password': None, 'url': None})
-    response = admin_client.post(
-        reverse('client-install-result', args=['user-one']),
-        data=data,
-        content_type="application/json")
+    response = admin_client.post(reverse('client-install-result',
+                                         args=['user-one']),
+                                 data=data,
+                                 content_type="application/json")
 
     assert response.json()['status'] is False
 
@@ -602,17 +599,15 @@ def test_client_install_fail_results_by_admin(admin_client, mailoutbox):
 
 
 def test_client_trial_by_client(client):
-    response = client.post(
-        reverse('client-trial', args=['user-three']),
-        content_type="application/json")
+    response = client.post(reverse('client-trial', args=['user-three']),
+                           content_type="application/json")
 
     assert response.status_code == 401
 
 
 def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
-    response = admin_client.post(
-        reverse('client-trial', args=['user-three']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-trial', args=['user-three']),
+                                 content_type="application/json")
     response_json = response.json()
     assert response_json['status'] is False
     assert response_json[
@@ -623,9 +618,8 @@ def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
     assert 'Failed client trial installation' in mail.subject
     assert 'user-three' in mail.body
 
-    response = admin_client.post(
-        reverse('client-trial', args=['user-five']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-trial', args=['user-five']),
+                                 content_type="application/json")
 
     response_json = response.json()
     assert response_json['status'] is False
@@ -646,24 +640,21 @@ def test_admin_trial_invalid_by_admin(admin_client, mailoutbox):
 
 def test_admin_trial_by_admin(admin_client):
     Service.objects.filter(pk=2, type='rooms').update(is_default=True)
-    Property.objects.create(
-        name='Test property four',
-        url='http://property.five',
-        client_id=5,
-        city_id=1)
+    Property.objects.create(name='Test property four',
+                            url='http://property.five',
+                            client_id=5,
+                            city_id=1)
     Room.objects.create(name='Test room one', property_id=4, rooms=13)
     Room.objects.create(name='Test room another', property_id=2, rooms=23)
-    Property.objects.create(
-        name='Test property five',
-        url='http://property.six',
-        client_id=5,
-        city_id=2)
+    Property.objects.create(name='Test property five',
+                            url='http://property.six',
+                            client_id=5,
+                            city_id=2)
     Room.objects.create(name='Test room two', property_id=5, rooms=12)
     client = Client.objects.get(pk=5)
     assert client.trial_activated is False
-    response = admin_client.post(
-        reverse('client-trial', args=['user-five']),
-        content_type="application/json")
+    response = admin_client.post(reverse('client-trial', args=['user-five']),
+                                 content_type="application/json")
 
     response_json = response.json()
     assert response_json['status'] is True
@@ -723,9 +714,15 @@ def test_client_restrictions_update():
     assert client.restrictions.rooms_limit == 7
 
 
-def test_client_language():
+def test_client_language(settings):
     assert Client.objects.get(login='user-rus').language == 'ru'
     assert Client.objects.get(login='user-one').language == 'en'
+
+    settings.MB_COUNTRIES_OVERWRITE['us'] = 'ru'
+
+    assert Client.objects.get(login='user-one').language == 'ru'
+
+    del settings.MB_COUNTRIES_OVERWRITE['us']
 
 
 def test_client_by_logins(make_orders):
@@ -808,8 +805,8 @@ def test_client_is_trial(make_orders):
 def test_client_get_disabled():
     begin = arrow.utcnow().shift(days=-3)
 
-    Client.objects.filter(pk=1).update(
-        status='disabled', disabled_at=begin.datetime)
+    Client.objects.filter(pk=1).update(status='disabled',
+                                       disabled_at=begin.datetime)
     clients = Client.objects.get_disabled()
     assert clients.count() == 1
     assert clients[0].login == 'user-one'
@@ -825,8 +822,8 @@ def test_client_get_disabled():
 
 def test_clients_disabled_email(mailoutbox, make_orders):
     begin = arrow.utcnow().shift(days=-3)
-    Client.objects.filter(pk=1).update(
-        status='disabled', disabled_at=begin.datetime)
+    Client.objects.filter(pk=1).update(status='disabled',
+                                       disabled_at=begin.datetime)
     client_disabled_email.delay()
     mail = mailoutbox[-1]
 
