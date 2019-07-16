@@ -1,3 +1,6 @@
+"""
+The client module serializers
+"""
 from django.forms.models import model_to_dict
 from rest_framework import serializers
 
@@ -59,11 +62,10 @@ class ClientAuthSerializer(serializers.ModelSerializer):
     """
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    client = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='login',
-        queryset=Client.objects.all())
+    client = serializers.SlugRelatedField(many=False,
+                                          read_only=False,
+                                          slug_field='login',
+                                          queryset=Client.objects.all())
 
     class Meta:
         model = ClientAuth
@@ -77,20 +79,20 @@ class CompanySerializer(serializers.ModelSerializer):
     """
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    city = serializers.PrimaryKeyRelatedField(
-        many=False, read_only=False, queryset=City.objects.all())
-    region = serializers.PrimaryKeyRelatedField(
-        many=False, read_only=False, queryset=Region.objects.all())
-    client = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='login',
-        queryset=Client.objects.all())
-    ru = serializers.HyperlinkedRelatedField(
-        many=False,
-        read_only=True,
-        view_name='companyru-detail',
-        lookup_field='company__pk')
+    city = serializers.PrimaryKeyRelatedField(many=False,
+                                              read_only=False,
+                                              queryset=City.objects.all())
+    region = serializers.PrimaryKeyRelatedField(many=False,
+                                                read_only=False,
+                                                queryset=Region.objects.all())
+    client = serializers.SlugRelatedField(many=False,
+                                          read_only=False,
+                                          slug_field='login',
+                                          queryset=Client.objects.all())
+    ru = serializers.HyperlinkedRelatedField(many=False,
+                                             read_only=True,
+                                             view_name='companyru-detail',
+                                             lookup_field='company__pk')
     world = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
@@ -112,11 +114,10 @@ class WebsiteSerializer(serializers.ModelSerializer):
     """
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    client = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='login',
-        queryset=Client.objects.all())
+    client = serializers.SlugRelatedField(many=False,
+                                          read_only=False,
+                                          slug_field='login',
+                                          queryset=Client.objects.all())
 
     def validate(self, data):
         """
@@ -134,8 +135,8 @@ class WebsiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientWebsite
         lookup_field = 'client__login'
-        fields = ('id', 'client', 'url', 'is_enabled', 'created', 'modified',
-                  'created_by', 'modified_by')
+        fields = ('id', 'client', 'url', 'own_domain_name', 'is_enabled',
+                  'created', 'modified', 'created_by', 'modified_by')
 
 
 class ClientRuSerializer(serializers.ModelSerializer):
@@ -144,11 +145,10 @@ class ClientRuSerializer(serializers.ModelSerializer):
     """
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    client = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='login',
-        queryset=Client.objects.all())
+    client = serializers.SlugRelatedField(many=False,
+                                          read_only=False,
+                                          slug_field='login',
+                                          queryset=Client.objects.all())
 
     class Meta:
         model = ClientRu
@@ -169,27 +169,25 @@ class ClientSerializer(ValidationSerializerMixin,
     ru = serializers.StringRelatedField(many=False, read_only=True)
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    country = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='tld',
-        queryset=Country.objects.all())
-    city = serializers.PrimaryKeyRelatedField(
-        many=False,
-        read_only=False,
-        allow_null=True,
-        required=False,
-        queryset=City.objects.all())
-    region = serializers.PrimaryKeyRelatedField(
-        many=False,
-        read_only=False,
-        allow_null=True,
-        required=False,
-        queryset=Region.objects.all())
+    country = serializers.SlugRelatedField(many=False,
+                                           read_only=False,
+                                           slug_field='tld',
+                                           queryset=Country.objects.all())
+    city = serializers.PrimaryKeyRelatedField(many=False,
+                                              read_only=False,
+                                              allow_null=True,
+                                              required=False,
+                                              queryset=City.objects.all())
+    region = serializers.PrimaryKeyRelatedField(many=False,
+                                                read_only=False,
+                                                allow_null=True,
+                                                required=False,
+                                                queryset=Region.objects.all())
     restrictions = serializers.SerializerMethodField()
 
-    timezone = serializers.CharField(
-        source='timezone.zone', required=False, read_only=True)
+    timezone = serializers.CharField(source='timezone.zone',
+                                     required=False,
+                                     read_only=True)
 
     def get_restrictions(self, obj):
         return model_to_dict(obj.restrictions)
@@ -212,24 +210,23 @@ class ClientServiceSerializer(serializers.HyperlinkedModelSerializer):
     ClientService serializer
     """
 
-    client = serializers.SlugRelatedField(
-        many=False,
-        read_only=False,
-        slug_field='login',
-        queryset=Client.objects.all())
+    client = serializers.SlugRelatedField(many=False,
+                                          read_only=False,
+                                          slug_field='login',
+                                          queryset=Client.objects.all())
     service = serializers.PrimaryKeyRelatedField(
         many=False, read_only=False, queryset=Service.objects.all())
     created_by = serializers.StringRelatedField(many=False, read_only=True)
     modified_by = serializers.StringRelatedField(many=False, read_only=True)
-    country = serializers.SlugRelatedField(
-        many=False, read_only=True, slug_field='tld')
+    country = serializers.SlugRelatedField(many=False,
+                                           read_only=True,
+                                           slug_field='tld')
 
     def validate(self, attrs):
-        ClientService.validate_dates(
-            attrs.get('begin'), attrs.get('end'),
-            attrs.get('pk') is None)
-        ClientService.validate_service(
-            attrs.get('service'), attrs.get('client'))
+        ClientService.validate_dates(attrs.get('begin'), attrs.get('end'),
+                                     attrs.get('pk') is None)
+        ClientService.validate_service(attrs.get('service'),
+                                       attrs.get('client'))
         return attrs
 
     class Meta:

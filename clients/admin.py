@@ -1,3 +1,6 @@
+"""
+The client admin module
+"""
 import arrow
 import phonenumbers
 from ajax_select import make_ajax_form
@@ -267,8 +270,8 @@ class WebsiteInlineAdmin(admin.StackedInline):
     for client`s website information.
     """
     model = ClientWebsite
-    fields = ('url', 'is_enabled', 'created', 'modified', 'created_by',
-              'modified_by')
+    fields = ('url', 'own_domain_name', 'is_enabled', 'created', 'modified',
+              'created_by', 'modified_by')
     readonly_fields = ('created', 'modified', 'created_by', 'modified_by')
 
 
@@ -319,12 +322,12 @@ class ClientAdmin(
     ]
     tab_client = (
         ('General', {
-            'fields': ('login', 'login_alias', 'email', 'phone', 'name',
-                       'description')
+            'fields':
+            ('login', 'login_alias', 'email', 'phone', 'name', 'description')
         }),
         ('Address', {
-            'fields': ('country', 'region', 'city', 'address', 'postal_code',
-                       'timezone')
+            'fields':
+            ('country', 'region', 'city', 'address', 'postal_code', 'timezone')
         }),
         ('Options', {
             'fields': [
@@ -504,10 +507,9 @@ class='color'>&nbsp;</span><br> {}
 
     def get_queryset(self, request):
         query = super().get_queryset(request)
-        prefetch = Prefetch(
-            'orders',
-            queryset=Order.objects.filter(
-                status='new').order_by('expired_date'))
+        prefetch = Prefetch('orders',
+                            queryset=Order.objects.filter(
+                                status='new').order_by('expired_date'))
         query = query.annotate(
             auth_count=Count('authentications')).prefetch_related(prefetch)
         return query

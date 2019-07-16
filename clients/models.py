@@ -584,6 +584,12 @@ among other clients.'),
         db_index=True,
         verbose_name=_('is the website enabled?'),
     )
+    own_domain_name = models.BooleanField(
+        default=False,
+        db_index=True,
+        verbose_name=_('own domain name?'),
+        help_text=_('Does the website use its own domain name?'),
+    )
 
     client = models.OneToOneField(Client,
                                   on_delete=models.CASCADE,
