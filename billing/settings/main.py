@@ -13,14 +13,13 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 import raven
-from kombu import Queue
-
 from celery.schedules import crontab
+from kombu import Queue
 
 # Local settings
 try:
-    from .settings_local import *
-    from .settings_local import DEBUG
+    from .local import *
+    from .local import DEBUG
     import psycopg2
 except ImportError:  # pragma: no cover
     # Fall back to psycopg2cffi
@@ -28,7 +27,8 @@ except ImportError:  # pragma: no cover
     compat.register()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Application definition
 INSTALLED_APPS = [
@@ -213,8 +213,7 @@ LOGGING = {
         'verbose': {
             'format':
             "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt':
-            "%d/%b/%Y %H:%M:%S"
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -358,11 +357,9 @@ CITIES_LIGHT_APP_NAME = 'hotels'
 if not DEBUG:  # pragma: no cover
     # Sentry raven
     RAVEN_CONFIG = {
-        'dsn':
-        'https://52126dbda9494c668b7b9dff7722c901:\
+        'dsn': 'https://52126dbda9494c668b7b9dff7722c901:\
 31b56314232c436fb812b98568a5f589@sentry.io/200649',
-        'release':
-        raven.fetch_git_sha(os.path.dirname(os.pardir)),
+        'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
     }
 
 # Django money

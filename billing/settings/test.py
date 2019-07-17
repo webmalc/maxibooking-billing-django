@@ -1,4 +1,4 @@
-from .settings import *
+from .main import *
 
 LOGGING.pop('root', None)
 # LOGGING['loggers']['billing']['handlers'].remove('file')
