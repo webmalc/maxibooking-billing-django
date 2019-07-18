@@ -1,0 +1,90 @@
+from .env import ENV, ROOT
+
+# MB setting by country
+MB_SETTINGS_BY_COUNTRY = {}
+
+# Client login restrictions
+MB_CLIENT_LOGIN_RESTRICTIONS = ENV.list('MB_CLIENT_LOGIN_RESTRICTIONS')
+
+# Django money
+FIXER_ACCESS_KEY = ENV.str('FIXER_ACCESS_KEY')
+
+# Rbk
+RBK_SHOP_ID = ENV.str('RBK_SHOP_ID')
+RBK_SECRET_KEY = ENV.str('RBK_SECRET_KEY')
+
+# Paypal
+PAYPAL_CLIENT_ID = ENV.str('PAYPAL_CLIENT_ID')
+PAYPAL_SECRET = ENV.str('PAYPAL_SECRET')
+
+# Sberbank
+SBERBANK_API_TOKEN = ENV.str('SBERBANK_API_TOKEN')
+SBERBANK_SECRET_KEY = ENV.str('SBERBANK_SECRET_KEY')
+SBERBANK_BASE_URL = ENV.str('SBERBANK_BASE_URL')
+SBERBANK_URL = SBERBANK_BASE_URL + ENV.str('SBERBANK_URL')
+
+SBERBANK_REST_USER = ENV.str('SBERBANK_REST_USER')
+SBERBANK_REST_PASSWORD = ENV.str('SBERBANK_REST_PASSWORD')
+SBERBANK_REST_URL = SBERBANK_BASE_URL + ENV.str('SBERBANK_REST_URL')
+
+# Stripe
+MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'] = {
+    '__all__': ENV.str('STRIPE_PUBLISHABLE_KEY')
+}
+MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'] = {
+    '__all__': ENV.str('STRIPE_SECRET_KEY')
+}
+
+# Braintree
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_MERCHANT_ID'] = {
+    '__all__': ENV.str('BRAINTREE_MERCHANT_ID')
+}
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_PUBLIC_KEY'] = {
+    '__all__': ENV.str('BRAINTREE_PUBLIC_KEY')
+}
+MB_SETTINGS_BY_COUNTRY['BRAINTREE_PRIVATE_KEY'] = {
+    '__all__': ENV.str('BRAINTREE_PRIVATE_KEY')
+}
+
+# Billing
+PAYMENT_SYSTEMS = ENV.tuple('PAYMENT_SYSTEMS')
+
+# Maxibooking urls
+MB_SETTINGS_BY_COUNTRY['MB_URLS'] = {
+    'ru': ENV.dict('MB_URLS_RU'),
+    '__all__': ENV.dict('MB_URLS_ALL')
+}
+
+MB_COUNTRIES_OVERWRITE = ENV.dict('MB_COUNTRIES_OVERWRITE', default={})
+
+# Requests timeout (sec)
+MB_TIMEOUT = ENV.int('MB_TIMEOUT')
+
+# Order expired period (in days)
+MB_ORDER_EXPIRED_DAYS = ENV.int('MB_ORDER_EXPIRED_DAYS')
+
+# Order creation period (in days)
+MB_ORDER_BEFORE_DAYS = ENV.int('MB_ORDER_BEFORE_DAYS')
+
+# Order payment notify (days before expiration)
+MB_ORDER_PAYMENT_NOTIFY_DAYS = ENV.int('MB_ORDER_PAYMENT_NOTIFY_DAYS')
+
+# The number of days after blocking for sending email to the disabled clients
+MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS = ENV.int(
+    'MB_CLIENT_DISABLED_FIRST_EMAIL_DAYS')
+MB_CLIENT_DISABLED_SECOND_EMAIL_DAYS = ENV.int(
+    'MB_CLIENT_DISABLED_SECOND_EMAIL_DAYS')
+
+# The number of days after registration for sending email to the trial clients
+MB_CLIENT_GREETING_EMAIL_DAYS = ENV.int('MB_CLIENT_GREETING_EMAIL_DAYS')
+
+# Client archive period (in months)
+MB_CLIENT_ARCHIVE_MONTHS = ENV.int('MB_CLIENT_ARCHIVE_MONTHS')
+
+# Bill recipient company
+MB_BILL_RECIPIENT_COMPANY = ENV.dict('MB_BILL_RECIPIENT_COMPANY')
+
+# MB
+MB_SITE_URL = 'https://maxi-booking.com'
+MB_TRIAL_DAYS = 15
+MB_WEBSITE_DOMAIN = 'https://{}.maaaxi.com'

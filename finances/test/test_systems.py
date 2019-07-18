@@ -160,7 +160,11 @@ def test_manager_get_braintree(make_orders):
     assert braintree.braintree.private_key == 'braintree_private_key'
 
 
-def test_manager_get_stripe(make_orders):
+def test_manager_get_stripe(make_orders, settings):
+    settings.MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'][
+        'ae'] = 'stripe_publishable_key_ae'
+    settings.MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'][
+        'ae'] = 'stripe_secret_key_ae'
     Client.objects.filter(pk=1).update(country_id=2)
     stripe = manager.get('stripe', Order.objects.get(pk=4))
     assert isinstance(stripe, Stripe)
@@ -248,7 +252,11 @@ def test_stripe_display_by_admin(admin_client, make_orders):
     _test_stripe_display_by_admin(admin_client, 'stripe_publishable_key_all')
 
 
-def test_stripe_display_ae_by_admin(admin_client, make_orders):
+def test_stripe_display_ae_by_admin(admin_client, make_orders, settings):
+    settings.MB_SETTINGS_BY_COUNTRY['STRIPE_PUBLISHABLE_KEY'][
+        'ae'] = 'stripe_publishable_key_ae'
+    settings.MB_SETTINGS_BY_COUNTRY['STRIPE_SECRET_KEY'][
+        'ae'] = 'stripe_secret_key_ae'
     Client.objects.filter(pk=1).update(country_id=2)
     _test_stripe_display_by_admin(admin_client, 'stripe_publishable_key_ae')
 

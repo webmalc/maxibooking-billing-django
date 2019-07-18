@@ -7,7 +7,8 @@ pipelines:
           - pip
         script:
           - apt-get update; apt-get install -y gettext;
-          - cp -n billing/settings_local.py.dist billing/settings_local.py
+          - cp -n billing/settings/.env_dist billing/settings/.env
+          - cp -n billing/settings/.env_test_dist billing/settings/.env_test
           - pip install -r requirements.txt
           - python manage.py migrate --no-input
           - python manage.py compilemessages
