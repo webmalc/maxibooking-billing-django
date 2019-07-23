@@ -389,6 +389,7 @@ EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.FixerBackend'
 
 # Cache
 CACHES = {'default': ENV.cache()}
+CACHES['default']['TIMEOUT'] = 60 * 60 * 24 * 7
 
 # DRM estensions
 REST_FRAMEWORK_EXTENSIONS = {

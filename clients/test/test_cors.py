@@ -3,8 +3,9 @@ The test CORS module
 """
 import pytest
 from django.http import HttpRequest
+from django.test import TestCase
 
-from clients.models import Client
+from clients.models import Client, ClientWebsite
 from clients.signals import cors_allow_with_own_domains
 
 pytestmark = pytest.mark.django_db
@@ -54,3 +55,33 @@ def test_cors_allow_domains_from_settings(mocker):
 
     HttpRequest.get_host = mocker.MagicMock(return_value='www.maxi-booking.ru')
     assert cors_allow_with_own_domains(None, HttpRequest())
+
+
+@pytest.mark.usefixtures('mocker')
+class CorsTestCase(TestCase):
+    """
+    The CORS test case
+    """
+
+    def test_calc_api_cache(self):
+        """
+        Check if the cache works with the CORS library
+        """
+        website = Client.objects.get(pk=1).website
+        website.url = 'http://hotel.one'
+        website.own_domain_name = True
+        website.save()
+
+        with self.assertNumQueries(1):
+            ClientWebsite.objects.check_by_own_domain('hotel.one')
+        with self.assertNumQueries(1):
+            ClientWebsite.objects.check_by_own_domain('hotel.two')
+        with self.assertNumQueries(0):
+            ClientWebsite.objects.check_by_own_domain('hotel.one')
+        with self.assertNumQueries(0):
+            ClientWebsite.objects.check_by_own_domain('hotel.two')
+
+        website.own_domain_name = False
+        website.save()
+        with self.assertNumQueries(1):
+            ClientWebsite.objects.check_by_own_domain('hotel.one')

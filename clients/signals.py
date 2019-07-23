@@ -60,7 +60,6 @@ def cors_allow_with_own_domains(sender, request, **kwargs):
     """
     Check if the CORS request is allowed
     """
-    # TODO: cache the requests
     return cors.check_host(request.get_host())
 
 

@@ -2,6 +2,7 @@ import pytest
 from django.utils import translation
 
 from billing.lib import lang, trans
+from billing.lib.cache import cache_result
 from clients.models import Client
 from finances.models import Order
 
@@ -39,3 +40,28 @@ def test_set_locale():
 
     with lang.select_locale(client, lang='en'):
         assert translation.get_language() == 'en'
+
+
+def test_cache_result():
+    """
+    Test the cache_result decorator
+    """
+
+    @cache_result
+    def test_func(one, two):
+        """
+        The function to test
+        """
+        test_func.counter += 1
+        return one + two
+
+    test_func.counter = 0
+
+    assert test_func(1, 2) == 3
+    assert test_func.counter == 1
+
+    assert test_func(3, 2) == 5
+    assert test_func.counter == 2
+
+    assert test_func(1, 2) == 3
+    assert test_func.counter == 2

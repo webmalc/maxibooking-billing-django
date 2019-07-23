@@ -17,8 +17,9 @@ from djmoney.models.validators import MinMoneyValidator
 from model_utils import FieldTracker
 from phonenumber_field.modelfields import PhoneNumberField
 
-from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
-                            CountryBase, DictMixin, GetManagerMixin)
+from billing.models import (CachedModel, ClientPermissionsModel, Comment,
+                            CommonInfo, CountryBase, DictMixin,
+                            GetManagerMixin)
 from finances.lib.calc import Calc
 from hotels.models import Country
 
@@ -589,7 +590,7 @@ lowercase letters, numbers, and "-" character.'),
         ordering = ['-created']
 
 
-class ClientWebsite(CommonInfo, TimeStampedModel):
+class ClientWebsite(CommonInfo, CachedModel, TimeStampedModel):
     """
     This class contains information about client`s website.
     """
