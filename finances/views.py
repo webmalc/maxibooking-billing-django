@@ -28,17 +28,16 @@ class PaymentSystemViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated, )
 
     def list(self, request):
-        entries = manager.systems_list(request.query_params.get('order', None),
-                                       request=request)
-        serializer = PaymentSystemListSerializer(instance=entries.values(),
-                                                 many=True)
+        entries = manager.systems_list(
+            request.query_params.get('order', None), request=request)
+        serializer = PaymentSystemListSerializer(
+            instance=entries.values(), many=True)
 
         return Response(serializer.data)
 
     def retrieve(self, request, pk):
-        entry = manager.get(pk,
-                            request.query_params.get('order', None),
-                            request=request)
+        entry = manager.get(
+            pk, request.query_params.get('order', None), request=request)
         if not entry:
             return Response(status=404)
         serializer = PaymentSystemSerializer(instance=entry, many=False)

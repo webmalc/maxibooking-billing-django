@@ -9,6 +9,24 @@ from billing.managers import DepartmentMixin, LookupMixin
 from hotels.models import Room
 
 
+class ClientWebsiteManager(LookupMixin):
+    """
+    The ClientWebsite manager
+    """
+
+    lookup_search_fields = ('id', 'client__login', 'client__email',
+                            'client__name', 'url')
+
+    def check_by_own_domain(self, host: str):
+        """
+        Check if there is a client website with its own domain
+        with the host provided
+        """
+        return self.filter(
+            url__icontains=host, is_enabled=True,
+            own_domain_name=True).count() > 0
+
+
 class CompanyManager(LookupMixin, DepartmentMixin):
     """"
     Company manager

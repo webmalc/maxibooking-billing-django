@@ -22,7 +22,8 @@ from billing.models import (ClientPermissionsModel, Comment, CommonInfo,
 from finances.lib.calc import Calc
 from hotels.models import Country
 
-from .managers import ClientManager, ClientServiceManager, CompanyManager
+from .managers import (ClientManager, ClientServiceManager,
+                       ClientWebsiteManager, CompanyManager)
 from .validators import validate_client_login_restrictions
 
 
@@ -49,15 +50,14 @@ class Restrictions(CommonInfo, TimeStampedModel):
     """
     Client restrictions class
     """
-    rooms_limit = models.PositiveIntegerField(verbose_name=_('rooms limit'),
-                                              db_index=True,
-                                              null=True,
-                                              blank=True)
+    rooms_limit = models.PositiveIntegerField(
+        verbose_name=_('rooms limit'), db_index=True, null=True, blank=True)
 
-    client = AutoOneToOneField('clients.Client',
-                               on_delete=models.CASCADE,
-                               related_name='restrictions',
-                               primary_key=True)
+    client = AutoOneToOneField(
+        'clients.Client',
+        on_delete=models.CASCADE,
+        related_name='restrictions',
+        primary_key=True)
 
     class Meta:
         verbose_name_plural = _('restrictions')
@@ -83,38 +83,42 @@ class Company(CommonInfo, TimeStampedModel, Payer, ClientPermissionsModel,
 
     objects = CompanyManager()
 
-    name = models.CharField(max_length=255,
-                            db_index=True,
-                            validators=[MinLengthValidator(2)],
-                            verbose_name=_('name'))
-    client = models.ForeignKey('clients.Client',
-                               on_delete=models.CASCADE,
-                               verbose_name=_('client'),
-                               related_name='companies',
-                               db_index=True)
-    account_number = models.CharField(max_length=50,
-                                      db_index=True,
-                                      validators=[MinLengthValidator(10)])
-    city = models.ForeignKey('hotels.City',
-                             on_delete=models.PROTECT,
-                             verbose_name=_('city'),
-                             db_index=True)
-    region = models.ForeignKey('hotels.Region',
-                               on_delete=models.PROTECT,
-                               verbose_name=_('region'),
-                               db_index=True)
-    address = models.CharField(max_length=255,
-                               db_index=True,
-                               validators=[MinLengthValidator(2)],
-                               verbose_name=_('address'))
-    postal_code = models.CharField(max_length=50,
-                                   db_index=True,
-                                   validators=[MinLengthValidator(2)])
+    name = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('name'))
+    client = models.ForeignKey(
+        'clients.Client',
+        on_delete=models.CASCADE,
+        verbose_name=_('client'),
+        related_name='companies',
+        db_index=True)
+    account_number = models.CharField(
+        max_length=50, db_index=True, validators=[MinLengthValidator(10)])
+    city = models.ForeignKey(
+        'hotels.City',
+        on_delete=models.PROTECT,
+        verbose_name=_('city'),
+        db_index=True)
+    region = models.ForeignKey(
+        'hotels.Region',
+        on_delete=models.PROTECT,
+        verbose_name=_('region'),
+        db_index=True)
+    address = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('address'))
+    postal_code = models.CharField(
+        max_length=50, db_index=True, validators=[MinLengthValidator(2)])
 
-    bank = models.CharField(max_length=255,
-                            db_index=True,
-                            validators=[MinLengthValidator(2)],
-                            verbose_name=_('bank'))
+    bank = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('bank'))
 
     @property
     def country(self):
@@ -155,9 +159,8 @@ class CompanyWorld(CountryBase, CommonInfo, TimeStampedModel):
             # integer_validator,
         ],
         verbose_name=_('swift'))
-    company = models.OneToOneField(Company,
-                                   on_delete=models.CASCADE,
-                                   related_name='world')
+    company = models.OneToOneField(
+        Company, on_delete=models.CASCADE, related_name='world')
 
     @property
     def company__pk(self):
@@ -187,83 +190,89 @@ class CompanyRu(CountryBase, CommonInfo, TimeStampedModel):
         ('proxy', _('proxy')),
     )
 
-    form = models.CharField(max_length=20,
-                            choices=FORMS,
-                            verbose_name=_('form'),
-                            db_index=True)
-    ogrn = models.CharField(max_length=15,
-                            db_index=True,
-                            null=True,
-                            blank=True,
-                            validators=[
-                                MinLengthValidator(13),
-                                MaxLengthValidator(15),
-                                integer_validator,
-                            ],
-                            verbose_name=_('ogrn'))
-    inn = models.CharField(max_length=13,
-                           db_index=True,
-                           validators=[
-                               MinLengthValidator(10),
-                               MaxLengthValidator(13),
-                               integer_validator,
-                           ],
-                           verbose_name=_('inn'))
-    kpp = models.CharField(max_length=9,
-                           db_index=True,
-                           null=True,
-                           blank=True,
-                           validators=[
-                               MinLengthValidator(9),
-                               MaxLengthValidator(9),
-                               integer_validator,
-                           ],
-                           verbose_name=_('kpp'))
+    form = models.CharField(
+        max_length=20, choices=FORMS, verbose_name=_('form'), db_index=True)
+    ogrn = models.CharField(
+        max_length=15,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[
+            MinLengthValidator(13),
+            MaxLengthValidator(15),
+            integer_validator,
+        ],
+        verbose_name=_('ogrn'))
+    inn = models.CharField(
+        max_length=13,
+        db_index=True,
+        validators=[
+            MinLengthValidator(10),
+            MaxLengthValidator(13),
+            integer_validator,
+        ],
+        verbose_name=_('inn'))
+    kpp = models.CharField(
+        max_length=9,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[
+            MinLengthValidator(9),
+            MaxLengthValidator(9),
+            integer_validator,
+        ],
+        verbose_name=_('kpp'))
 
-    bik = models.CharField(max_length=30,
-                           db_index=True,
-                           validators=[
-                               MinLengthValidator(7),
-                               integer_validator,
-                           ],
-                           verbose_name=_('bik'))
-    corr_account = models.CharField(max_length=30,
-                                    validators=[
-                                        MinLengthValidator(20),
-                                        MaxLengthValidator(30),
-                                        integer_validator,
-                                    ],
-                                    verbose_name=_('correspondent account'))
-    boss_firstname = models.CharField(max_length=255,
-                                      validators=[MinLengthValidator(2)],
-                                      verbose_name=_('boss firstname'))
-    boss_lastname = models.CharField(max_length=255,
-                                     db_index=True,
-                                     validators=[MinLengthValidator(2)],
-                                     verbose_name=_('boss lastname'))
-    boss_patronymic = models.CharField(max_length=255,
-                                       validators=[MinLengthValidator(2)],
-                                       verbose_name=_('boss patronymic'))
+    bik = models.CharField(
+        max_length=30,
+        db_index=True,
+        validators=[
+            MinLengthValidator(7),
+            integer_validator,
+        ],
+        verbose_name=_('bik'))
+    corr_account = models.CharField(
+        max_length=30,
+        validators=[
+            MinLengthValidator(20),
+            MaxLengthValidator(30),
+            integer_validator,
+        ],
+        verbose_name=_('correspondent account'))
+    boss_firstname = models.CharField(
+        max_length=255,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss firstname'))
+    boss_lastname = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss lastname'))
+    boss_patronymic = models.CharField(
+        max_length=255,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('boss patronymic'))
     boss_operation_base = models.CharField(
         max_length=255,
         choices=OPERATION_BASES,
         verbose_name=_('boss operation base'))
-    proxy_number = models.CharField(max_length=50,
-                                    null=True,
-                                    blank=True,
-                                    validators=[
-                                        MinLengthValidator(2),
-                                        integer_validator,
-                                    ],
-                                    verbose_name=_('proxy number'))
+    proxy_number = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        validators=[
+            MinLengthValidator(2),
+            integer_validator,
+        ],
+        verbose_name=_('proxy number'))
     proxy_date = models.DateTimeField(
         verbose_name=_('proxy date'),
         null=True,
         blank=True,
     )
-    company = models.OneToOneField(Company,
-                                   on_delete=models.CASCADE,
-                                   related_name='ru')
+    company = models.OneToOneField(
+        Company, on_delete=models.CASCADE, related_name='ru')
 
     @property
     def company__pk(self):
@@ -342,109 +351,121 @@ lowercase letters, numbers, and "-" character.'),
         error_messages={'unique': _('Client with this domain already exist.')},
         verbose_name=_('login alias'),
         validators=login_validators)
-    email = models.EmailField(db_index=True,
-                              unique=True,
-                              verbose_name=_('e-mail'))
-    phone = PhoneNumberField(max_length=50,
-                             db_index=True,
-                             null=True,
-                             blank=True,
-                             verbose_name=_('phone'))
-    name = models.CharField(max_length=255,
-                            db_index=True,
-                            null=True,
-                            blank=True,
-                            validators=[MinLengthValidator(2)],
-                            verbose_name=_('full name'))
-    description = models.TextField(null=True,
-                                   blank=True,
-                                   db_index=True,
-                                   verbose_name=_('description'),
-                                   validators=[MinLengthValidator(2)])
-    country = models.ForeignKey(Country,
-                                on_delete=models.PROTECT,
-                                verbose_name=_('country'),
-                                db_index=True)
-    city = models.ForeignKey('hotels.City',
-                             null=True,
-                             blank=True,
-                             on_delete=models.PROTECT,
-                             verbose_name=_('city'),
-                             db_index=True)
-    region = models.ForeignKey('hotels.Region',
-                               null=True,
-                               blank=True,
-                               on_delete=models.PROTECT,
-                               verbose_name=_('region'),
-                               db_index=True)
-    address = models.CharField(max_length=255,
-                               null=True,
-                               blank=True,
-                               db_index=True,
-                               validators=[MinLengthValidator(2)],
-                               verbose_name=_('address'))
-    postal_code = models.CharField(max_length=50,
-                                   null=True,
-                                   blank=True,
-                                   db_index=True,
-                                   validators=[MinLengthValidator(2)])
-    status = models.CharField(max_length=20,
-                              default='not_confirmed',
-                              choices=STATUSES,
-                              verbose_name=_('status'),
-                              db_index=True)
-    installation = models.CharField(max_length=20,
-                                    default='not_installed',
-                                    verbose_name=_('installation status'),
-                                    choices=INSTALLATION,
-                                    db_index=True)
-    trial_activated = models.BooleanField(default=False,
-                                          db_index=True,
-                                          verbose_name=_('trial activated'))
-    disabled_at = models.DateTimeField(db_index=True,
-                                       null=True,
-                                       blank=True,
-                                       verbose_name=_('disabled at'))
-    url = models.URLField(db_index=True,
-                          null=True,
-                          blank=True,
-                          verbose_name=_('url'),
-                          help_text=_('maxibooking url'))
+    email = models.EmailField(
+        db_index=True, unique=True, verbose_name=_('e-mail'))
+    phone = PhoneNumberField(
+        max_length=50,
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('phone'))
+    name = models.CharField(
+        max_length=255,
+        db_index=True,
+        null=True,
+        blank=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('full name'))
+    description = models.TextField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('description'),
+        validators=[MinLengthValidator(2)])
+    country = models.ForeignKey(
+        Country,
+        on_delete=models.PROTECT,
+        verbose_name=_('country'),
+        db_index=True)
+    city = models.ForeignKey(
+        'hotels.City',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('city'),
+        db_index=True)
+    region = models.ForeignKey(
+        'hotels.Region',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('region'),
+        db_index=True)
+    address = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        db_index=True,
+        validators=[MinLengthValidator(2)],
+        verbose_name=_('address'))
+    postal_code = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True,
+        db_index=True,
+        validators=[MinLengthValidator(2)])
+    status = models.CharField(
+        max_length=20,
+        default='not_confirmed',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
+    installation = models.CharField(
+        max_length=20,
+        default='not_installed',
+        verbose_name=_('installation status'),
+        choices=INSTALLATION,
+        db_index=True)
+    trial_activated = models.BooleanField(
+        default=False, db_index=True, verbose_name=_('trial activated'))
+    disabled_at = models.DateTimeField(
+        db_index=True, null=True, blank=True, verbose_name=_('disabled at'))
+    url = models.URLField(
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name=_('url'),
+        help_text=_('maxibooking url'))
     ip = models.GenericIPAddressField(null=True, blank=True)
-    manager = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                null=True,
-                                blank=True,
-                                db_index=True,
-                                on_delete=models.SET_NULL,
-                                verbose_name=_('manager'),
-                                related_name="%(app_label)s_%(class)s_manager")
+    manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('manager'),
+        related_name="%(app_label)s_%(class)s_manager")
     managers_history = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         verbose_name=_('managers history'),
         blank=True)
-    manager_code = models.CharField(max_length=50,
-                                    blank=True,
-                                    null=True,
-                                    validators=[MinLengthValidator(3)])
-    source = models.CharField(max_length=20,
-                              default='registration',
-                              choices=SOURCES,
-                              verbose_name=_('source'),
-                              db_index=True)
-    sales_status = models.ForeignKey(SalesStatus,
-                                     null=True,
-                                     blank=True,
-                                     db_index=True,
-                                     on_delete=models.SET_NULL,
-                                     verbose_name=_('sales status'),
-                                     related_name='clients')
-    refusal_reason = models.ForeignKey(RefusalReason,
-                                       null=True,
-                                       blank=True,
-                                       db_index=True,
-                                       on_delete=models.SET_NULL,
-                                       verbose_name=_('refusal reason'),
-                                       related_name='clients')
+    manager_code = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        validators=[MinLengthValidator(3)])
+    source = models.CharField(
+        max_length=20,
+        default='registration',
+        choices=SOURCES,
+        verbose_name=_('source'),
+        db_index=True)
+    sales_status = models.ForeignKey(
+        SalesStatus,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('sales status'),
+        related_name='clients')
+    refusal_reason = models.ForeignKey(
+        RefusalReason,
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_('refusal reason'),
+        related_name='clients')
     comments = GenericRelation(Comment)
 
     @property
@@ -572,6 +593,9 @@ class ClientWebsite(CommonInfo, TimeStampedModel):
     """
     This class contains information about client`s website.
     """
+
+    objects = ClientWebsiteManager()
+
     url = models.URLField(
         db_index=True,
         verbose_name=_('url'),
@@ -591,12 +615,13 @@ among other clients.'),
         help_text=_('Does the website use its own domain name?'),
     )
 
-    client = models.OneToOneField(Client,
-                                  on_delete=models.CASCADE,
-                                  db_index=True,
-                                  unique=True,
-                                  verbose_name=_('client'),
-                                  related_name='website')
+    client = models.OneToOneField(
+        Client,
+        on_delete=models.CASCADE,
+        db_index=True,
+        unique=True,
+        verbose_name=_('client'),
+        related_name='website')
 
     def generate_url(self, add: str = None) -> str:
         """
@@ -626,38 +651,41 @@ class ClientRu(CountryBase, CommonInfo, TimeStampedModel):
     """
     Client ru fields
     """
-    passport_serial = models.CharField(max_length=4,
-                                       db_index=True,
-                                       validators=[
-                                           MinLengthValidator(4),
-                                           MaxLengthValidator(4),
-                                           integer_validator,
-                                       ],
-                                       verbose_name=_('passport serial'))
-    passport_number = models.CharField(max_length=6,
-                                       db_index=True,
-                                       validators=[
-                                           MinLengthValidator(6),
-                                           MaxLengthValidator(6),
-                                           integer_validator,
-                                       ],
-                                       verbose_name=_('passport number'))
+    passport_serial = models.CharField(
+        max_length=4,
+        db_index=True,
+        validators=[
+            MinLengthValidator(4),
+            MaxLengthValidator(4),
+            integer_validator,
+        ],
+        verbose_name=_('passport serial'))
+    passport_number = models.CharField(
+        max_length=6,
+        db_index=True,
+        validators=[
+            MinLengthValidator(6),
+            MaxLengthValidator(6),
+            integer_validator,
+        ],
+        verbose_name=_('passport number'))
     passport_date = models.DateTimeField(verbose_name=_('passport date'))
-    passport_issued_by = models.CharField(max_length=255,
-                                          db_index=True,
-                                          validators=[MinLengthValidator(4)],
-                                          verbose_name=_('passport issued by'))
-    inn = models.CharField(max_length=13,
-                           db_index=True,
-                           validators=[
-                               MinLengthValidator(10),
-                               MaxLengthValidator(13),
-                               integer_validator,
-                           ],
-                           verbose_name=_('inn'))
-    client = models.OneToOneField(Client,
-                                  on_delete=models.CASCADE,
-                                  related_name='ru')
+    passport_issued_by = models.CharField(
+        max_length=255,
+        db_index=True,
+        validators=[MinLengthValidator(4)],
+        verbose_name=_('passport issued by'))
+    inn = models.CharField(
+        max_length=13,
+        db_index=True,
+        validators=[
+            MinLengthValidator(10),
+            MaxLengthValidator(13),
+            integer_validator,
+        ],
+        verbose_name=_('inn'))
+    client = models.OneToOneField(
+        Client, on_delete=models.CASCADE, related_name='ru')
 
     def __str__(self):
         return '{} {} от {} выдан {}. инн {}'.format(
@@ -688,11 +716,12 @@ class ClientAuth(CommonInfo, TimeStampedModel):
         verbose_name=_('authentication date'),
     )
     ip = models.GenericIPAddressField(db_index=True)
-    user_agent = models.TextField(null=True,
-                                  blank=True,
-                                  db_index=True,
-                                  verbose_name=_('user agent'),
-                                  validators=[MinLengthValidator(2)])
+    user_agent = models.TextField(
+        null=True,
+        blank=True,
+        db_index=True,
+        verbose_name=_('user agent'),
+        validators=[MinLengthValidator(2)])
 
     class Meta:
         ordering = ['-auth_date']
@@ -713,54 +742,54 @@ class ClientService(CommonInfo, TimeStampedModel, ClientPermissionsModel,
 
     objects = ClientServiceManager()
 
-    is_enabled = models.BooleanField(default=True,
-                                     db_index=True,
-                                     verbose_name=_('is enabled'))
-    status = models.CharField(max_length=20,
-                              default='active',
-                              choices=STATUSES,
-                              verbose_name=_('status'),
-                              db_index=True)
-    is_paid = models.BooleanField(default=False,
-                                  db_index=True,
-                                  verbose_name=_('is paid'))
-    price = MoneyField(max_digits=20,
-                       decimal_places=2,
-                       blank=True,
-                       verbose_name=_('price'),
-                       validators=[MinMoneyValidator(0)],
-                       db_index=True)
-    country = models.ForeignKey(Country,
-                                blank=True,
-                                on_delete=models.PROTECT,
-                                verbose_name=_('country'),
-                                db_index=True,
-                                related_name='client_services')
-    quantity = models.PositiveIntegerField(verbose_name=_('quantity'),
-                                           db_index=True,
-                                           validators=[MinValueValidator(1)])
-    start_at = models.DateTimeField(db_index=True,
-                                    verbose_name=_('start date'),
-                                    auto_now_add=True)
-    begin = models.DateTimeField(db_index=True,
-                                 blank=True,
-                                 verbose_name=_('begin date'))
-    end = models.DateTimeField(db_index=True,
-                               blank=True,
-                               verbose_name=_('end date'))
-    service = models.ForeignKey('finances.Service',
-                                on_delete=models.PROTECT,
-                                db_index=True,
-                                verbose_name=_('service'),
-                                related_name='client_services')
-    client = models.ForeignKey(Client,
-                               on_delete=models.CASCADE,
-                               db_index=True,
-                               verbose_name=_('client'),
-                               related_name='services')
-    orders = models.ManyToManyField('finances.Order',
-                                    verbose_name=_('orders'),
-                                    blank=True)
+    is_enabled = models.BooleanField(
+        default=True, db_index=True, verbose_name=_('is enabled'))
+    status = models.CharField(
+        max_length=20,
+        default='active',
+        choices=STATUSES,
+        verbose_name=_('status'),
+        db_index=True)
+    is_paid = models.BooleanField(
+        default=False, db_index=True, verbose_name=_('is paid'))
+    price = MoneyField(
+        max_digits=20,
+        decimal_places=2,
+        blank=True,
+        verbose_name=_('price'),
+        validators=[MinMoneyValidator(0)],
+        db_index=True)
+    country = models.ForeignKey(
+        Country,
+        blank=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('country'),
+        db_index=True,
+        related_name='client_services')
+    quantity = models.PositiveIntegerField(
+        verbose_name=_('quantity'),
+        db_index=True,
+        validators=[MinValueValidator(1)])
+    start_at = models.DateTimeField(
+        db_index=True, verbose_name=_('start date'), auto_now_add=True)
+    begin = models.DateTimeField(
+        db_index=True, blank=True, verbose_name=_('begin date'))
+    end = models.DateTimeField(
+        db_index=True, blank=True, verbose_name=_('end date'))
+    service = models.ForeignKey(
+        'finances.Service',
+        on_delete=models.PROTECT,
+        db_index=True,
+        verbose_name=_('service'),
+        related_name='client_services')
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        db_index=True,
+        verbose_name=_('client'),
+        related_name='services')
+    orders = models.ManyToManyField(
+        'finances.Order', verbose_name=_('orders'), blank=True)
 
     @property
     def price_for_unit(self):
@@ -774,8 +803,8 @@ class ClientService(CommonInfo, TimeStampedModel, ClientPermissionsModel,
         return self.quantity
 
     def price_repr(self):
-        return '{} {}'.format(getattr(self.price, 'amount', ''),
-                              self.price.currency)
+        return '{} {}'.format(
+            getattr(self.price, 'amount', ''), self.price.currency)
 
     price_repr.short_description = _('price')
 
@@ -806,14 +835,16 @@ class ClientService(CommonInfo, TimeStampedModel, ClientPermissionsModel,
         super(ClientService, self).save(*args, **kwargs)
 
         if self.is_enabled:
-            ClientService.objects.disable(client=self.client,
-                                          service_type=self.service.type,
-                                          exclude_pk=self.pk)
+            ClientService.objects.disable(
+                client=self.client,
+                service_type=self.service.type,
+                exclude_pk=self.pk)
 
         if self.status == 'active':
-            ClientService.objects.deactivate(client=self.client,
-                                             service_type=self.service.type,
-                                             exclude_pk=self.pk)
+            ClientService.objects.deactivate(
+                client=self.client,
+                service_type=self.service.type,
+                exclude_pk=self.pk)
         self.client.restrictions_update()
 
     @staticmethod

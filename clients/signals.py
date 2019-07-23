@@ -1,9 +1,14 @@
+"""
+The clients signals module
+"""
+from corsheaders.signals import check_request_enabled
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from finances.models import ClientDiscount, Discount
 from users.models import Profile
 
+from .lib import cors
 from .models import Client, ClientWebsite
 from .tasks import (invalidate_client_cache_task,
                     invalidate_mb_client_login_cache)
@@ -49,3 +54,14 @@ def client_post_save(sender, **kwargs):
         website.client = client
         website.generate_url()
         website.save()
+
+
+def cors_allow_with_own_domains(sender, request, **kwargs):
+    """
+    Check if the CORS request is allowed
+    """
+    # TODO: cache the requests
+    return cors.check_host(request.get_host())
+
+
+check_request_enabled.connect(cors_allow_with_own_domains)
