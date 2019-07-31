@@ -90,7 +90,7 @@ def client_fixtures(client):
             'Failed client fixtures installation. Id: {}; login: {}'.format(
                 client.id, client.login))
         mail_client(
-            subject=_('Registation failed'),
+            subject=_('Registration failed'),
             template='emails/registration_fail.html',
             data={},
             client=client)
@@ -124,7 +124,7 @@ def client_install(client):
             'Failed client installation. Id: {}; login: {}'.format(
                 client.id, client.login))
         mail_client(
-            subject=_('Registation failed'),
+            subject=_('Registration failed'),
             template='emails/registration_fail.html',
             data={},
             client=client)

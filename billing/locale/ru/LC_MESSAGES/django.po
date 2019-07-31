@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-17 12:31+0000\n"
+"POT-Creation-Date: 2019-07-31 11:06+0000\n"
 "PO-Revision-Date: 2019-06-17 12:30+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgid "Action is marked as canceled."
 msgstr ""
 
 #: billing/lib/mb.py:93 billing/lib/mb.py:127 clients/views.py:364
-msgid "Registation failed"
+msgid "Registration failed"
 msgstr "Ошибка при регистрации"
 
 #: billing/models.py:23
@@ -81,7 +81,7 @@ msgstr ""
 msgid "date"
 msgstr ""
 
-#: billing/models.py:68 clients/models.py:394 clients/models.py:716
+#: billing/models.py:68 clients/models.py:412 clients/models.py:752
 #: finances/models.py:397 finances/models.py:636
 msgid "status"
 msgstr ""
@@ -102,7 +102,7 @@ msgstr ""
 msgid "code"
 msgstr ""
 
-#: billing/models.py:118 clients/models.py:712 finances/models.py:60
+#: billing/models.py:118 clients/models.py:747 finances/models.py:60
 #: finances/models.py:170 hotels/models.py:48 hotels/models.py:83
 #: hotels/models.py:110
 msgid "is enabled"
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Your payment was successful"
 msgstr "Успешная оплата"
 
-#: billing/templates/billing/processing.html:13 clients/models.py:703
+#: billing/templates/billing/processing.html:13 clients/models.py:739
 #: finances/models.py:385
 msgid "processing"
 msgstr ""
@@ -144,18 +144,31 @@ msgid "we miss You!"
 msgstr "мы скучаем по Вам!"
 
 #: billing/templates/emails/client_disabled.html:11
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "\n"
+#| "<p>Hello!</p>\n"
+#| "<p>New Sales are waiting for You! Quickly unlock your account and start "
+#| "selling more.</p>\n"
+#| "<p>To unlock your account simply make a payment for your Invoice #%(id)s "
+#| "from %(created)s in \"My Account\" by clicking on the link: <a href="
+#| "\"%(url)s\">%(url)s</a></p>\n"
+#| "<p>Are there features that you want to try but didn't have a chance to "
+#| "try yet? Write to us. We are happy only when you sell more with us!</"
+#| "p>   \n"
+#| "\n"
 msgid ""
 "\n"
 "\n"
-"<p>Hello!</p>\n"
-"<p>New Sales are waiting for You! Quickly unlock your account and start "
+"    <p>Hello!</p>\n"
+"    <p>New Sales are waiting for You! Quickly unlock your account and start "
 "selling more.</p>\n"
-"<p>To unlock your account simply make a payment for your Invoice #%(id)s "
+"    <p>To unlock your account simply make a payment for your Invoice #%(id)s "
 "from %(created)s in \"My Account\" by clicking on the link: <a href=\"%(url)s"
 "\">%(url)s</a></p>\n"
-"<p>Are there features that you want to try but didn't have a chance to try "
-"yet? Write to us. We are happy only when you sell more with us!</p>   \n"
+"    <p>Are there features that you want to try but didn't have a chance to "
+"try yet? Write to us. We are happy only when you sell more with us!</p>\n"
 "\n"
 msgstr ""
 "\n"
@@ -173,17 +186,30 @@ msgid "How is your Sales?"
 msgstr "как Ваши продажи?"
 
 #: billing/templates/emails/client_welcome.html:10
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "        <p>Hello!</p>\n"
+#| "        <p>How is your Sales?</p>\n"
+#| "        <p>At Maxibooking, we are always happy to help you set up all the "
+#| "features, prices and special offers you need, including individual "
+#| "configuration of the number of rooms and properties offered for sale in "
+#| "each of your sales channels (Your personal website, Booking.com and "
+#| "others.)</p>\n"
+#| "        <p>Are there features that you want to try but didn't have a "
+#| "chance to try yet? Write to us. We are happy only when you sell more with "
+#| "us!</p>\n"
+#| "    "
 msgid ""
 "\n"
-"        <p>Hello!</p>\n"
-"        <p>How is your Sales?</p>\n"
-"        <p>At Maxibooking, we are always happy to help you set up all the "
+"    <p>Hello!</p>\n"
+"    <p>How is your Sales?</p>\n"
+"    <p>At Maxibooking, we are always happy to help you set up all the "
 "features, prices and special offers you need, including individual "
 "configuration of the number of rooms and properties offered for sale in each "
 "of your sales channels (Your personal website, Booking.com and others.)</p>\n"
-"        <p>Are there features that you want to try but didn't have a chance "
-"to try yet? Write to us. We are happy only when you sell more with us!</p>\n"
-"    "
+"    <p>Are there features that you want to try but didn't have a chance to "
+"try yet? Write to us. We are happy only when you sell more with us!</p>\n"
 msgstr ""
 "\n"
 "<p>Здравствуйте,</p>\n"
@@ -241,19 +267,32 @@ msgid "Oh No! Your Account has been suspended"
 msgstr "Ваш аккаунт заблокирован"
 
 #: billing/templates/emails/order_client_disabled.html:10
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "        <p>Hello!</p>\n"
+#| "        <p>Due to unpaid Invoice, your account has been suspended.</p>\n"
+#| "        <p>Quickly unlock your account so you don’t lose new bookings! </"
+#| "p>\n"
+#| "        <p>To unlock your account simply make a payment for your Invoice #"
+#| "%(order.id)s from %(created)s in \"My Account\" by clicking on the link: "
+#| "<a href=\"%(url)s\">%(url)s</a></p>\n"
+#| "        <p>Are there features that you want to try but didn't have a "
+#| "chance to try yet? Write to us. We are happy only when you sell more with "
+#| "us!</p>\n"
+#| "\n"
+#| "    "
 msgid ""
 "\n"
-"        <p>Hello!</p>\n"
-"        <p>Due to unpaid Invoice, your account has been suspended.</p>\n"
-"        <p>Quickly unlock your account so you don’t lose new bookings! </p>\n"
-"        <p>To unlock your account simply make a payment for your Invoice #"
+"    <p>Hello!</p>\n"
+"    <p>Due to unpaid Invoice, your account has been suspended.</p>\n"
+"    <p>Quickly unlock your account so you don’t lose new bookings! </p>\n"
+"    <p>To unlock your account simply make a payment for your Invoice #"
 "%(order.id)s from %(created)s in \"My Account\" by clicking on the link: <a "
 "href=\"%(url)s\">%(url)s</a></p>\n"
-"        <p>Are there features that you want to try but didn't have a chance "
-"to try yet? Write to us. We are happy only when you sell more with us!</p>\n"
+"    <p>Are there features that you want to try but didn't have a chance to "
+"try yet? Write to us. We are happy only when you sell more with us!</p>\n"
 "\n"
-"    "
 msgstr ""
 "\n"
 "<p>Здравствуйте,</p>\n"
@@ -308,7 +347,7 @@ msgid ""
 "and pay online simply go to “My Account” by clicking on the link: %(url)s</"
 "p>\n"
 "    <p>Are there features that you want to try but didn't have a chance to "
-"try yet? Write to us. We are happy only when you sell more with us!</p> \n"
+"try yet? Write to us. We are happy only when you sell more with us!</p>\n"
 "\n"
 msgstr ""
 "\n"
@@ -334,7 +373,6 @@ msgstr "Успешная регистрация"
 #, python-format
 msgid ""
 "\n"
-"\n"
 "    <p>Greetings!</p>\n"
 "    <p>Welcome to 'MaxiBooking'! You are now well on your way to start "
 "selling more. </p>\n"
@@ -355,12 +393,6 @@ msgid ""
 "background-color: #ff4632; margin: 0; border-color: #ff4632; border-style: "
 "solid; border-width: 10px 20px;\">go to your website</a>\n"
 "    </p>\n"
-"    <p>Don't hesitate to check out our Customer Support Knowledge Base for "
-"lots of guiding material that we have prepared for You: https://support.maxi-"
-"booking.com</p>\n"
-"    <p>Let us know what you think. We love to hear from You. For feedback "
-"and if you have any questions just send us an email at: support@maxi-booking."
-"com</p>\n"
 "    <p>We are happy only when you sell more with us!</p>\n"
 "\n"
 msgstr ""
@@ -390,42 +422,11 @@ msgstr ""
 "<p>Добавьте больше информации о вашем объекте,\n"
 "чтобы ваши продажи заметно выросли.</p>\n"
 "\n"
-"    <p>Чтобы помочь Вам скорее начать продавать больше, мы собрали для Вас "
-"полезную информацию в нашей Базе Знаний, которая ждет Вас по ссылке: <a href="
-"\"https://support.maxi-booking.com/hc/ru/\">https://support.maxi-booking.com/"
-"hc/ru/</a> и которая поможет Вам быстро и просто познакомиться с "
-"возможностями и настройками Максибукинг.</p>\n"
-"    <p>\n"
-"<a href=\"https://maxi-booking.zendesk.com/hc/ru\" class=\"btn-primary\" "
-"itemprop=\"url\" style=\"font-family: 'Helvetica Neue',Helvetica,Arial,sans-"
-"serif; box-sizing: border-box; font-size: 14px; color: #FFF; text-"
-"decoration: none; line-height: 2em; font-weight: bold; text-align: center; "
-"cursor: pointer; display: inline-block; border-radius: 0px; text-transform: "
-"capitalize; background-color: #ff4632; margin: 0; border-color: #ff4632; "
-"border-style: solid; border-width: 10px 20px;\">\n"
-"    база знаний\n"
-"</a>&nbsp;&nbsp;\n"
-"<a href=\"https://support.maxi-booking.com/hc/ru/categories/360000231673-"
-"Обучающие-видео\" class=\"btn-primary\" itemprop=\"url\" style=\"font-"
-"family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; "
-"font-size: 14px; color: #FFF; text-decoration: none; line-height: 2em; font-"
-"weight: bold; text-align: center; cursor: pointer; display: inline-block; "
-"border-radius: 0px; text-transform: capitalize; background-color: #ff4632; "
-"margin: 0; border-color: #ff4632; border-style: solid; border-width: 10px "
-"20px;\">\n"
-"    видеоуроки\n"
-"</a>\n"
-"</p>\n"
-"\n"
-"<p>Наша служба Клиентской поддержки всегда рада помочь Вам. Напишите нам на "
-"наш контактный адрес: <a href=\"mailto:support@maxi-booking.ru"
-"\">support@maxi-booking.ru</a> и Ваш личный консультант поможет Вам сделать "
-"все необходимые настройки.</p>\n"
 "<p>В Максибукинг мы работаем для Вас!\n"
 "<p>Желаем Вам много продаж.\n"
 
 #: billing/templates/emails/registration_fail.html:6
-msgid "Registation failure"
+msgid "Registration failure"
 msgstr "Ошибка при регистрации"
 
 #: billing/templates/emails/registration_fail.html:10
@@ -443,29 +444,33 @@ msgstr ""
 "<p>Для устранения ошибки обратитесь, пожалуйста, в службу поддержки по "
 "адресу: support@maxi-booking.ru</p> \n"
 
-#: billing/templates/emails/sign.html:2
+#: billing/templates/emails/sign.html:29
+msgid "Knowledge Base"
+msgstr "База знаний"
+
+#: billing/templates/emails/sign.html:38
 msgid ""
-"\n"
-"    <p>Yours Faithfully,<br>\n"
-"        MaxiBooking Customer Support Team</p>\n"
-"    <p>\n"
-"        E-mail: <a href=\"mailto:support@maxi-booking.com\">support@maxi-"
-"booking.com</a><br>\n"
-"        Knowledge Base: <a href=\"https://support.maxi-booking.com\">https://"
-"support.maxi-booking.com</a>\n"
-"    </p>\n"
-msgstr ""
-"\n"
-"<p>С уважением,<br>\n"
-"    Служба Клиентской поддержки «Максибукинг»</p>\n"
-"<p>\n"
-"    E-mail: <a href=\"mailto:support@maxi-booking.ru\">support@maxi-booking."
-"ru</a><br>\n"
-"    Телефон: 8 800 200 78 30<br>\n"
-"    База знаний: <a href=\"https://maxi-booking.zendesk.com/hc/ru\">https://"
-"maxi-booking.zendesk.com/hc/ru</a>\n"
-"</p>\n"
-"<p>Максибукинг: Работает программа — зарабатываете Вы!</p>\n"
+"Don't hesitate to check out our Customer Support Knowledge Base for lots of "
+"guiding material that we have prepared for You."
+msgstr "Чтобы помочь Вам скорее начать продавать больше, мы собрали для Вас полезную информацию в нашей Базе Знаний"
+
+#: billing/templates/emails/sign.html:59
+msgid "Support"
+msgstr "Техническая поддержка"
+
+#: billing/templates/emails/sign.html:67
+msgid ""
+"Let us know what you think. We love to hear from You. For feedback and if "
+"you have any questions just send us an email"
+msgstr "Наша служба Клиентской поддержки всегда рада помочь Вам"
+
+#: billing/templates/emails/sign.html:100
+msgid "contact info"
+msgstr "контактная информация"
+
+#: billing/templates/emails/sign.html:114
+msgid "Phone"
+msgstr "Телефон"
 
 #: billing/templates/tabbed_admin/change_form.html:15
 msgid "Please correct the error below."
@@ -479,45 +484,45 @@ msgstr ""
 msgid "postal_code"
 msgstr "индекс"
 
-#: billing/templates/trans/fix.html:3 clients/models.py:104
-#: clients/models.py:378
+#: billing/templates/trans/fix.html:3 clients/models.py:108
+#: clients/models.py:393
 msgid "region"
 msgstr "область"
 
-#: billing/templates/trans/fix.html:4 clients/models.py:100
-#: clients/models.py:372 hotels/models.py:176
+#: billing/templates/trans/fix.html:4 clients/models.py:103
+#: clients/models.py:386 hotels/models.py:176
 msgid "city"
 msgstr "город"
 
-#: billing/templates/trans/fix.html:5 clients/models.py:109
-#: clients/models.py:385 hotels/models.py:168
+#: billing/templates/trans/fix.html:5 clients/models.py:114
+#: clients/models.py:401 hotels/models.py:168
 msgid "address"
 msgstr "адрес"
 
-#: billing/templates/trans/fix.html:6 clients/models.py:307
-#: clients/models.py:352
+#: billing/templates/trans/fix.html:6 clients/models.py:317
+#: clients/models.py:362
 msgid "phone"
 msgstr "телефон"
 
-#: clients/admin.py:59
+#: clients/admin.py:62
 msgid "color"
 msgstr ""
 
-#: clients/admin.py:425 clients/models.py:92 clients/models.py:592
-#: clients/models.py:677 clients/models.py:753 finances/models.py:417
+#: clients/admin.py:428 clients/models.py:95 clients/models.py:624
+#: clients/models.py:712 clients/models.py:790 finances/models.py:417
 #: finances/models.py:616 hotels/models.py:190
 msgid "client"
 msgstr ""
 
-#: clients/admin.py:437
+#: clients/admin.py:440
 msgid "sales"
 msgstr ""
 
-#: clients/admin.py:459
+#: clients/admin.py:462
 msgid "Installation successfully started."
 msgstr ""
 
-#: clients/admin.py:468
+#: clients/admin.py:471
 msgid "Client manger successfully saved."
 msgstr ""
 
@@ -533,170 +538,170 @@ msgstr ""
 msgid "Not paid"
 msgstr ""
 
-#: clients/models.py:35
+#: clients/models.py:37
 msgid "refusal reasons"
 msgstr ""
 
-#: clients/models.py:45
+#: clients/models.py:47
 msgid "sales statuses"
 msgstr ""
 
-#: clients/models.py:52
+#: clients/models.py:55
 msgid "rooms limit"
 msgstr ""
 
-#: clients/models.py:63
+#: clients/models.py:64
 msgid "restrictions"
 msgstr ""
 
-#: clients/models.py:89 fms/models.py:12 hotels/models.py:156
+#: clients/models.py:91 fms/models.py:12 hotels/models.py:156
 #: hotels/models.py:211
 msgid "name"
 msgstr ""
 
-#: clients/models.py:117
+#: clients/models.py:122
 msgid "bank"
 msgstr ""
 
-#: clients/models.py:140
+#: clients/models.py:145
 msgid "companies"
 msgstr ""
 
-#: clients/models.py:157
+#: clients/models.py:162
 msgid "swift"
 msgstr ""
 
-#: clients/models.py:168 clients/models.py:169
+#: clients/models.py:172 clients/models.py:173
 msgid "world"
 msgstr ""
 
-#: clients/models.py:180
+#: clients/models.py:184
 msgid "ooo"
 msgstr "ООО"
 
-#: clients/models.py:181
+#: clients/models.py:185
 msgid "oao"
 msgstr "ОАО"
 
-#: clients/models.py:182
+#: clients/models.py:186
 msgid "ip"
 msgstr "ИП"
 
-#: clients/models.py:183
+#: clients/models.py:187
 msgid "zao"
 msgstr "ЗАО"
 
-#: clients/models.py:186
+#: clients/models.py:190
 msgid "charter"
 msgstr ""
 
-#: clients/models.py:187
+#: clients/models.py:191
 msgid "proxy"
 msgstr ""
 
-#: clients/models.py:192
+#: clients/models.py:195
 msgid "form"
 msgstr ""
 
-#: clients/models.py:203
+#: clients/models.py:206
 msgid "ogrn"
 msgstr ""
 
-#: clients/models.py:211 clients/models.py:651
+#: clients/models.py:215 clients/models.py:687
 msgid "inn"
 msgstr ""
 
-#: clients/models.py:221 fms/models.py:39
+#: clients/models.py:226 fms/models.py:39
 msgid "kpp"
 msgstr ""
 
-#: clients/models.py:229
+#: clients/models.py:235
 msgid "bik"
 msgstr ""
 
-#: clients/models.py:236
+#: clients/models.py:243
 msgid "correspondent account"
 msgstr ""
 
-#: clients/models.py:239
+#: clients/models.py:247
 msgid "boss firstname"
 msgstr ""
 
-#: clients/models.py:243
+#: clients/models.py:252
 msgid "boss lastname"
 msgstr ""
 
-#: clients/models.py:246
+#: clients/models.py:256
 msgid "boss patronymic"
 msgstr ""
 
-#: clients/models.py:250
+#: clients/models.py:260
 msgid "boss operation base"
 msgstr ""
 
-#: clients/models.py:258
+#: clients/models.py:269
 msgid "proxy number"
 msgstr ""
 
-#: clients/models.py:260
+#: clients/models.py:271
 msgid "proxy date"
 msgstr ""
 
-#: clients/models.py:275
+#: clients/models.py:285
 msgid "Please fill a proxy date and a proxy number."
 msgstr ""
 
-#: clients/models.py:286 clients/models.py:287
+#: clients/models.py:296 clients/models.py:297
 msgid "ru"
 msgstr ""
 
-#: clients/models.py:295
+#: clients/models.py:305
 msgid "not confirmed"
 msgstr ""
 
-#: clients/models.py:296 clients/models.py:704
+#: clients/models.py:306 clients/models.py:740
 msgid "active"
 msgstr ""
 
-#: clients/models.py:297
+#: clients/models.py:307
 msgid "disabled"
 msgstr ""
 
-#: clients/models.py:298
+#: clients/models.py:308
 msgid "archived"
 msgstr ""
 
-#: clients/models.py:301
+#: clients/models.py:311
 msgid "not installed"
 msgstr ""
 
-#: clients/models.py:302
+#: clients/models.py:312
 msgid "process"
 msgstr ""
 
-#: clients/models.py:303
+#: clients/models.py:313
 msgid "installed"
 msgstr ""
 
-#: clients/models.py:306
+#: clients/models.py:316
 msgid "chat"
 msgstr ""
 
-#: clients/models.py:308
+#: clients/models.py:318
 msgid "cold call"
 msgstr ""
 
-#: clients/models.py:309
+#: clients/models.py:319
 msgid "email"
 msgstr ""
 
-#: clients/models.py:310
+#: clients/models.py:320
 #, fuzzy
-#| msgid "Registation failed"
+#| msgid "Registration failed"
 msgid "registration"
 msgstr "Ошибка при регистрации"
 
-#: clients/models.py:321
+#: clients/models.py:331
 msgid ""
 "Enter a valid domain. This value may contain only lowercase letters, "
 "numbers, and \"-\" character."
@@ -704,165 +709,173 @@ msgstr ""
 "Введенный Вами адрес содержит недопустимые символы. Адрес может содержать "
 "только латинские буквы, цифры и символ -(тире)"
 
-#: clients/models.py:333 clients/models.py:342
+#: clients/models.py:343 clients/models.py:352
 msgid "Client with this domain already exist."
 msgstr "Клиент с таким доменом уже существует."
 
-#: clients/models.py:334
+#: clients/models.py:344
 msgid "login"
 msgstr ""
 
-#: clients/models.py:343
+#: clients/models.py:353
 msgid "login alias"
 msgstr ""
 
-#: clients/models.py:347
+#: clients/models.py:356
 msgid "e-mail"
 msgstr ""
 
-#: clients/models.py:358
+#: clients/models.py:369
 msgid "full name"
 msgstr ""
 
-#: clients/models.py:362 hotels/models.py:162 hotels/models.py:217
+#: clients/models.py:374 hotels/models.py:162 hotels/models.py:217
 msgid "description"
 msgstr ""
 
-#: clients/models.py:366 clients/models.py:730 finances/models.py:165
+#: clients/models.py:379 clients/models.py:767 finances/models.py:165
 #: finances/models.py:629 users/models.py:67
 msgid "country"
 msgstr ""
 
-#: clients/models.py:398
+#: clients/models.py:417
 msgid "installation status"
 msgstr ""
 
-#: clients/models.py:403
+#: clients/models.py:421
 msgid "trial activated"
 msgstr ""
 
-#: clients/models.py:407
+#: clients/models.py:423
 msgid "disabled at"
 msgstr ""
 
-#: clients/models.py:411 clients/models.py:577 hotels/models.py:186
+#: clients/models.py:428 clients/models.py:602 hotels/models.py:186
 msgid "url"
 msgstr ""
 
-#: clients/models.py:412
+#: clients/models.py:429
 msgid "maxibooking url"
 msgstr ""
 
-#: clients/models.py:419 finances/models.py:221
+#: clients/models.py:437 finances/models.py:221
 msgid "manager"
 msgstr ""
 
-#: clients/models.py:423
+#: clients/models.py:441
 msgid "managers history"
 msgstr ""
 
-#: clients/models.py:432
+#: clients/models.py:452
 msgid "source"
 msgstr ""
 
-#: clients/models.py:439
+#: clients/models.py:460
 msgid "sales status"
 msgstr ""
 
-#: clients/models.py:446
+#: clients/models.py:468
 msgid "refusal reason"
 msgstr ""
 
-#: clients/models.py:545
+#: clients/models.py:567
 msgid "Empty refusal reason."
 msgstr ""
 
-#: clients/models.py:578
+#: clients/models.py:603
 msgid "The URL of client`s website must be unique among other clients."
 msgstr ""
 
-#: clients/models.py:585
+#: clients/models.py:610
 msgid "is the website enabled?"
 msgstr ""
 
-#: clients/models.py:630
+#: clients/models.py:615
+msgid "own domain name?"
+msgstr ""
+
+#: clients/models.py:616
+msgid "Does the website use its own domain name?"
+msgstr ""
+
+#: clients/models.py:663
 msgid "passport serial"
 msgstr ""
 
-#: clients/models.py:638
+#: clients/models.py:672
 msgid "passport number"
 msgstr ""
 
-#: clients/models.py:639
+#: clients/models.py:673
 msgid "passport date"
 msgstr ""
 
-#: clients/models.py:643
+#: clients/models.py:678
 msgid "passport issued by"
 msgstr ""
 
-#: clients/models.py:682
+#: clients/models.py:717
 msgid "authentication date"
 msgstr ""
 
-#: clients/models.py:688
+#: clients/models.py:724
 msgid "user agent"
 msgstr ""
 
-#: clients/models.py:693
+#: clients/models.py:729
 msgid "Client authentications"
 msgstr ""
 
-#: clients/models.py:702
+#: clients/models.py:738
 msgid "archive"
 msgstr ""
 
-#: clients/models.py:705
+#: clients/models.py:741
 msgid "next"
 msgstr ""
 
-#: clients/models.py:720
+#: clients/models.py:755
 msgid "is paid"
 msgstr ""
 
-#: clients/models.py:724 clients/models.py:774 finances/models.py:159
+#: clients/models.py:760 clients/models.py:810 finances/models.py:159
 #: finances/models.py:409 finances/models.py:642
 msgid "price"
 msgstr ""
 
-#: clients/models.py:733
+#: clients/models.py:771
 msgid "quantity"
 msgstr ""
 
-#: clients/models.py:737
+#: clients/models.py:775
 msgid "start date"
 msgstr ""
 
-#: clients/models.py:741 finances/models.py:215
+#: clients/models.py:777 finances/models.py:215
 msgid "begin date"
 msgstr ""
 
-#: clients/models.py:744 finances/models.py:217 fms/models.py:24
+#: clients/models.py:779 finances/models.py:217 fms/models.py:24
 msgid "end date"
 msgstr ""
 
-#: clients/models.py:748 finances/models.py:174
+#: clients/models.py:784 finances/models.py:174
 msgid "service"
 msgstr ""
 
-#: clients/models.py:756
+#: clients/models.py:793
 msgid "orders"
 msgstr ""
 
-#: clients/models.py:818
+#: clients/models.py:856
 msgid "Please correct dates."
 msgstr ""
 
-#: clients/models.py:824
+#: clients/models.py:862
 msgid "Empty service prices."
 msgstr ""
 
-#: clients/models.py:843
+#: clients/models.py:881
 msgid "Client service with this type already exists."
 msgstr ""
 
@@ -1200,6 +1213,29 @@ msgstr ""
 #: users/models.py:113
 msgid "The unique user`s code"
 msgstr ""
+
+#~ msgid ""
+#~ "\n"
+#~ "    <p>Yours Faithfully,<br>\n"
+#~ "        MaxiBooking Customer Support Team</p>\n"
+#~ "    <p>\n"
+#~ "        E-mail: <a href=\"mailto:support@maxi-booking.com\">support@maxi-"
+#~ "booking.com</a><br>\n"
+#~ "        Knowledge Base: <a href=\"https://support.maxi-booking.com"
+#~ "\">https://support.maxi-booking.com</a>\n"
+#~ "    </p>\n"
+#~ msgstr ""
+#~ "\n"
+#~ "<p>С уважением,<br>\n"
+#~ "    Служба Клиентской поддержки «Максибукинг»</p>\n"
+#~ "<p>\n"
+#~ "    E-mail: <a href=\"mailto:support@maxi-booking.ru\">support@maxi-"
+#~ "booking.ru</a><br>\n"
+#~ "    Телефон: 8 800 200 78 30<br>\n"
+#~ "    База знаний: <a href=\"https://maxi-booking.zendesk.com/hc/ru"
+#~ "\">https://maxi-booking.zendesk.com/hc/ru</a>\n"
+#~ "</p>\n"
+#~ "<p>Максибукинг: Работает программа — зарабатываете Вы!</p>\n"
 
 #~ msgid ""
 #~ "\n"

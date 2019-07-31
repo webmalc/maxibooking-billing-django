@@ -1,9 +1,9 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/base_client.html' %}
 {% load humanize %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "New Invoice #" %}{{ order.id }}
+{% trans "New Invoice #" %}{{ order.id }}
 {% endblock %}
 
 {% block content %}
@@ -17,7 +17,5 @@
     <p>Are there features that you want to try but didn’t have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 
 {% endblocktrans %}
-
-{% include "emails/sign.html" %}
 
 {% endblock %}

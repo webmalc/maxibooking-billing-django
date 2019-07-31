@@ -25,16 +25,17 @@ def test_mail_client_by_email(mailoutbox):
     """
     Should send an email by a client email
     """
-    mailer.mail_client(subject='Text message',
-                       template='emails/registration_fail.html',
-                       data={},
-                       email='client@example.com')
+    mailer.mail_client(
+        subject='Text message',
+        template='emails/registration_fail.html',
+        data={},
+        email='client@example.com')
 
     assert len(mailoutbox) == 1
     mail = mailoutbox[0]
     assert mail.recipients() == ['client@example.com']
     assert 'Text message' in mail.subject
-    assert 'Registation failure' in mail.alternatives[0][0]
+    assert 'Registration failure' in mail.alternatives[0][0]
 
 
 def test_mail_client_by_client(mailoutbox, settings):
@@ -42,19 +43,24 @@ def test_mail_client_by_client(mailoutbox, settings):
     Should send an email by a client object
     """
 
-    def send(login):
+    def send(
+            login,
+            subject='Registration failure',
+            template='registration_fail',
+    ):
         client = Client.objects.get(login=login)
-        mailer.mail_client(subject='Registation failure',
-                           template='emails/registration_fail.html',
-                           data={},
-                           client=client)
+        mailer.mail_client(
+            subject=subject,
+            template='emails/{}.html'.format(template),
+            data={},
+            client=client)
 
     send('user-one')
     assert len(mailoutbox) == 1
     mail = mailoutbox[0]
     assert mail.recipients() == ['user@one.com']
-    assert 'User One, Registation failure' in mail.subject
-    assert 'Registation failure' in mail.alternatives[0][0]
+    assert 'User One, Registration failure' in mail.subject
+    assert 'Registration failure' in mail.alternatives[0][0]
 
     send('user-rus')
     assert len(mailoutbox) == 2
@@ -70,6 +76,18 @@ def test_mail_client_by_client(mailoutbox, settings):
     assert mail.recipients() == ['user@one.com']
     assert 'Ошибка при регистрации' in mail.subject
     assert 'Ошибка при регистрации' in mail.alternatives[0][0]
+    assert 'При установке программы' in mail.alternatives[0][0]
+
+    send(
+        'user-rus',
+        template='registration',
+        subject='Registration Successefull',
+    )
+    assert len(mailoutbox) == 4
+    mail = mailoutbox[3]
+    assert mail.recipients() == ['user@rus.com']
+    assert 'Успешная регистрация' in mail.subject
+    assert 'Поздравляем и добро пожаловать' in mail.alternatives[0][0]
 
 
 def test_mail_client_by_client_subject_format(mailoutbox, settings):
@@ -80,10 +98,11 @@ def test_mail_client_by_client_subject_format(mailoutbox, settings):
     client = Client.objects.get(login='user-one')
     subject = 'test subject'
 
-    mailer.mail_client(subject=subject,
-                       template='emails/registration_fail.html',
-                       data={},
-                       client=client)
+    mailer.mail_client(
+        subject=subject,
+        template='emails/registration_fail.html',
+        data={},
+        client=client)
 
     mail = mailoutbox[0]
     assert mail.subject == 'Prefix: User One, test subject'
@@ -91,9 +110,10 @@ def test_mail_client_by_client_subject_format(mailoutbox, settings):
     Client.objects.filter(login='user-one').update(name=None)
     client = Client.objects.get(login='user-one')
 
-    mailer.mail_client(subject=subject,
-                       template='emails/registration_fail.html',
-                       data={},
-                       client=client)
+    mailer.mail_client(
+        subject=subject,
+        template='emails/registration_fail.html',
+        data={},
+        client=client)
     mail = mailoutbox[1]
     assert mail.subject == 'Prefix: test subject'

@@ -1,20 +1,18 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/base_client.html' %}
 {% load humanize %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "Oh No! Your Account has been suspended" %}
+{% trans "Oh No! Your Account has been suspended" %}
 {% endblock %}
 
 {% block content %}
-    {% blocktrans with url=url name=name odrder=order created=created %}
-        <p>Hello!</p>
-        <p>Due to unpaid Invoice, your account has been suspended.</p>
-        <p>Quickly unlock your account so you don’t lose new bookings! </p>
-        <p>To unlock your account simply make a payment for your Invoice #{{ order.id}} from {{ created }} in "My Account" by clicking on the link: <a href="{{ url }}">{{ url }}</a></p>
-        <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
+{% blocktrans with url=url name=name odrder=order created=created %}
+    <p>Hello!</p>
+    <p>Due to unpaid Invoice, your account has been suspended.</p>
+    <p>Quickly unlock your account so you don’t lose new bookings! </p>
+    <p>To unlock your account simply make a payment for your Invoice #{{ order.id}} from {{ created }} in "My Account" by clicking on the link: <a href="{{ url }}">{{ url }}</a></p>
+    <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 
-    {% endblocktrans %}
-
-    {% include "emails/sign.html" %}
+{% endblocktrans %}
 {% endblock %}

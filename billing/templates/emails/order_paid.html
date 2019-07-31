@@ -1,9 +1,9 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/base_client.html' %}
 {% load humanize %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "Thank you for your payment!" %}
+{% trans "Thank you for your payment!" %}
 {% endblock %}
 
 {% block content %}
@@ -14,5 +14,4 @@
     <p>Are there features that you want to try but didn’t have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 {% endblocktrans %}
 
-{% include "emails/sign.html" %}
 {% endblock %}

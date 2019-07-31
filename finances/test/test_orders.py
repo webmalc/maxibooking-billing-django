@@ -19,8 +19,8 @@ def test_order_disable_rooms_orders(make_orders):
     The client should have only one order with service type equal to 'rooms'
     """
     client = Client.objects.get(pk=1)
-    client_service = ClientService.objects.get(client=client,
-                                               service__type='rooms')
+    client_service = ClientService.objects.get(
+        client=client, service__type='rooms')
     order_one = Order.objects.get(client=client, pk=1)
     order_two = Order.objects.get(client=client, pk=4)
     order_one.client_services.add(client_service)
@@ -48,8 +48,8 @@ def test_order_get_by_service_type(make_orders):
     assert orders.count() == 0
 
     order = Order.objects.filter(client=client).first()
-    client_service = ClientService.objects.get(client=client,
-                                               service__type='rooms')
+    client_service = ClientService.objects.get(
+        client=client, service__type='rooms')
     order.client_services.add(client_service)
     order.save()
     orders = Order.objects.get_by_service_type(client, 'rooms')

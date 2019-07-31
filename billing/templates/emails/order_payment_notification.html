@@ -1,9 +1,9 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/base_client.html' %}
 {% load humanize %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "Invoice is due - don’t forget to extend your access!" %}
+{% trans "Invoice is due - don’t forget to extend your access!" %}
 {% endblock %}
 
 {% block content %}
@@ -15,10 +15,8 @@
     <p>You Invoice #{{ id }} from {{ created }} is due.</p>
     <p>Great opportunities and more Sales await. Don't forget to extend your access by paying you Invoice by {{ expired }}</p>
     <p>To view your Invoice, update and confirm your subscription details, and pay online simply go to “My Account” by clicking on the link: {{ url }}</p>
-    <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p> 
+    <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 
 {% endblocktrans %}
-
-{% include "emails/sign.html" %}
 
 {% endblock %}

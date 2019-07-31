@@ -361,7 +361,7 @@ class ClientViewSet(viewsets.ModelViewSet):
                 return Response({'status': True})
             else:
                 mail_client_task.delay(
-                    subject=_('Registation failed'),
+                    subject=_('Registration failed'),
                     template='emails/registration_fail.html',
                     data={},
                     client_id=client.id)

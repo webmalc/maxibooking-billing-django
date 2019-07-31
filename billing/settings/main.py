@@ -209,8 +209,8 @@ STATICFILES_FINDERS = (
 
 FIXTURE_DIRS = (os.path.join(BASE_DIR, 'fixtures'), )
 LOCALE_PATHS = (
-    os.path.join(os.path.dirname(__file__), "locale"),
-    os.path.join(os.path.dirname(__file__), "app_locale"),
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "locale"),
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), "app_locale"),
 )
 
 EMAIL_SUBJECT_PREFIX = 'Maxi-booking: '

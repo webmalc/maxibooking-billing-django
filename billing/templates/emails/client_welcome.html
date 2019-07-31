@@ -1,18 +1,17 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/base_client.html' %}
 {% load humanize %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "How is your Sales?" %}
+{% trans "How is your Sales?" %}
 {% endblock %}
 
 {% block content %}
-    {% blocktrans with name=client.name %}
-        <p>Hello!</p>
-        <p>How is your Sales?</p>
-        <p>At Maxibooking, we are always happy to help you set up all the features, prices and special offers you need, including individual configuration of the number of rooms and properties offered for sale in each of your sales channels (Your personal website, Booking.com and others.)</p>
-        <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
-    {% endblocktrans %}
+{% blocktrans with name=client.name %}
+    <p>Hello!</p>
+    <p>How is your Sales?</p>
+    <p>At Maxibooking, we are always happy to help you set up all the features, prices and special offers you need, including individual configuration of the number of rooms and properties offered for sale in each of your sales channels (Your personal website, Booking.com and others.)</p>
+    <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
+{% endblocktrans %}
 
-    {% include "emails/sign.html" %}
 {% endblock %}

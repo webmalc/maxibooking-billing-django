@@ -1,22 +1,20 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/base_client.html' %}
 {% load humanize %}
 {% load i18n %}
 
 {% block title %}
-    {% trans "we miss You!" %}
+{% trans "we miss You!" %}
 {% endblock %}
 
 {% block content %}
 
 {% blocktrans with name=client.name id=order.id created=order.created|date:'d.m.Y' url=client.url %}
 
-<p>Hello!</p>
-<p>New Sales are waiting for You! Quickly unlock your account and start selling more.</p>
-<p>To unlock your account simply make a payment for your Invoice #{{id}} from {{ created }} in "My Account" by clicking on the link: <a href="{{url}}">{{url}}</a></p>
-<p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>   
+    <p>Hello!</p>
+    <p>New Sales are waiting for You! Quickly unlock your account and start selling more.</p>
+    <p>To unlock your account simply make a payment for your Invoice #{{id}} from {{ created }} in "My Account" by clicking on the link: <a href="{{url}}">{{url}}</a></p>
+    <p>Are there features that you want to try but didn't have a chance to try yet? Write to us. We are happy only when you sell more with us!</p>
 
 {% endblocktrans %}
-
-{% include "emails/sign.html" %}
 
 {% endblock %}
