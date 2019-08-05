@@ -29,7 +29,15 @@ class Command(BaseCommand):
             'template',
             nargs='?',
             default='registration',
-            choices=['registration', 'registration_fail'],
+            choices=[
+                'registration',
+                'registration_fail',
+                'client_disabled',
+                'client_welcome',
+                'order_client_disabled',
+                'order_paid',
+                'order_payment_notify',
+            ],
         )
 
     @staticmethod

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-31 11:06+0000\n"
+"POT-Creation-Date: 2019-08-05 12:39+0000\n"
 "PO-Revision-Date: 2018-06-04 10:26+0000\n"
 "Last-Translator: b'  <m@webmalc.pw>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -280,12 +280,9 @@ msgid ""
 "    <p>To visit Your SMART website simply click on the button below!</p>\n"
 "    <p>\n"
 "        <a href=\"%(website)s\" class=\"btn-primary\" itemprop=\"url\" style="
-"\"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: "
-"border-box; font-size: 14px; color: #FFF; text-decoration: none; line-"
-"height: 2em; font-weight: bold; text-align: center; cursor: pointer; "
-"display: inline-block; border-radius: 0px; text-transform: capitalize; "
-"background-color: #ff4632; margin: 0; border-color: #ff4632; border-style: "
-"solid; border-width: 10px 20px;\">go to your website</a>\n"
+"\"font-family: 'Montserrat', sans-serif; font-weight: normal; font-size: "
+"16px; line-height: 26px; color: #fff; text-decoration: none; padding: 15px "
+"35px; background-color: #2DBABA;\">go to your website</a>\n"
 "    </p>\n"
 "    <p>We are happy only when you sell more with us!</p>\n"
 "\n"
@@ -305,31 +302,31 @@ msgid ""
 "support@maxi-booking.com</p> \n"
 msgstr ""
 
-#: billing/templates/emails/sign.html:29
+#: billing/templates/emails/sign.html:22
 msgid "Knowledge Base"
 msgstr ""
 
-#: billing/templates/emails/sign.html:38
+#: billing/templates/emails/sign.html:31
 msgid ""
 "Don't hesitate to check out our Customer Support Knowledge Base for lots of "
 "guiding material that we have prepared for You."
 msgstr ""
 
-#: billing/templates/emails/sign.html:59
+#: billing/templates/emails/sign.html:52
 msgid "Support"
 msgstr ""
 
-#: billing/templates/emails/sign.html:67
+#: billing/templates/emails/sign.html:60
 msgid ""
 "Let us know what you think. We love to hear from You. For feedback and if "
 "you have any questions just send us an email"
 msgstr ""
 
-#: billing/templates/emails/sign.html:100
+#: billing/templates/emails/sign.html:95
 msgid "contact info"
 msgstr ""
 
-#: billing/templates/emails/sign.html:114
+#: billing/templates/emails/sign.html:110
 msgid "Phone"
 msgstr ""
 

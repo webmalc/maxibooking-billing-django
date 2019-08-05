@@ -13,12 +13,14 @@ def test_mail_managers(mailoutbox):
     """
     Should send an email to the system managers
     """
-    mailer.mail_managers(subject='Text message', data={'text': 'Test text'})
+    mailer.mail_managers(
+        subject='Text message', data={'text': '<p>Test text</p>'})
     assert len(mailoutbox) == 1
     mail = mailoutbox[0]
     assert mail.recipients() == ['admin@example.com', 'manager@example.com']
     assert 'Text message' in mail.subject
     assert 'Test text' in mail.alternatives[0][0]
+    assert '<p style="font-family:' in mail.alternatives[0][0]
 
 
 def test_mail_client_by_email(mailoutbox):
@@ -36,6 +38,7 @@ def test_mail_client_by_email(mailoutbox):
     assert mail.recipients() == ['client@example.com']
     assert 'Text message' in mail.subject
     assert 'Registration failure' in mail.alternatives[0][0]
+    assert '<p style="font-family:' in mail.alternatives[0][0]
 
 
 def test_mail_client_by_client(mailoutbox, settings):
