@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 lang=locale)
 
     @staticmethod
-    def _managers():
+    def _managers(*args, **kwargs):
         """
         Send emails to the managers
         """
