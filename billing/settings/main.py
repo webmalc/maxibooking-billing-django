@@ -384,7 +384,7 @@ if not DEBUG:  # pragma: no cover
 # Django money
 DEFAULT_CURRENCY = 'EUR'
 BASE_CURRENCY = 'EUR'
-CURRENCIES = ('RUB', 'EUR', 'CAD', 'USD')
+# CURRENCIES = ('RUB', 'EUR', 'CAD', 'USD')
 EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.FixerBackend'
 
 # Cache

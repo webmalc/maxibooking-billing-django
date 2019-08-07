@@ -1,5 +1,7 @@
 * ISSUES
-** TODO !!!! django 2.0
+** TODO currencies REST
+** TODO rooms max occupation and price
+** TODO JWT
 ** TODO coverage 100%
 ** TODO not periodical order
 ** TODO multiprocessing
@@ -8,7 +10,12 @@
 
 ** TODO add reversion context manager to tasks
 
+
 * COMPLETED
+** DONE property type REST
+   CLOSED: [2019-08-07 Wed 11:17]
+** DONE !!!! django 2.0
+   CLOSED: [2019-08-06 Tue 09:52]
 ** DONE prices migration
    CLOSED: [2018-04-28 Sat 16:18]
 ** DONE tests for client installation

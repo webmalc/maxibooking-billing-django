@@ -1144,7 +1144,7 @@ msgstr ""
 
 #: hotels/models.py:148
 msgid "Hotel"
-msgstr ""
+msgstr "Отель"
 
 #: hotels/models.py:148
 msgid "Hostel"

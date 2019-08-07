@@ -1,3 +1,6 @@
+"""
+The finances views module
+"""
 import logging
 
 from django.http import HttpResponseNotFound
@@ -5,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
+from djmoney.contrib.exchange.models import Rate
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
@@ -15,8 +19,9 @@ from .lib.calc import CalcByQuery, CalcException
 from .models import Order, Price, Service, ServiceCategory, Transaction
 from .serializers import (CalcQuerySerializer, OrderSerializer,
                           PaymentSystemListSerializer, PaymentSystemSerializer,
-                          PriceSerializer, ServiceCategorySerializer,
-                          ServiceSerializer, TransactionSerializer)
+                          PriceSerializer, RateSerializer,
+                          ServiceCategorySerializer, ServiceSerializer,
+                          TransactionSerializer)
 from .systems import manager
 
 
@@ -43,6 +48,15 @@ class PaymentSystemViewSet(viewsets.ViewSet):
         serializer = PaymentSystemSerializer(instance=entry, many=False)
 
         return Response(serializer.data)
+
+
+class RateViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    The rate viewset
+    """
+    queryset = Rate.objects.all()
+    serializer_class = RateSerializer
+    filter_fields = ('currency', )
 
 
 class TransactionViewSet(viewsets.ReadOnlyModelViewSet):

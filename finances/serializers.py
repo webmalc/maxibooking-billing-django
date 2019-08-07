@@ -1,8 +1,45 @@
+"""
+The finances serializers module
+"""
+from django.utils.translation import get_language
+from django.utils.translation import ugettext_lazy as _
+from djmoney.contrib.exchange.models import Rate
+from moneyed import CURRENCIES
+from moneyed.localization import _FORMATTER
 from rest_framework import serializers
 
 from billing.serializers import ValidationSerializerMixin
 
 from .models import Order, Price, Service, ServiceCategory, Transaction
+
+
+class RateSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    The rate model serializer
+    """
+    title = serializers.SerializerMethodField()
+    sign = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_sign(obj: Rate) -> str:
+        """
+        Get the currency sign
+        """
+        result = _FORMATTER.get_sign_definition(obj.currency, get_language())
+
+        return result[1] or result[0]
+
+    @staticmethod
+    def get_title(obj: Rate) -> str:
+        """
+        Get the currency title
+        """
+        currency = CURRENCIES.get(obj.currency)
+        return _(getattr(currency, 'name', '-'))
+
+    class Meta:
+        model = Rate
+        fields = ('currency', 'title', 'sign', 'value')
 
 
 class CalcQuerySerializer(serializers.Serializer):
