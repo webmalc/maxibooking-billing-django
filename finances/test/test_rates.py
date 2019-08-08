@@ -1,8 +1,13 @@
+"""
+The exchange rates tests
+"""
 from decimal import Decimal
 
 import pytest
+from django.urls import reverse
 from djmoney.money import Money
 
+from billing.lib.test import json_contains
 from finances.lib import rates
 
 pytestmark = pytest.mark.django_db
@@ -16,6 +21,28 @@ def _get_first_log_messages(caplog) -> list:
 
 def _get_money_sample() -> Money:
     return Money(1.5, 'EUR')
+
+
+def test_rates_list_by_user(client):
+    """
+    The endpoint should not be available to unauthenticated users
+    """
+    response = client.get(reverse('rate-list'))
+    assert response.status_code == 401
+
+
+def test_rates_list_by_admin(admin_client):
+    """
+    The endpoint should return a list of the rates
+    """
+    response = admin_client.get(reverse('rate-list'))
+
+    assert response.status_code == 200
+    assert len(response.json()) == 168
+    json_contains(response, 'EUR')
+    json_contains(response, 'USD')
+    json_contains(response, '$')
+    json_contains(response, '€')
 
 
 def test_log_exchange_rates(caplog):

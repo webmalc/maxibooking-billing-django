@@ -13,6 +13,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
 
 from .filters import OrderFilterSet
 from .lib.calc import CalcByQuery, CalcException
@@ -50,11 +51,12 @@ class PaymentSystemViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-class RateViewSet(viewsets.ReadOnlyModelViewSet):
+class RateViewSet(CacheResponseMixin, viewsets.ReadOnlyModelViewSet):
     """
     The rate viewset
     """
-    queryset = Rate.objects.all()
+    pagination_class = None
+    queryset = Rate.objects.all().order_by('currency')
     serializer_class = RateSerializer
     filter_fields = ('currency', )
 

@@ -1,6 +1,7 @@
 from django.core.cache import cache
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from djmoney.contrib.exchange.models import Rate
 
 from clients.tasks import mail_managers_task
 
@@ -12,8 +13,10 @@ def cached_model_post_save(sender, **kwargs):
     """
     Cached model post save
     """
-    if isinstance(kwargs['instance'], CachedModel):
-        cache.clear()
+    models = (CachedModel, Rate)
+    for model in models:
+        if isinstance(kwargs['instance'], model):
+            cache.clear()
 
 
 @receiver(post_save, dispatch_uid='checked_model_post_save')
