@@ -18,6 +18,7 @@ class RateSerializer(serializers.HyperlinkedModelSerializer):
     The rate model serializer
     """
     title = serializers.SerializerMethodField()
+    countries = serializers.SerializerMethodField()
     sign = serializers.SerializerMethodField()
 
     @staticmethod
@@ -30,6 +31,14 @@ class RateSerializer(serializers.HyperlinkedModelSerializer):
         return result[1] or result[0]
 
     @staticmethod
+    def get_countries(obj: Rate) -> list:
+        """
+        Get the currency countries
+        """
+        currency = CURRENCIES.get(obj.currency)
+        return getattr(currency, 'countries', '-')
+
+    @staticmethod
     def get_title(obj: Rate) -> str:
         """
         Get the currency title
@@ -39,7 +48,7 @@ class RateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Rate
-        fields = ('currency', 'title', 'sign', 'value')
+        fields = ('currency', 'title', 'sign', 'countries', 'value')
 
 
 class CalcQuerySerializer(serializers.Serializer):
