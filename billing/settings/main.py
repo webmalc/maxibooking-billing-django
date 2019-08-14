@@ -280,6 +280,7 @@ LOGGING = {
 if not ENV.list('LOGGING', default=False):
     LOGGING.pop('root', None)
     LOGGING['loggers']['billing']['handlers'].remove('sentry')
+    del LOGGING['handlers']['sentry']
 
 # Two factor auth
 LOGIN_URL = 'two_factor:login'
@@ -373,7 +374,7 @@ REST_FRAMEWORK = {
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en', 'ru']
 CITIES_LIGHT_APP_NAME = 'hotels'
 
-if not DEBUG:  # pragma: no cover
+if not DEBUG and ENV.list('LOGGING', default=False):  # pragma: no cover
     # Sentry raven
     RAVEN_CONFIG = {
         'dsn': 'https://52126dbda9494c668b7b9dff7722c901:\

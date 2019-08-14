@@ -1,6 +1,4 @@
 * ISSUES
-** TODO currencies REST
-** TODO rooms max occupation and price
 ** TODO JWT
 ** TODO coverage 100%
 ** TODO not periodical order
@@ -12,6 +10,10 @@
 
 
 * COMPLETED
+** DONE rooms max occupation and price
+   CLOSED: [2019-08-14 Wed 12:14]
+** DONE currencies REST
+   CLOSED: [2019-08-14 Wed 10:39]
 ** DONE property type REST
    CLOSED: [2019-08-07 Wed 11:17]
 ** DONE !!!! django 2.0

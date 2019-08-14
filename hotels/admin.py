@@ -15,7 +15,7 @@ class RoomsInlineAdmin(admin.TabularInline):
     ClientServiceInline admin interface
     """
     model = Room
-    fields = ('name', 'rooms', 'description')
+    fields = ('name', 'rooms', 'max_occupancy', 'price', 'description')
 
 
 @admin.register(Property)

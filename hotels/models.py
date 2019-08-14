@@ -7,6 +7,8 @@ from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
+from djmoney.models.fields import MoneyField
+from moneyed import EUR, Money
 from timezone_field import TimeZoneField
 
 from billing.models import (CachedModel, CheckedModel, ClientPermissionsModel,
@@ -222,6 +224,18 @@ class Room(CommonInfo, TimeStampedModel):
         db_index=True,
         validators=[MinValueValidator(1)],
         help_text=_('max rooms'))
+    max_occupancy = models.PositiveIntegerField(
+        verbose_name=_('max occupancy'),
+        db_index=True,
+        validators=[MinValueValidator(1)],
+        default=1,
+        help_text=_('max guest occupancy'))
+    price = MoneyField(
+        max_digits=20,
+        decimal_places=2,
+        verbose_name=_('price'),
+        default=Money(0, EUR),
+        db_index=True)
     property = models.ForeignKey(
         Property,
         on_delete=models.CASCADE,

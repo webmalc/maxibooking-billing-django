@@ -1,6 +1,7 @@
 import json
 
 from django.urls import reverse
+from moneyed import Money
 
 from billing.lib.test import json_contains
 from clients.models import Client
@@ -44,10 +45,16 @@ def test_room_create_invalid_by_admin(admin_client):
 
 
 def test_room_create_by_admin(admin_client):
+    """
+    Test rooms creating via the REST endpoint
+    """
     data = json.dumps({
         'name': 'new test room',
         'property': 1,
         'rooms': 23,
+        'max_occupancy': 3,
+        'price': 12.55,
+        'price_currency': 'GIP',
         'client': 'user-one'
     })
     response = admin_client.post(
@@ -57,9 +64,33 @@ def test_room_create_by_admin(admin_client):
     assert response_json['name'] == 'new test room'
     assert response_json['rooms'] == 23
     assert response_json['created_by'] == 'admin'
+    assert response_json['max_occupancy'] == 3
+    assert response_json['price'] == '12.55'
+    assert response_json['price_currency'] == 'GIP'
+    assert Room.objects.all().first().price == Money(12.55, 'GIP')
 
     response = admin_client.get(reverse('room-list'))
     assert len(response.json()['results']) == 4
+
+
+def test_room_create_without_price_by_admin(admin_client):
+    """
+    Test rooms creating via the REST endpoint (with the default price)
+    """
+    data = json.dumps({
+        'name': 'new test room',
+        'property': 1,
+        'rooms': 23,
+        'max_occupancy': 3,
+        'client': 'user-one'
+    })
+    response = admin_client.post(
+        reverse('room-list'), data=data, content_type="application/json")
+    response_json = response.json()
+
+    assert response_json['price'] == '0.00'
+    assert response_json['price_currency'] == 'EUR'
+    assert Room.objects.all().first().price == Money(0, 'EUR')
 
 
 def test_rooms_count(admin_client):
