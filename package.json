@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "font-awesome": "^4.6.3",
-    "jquery": "^3.1.1",
+    "jquery": "^3.5.0",
     "jquery.inputmask": "^3.3.3",
     "less": "^3.5.3",
     "npm": "^5.4.1",
