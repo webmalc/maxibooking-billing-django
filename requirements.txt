@@ -75,7 +75,7 @@ Fabric3==1.14.post1
 flake8==3.7.7
 flower==0.9.2
 html5lib==1.0.1
-httplib2==0.12.1
+httplib2==0.18.0
 hy==0.16.0
 idna==2.7
 importlib-resources==1.0.2
