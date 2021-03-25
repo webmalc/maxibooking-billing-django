@@ -153,7 +153,7 @@ python-memcached==1.59
 python-utils==2.3.0
 pytz==2018.9
 pyxdg==0.26
-PyYAML==3.13
+PyYAML==5.4
 qrcode==6.1
 raven==6.10.0
 redis==3.2.0
