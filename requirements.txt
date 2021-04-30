@@ -159,7 +159,7 @@ raven==6.10.0
 redis==3.2.0
 reportlab==3.5.13
 requests==2.21.0
-rsa==4.0
+rsa==4.7
 s3transfer==0.2.0
 SecretStorage==3.1.1
 simplejson==3.16.0
