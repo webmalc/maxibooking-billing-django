@@ -14,7 +14,7 @@ braintree==3.51.0
 braintreehttp==0.5.0
 cairocffi==1.0.2
 CairoSVG==2.3.0
-celery==4.2.1
+celery==5.2.2
 certifi==2018.11.29
 cffi==1.12.1
 colorama==0.4.1
