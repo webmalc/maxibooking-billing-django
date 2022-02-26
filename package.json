@@ -10,7 +10,7 @@
     "less": "^3.5.3",
     "npm": "^5.4.1",
     "reset-css": "^2.2.1",
-    "urijs": "^1.18.12"
+    "urijs": "^1.19.8"
   },
   "devDependencies": {},
   "scripts": {
