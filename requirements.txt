@@ -157,7 +157,7 @@ PyYAML==3.13
 qrcode==6.1
 raven==6.10.0
 redis==3.2.0
-reportlab==3.5.13
+reportlab==3.5.55
 requests==2.21.0
 rsa==4.0
 s3transfer==0.2.0
